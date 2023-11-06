@@ -1,0 +1,138 @@
+
+.ul {
+    list-style: none;
+}
+
+.dis {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ul > li {
+    display: flex;
+    padding: 5px 20px;
+    justify-content: space-between;
+    align-items: center;
+    overflow: hidden;
+}
+
+.ul > li:not(:first-child):hover {
+    background-color: rgb(254, 239, 146);
+}
+
+.ul > li:not(:first-child) {
+    border-bottom: 1px solid rgb(98, 98, 98);
+}
+
+.ul > li:last-child {
+    margin-bottom: 0;
+}
+
+.ul > li span {
+    overflow: hidden;
+}
+
+.ul > li:first-child {
+    /*margin-bottom: 8px;*/
+}
+
+.ul > li > span:first-child {
+    color: #53BB2E;
+}
+
+.box {
+    padding: 20px 20px 0 110px;
+
+}
+
+.boxPar {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.boxPar > .left {
+    padding: 0 10px;
+    width: 64%;
+}
+
+.boxBott {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgb(293, 213, 62);
+    border-radius: 10px;
+    padding: 20px 30px 15px 12px;
+    margin: 25px 0;
+}
+.boxLogo{
+    display: flex;
+    justify-content: center;
+    padding: 30px 0;
+    background-color: rgb(251,213,62);
+    margin-bottom: 20px;
+    border-radius: 20px;
+}
+
+.rightUl {
+    width: 100%;
+}
+
+.rightUl li {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid;
+    padding: 10px 20px;
+    justify-content: space-between;
+}
+
+.rightUl li:first-child {
+    border-bottom: none;
+}
+
+.rightUl .li {
+    background-color: rgb(188, 238, 125);
+}
+
+.rightUl .li:nth-child(even) {
+    background-color: rgb(253, 213, 62);
+}
+
+.rightUl .li:nth-child(even):hover {
+    background-color: rgb(254, 239, 146);
+}
+
+.rightUl .li:nth-child(odd):hover {
+    background-color: rgb(208, 255, 149);
+}
+
+.rightUl > li:last-child {
+    margin-bottom: 0;
+}
+
+.button {
+    border-radius: 12px;
+    background: rgba(229, 171, 103, 0.20);
+    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25) inset
+}
+
+.button > button {
+    border: 0;
+    border-radius: 16px !important;
+    margin: 3px 5px;
+    font-size: 10px;
+    line-height: 1;
+}
+
+.button .css-ueukts-MuiButtonBase-root-MuiToggleButton-root.Mui-selected {
+    background: rgb(243, 215, 177) !important;
+}
+
+.ttt {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
