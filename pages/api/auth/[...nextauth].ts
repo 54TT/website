@@ -1,6 +1,8 @@
 import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import { getCsrfToken } from "next-auth/react"
+// @ts-ignore
+import  baseUrl from '/utils/baseUrl'
 import { SiweMessage } from "siwe"
 import axios from 'axios';
 
@@ -8,9 +10,6 @@ import axios from 'axios';
 // https://next-auth.js.org/configuration/options
 
 export default async function auth(req: any, res: any) {
-  console.log('req----------------',req)
-  console.log('req----------------',res)
-  console.log('111111111111111111111111111',)
   const providers = [
     CredentialsProvider({
       name: "Ethereum",
@@ -28,10 +27,10 @@ export default async function auth(req: any, res: any) {
       },
       async authorize(credentials) {
         try {
-          const siwe = new SiweMessage(JSON.parse(credentials?.message || "{}"))
+          const para = new SiweMessage(JSON.parse(credentials?.message || "{}"))
           const nextAuthUrl = new URL(process.env.NEXTAUTH_URL)
 
-          const result = await siwe.verify({
+          const result = await para.verify({
             signature: credentials?.signature || "",
             domain: nextAuthUrl.host,
             nonce: await getCsrfToken({ req }),
@@ -39,7 +38,7 @@ export default async function auth(req: any, res: any) {
 
           if (result.success) {
             return {
-              id: siwe.address,
+              id: para.address,
             }
           }
           return null
@@ -64,25 +63,22 @@ export default async function auth(req: any, res: any) {
     session: {
       strategy: "jwt",
     },
-    secret: process.env.NEXTAUTH_SECRET,
+    secret:  process.env.NEXTAUTH_SECRET,
     callbacks: {
       async session({ session, token }: { session: any; token: any }) {
-        let userAndFollowStats = (await axios.get("http://192.168.8.39:3004/api/user", {
+        let userAndFollowStats = (await axios.get( baseUrl+"/api/user", {
           params: {
             address: token.sub
           }
         })).data;
         if(!userAndFollowStats.user){
-          userAndFollowStats = (await axios.post("http://192.168.8.39:3004/api/user",{
+          userAndFollowStats = (await axios.post( baseUrl+"/api/user",{
               address: token.sub
           })).data
         }
-        console.log("user:",userAndFollowStats.user)
-        console.log("userFollowStats:",userAndFollowStats.userFollowStats)
         session.address = token.sub
         session.user = userAndFollowStats.user
         session.userFollowStats = userAndFollowStats.userFollowStats
-        console.log("session:", session)
         return session
       },
     },

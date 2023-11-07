@@ -6,10 +6,8 @@ dotenv.config();
 const getSubscript = (number) => {
   // 定义下标字符的 Unicode 起始值（0 对应 U+2080）
   const subscriptStart = 0x2080;
-
   // 将数字转换为字符串
   const numberString = number.toString();
-
   // 初始化一个空字符串来存储下标字符
   let subscript = '';
 
@@ -51,8 +49,7 @@ const formatDecimal = (number, count) => {
     return number;
   }
 }
-
-/**
+    /**
  * 发送 GET 请求并隐藏敏感信息
  * @param {string} url - 请求的URL
  * @param {object} sensitiveData - 包含敏感信息的对象
@@ -136,7 +133,7 @@ async function sendPostRequestWithSensitiveData(url, sensitiveData, data = {}, o
 
 
 // // 发起 GET 请求
-// sendGetRequestWithSensitiveData('http://localhost:3001/queryPairInfoByPairAddress', sensitiveData, getRequestParams)
+// sendGetRequestWithSensitiveData('http://192.168.8.104:3004/queryPairInfoByPairAddress', sensitiveData, getRequestParams)
 //   .then(responseData => {
 //     console.log('GET 请求处理后的响应数据:', responseData);
 //   })
@@ -145,7 +142,7 @@ async function sendPostRequestWithSensitiveData(url, sensitiveData, data = {}, o
 //   });
 
 // // 发起 POST 请求
-// sendPostRequestWithSensitiveData('http://localhost:3001/postDataEndpoint', sensitiveData, postData)
+// sendPostRequestWithSensitiveData('http://192.168.8.104:3004/postDataEndpoint', sensitiveData, postData)
 //   .then(responseData => {
 //     console.log('POST 请求处理后的响应数据:', responseData);
 //   })
@@ -153,7 +150,7 @@ async function sendPostRequestWithSensitiveData(url, sensitiveData, data = {}, o
 //     console.error('POST 请求错误:', error);
 //   });
 
-function formatDateTime(dateTime, format = 'YYYY-MM-DD HH:mm:ss') {
+function formatDateTime(dateTime, format = 'YYYY-MM-DD:HH:mm:ss') {
   return moment(dateTime).format(format);
 }
 
@@ -203,4 +200,5 @@ module.exports = {
   sendPostRequestWithSensitiveData,
   getRelativeTimeDifference,
   formatDateTime,
+
 }

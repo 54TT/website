@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import axios from 'axios';
+import  baseUrl from '/utils/baseUrl'
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { formatDecimal } from './Utils';
 import Link from "next/link";
-import { useAccount, useNetwork } from "wagmi";
+// import { useAccount, useNetwork } from "wagmi";
 
 export default function PairInfo() {
   const router = useRouter();
@@ -17,7 +18,7 @@ export default function PairInfo() {
   const [pairAddressEllipsis, setPairAddressEllipsis] = useState("");
   const [tokenAddressEllipsis, setTokenAddressEllipsis] = useState("");
   const [priceUsd, setPriceUsd] = useState(0);
-  const { chain } = useNetwork();
+  // const { chain } = useNetwork();
   const [chainId, setChainId] = useState("ethereum");
 
   const headers = {
@@ -27,16 +28,14 @@ export default function PairInfo() {
 
   async function getPairInfo() {
     try {
-      const response = await axios.get('http://localhost:3001/queryPairInfoByPairAddress', {
+      const response = await axios.get( baseUrl+'/queryPairInfoByPairAddress', {
         headers: headers,
         params: {
           pairAddress: pairAddress
         }
       });
       const pairBase = response.data;
-      console.log("pairBase:", pairBase)
       let pairDex = await axios.get(`https://api.dexscreener.com/latest/dex/pairs/${chainId}/${pairAddress}`);
-      console.log("pairDex:", pairDex)
       setPairBaseData(pairBase[0]);
       setPairDexData(pairDex.data.pairs[0]);
       const priceUsd = formatDecimal(pairDex.data.pairs[0].priceUsd, 5);
@@ -63,22 +62,22 @@ export default function PairInfo() {
     }
   }
 
-  useEffect(() => {
-    if (pairAddress && chain) {
-      let chainName = chain.name;
-      chainName = chainName.toLocaleLowerCase();
-      setChainId(chainName);
-      getPairInfo();
-
-      const timer = setInterval(() => {
-        getPriceUsd();
-      }, 5000);
-
-      return () => {
-        clearInterval(timer);
-      };
-    }
-  }, [pairAddress, chain]);
+  // useEffect(() => {
+  //   if (pairAddress && chain) {
+  //     let chainName = chain.name;
+  //     chainName = chainName.toLocaleLowerCase();
+  //     setChainId(chainName);
+  //     getPairInfo();
+  //
+  //     const timer = setInterval(() => {
+  //       getPriceUsd();
+  //     }, 5000);
+  //
+  //     return () => {
+  //       clearInterval(timer);
+  //     };
+  //   }
+  // }, [pairAddress, chain]);
 
   return (
     <div className="mx-auto mt-16 ml-20 mr-5">
@@ -92,7 +91,7 @@ export default function PairInfo() {
             <div className="grid grid-flow-row grid-cols-2 px-3 mt-3">
               <div className="grid grid-flow-row grid-cols-2 m-9 w-32">
                 <div className="w-9">
-                  <Image src={`http://localhost:3001/${pairBaseData.logo}`} alt="logo" width={40} height={40} className="inline rounded-full" />
+                  <Image src={`${ baseUrl}/${pairBaseData.logo}`} alt="logo" width={40} height={40} className="inline rounded-full" />
                 </div>
                 <div className="w-32">
                   <div>

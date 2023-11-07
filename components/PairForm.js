@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from "react";
 import axios from 'axios';
 import Link from "next/link";
-import Container from '@mui/material/Container';
+import  baseUrl from '/utils/baseUrl'
 import { Input } from "@material-tailwind/react";
 import { formatDecimal, sendGetRequestWithSensitiveData, sendPostRequestWithSensitiveData } from './Utils';
 import { useRouter } from 'next/router';
-import { useAccount, useNetwork} from "wagmi";
+import {notification} from "antd";
+// import { useAccount, chain} from "wagmi";
 
 export default function CoinForm() {
   const router = useRouter();
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [logoPath, setLogoPath] = useState("")
-  const { chain } = useNetwork();
 
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
@@ -22,12 +22,10 @@ export default function CoinForm() {
       'x-api-key': '922e0369e89a40d9be91d68fde539325', // 替换为你的授权令牌
       'Content-Type': 'multipart/form-data', // 根据需要添加其他标头
     };
-    // console.log("data:", data)
-    await sendPostRequestWithSensitiveData('http://localhost:3001/uploadLogo', headers, formData)
+    await sendPostRequestWithSensitiveData( baseUrl+'/uploadLogo', headers, formData)
       .then(responseData => {
         if (responseData.message === "success") {
           const resLogoPath = responseData.logoPath;
-          console.log("logoPath:",logoPath)
           setLogoPath(resLogoPath);
           setTokenInfo({
             ...tokenInfo,
@@ -38,7 +36,9 @@ export default function CoinForm() {
         }
       })
       .catch(error => {
-        console.error('axios get error:', error);
+        notification.error({
+          message: `Please note`, description: 'Error reported', placement: 'topLeft',
+        });
       });
 
     setSelectedFile(file);
@@ -54,7 +54,7 @@ export default function CoinForm() {
   const [tokenInfo, setTokenInfo] = useState({
     tokenAddress: '',
     logo: '',
-    chain: '',
+    // chain: '',
   });
 
   const [pairInfo, setPairInfo] = useState({
@@ -87,29 +87,28 @@ export default function CoinForm() {
       'Content-Type': 'application/json',
     };
 
-    await sendPostRequestWithSensitiveData('http://localhost:3001/addPair', headers, formData)
+    await sendPostRequestWithSensitiveData( baseUrl+'/addPair', headers, formData)
       .then(responseData => {
-        console.log("responseData:",responseData)
         if(responseData.success === true){
           router.push('/');
         }
       })
       .catch(error => {
-        console.error('axios get error:', error);
+        notification.error({
+          message: `Please note`, description: 'Error reported', placement: 'topLeft',
+        });
       });
   };
 
-  useEffect(() => {
-    if(chain){
-      const chainName = chain.name;
-      setTokenInfo({ ...tokenInfo, chain: chainName})
-    }
-  }, [chain]);
+  // useEffect(() => {
+  //   if(chain){
+  //     const chainName = chain.name;
+  //     setTokenInfo({ ...tokenInfo, chain: chainName})
+  //   }
+  // }, [chain]);
 
   return (
     <div className="mx-auto mt-20 ml-20 mr-5 text-white-500">
-      <Container>
-
         <form onSubmit={handleSubmit}>
         <div className="grid gap-6 mb-6 md:grid-cols-2">
             <div>
@@ -185,7 +184,6 @@ export default function CoinForm() {
           </div>
           <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>
         </form>
-      </Container>
     </div>
   );
 }

@@ -48,5 +48,5 @@ module.exports = {
       boxShadow: ["active", "hover"],
     },
   },
-  plugins: [],
+  plugins:[require("tailwind-scrollbar-hide")],
 };

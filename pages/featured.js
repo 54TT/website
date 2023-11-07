@@ -1,4 +1,4 @@
-import Hot from "../components/Hot";
+import Featured from "../components/Featured";
 import Layout from "../components/Layout/Layout";
 import SeoHead from "../components/SeoHead";
 
@@ -7,7 +7,7 @@ export default function index() {
     <>
       <SeoHead title='' />
       <Layout>
-        <Hot/>
+        <Featured />
       </Layout>
     </>
   );
