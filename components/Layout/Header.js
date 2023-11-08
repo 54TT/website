@@ -2,13 +2,13 @@ import React, {useState, useEffect, useRef} from "react";
 import {getCsrfToken, signIn, useSession, signOut} from "next-auth/react"
 import {SiweMessage} from "siwe"
 import  baseUrl from '/utils/baseUrl'
-import {useAccount, useConnect, useNetwork, useSignMessage, useDisconnect} from "wagmi"
+import {useAccount, useConnect, useNetwork, useSignMessage, useDisconnect,} from "wagmi"
 import Link from "next/link"
 import Marquee from "react-fast-marquee";
 import DrawerPage from './drawer'
 import {InjectedConnector} from 'wagmi/connectors/injected'
 import axios from 'axios';
-import {Dropdown, Drawer, Form, Select, Input, DatePicker, Button, notification} from 'antd'
+import {Dropdown, Drawer, Form, Select, Input, DatePicker, Button, notification,} from 'antd'
 import {CaretDownFilled, CaretRightFilled} from '@ant-design/icons';
 import getConfig from "next/config";
 import styles  from './css/header.module.css'
@@ -18,14 +18,16 @@ import {get, post, del} from '/utils/axios'
 import _ from 'lodash'
 import moment from 'moment'
 
-const Header = () => {
+const Header =   () => {
     const [form] = Form.useForm();
+    const { chain } = useNetwork()
     const inputRef = useRef(null);
     const [api, contextHolder] = notification.useNotification();
-
     const [hotPairs, setHotPairs] = useState([]);
     const {address, isConnected} = useAccount()
+
     const {data: session, status} = useSession()
+
     const {signMessageAsync} = useSignMessage()
     const {disconnect} = useDisconnect()
     const {connect} = useConnect({
@@ -150,7 +152,6 @@ const Header = () => {
             });
             setHotPairs(pairs.data);
         }
-
         // fetchHotPairs();
     }, []);
     const handleLogin = async () => {
@@ -162,7 +163,7 @@ const Header = () => {
                 statement: "Sign in with Ethereum to the app.",
                 uri: window.location.origin,
                 version: "1",
-                // chainId: chain?.id,
+                chainId: chain?.id,
                 nonce: await getCsrfToken(),
             })
             const signature = await signMessageAsync({
@@ -178,12 +179,16 @@ const Header = () => {
             window.alert(error)
         }
     }
+    useEffect(()=>{
+        console.log(session)
+    },[session])
 
     useEffect(() => {
         if (isConnected && !session) {
             handleLogin()
         }
     }, [isConnected])
+
     const items = [
         {
             key: '1',

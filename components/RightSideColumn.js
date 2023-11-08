@@ -29,12 +29,11 @@ function RightSideColumn({ user, chatsData, userFollowStats }) {
       try {
         setLoadingWhoToF(true);
         const res = await axios.get(
-          `${process.env.baseUrl}/api/profile/home/youMayLikeToFollow`,
+          `${baseUrl}/api/profile/home/youMayLikeToFollow`,
           {
             headers: { Authorization: cookie.get("token") },
           }
         );
-        console.log("llllll res:",res)
         setUsersToFollow(res.data);
         setLoadingWhoToF(false);
       } catch (error) {
@@ -54,14 +53,14 @@ function RightSideColumn({ user, chatsData, userFollowStats }) {
       {usersToFollow && usersToFollow.length > 0&&Array.isArray(usersToFollow) ? (
         usersToFollow.map((fol) => {
           const isLoggedInUserFollowing =
-            loggedInUserFollowStats.following.length > 0 &&
-            loggedInUserFollowStats.following.filter(
+            loggedInUserFollowStats?.following?.length > 0 &&
+            loggedInUserFollowStats?.following?.filter(
               (loggedInUserFollowing) =>
                 loggedInUserFollowing.user.id === fol.id
-            ).length > 0;
+            ).length > 0||'';
           return (
             <div key={fol.id}>
-              {fol.id !== user.id && (
+              {fol?.id !== user?.id && (
                 <div
                   style={{ border: ".5px solid lightgrey" }}
                   key={fol.id}
@@ -96,7 +95,7 @@ function RightSideColumn({ user, chatsData, userFollowStats }) {
                       )}
                     </div>
                   </div>
-                  {fol.id !== user.id ? (
+                  {fol?.id !== user?.id ? (
                     <>
                       {isLoggedInUserFollowing ? (
                         <FollowButton

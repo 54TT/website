@@ -13,10 +13,11 @@ import Header from "../../../components/Header";
 import styled from "styled-components";
 import { followUser, unfollowUser } from "../../../utils/profileActions";
 import Sidebar from "../../../components/Sidebar";
+import {useSession} from "next-auth/react";
 
-function FollowersPage({ user, userFollowStats, followers, errorLoading }) {
+function FollowersPage({ followers, errorLoading }) {
   const router = useRouter();
-
+  const {user, userFollowStats,} = useSession()
   const [followersArrayState, setFollowersArrayState] = useState(followers);
   const [loggedUserFollowStats, setLoggedUserFollowStats] =
     useState(userFollowStats);

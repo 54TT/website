@@ -10,8 +10,10 @@ import CommentNotification from "../components/Notification/CommentNotification"
 import FollowNotification from "../components/Notification/FollowNotification";
 import cookie from "js-cookie";
 import { ExclamationCircleIcon } from "@heroicons/react/outline";
+import {useSession} from "next-auth/react";
 
-function Notifications({ user, notifications, errorLoading, userFollowStats }) {
+function Notifications({ notifications, errorLoading }) {
+  const {user, userFollowStats,} = useSession()
   //for setting notifications to read on cleanup of the component / before re-render
   useEffect(() => {
     const notificationRead = async () => {

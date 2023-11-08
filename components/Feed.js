@@ -23,7 +23,7 @@ function Feed({user, postsData, errorLoading, increaseSizeAnim}) {
     const fetchDataOnScroll = async () => {
         try {
             console.log(`no. of posts on feed: ${posts.length}`);
-            const res = await axios.get(`${process.env.baseUrl}/api/posts`, {
+            const res = await axios.get(`${baseUrl}/api/posts`, {
                 headers: {Authorization: cookie.get("token")},
                 params: {pageNumber: pageNumber, userId: '654224ee643b1a129ada19ec'},
                 // params sent using ^ are received on backend with req.query

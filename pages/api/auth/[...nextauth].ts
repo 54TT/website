@@ -1,8 +1,7 @@
 import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import { getCsrfToken } from "next-auth/react"
-// @ts-ignore
-import  baseUrl from '/utils/baseUrl'
+import  baseUrl from '../../../utils/baseUrl'
 import { SiweMessage } from "siwe"
 import axios from 'axios';
 
