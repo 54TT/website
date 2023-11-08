@@ -5,7 +5,7 @@ import Image from 'next/image';
 import  baseUrl from '/utils/baseUrl'
 import { formatDecimal, sendGetRequestWithSensitiveData, getRelativeTimeDifference, formatDateTime } from './utils';
 import { useAccount, useNetwork} from "wagmi";
-import moment from 'moment';
+import dayjs from 'dayjs';
 import {notification, Pagination, Table,Card} from "antd";
 import _ from "lodash";
 import {get} from "../utils/axios";
@@ -21,7 +21,7 @@ export default function Featured() {
   const [launchCount, setLaunchCount] = useState(0);
   const [featured, setFeatured] = useState([]);
   const [featuredBol, setFeaturedBol] = useState(true);
-  const [refreshedTime, setRefreshedTime] = useState(moment());
+  const [refreshedTime, setRefreshedTime] = useState(dayjs());
   const data = [
     {
       key: '1',
@@ -145,7 +145,7 @@ export default function Featured() {
     },
   ];
   const updateRefreshedTime = () => {
-    setRefreshedTime(moment());
+    setRefreshedTime(dayjs());
   };
   const getParams = (url, params) => {
     get(url, params).then(async (res) => {

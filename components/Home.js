@@ -1,7 +1,7 @@
 import React, {useEffect, useState, useRef} from "react";
 import styles from "../styles/home.module.css";
 import axios from 'axios';
-import  baseUrl from '/utils/baseUrl'
+import baseUrl from '/utils/baseUrl'
 import Link from "next/link";
 import Image from 'next/image';
 import {formatDecimal, sendGetRequestWithSensitiveData, getRelativeTimeDifference, formatDateTime} from './Utils';
@@ -10,14 +10,28 @@ import {presalePlatforms, presalePlatformMatchLogos, launchPlatformMatchLogos} f
 import getConfig from "next/config";
 import {useRouter} from 'next/router';
 import {get, post, del} from '/utils/axios'
-import {Tooltip, Table,Card, Pagination, notification, Divider, Form, Radio, Skeleton, Space, Switch, Drawer} from 'antd'
-import moment from 'moment'
+import {
+    Tooltip,
+    Table,
+    Card,
+    Pagination,
+    notification,
+    Divider,
+    Segmented,
+    Form,
+    Radio,
+    Skeleton,
+    Space,
+    Switch,
+    Drawer
+} from 'antd'
+import dayjs from 'dayjs'
 import {useQuery, ApolloClient, InMemoryCache} from '@apollo/client';
 import {gql} from 'graphql-tag';
 import {HeartFilled, HeartOutlined, RetweetOutlined, MessageOutlined, ShareAltOutlined} from '@ant-design/icons'
 
 const client = new ApolloClient({
-    uri: 'http://192.168.8.39:8000/subgraphs/name/levi/uniswapv2', cache: new InMemoryCache(),
+    uri: 'http://192.168.8.104:8000/subgraphs/name/levi/uniswapv2', cache: new InMemoryCache(),
 });
 import backImg from '/public/img/background.png'
 
@@ -69,12 +83,12 @@ query NewPair {
                 'Content-Type': 'application/json', // 根据需要添加其他标头
             };
 
-            let pairCount = await axios.get( baseUrl+'/queryAllPairCount', {
+            let pairCount = await axios.get(baseUrl + '/queryAllPairCount', {
                 headers: headers, params: {}
             });
             setPairCount(pairCount.data[0].count);
 
-            let data = await axios.get( baseUrl+'/queryAllPair', {
+            let data = await axios.get(baseUrl + '/queryAllPair', {
                 headers: headers, params: {
                     pageIndex: pageIndex, pageSize: pageSize
                 }
@@ -85,7 +99,7 @@ query NewPair {
             const pairInfosResponse = await axios.get(`https://api.dexscreener.com/latest/dex/pairs/${chainIdParam}/${pairArray}`);
             const pairInfos = pairInfosResponse.data.pairs;
             let newPairInfos = pairInfos.map(async (pairInfo) => {
-                const baseTokenInfo = await axios.get( baseUrl+'/queryTokenByAddress', {
+                const baseTokenInfo = await axios.get(baseUrl + '/queryTokenByAddress', {
                     headers: headers, params: {
                         address: pairInfo.baseToken.address
                     }
@@ -130,7 +144,7 @@ query NewPair {
                 'Content-Type': 'application/json',
             };
 
-            let data = await axios.get( baseUrl+'/queryAllFeatured', {
+            let data = await axios.get(baseUrl + '/queryAllFeatured', {
                 headers: headers, params: {}
             });
             data = data.data
@@ -138,7 +152,7 @@ query NewPair {
             const pairInfosResponse = await axios.get(`https://api.dexscreener.com/latest/dex/pairs/${chainIdParam}/${pairArray}`);
             const pairInfos = pairInfosResponse.data.pairs;
             let newPairInfos = pairInfos.map(async (pairInfo) => {
-                const baseTokenInfo = await axios.get( baseUrl+'/queryTokenByAddress', {
+                const baseTokenInfo = await axios.get(baseUrl + '/queryTokenByAddress', {
                     headers: headers, params: {
                         address: pairInfo.baseToken.address
                     }
@@ -190,7 +204,7 @@ query NewPair {
                 'x-api-key': '922e0369e89a40d9be91d68fde539325', // 替换为你的授权令牌
                 'Content-Type': 'application/json', // 根据需要添加其他标头
             };
-            let launchsData = await axios.get( baseUrl+'/queryAllLaunch', {
+            let launchsData = await axios.get(baseUrl + '/queryAllLaunch', {
                 headers: headers, params: {
                     pageIndex: 0, pageSize: 5
                 }
@@ -208,7 +222,7 @@ query NewPair {
                 'Content-Type': 'application/json', // 根据需要添加其他标头
             };
 
-            let presalesData = await axios.get( baseUrl+'/queryAllPresale', {
+            let presalesData = await axios.get(baseUrl + '/queryAllPresale', {
                 headers: headers, params: {
                     pageIndex: 0, pageSize: 3
                 }
@@ -251,30 +265,14 @@ query NewPair {
     };
     const [page, setPage] = useState(0);
     const [loadingBool, setLoadingBool] = useState(true);
-    const [tableParams, setTableParams] = useState([]);
+    const [newPair, setNewPair] = useState([])
     const [tableSize, setTableSize] = useState(10);
     const [tableCurrent, setTableCurrent] = useState(1);
     const [tableTotal, setTableTotal] = useState(100);
     const [loveChanges, setLoveChange] = useState(false);
     const [launch, setLaunch] = useState([]);
-    const [launchPre, setLaunchPre] = useState([]);
     const [featuredBol, setFeaturedBol] = useState(false);
     const [featured, setFeatured] = useState([]);
-    const [featuredPre, setFeaturedPre] = useState([]);
-    useEffect(() => {
-        if (launch && launch.length > 2) {
-            const data = launch.slice(0, 3)
-            setLaunchPre(data)
-        } else {
-            setLaunchPre(launch)
-        }
-        if (featured && featured.length > 4) {
-            const data = featured.slice(0, 5)
-            setFeaturedPre(data)
-        } else {
-            setFeaturedPre(featured)
-        }
-    }, [launch, featured])
     const [rowsPerPages, setRowsPerPages] = useState(10);
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -283,10 +281,10 @@ query NewPair {
     useEffect(() => {
         if (!loading) {
             if (data && data?.pairs.length > 0) {
-                setTableParams(data?.pairs)
+                setNewPair(data?.pairs)
                 setLoadingBool(false)
             } else {
-                setTableParams([])
+                setNewPair([])
                 setLoadingBool(false)
             }
         } else {
@@ -325,58 +323,73 @@ query NewPair {
             hint()
         })
     }
+    const [time, setTime] = useState('h24')
     const columns = [{
-        title: 'Pair', render: (text, record) => {
-            return <div style={{display: 'flex', alignItems: 'center'}}><p style={{
+        title: '', render: (text, record) => {
+            return <p style={{
                 width: '30px',
-                lineHeight: '30px',
-                borderRadius: '50%',
                 backgroundColor: 'black',
                 color: 'white',
-                textAlign: 'center'
-            }}>{record.token0?.symbol.slice(0, 1)}</p><span>{record.token0?.symbol}/{record.token1?.symbol}</span>
+                lineHeight: '30px',
+                textAlign: 'center',
+                borderRadius: '50%'
+            }}>{record?.baseToken?.symbol?.slice(0, 1)}</p>
+        }
+    }, {
+        title: 'PAIR', render: (text, record) => {
+            return <div style={{display: 'flex', alignItems: 'center'}}>
+                <span>{record.baseToken?.symbol}/{record.quoteToken?.symbol}</span>
             </div>
         }
     },
         {
-            title: 'Create Time', render: (text, record) => {
-                return <p style={{letterSpacing: '2px'}}>{record?.createdAtTimestamp}</p>
+            title: 'PRICE', render: (text, record) => {
+                return <div>{record?.priceUsd ? formatDecimal(record?.priceUsd, 3) : ''}</div>
             }
         },
         {
             title: 'Create Time', render: (text, record) => {
-                return <p style={{letterSpacing: '2px'}}>4242.4K</p>
+                return <p>{record?.pairCreatedAt ? getRelativeTimeDifference(formatDateTime(record.pairCreatedAt)) : ''}</p>
             }
         },
         {
-         width:80,   title: 'Create Time', render: (text, record) => {
-                return <p style={{
-                    textAlign: 'center',
-                    backgroundColor: 'rgb(188,238,125)',borderRadius:'5px'
-                }}>237%</p>
+            title: 'PRICECHANGE', render: (text, record) => {
+                return <p
+                    style={{color: record?.priceChange[time] > 0 ? 'green' : 'red'}}>{record?.priceChange[time]}</p>
             }
         },
         {
-            title: 'Create Time', render: (text, record) => {
-                return <p style={{letterSpacing: '2px'}}>$12.44M</p>
+            title: 'TXNS', render: (text, record) => {
+                return <p>{(record?.txns[time]?.buys + record?.txns[time]?.sells) ? autoConvert(record?.txns[time]?.buys + record?.txns[time]?.sells) : ''}</p>
             }
         },
         {
-            title: 'TxCount', dataIndex: 'address', // sorter: {
-            //     compare: (a, b) => a.chinese - b.chinese,
-            // },
-            render: (text, record) => {
-                return <p style={{letterSpacing: '2px'}}>{record?.txCount}</p>
+            title: 'VOLUME', render: (text, record) => {
+                return <p>{record?.volume[time] ? autoConvert(record?.volume[time]) : ''}</p>
             }
         },
         {
-            title: 'ReserveETH', // sorter: {
-            //     compare: (a, b) => a.chinese - b.chinese,
-            // },
-            dataIndex: 'address', render: (text, record) => {
-                return <p style={{letterSpacing: '2px'}}>{record?.reserveETH}</p>
+            title: 'LIQUIDITY', render: (text, record) => {
+                return <p> {record?.liquidity?.usd ? autoConvert(record.liquidity.usd) : ''}</p>
             }
-        }, // {
+        },
+        // {
+        //     title: 'TxCount', dataIndex: 'address', // sorter: {
+        //     //     compare: (a, b) => a.chinese - b.chinese,
+        //     // },
+        //     render: (text, record) => {
+        //         return <p style={{letterSpacing: '2px'}}>{record?.txCount}</p>
+        //     }
+        // },
+        // {
+        //     title: 'ReserveETH', // sorter: {
+        //     //     compare: (a, b) => a.chinese - b.chinese,
+        //     // },
+        //     dataIndex: 'address', render: (text, record) => {
+        //         return <p style={{letterSpacing: '2px'}}>{record?.reserveETH}</p>
+        //     }
+        // },
+        // {
         //     title: 'Volume',
         //     dataIndex: 'address',
         //     sorter: {
@@ -405,7 +418,6 @@ query NewPair {
         //     },
         // },
     ];
-
     // setInterval( getParams('/queryFeatured', '', 'featured'),3000);  // setInterval() 的返回值为一个线程号，这个线程号可以用在清除定时器的函数中 clearInterval(线程号)
     useEffect(() => {
         getParams('/queryFeatured', '', 'featured')
@@ -417,14 +429,14 @@ query NewPair {
         return () => {
             clearInterval(ref.current)
         }
-    }, [featuredPre]);
+    }, [featured]);
     const loveChange = () => {
         setLoveChange(!loveChanges)
     }
 
     function getDateTime(dateTime, format = 'DD:HH:mm') {
         // YYYY-MM-DD:HH:mm:ss
-        return moment(dateTime).format(format);
+        return dayjs(dateTime).format(format);
     }
 
     const handleChangeRowsPerPage = (event) => {
@@ -448,12 +460,25 @@ query NewPair {
                 break;
         }
     }
-    const pushRouter=(name)=>{
-        if(name==='live'){
+    const pushRouter = (name) => {
+        if (name === 'live') {
             router.push('/launch')
-        }else if(name==='swap'){
+        } else if (name === 'swap') {
             router.push('/featured')
-        }else { router.push('/presale')}
+        } else {
+            router.push('/presale')
+        }
+    }
+    const changSeg = (e) => {
+        if (e === '1m') {
+            setTime('m1')
+        } else if (e === '1h') {
+            setTime('h1')
+        } else if (e === '6h') {
+            setTime('h6')
+        } else if (e === '24h') {
+            setTime('m24')
+        }
     }
     return (<div className={styles['box']}>
         <div className={styles['boxPar']}>
@@ -462,64 +487,76 @@ query NewPair {
                 {/*上面*/}
                 <div style={{display: 'flex', justifyContent: 'space-between',}}>
                     {/*左边*/}
-                    <div style={{width: '46%', position: 'relative'}}  className={'cardParams'}>
+                    <div style={{width: '46%', position: 'relative'}} className={'cardParams'}>
                         {/*<img src={` /fire.png`}*/}
                         {/*     style={{position: 'absolute', top: '-29px', left: '-39px', width: '75px'}} alt=""/>*/}
 
-                        <Card style={{minWidth: 300, backgroundColor: 'rgb(253, 213, 62)', width: '100%', border:'none'}}>
+                        <Card style={{
+                            minWidth: 300,
+                            backgroundColor: 'rgb(253, 213, 62)',
+                            width: '100%',
+                            border: 'none'
+                        }}>
                             <ul className={styles['ul']}>
                                 <li>
-                                    <p style={{fontSize: '20px', fontWeight: 'bold'}}>LIVE NEW PAIRS</p>
-                                    <p style={{fontSize: '20px', color: '#2394D4', cursor: 'pointer'}}  onClick={()=>pushRouter('live')}>more></p>
+                                    <p style={{fontSize: '20px', fontWeight: 'bold'}}>New Pair</p>
+                                    <p style={{fontSize: '20px', color: '#2394D4', cursor: 'pointer'}}
+                                       onClick={() => pushRouter('live')}>more></p>
                                 </li>
-                                {featuredBol ? featuredPre.length > 0 ? featuredPre.map((i, v) => {
-                                    return <li key={v}>
-                                        <span style={{width: '3%'}}>{v + 1}</span>
-                                        <div style={{
-                                            display: 'flex', alignItems: 'center', width: '40%', overflow: 'hidden'
-                                        }}>
-                                            <p style={{
-                                                width: '30px',
-                                                borderRadius: '50%',
-                                                backgroundColor: 'black',
-                                                textAlign: 'center',
-                                                color: 'white',
-                                                lineHeight: '30px'
-                                            }}>{i.baseToken?.symbol.slice(0, 1)}</p>
-                                            <div style={{width: '81%'}}>
+                                {featuredBol ? newPair.length > 0 ? newPair.map((i, v) => {
+                                    if (v > 4) {
+                                        return ''
+                                    } else {
+                                        return <li key={v}>
+                                            <span style={{width: '3%'}}>{v + 1}</span>
+                                            <div style={{
+                                                display: 'flex', alignItems: 'center', width: '40%', overflow: 'hidden'
+                                            }}>
+                                                <p style={{
+                                                    width: '30px',
+                                                    borderRadius: '50%',
+                                                    backgroundColor: 'black',
+                                                    textAlign: 'center',
+                                                    color: 'white',
+                                                    lineHeight: '30px'
+                                                }}>{i.baseToken?.name?.slice(0, 1)}</p>
+                                                <div style={{width: '81%'}}>
+                                                    <div style={{
+                                                        width: '100%', display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center'
+                                                    }}>
+                                                        <span>{i.token0?.symbol ? i.token0?.symbol + '/' : ''}</span>
+                                                        <span
+                                                            style={{color: 'rgb(98,98,98)'}}>{i.token1?.symbol ? i.token1?.symbol : ''}</span>
+                                                    </div>
+                                                    {/*<p style={{*/}
+                                                    {/*    backgroundColor: 'rgb(188,238,125)',*/}
+                                                    {/*    padding: '5px 10px',*/}
+                                                    {/*    textAlign:'center',*/}
+                                                    {/*    margin: '0 auto',*/}
+                                                    {/*    width: '50%',*/}
+                                                    {/*    lineHeight: 1,*/}
+                                                    {/*    borderRadius: '6px'*/}
+                                                    {/*}}>{i.txCount?Number(i.txCount)*100+'%':''}</p>*/}
+                                                </div>
+                                            </div>
+                                            {/*<Tooltip title={i.priceUsd}>*/}
+                                            {/*    <span*/}
+                                            {/*        style={{width: '23%'}}>{i.priceUsd ? '$' + formatDecimal(i.priceUsd, 3) : null}</span>*/}
+                                            {/*</Tooltip>*/}
+                                            <div style={{width: '35%'}}>
                                                 <div style={{
-                                                    width: '100%', display: 'flex',
+                                                    display: 'flex',
                                                     alignItems: 'center',
                                                     justifyContent: 'center'
                                                 }}>
-                                                    <span>{i.baseToken?.symbol ? i.baseToken?.symbol + '/' : ''}</span>
-                                                    <span style={{color: 'rgb(98,98,98)'}}>{i.quoteToken?.symbol}</span>
+                                                    <img src={` /Group.png`} width={'22%'} alt=""/>
+                                                    <span>{i.createdAtTimestamp ? getRelativeTimeDifference(formatDateTime(i.createdAtTimestamp)) : ''}</span>
                                                 </div>
-                                                <p style={{
-                                                    backgroundColor: 'rgb(188,238,125)',
-                                                    padding: '5px 10px',
-                                                    margin: '0 auto',
-                                                    width: '50%',
-                                                    lineHeight: 1,
-                                                    borderRadius: '6px'
-                                                }}>237%</p>
                                             </div>
-                                        </div>
-                                        <Tooltip title={i.priceUsd}>
-                                                <span
-                                                    style={{width: '23%'}}>{i.priceUsd ? '$' + formatDecimal(i.priceUsd, 3) : null}</span>
-                                        </Tooltip>
-                                        <div style={{width: '25%'}}>
-                                            <div style={{
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center'
-                                            }}>
-                                                <img src={` /Group.png`} width={'22%'} alt=""/>
-                                                <span>3m55ss</span>
-                                            </div>
-                                        </div>
-                                    </li>
+                                        </li>
+                                    }
                                 }) : [] : [1, 2, 3, 4, 5].map((i, index) => {
                                     return <li key={index}>
                                         <div style={{display: 'flex', alignItems: 'center', width: '100%'}}>
@@ -533,81 +570,102 @@ query NewPair {
                         </Card>
                     </div>
                     {/*右边*/}
-                    <div style={{width: '46%',  marginTop: '4px'}}  className={'cardParams'}>
+                    <div style={{width: '46%', marginTop: '4px'}} className={'cardParams'}>
                         {/*<img src={` /Group.png`}*/}
                         {/*     style={{position: 'absolute', top: '-42px', left: '-68px', width: '75px'}} alt=""/>*/}
-                        <Card  style={{minWidth: 300, backgroundColor: 'rgb(253, 213, 62)', width: '100%', border:'none'}}>
+                        <Card style={{
+                            minWidth: 300,
+                            backgroundColor: 'rgb(253, 213, 62)',
+                            width: '100%',
+                            border: 'none'
+                        }}>
                             <ul className={styles['rightUl']}>
                                 <li>
-                                    <p style={{fontSize: '20px', fontWeight: 'bold'}}>COMING SOON</p>
-                                    <p style={{fontSize: '20px', color: '#2394D4', cursor: 'pointer'}}  onClick={()=>pushRouter('coming')}>more></p>
+                                    <p style={{fontSize: '20px', fontWeight: 'bold'}}>LAUNCH AND PRESALE</p>
+                                    <p style={{fontSize: '20px', color: '#2394D4', cursor: 'pointer'}}
+                                       onClick={() => pushRouter('coming')}>more></p>
                                 </li>
-                                {launchPre.length > 0 ? launchPre.map((i, index) => {
-                                    return <li className={styles['li']} key={index}>
-                                        <p style={{
-                                            textAlign: 'center',
-                                            width: '50px',
-                                            lineHeight: '50px',
-                                            borderRadius: '50%',
-                                            backgroundColor: 'black',
-                                            color: 'white'
-                                        }}>{i.symbol.slice(0, 1)}</p>
-                                        <div style={{width: '30%'}}>
-                                            <Tooltip title={i.symbol}>
+                                {launch.length > 0 ? launch.map((i, index) => {
+                                    if (index > 2) {
+                                        return ''
+                                    } else {
+                                        return <li className={styles['li']} key={index}>
+                                            <p style={{
+                                                textAlign: 'center',
+                                                width: '50px',
+                                                lineHeight: '50px',
+                                                borderRadius: '50%',
+                                                fontSize: '20px',
+                                                backgroundColor: 'black',
+                                                color: 'white'
+                                            }}>{i.symbol.slice(0, 1)}</p>
+                                            <div style={{width: '30%'}}>
+                                                <Tooltip title={i.symbol}>
+                                                    <p style={{
+                                                        textAlign: 'center',
+                                                        fontSize: '24px',
+                                                        overflow: 'hidden',
+                                                        lineHeight: '1.3',
+                                                        textOverflow: 'ellipsis',
+                                                        whiteSpace: 'nowrap',
+                                                        fontWeight: 'bold', marginBottom: '5px'
+                                                    }}>{i.symbol}</p>
+                                                </Tooltip>
+                                                <div className={styles['dis']} style={{
+                                                    padding: '3px',
+                                                }}>
+                                                    <img src={` /Website.png`} alt={`${i.website}`}
+                                                         style={{cursor: 'pointer'}} onClick={() => push(i, 'one')}
+                                                         width={'25%'}/>
+                                                    <img src={` /TwitterCircled.png`} alt={`${i.twitter}`}
+                                                         onClick={() => push(i, 'two')} width={'25%'}
+                                                         style={{cursor: 'pointer'}}/>
+                                                    <img src={` /Telegram.png`} alt={`${i.telegram}`}
+                                                         onClick={() => push(i, 'three')} width={'25%'}
+                                                         style={{cursor: 'pointer'}}/>
+                                                </div>
+                                            </div>
+                                            {/*<div style={{width: '50%'}}>*/}
+                                            {/*    <div className={styles['dis']} style={{fontSize: '28px', lineHeight: '1'}}>*/}
+                                            {/*        /!*{*!/*/}
+                                            {/*        /!*  getRelativeTimeDifference(formatDateTime(i.time))*!/*/}
+                                            {/*        /!*}*!/*/}
+                                            {/*        <span>{getDateTime(i.time).slice(0, 2)}</span>*/}
+                                            {/*        <span>{getDateTime(i.time).slice(2, 3)}</span>*/}
+                                            {/*        <span>{getDateTime(i.time).slice(3, 5)}</span>*/}
+                                            {/*        <span>{getDateTime(i.time).slice(5, 6)}</span>*/}
+                                            {/*        <span>{getDateTime(i.time).slice(6)}</span>*/}
+                                            {/*    </div>*/}
+                                            {/*    <div className={styles['dis']}>*/}
+                                            {/*        <span style={{letterSpacing: '-1px'}}>days</span>*/}
+                                            {/*        <span style={{letterSpacing: '-1px'}}>hours</span>*/}
+                                            {/*        <span style={{letterSpacing: '-1px'}}>minutes</span>*/}
+                                            {/*    </div>*/}
+                                            {/*</div>*/}
+                                            <div>
                                                 <p style={{
-                                                    textAlign: 'center',
-                                                    fontSize: '24px',
-                                                    overflow: 'hidden',
-                                                    lineHeight:'1',
-                                                    textOverflow: 'ellipsis',
-                                                    whiteSpace: 'nowrap',
-                                                    fontWeight: 'bold',marginBottom:'10px'
-                                                }}>{i.symbol}</p>
-                                            </Tooltip>
-                                            <div className={styles['dis']} style={{
-                                                padding: '3px',
-                                            }}>
-                                                <img src={` /Website.png`} alt={`${i.website}`}
-                                                     style={{cursor: 'pointer'}} onClick={() => push(i, 'one')}
-                                                     width={'25%'}/>
-                                                <img src={` /TwitterCircled.png`} alt={`${i.twitter}`}
-                                                     onClick={() => push(i, 'two')} width={'25%'}
-                                                     style={{cursor: 'pointer'}}/>
-                                                <img src={` /Telegram.png`} alt={`${i.telegram}`}
-                                                     onClick={() => push(i, 'three')} width={'25%'}
-                                                     style={{cursor: 'pointer'}}/>
+                                                    lineHeight: 1,
+                                                    letterSpacing: '1px',
+                                                    textAlign: 'center'
+                                                }}>Pre-sale ends</p>
+                                                <div style={{display: 'flex', alignItems: 'center', lineHeight: 1}}>
+                                                    <img src={`/Time.png`} alt="" width={'22px'}/>
+                                                    <span
+                                                        style={{letterSpacing: '2px', fontSize: '18px'}}>02:13:54</span>
+                                                </div>
+                                                <p style={{
+                                                    lineHeight: 1,
+                                                    letterSpacing: '1px',
+                                                    textAlign: 'center'
+                                                }}>launch time</p>
+                                                <div style={{display: 'flex', alignItems: 'center', lineHeight: 1}}>
+                                                    <img src={` /Time.png`} alt="" width={'22px'}/>
+                                                    <span
+                                                        style={{letterSpacing: '2px', fontSize: '18px'}}>02:13:54</span>
+                                                </div>
                                             </div>
-                                        </div>
-                                        {/*<div style={{width: '50%'}}>*/}
-                                        {/*    <div className={styles['dis']} style={{fontSize: '28px', lineHeight: '1'}}>*/}
-                                        {/*        /!*{*!/*/}
-                                        {/*        /!*  getRelativeTimeDifference(formatDateTime(i.time))*!/*/}
-                                        {/*        /!*}*!/*/}
-                                        {/*        <span>{getDateTime(i.time).slice(0, 2)}</span>*/}
-                                        {/*        <span>{getDateTime(i.time).slice(2, 3)}</span>*/}
-                                        {/*        <span>{getDateTime(i.time).slice(3, 5)}</span>*/}
-                                        {/*        <span>{getDateTime(i.time).slice(5, 6)}</span>*/}
-                                        {/*        <span>{getDateTime(i.time).slice(6)}</span>*/}
-                                        {/*    </div>*/}
-                                        {/*    <div className={styles['dis']}>*/}
-                                        {/*        <span style={{letterSpacing: '-1px'}}>days</span>*/}
-                                        {/*        <span style={{letterSpacing: '-1px'}}>hours</span>*/}
-                                        {/*        <span style={{letterSpacing: '-1px'}}>minutes</span>*/}
-                                        {/*    </div>*/}
-                                        {/*</div>*/}
-                                        <div>
-                                            <p style={{lineHeight: 1}}>Pre-sale ends</p>
-                                            <div style={{display: 'flex', alignItems: 'center', lineHeight: 1}}>
-                                                <img src={` /Time.png`} alt=""/>
-                                                <span style={{letterSpacing: '2px'}}>02:13:54</span>
-                                            </div>
-                                            <p style={{lineHeight: 1}}>launch time</p>
-                                            <div style={{display: 'flex', alignItems: 'center', lineHeight: 1}}>
-                                                <img src={` /Time.png`} alt="" width={'20%'}/>
-                                                <span style={{letterSpacing: '2px'}}>02:13:54</span>
-                                            </div>
-                                        </div>
-                                    </li>
+                                        </li>
+                                    }
                                 }) : []}
                             </ul>
                         </Card>
@@ -625,37 +683,19 @@ query NewPair {
                     {/*<img src={` /new.png`}*/}
                     {/*     style={{position: 'absolute', top: '-29px', left: '-33px', width: '67px'}} alt=""/>*/}
                     <div className={styles['dis']} style={{width: '100%', marginBottom: '10px', padding: '0 24px'}}>
-                        <p style={{fontSize: '20px', fontWeight: 'bold'}}>SWAP EXPLORER</p>
+                        <p style={{fontSize: '20px', fontWeight: 'bold'}}>FEATURE</p>
                         {/*style={{width: '37%'}}*/}
                         <div className={styles['dis']}>
-                            {/*s时间选择*/}
-                            {/*<ToggleButtonGroup*/}
-                            {/*    value={alignment}*/}
-                            {/*    exclusive*/}
-                            {/*    onChange={handleAlignment}*/}
-                            {/*    aria-label="text alignment"*/}
-                            {/*    className={styles['button']}*/}
-                            {/*>*/}
-                            {/*    <ToggleButton value="24h" aria-label="24h">*/}
-                            {/*        <span>24h</span>*/}
-                            {/*    </ToggleButton>*/}
-                            {/*    <ToggleButton value="6h" aria-label="6h">*/}
-                            {/*        <span>6h</span>*/}
-                            {/*    </ToggleButton>*/}
-                            {/*    <ToggleButton value="1h" aria-label="1h">*/}
-                            {/*        <span>1h</span>*/}
-                            {/*    </ToggleButton>*/}
-                            {/*    <ToggleButton value="5m" aria-label="5m">*/}
-                            {/*        <span>5m</span>*/}
-                            {/*    </ToggleButton>*/}
-                            {/*</ToggleButtonGroup>*/}
-                            <p style={{color: '#2394D4', cursor: 'pointer', fontSize: '20px'}} onClick={()=>pushRouter('swap')}>more></p>
+                            {/*时间选择*/}
+                            <Segmented options={['1m', '1h', '6h', '24h']} onChange={changSeg} defaultValue={'24h'}/>
+                            <p style={{color: '#2394D4', cursor: 'pointer', fontSize: '20px'}}
+                               onClick={() => pushRouter('swap')}>more></p>
                         </div>
                     </div>
                     {/*表格*/}
                     <Table columns={columns} rowKey={(record) => record?.token0?.id} loading={loadingBool}
-                           className={'tablesss'} showHeader={false}
-                           dataSource={tableParams.length > 5 ? tableParams.slice(0, 5) : tableParams}
+                           className={'tablesss'}
+                           dataSource={featured.length > 5 ? featured.slice(0, 5) : featured}
                            onChange={onChange} pagination={false}/>
                     <div style={{
                         display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-end', marginTop: '10px'

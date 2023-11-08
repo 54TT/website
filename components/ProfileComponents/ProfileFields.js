@@ -1,41 +1,35 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import YouTubeIcon from "@material-ui/icons/YouTube";
-import TwitterIcon from "@material-ui/icons/Twitter";
-import FacebookIcon from "@material-ui/icons/Facebook";
-import InstagramIcon from "@material-ui/icons/Instagram";
 import { ArrowSmRightIcon, PencilAltIcon } from "@heroicons/react/solid";
 import { profileUpdate } from "../../utils/profileActions";
+import {YoutubeOutlined,TwitterOutlined,FacebookOutlined,InstagramOutlined} from '@ant-design/icons'
 import Loader from "react-loader-spinner";
 import toast, { Toaster } from "react-hot-toast";
 import { useEffect } from "react";
-
 const notifyError = () =>
   toast.error("Please enter a bio.", {
     position: "bottom-center",
   });
 
 function ProfileFields({ profile, isUserOnOwnAccount, newComp }) {
-  const [bio, setBio] = useState(profile.bio ? profile.bio : "");
+  const [bio, setBio] = useState(profile?.bio ? profile.bio : "");
   const [social, setSocial] = useState({
     youtube:
-      profile.social && profile.social.youtube ? profile.social.youtube : "",
+      profile?.social && profile.social?.youtube ? profile.social.youtube : "",
     twitter:
-      profile.social && profile.social.twitter ? profile.social.twitter : "",
+      profile?.social && profile.social?.twitter ? profile.social.twitter : "",
     instagram:
-      profile.social && profile.social.instagram
+      profile?.social && profile.social?.instagram
         ? profile.social.instagram
         : "",
     facebook:
-      profile.social && profile.social.facebook ? profile.social.facebook : "",
+      profile?.social && profile.social?.facebook ? profile.social.facebook : "",
   });
   const [editProfile, setEditProfile] = useState(false);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const { youtube, twitter, instagram, facebook } = social;
-
-  console.log(facebook);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -114,7 +108,7 @@ function ProfileFields({ profile, isUserOnOwnAccount, newComp }) {
           />
           <div>
             <SocialMedia>
-              <YouTubeIcon style={{ color: "#8f85de" }} />
+              <YoutubeOutlined style={{ color: "#8f85de" }}/>
               <SocialMediaInput
                 name="youtube"
                 value={youtube}
@@ -123,7 +117,7 @@ function ProfileFields({ profile, isUserOnOwnAccount, newComp }) {
               />
             </SocialMedia>
             <SocialMedia>
-              <TwitterIcon style={{ color: "#8f85de" }} />
+              <TwitterOutlined style={{ color: "#8f85de" }}/>
               <SocialMediaInput
                 name="twitter"
                 value={twitter}
@@ -132,7 +126,7 @@ function ProfileFields({ profile, isUserOnOwnAccount, newComp }) {
               />
             </SocialMedia>
             <SocialMedia>
-              <InstagramIcon style={{ color: "#8f85de" }} />
+              <InstagramOutlined style={{ color: "#8f85de" }}/>
               <SocialMediaInput
                 name="instagram"
                 value={instagram}
@@ -141,7 +135,7 @@ function ProfileFields({ profile, isUserOnOwnAccount, newComp }) {
               />
             </SocialMedia>
             <SocialMedia>
-              <FacebookIcon style={{ color: "#8f85de" }} />
+              <FacebookOutlined style={{ color: "#8f85de" }}/>
               <SocialMediaInput
                 name="facebook"
                 value={facebook}
@@ -180,7 +174,7 @@ function ProfileFields({ profile, isUserOnOwnAccount, newComp }) {
                   rel="noopener noreferrer"
                 >
                   <SocialMediaDisplayDiv>
-                    <YouTubeIcon style={{ color: "#8f85de" }} />{" "}
+                    <YoutubeOutlined style={{ color: "#8f85de" }}/>
                     <p>{social.youtube}</p>
                   </SocialMediaDisplayDiv>
                 </AnchorTag>
@@ -192,7 +186,7 @@ function ProfileFields({ profile, isUserOnOwnAccount, newComp }) {
                   rel="noopener noreferrer"
                 >
                   <SocialMediaDisplayDiv>
-                    <TwitterIcon style={{ color: "#8f85de" }} />
+                    <TwitterOutlined style={{ color: "#8f85de" }}/>
                     <p>{social.twitter}</p>
                   </SocialMediaDisplayDiv>
                 </AnchorTag>
@@ -204,7 +198,7 @@ function ProfileFields({ profile, isUserOnOwnAccount, newComp }) {
                   rel="noopener noreferrer"
                 >
                   <SocialMediaDisplayDiv>
-                    <FacebookIcon style={{ color: "#8f85de" }} />
+                    <FacebookOutlined style={{ color: "#8f85de" }}/>
                     <p>{social.facebook}</p>
                   </SocialMediaDisplayDiv>
                 </AnchorTag>
@@ -216,7 +210,7 @@ function ProfileFields({ profile, isUserOnOwnAccount, newComp }) {
                   rel="noopener noreferrer"
                 >
                   <SocialMediaDisplayDiv>
-                    <InstagramIcon style={{ color: "#8f85de" }} />
+                    <InstagramOutlined style={{ color: "#8f85de" }}/>
                     <p>{social.instagram}</p>
                   </SocialMediaDisplayDiv>
                 </AnchorTag>

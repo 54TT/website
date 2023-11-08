@@ -28,7 +28,6 @@ function Sidebar({user, topDist, maxWidth}) {
                 title={user ? user.name : ''}
                 route={user ? `/${user.username}` : ''}
             />
-            <span>dada</span>
             <SidebarRow
                 Icon={UsersIcon}
                 title="Home"

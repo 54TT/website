@@ -21,12 +21,8 @@
     background-color: rgb(254, 239, 146);
 }
 
-.ul > li:not(:first-child) {
-    border-bottom: 1px solid rgb(98, 98, 98);
-}
-
-.ul > li:last-child {
-    margin-bottom: 0;
+.ul > li:not(:first-child):not(:last-child) {
+    border-bottom: 1px solid rgb(128,128,128);
 }
 
 .ul > li span {
@@ -82,12 +78,12 @@
 .rightUl li {
     display: flex;
     align-items: center;
-    border-bottom: 1px solid;
+    border-bottom: 1px solid rgb(128,128,128);
     padding: 10px 20px;
     justify-content: space-between;
 }
 
-.rightUl li:first-child {
+.rightUl li:first-child, .rightUl li:last-child {
     border-bottom: none;
 }
 

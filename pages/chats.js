@@ -10,11 +10,10 @@ import { SearchIcon } from "@heroicons/react/outline";
 import styled from "styled-components";
 import calculateTime from "../utils/calculateTime";
 import Chat from "../components/Chat/Chat";
-import FiberManualRecordIcon from "@material-ui/icons/FiberManualRecord";
 import Loader from "react-loader-spinner";
 import cookie from "js-cookie";
 import { Facebook } from "react-content-loader";
-
+import {AppleOutlined} from '@ant-design/icons'
 function ChatsPage({ user, chatsData }) {
   const [chats, setChats] = useState(chatsData);
   const router = useRouter();
@@ -48,7 +47,6 @@ function ChatsPage({ user, chatsData }) {
       });
     }
 
-    console.log(router.pathname);
     if (
       chats &&
       chats.length > 0 &&
@@ -127,12 +125,9 @@ function ChatsPage({ user, chatsData }) {
   useEffect(() => {
     if (socket.current) {
       socket.current.on("textSent", ({ newText }) => {
-        console.log("openChatId.current:",openChatId.current)
-        console.log("newText:",newText)
         //if we're still on the same chat
         if (newText.receiverId === openChatId.current) {
           setTexts((prev) => [...prev, newText]);
-          console.log("chats:",chats)
           //setChats is basically used to set the data required for the left half of the column, as in the names and lastText and stuff
           setChats((prev) => {
             const previousChat = prev.find(
@@ -270,7 +265,7 @@ function ChatsPage({ user, chatsData }) {
                         connectedUsers.filter(
                           (user) => user.userId === chat.textsWith
                         ).length > 0 ? (
-                          <FiberManualRecordIcon
+                          <AppleOutlined
                             style={{
                               color: "#55d01d",
                               fontSize: "1.85rem",
@@ -411,7 +406,6 @@ ChatsPage.getInitialProps = async (ctx) => {
   try {
     const res = await axios.get(`${baseUrl}/api/chats`, {
     });
-    console.log("chatsData:",res.data)
     return { chatsData: res.data };
   } catch (error) {
     return { errorLoading: true };

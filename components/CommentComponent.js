@@ -39,10 +39,8 @@ function CommentComponent({ comment, postId, user, setComments }) {
     handleClose();
   };
   const handleDisagree = () => {
-    console.log("I do not agree.");
     handleClose();
   };
-  console.log("comment-----------",comment)
 
   return (
     <div className="flex items-start pl-5 pr-3 mt-3">

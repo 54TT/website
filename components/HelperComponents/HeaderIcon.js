@@ -1,7 +1,5 @@
 import React from "react";
-import styled from "styled-components";
-import FiberManualRecordIcon from "@material-ui/icons/FiberManualRecord";
-
+import {AppleOutlined} from '@ant-design/icons'
 function HeaderIcon({ Icon, active, IconSolid, unread }) {
   return (
     <div
@@ -16,7 +14,7 @@ function HeaderIcon({ Icon, active, IconSolid, unread }) {
       />
 
       {unread && (
-        <FiberManualRecordIcon
+        <AppleOutlined
           style={{
             position: "relative",
             top: "-.46rem",

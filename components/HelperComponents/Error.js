@@ -1,11 +1,11 @@
-import ErrorOutlineIcon from "@material-ui/icons/ErrorOutline";
+
 import React from "react";
 import styled from "styled-components";
-
+import {WomanOutlined} from '@ant-design/icons'
 function ErrorComponent({ errorMessage }) {
   return (
     <ErrorContainer>
-      <ErrorOutlineIcon
+      <WomanOutlined
         style={{
           fontSize: "1.31rem",
           color: "#fe6f8a",

@@ -184,12 +184,16 @@ li.check:before {
   padding: 8px!important;
   border: none;
 }
-.tablesss .ant-table .ant-table-content .ant-table-tbody .ant-table-row .ant-table-cell{
+.tablesss .ant-table .ant-table-content .ant-table-tbody .ant-table-row  .ant-table-cell{
   background-color: rgb(253,213,62);
   border: none;
-  border-bottom: 1px solid;
   padding: 8px!important;
 }
+
+.tablesss .ant-table .ant-table-content .ant-table-tbody .ant-table-row:not(:last-child) .ant-table-cell {
+  border-bottom: 1px solid rgb(128,128,128);
+}
+
 .tablesss .ant-table .ant-table-content .ant-table-tbody .ant-table-row:hover .ant-table-cell {
   background-color: rgb(254,239,146) !important;
 }

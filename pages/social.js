@@ -46,7 +46,6 @@ function Index({postsData, chatsData, errorLoading}) {
         connector: new InjectedConnector(),
     });
     useEffect(()=>{
-        console.log('14---------------', isConnected, session)
         if(isConnected&&!session){
             handleLogin()
         }else if(!isConnected){

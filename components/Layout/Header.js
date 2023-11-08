@@ -16,7 +16,7 @@ import styles  from './css/header.module.css'
 const {Option} = Select;
 import {get, post, del} from '/utils/axios'
 import _ from 'lodash'
-import moment from 'moment'
+import dayjs from 'dayjs'
 
 const Header =   () => {
     const [form] = Form.useForm();
@@ -179,9 +179,6 @@ const Header =   () => {
             window.alert(error)
         }
     }
-    useEffect(()=>{
-        console.log(session)
-    },[session])
 
     useEffect(() => {
         if (isConnected && !session) {

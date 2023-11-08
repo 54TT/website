@@ -1,5 +1,6 @@
 const axios = require('axios');
-const moment = require('moment');
+const dayjs = require('dayjs');
+import moment from 'moment'
 const dotenv = require('dotenv');
 dotenv.config();
 
@@ -151,12 +152,12 @@ async function sendPostRequestWithSensitiveData(url, sensitiveData, data = {}, o
 //   });
 
 function formatDateTime(dateTime, format = 'YYYY-MM-DD:HH:mm:ss') {
-  return moment(dateTime).format(format);
+  return dayjs.unix(dateTime).format(format);
 }
 
 function getRelativeTimeDifference(dateTime) {
-  const now = moment();
-  const targetDateTime = moment(dateTime);
+  const now = dayjs();
+  const targetDateTime = dayjs(dateTime);
 
   if (targetDateTime.isSame(now)) {
     return 'Just now';

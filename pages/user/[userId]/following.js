@@ -54,8 +54,8 @@ function FollowingPage({ user, userFollowStats, following, errorLoading }) {
           <GridContainer className="grid-cols-1 lg:grid-cols-2">
             {followingArrayState.map((fol) => {
               const isLoggedInUserFollowing =
-                loggedUserFollowStats.following.length > 0 &&
-                loggedUserFollowStats.following.filter(
+                loggedUserFollowStats?.following?.length > 0 &&
+                loggedUserFollowStats?.following?.filter(
                   (loggedInUserFollowing) =>
                     loggedInUserFollowing.user === fol.user.id
                 ).length > 0;

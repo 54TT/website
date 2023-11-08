@@ -1,8 +1,8 @@
-import moment from "moment";
+import dayjs from "dayjs";
 
 const calculateTime = (createdAt, isComment) => {
-  const today = moment(Date.now());
-  const postDate = moment(createdAt);
+  const today = dayjs(Date.now());
+  const postDate = dayjs(createdAt);
   const diffInWeeks = today.diff(postDate, "weeks");
   const diffInDays = today.diff(postDate, "days");
   const diffInHours = today.diff(postDate, "hours");
@@ -22,7 +22,7 @@ const calculateTime = (createdAt, isComment) => {
     // return (
     //   <>
     //     {/* hh:mm A -> hours:minutes AM/PM */}
-    //     Today, <Moment format="hh:mm A">{createdAt}</Moment>
+    //     Today, <dayjs format="hh:mm A">{createdAt}</dayjs>
     //   </>
     // );
   } else if (diffInHours >= 24 && diffInHours < 36) {
@@ -31,7 +31,7 @@ const calculateTime = (createdAt, isComment) => {
     }
     return (
       <>
-        Yesterday, <Moment format="HH:mm">{createdAt}</Moment>
+        Yesterday, <dayjs format="HH:mm">{createdAt}</dayjs>
       </>
     );
   } else if (diffInHours >= 36 && diffInHours < 168) {
@@ -41,7 +41,7 @@ const calculateTime = (createdAt, isComment) => {
     return (
       <>
         {/* date/month/year along with time */}
-        <Moment format="DD MMM YYYY, HH:mm">{createdAt}</Moment>
+        <dayjs format="DD MMM YYYY, HH:mm">{createdAt}</dayjs>
       </>
     );
   } else if (diffInHours >= 168) {
@@ -51,7 +51,7 @@ const calculateTime = (createdAt, isComment) => {
     return (
       <>
         {/* date/month/year along with time */}
-        <Moment format="DD MMM YYYY, HH:mm">{createdAt}</Moment>
+        <dayjs format="DD MMM YYYY, HH:mm">{createdAt}</dayjs>
       </>
     );
   }

@@ -8,14 +8,15 @@ import {
   MinusCircleIcon,
   ShareIcon,
   ThumbUpIcon as ThumbUpOutlineIcon,
+
 } from "@heroicons/react/outline";
+import {Input} from 'antd'
 import { deletePost, likePost, postComment } from "../utils/postActions";
 import CommentComponent from "./CommentComponent";
-import { TextareaAutosize } from "@material-ui/core";
 import { useRouter } from "next/router";
 import ReusableDialog from "./ReusableDialog";
 import toast, { Toaster } from "react-hot-toast";
-
+const {TextArea} =Input
 const notify = () =>
   toast.success("Post deleted successfully!", {
     position: "bottom-center",
@@ -68,12 +69,10 @@ function PostCard({ post, user, setPosts, postById }) {
   };
 
   const handleAgree = async () => {
-    await deletePost(post.id, setPosts, notify);
-
+    // await deletePost(post.id, setPosts, notify);
     handleClose();
   };
   const handleDisagree = () => {
-    console.log("I do not agree.");
     handleClose();
   };
 
@@ -103,7 +102,6 @@ function PostCard({ post, user, setPosts, postById }) {
               {calculateTime(post.created_at)}
             </p>
           </div>
-
           <ReusableDialog
             title={"Delete Post"}
             action={"delete"}
@@ -213,19 +211,31 @@ function PostCard({ post, user, setPosts, postById }) {
                   style={{ padding: ".85rem" }}
                   className={`flex bg-gray-100 rounded-3xl items-center w-full`}
                 >
-                  <TextareaAutosize
-                    style={{ resize: "none", fontFamily: "Inter" }}
-                    name="commentText"
-                    value={commentText}
-                    onChange={(e) => {
-                      setCommentText(e.target.value);
-                    }}
-                    className="outline-none w-full bg-transparent text-md placeholder-gray-400 font-light"
-                    type="text"
-                    placeholder={`Write a comment...`}
-                    maxRows={"4"}
-                    onKeyDown={onEnterPress}
-                  ></TextareaAutosize>
+                  <TextArea
+                      showCount
+                      maxLength={100}
+                      onChange={(e) => {
+                        setCommentText(e.target.value);
+                      }}
+                      className="outline-none w-full bg-transparent text-md placeholder-gray-400 font-light"
+                      placeholder="Write a comment..."
+                      style={{
+                        resize: 'none', fontFamily: "Inter"
+                      }}
+                      onKeyDown={onEnterPress}
+                  />
+                  {/*<TextareaAutosize*/}
+                  {/*  style={{ resize: "none", fontFamily: "Inter" }}*/}
+                  {/*  name="commentText"*/}
+                  {/*  value={commentText}*/}
+                  {/*  onChange={(e) => {*/}
+                  {/*    setCommentText(e.target.value);*/}
+                  {/*  }}*/}
+                  {/*  type="text"*/}
+                  {/*  placeholder={`Write a comment...`}*/}
+                  {/*  maxRows={"4"}*/}
+                  {/*  onKeyDown={onEnterPress}*/}
+                  {/*></TextareaAutosize>*/}
                 </div>
               </div>
               <button

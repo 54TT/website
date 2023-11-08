@@ -5,7 +5,7 @@ import Image from 'next/image';
 import {formatDecimal, sendGetRequestWithSensitiveData, getRelativeTimeDifference, formatDateTime} from './Utils';
 // import { useAccount, useNetwork} from "wagmi";
 import {useRouter} from 'next/router';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import {notification, Pagination, Table, Card} from "antd";
 import _ from "lodash";
 import {get} from "../utils/axios";
@@ -25,9 +25,9 @@ export default function Presale() {
             message: `Please note`, description: 'Error reported', placement: 'topLeft',
         });
     }
-    const [refreshedTime, setRefreshedTime] = useState(moment());
+    const [refreshedTime, setRefreshedTime] = useState(dayjs());
     const updateRefreshedTime = () => {
-        setRefreshedTime(moment());
+        setRefreshedTime(dayjs());
     };
 
     const getParams = (url, params) => {
@@ -108,15 +108,15 @@ export default function Presale() {
             dataIndex: 'presale_time',
             sorter: {
                 compare: (a, b) => {
-                    const data = moment(a.presale_time).format('YYYY-MM-DD HH:mm:ss')
-                    const pa = moment(b.presale_time).format('YYYY-MM-DD HH:mm:ss')
-                    return moment(pa).isBefore(data)
+                    const data = dayjs(a.presale_time).format('YYYY-MM-DD HH:mm:ss')
+                    const pa = dayjs(b.presale_time).format('YYYY-MM-DD HH:mm:ss')
+                    return dayjs(pa).isBefore(data)
                 }
             },
-            // moment('2010-10-20').isBefore('2010-10-21');
+            // dayjs('2010-10-20').isBefore('2010-10-21');
             render: (text) => {
                 return <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}><img
-                    src="/Time.png" alt="" width={'30px'}/> <span>{moment(text).format('YYYY-MM-DD:HH:mm:ss')}</span>
+                    src="/Time.png" alt="" width={'30px'}/> <span>{dayjs(text).format('YYYY-MM-DD:HH:mm:ss')}</span>
                 </div>
             }
         },
@@ -125,14 +125,14 @@ export default function Presale() {
             dataIndex: 'launch_time',
             sorter: {
                 compare: (a, b) => {
-                    const data = moment(a.launch_time).format('YYYY-MM-DD HH:mm:ss')
-                    const pa = moment(b.launch_time).format('YYYY-MM-DD HH:mm:ss')
-                    return moment(pa).isBefore(data)
+                    const data = dayjs(a.launch_time).format('YYYY-MM-DD HH:mm:ss')
+                    const pa = dayjs(b.launch_time).format('YYYY-MM-DD HH:mm:ss')
+                    return dayjs(pa).isBefore(data)
                 },
             },
             render: (text) => {
                 return <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}><img
-                    src="/Time.png" alt="" width={'30px'}/> <span>{moment(text).format('YYYY-MM-DD HH:mm:ss')}</span>
+                    src="/Time.png" alt="" width={'30px'}/> <span>{dayjs(text).format('YYYY-MM-DD HH:mm:ss')}</span>
                 </div>
             }
         },

@@ -4,7 +4,7 @@ import { CameraIcon, ChevronUpIcon } from "@heroicons/react/solid";
 import { ArrowSmRightIcon } from "@heroicons/react/solid";
 import { XIcon } from "@heroicons/react/solid";
 import { ChevronDownIcon } from "@heroicons/react/solid";
-import { Public } from "@material-ui/icons";
+import {GlobalOutlined} from '@ant-design/icons'
 import uploadPic from "../utils/uploadPic";
 import { submitNewPost } from "../utils/postActions";
 import { ExclamationCircleIcon } from "@heroicons/react/outline";
@@ -46,7 +46,6 @@ function InputBox({ user, setPosts, increaseSizeAnim }) {
 
     if (image !== null) {
       picUrl = await uploadPic(image);
-      console.log(picUrl);
       if (!picUrl) {
         setLoading(false);
         return setError("Error uploading image");
@@ -149,7 +148,7 @@ function InputBox({ user, setPosts, increaseSizeAnim }) {
                     {user.name}
                   </p>
                   <div className="flex text-gray-500 text-sm space-x-1 items-center">
-                    <Public style={{ fontSize: "1rem" }} />
+                    <GlobalOutlined style={{ fontSize: "1rem" }}/>
                     <p>Public</p>
                   </div>
                 </div>

@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import  baseUrl from '/utils/baseUrl'
-import AddCircleIcon from "@material-ui/icons/AddCircle";
 import {
   CameraIcon,
   CheckCircleIcon,
@@ -56,7 +55,7 @@ function ProfilePage({
   const [loadingFollowStats, setLoadingFollowStats] = useState(false);
 
   const isLoggedInUserFollowing =
-    loggedUserFollowStats.following.length > 0 &&
+    loggedUserFollowStats?.following?.length > 0 &&
     loggedUserFollowStats.following?.filter(
       (following) => following?.following_id === profile?.user_id
     ).length > 0;
@@ -83,13 +82,10 @@ function ProfilePage({
         setLoadingProfilePic(true);
         if (profilePic !== null) {
           profileImageUrl = await uploadPic(profilePic);
-          console.log(profileImageUrl);
           if (!profileImageUrl) {
             setLoadingProfilePic(false);
-            console.log("cant upload");
             return setError("Error uploading image");
           }
-          console.log("here now");
           await profilePicturesUpdate(
             profileImageUrl,
             null,
@@ -115,7 +111,6 @@ function ProfilePage({
         setLoadingCoverPic(true);
         if (coverPic !== null) {
           picUrl = await uploadPic(coverPic);
-          console.log(picUrl);
           if (!picUrl) {
             setLoadingCoverPic(false);
             return setError("Error uploading image");
@@ -154,7 +149,6 @@ function ProfilePage({
 
         setPosts(res.data);
       } catch (error) {
-        console.log(error);
         alert("Error Loading Posts");
       }
 
@@ -356,7 +350,6 @@ ProfilePage.getInitialProps = async (ctx) => {
     const { username } = ctx.query;
 
     const res = await axios.get(`${process.env.baseUrl}/api/profile/${username}`);
-    console.log("profile:",profile)
     const { profile, followersLength, followingLength } = res.data;
     return { profile, followersLength, followingLength };
   } catch (error) {

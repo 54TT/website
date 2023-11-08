@@ -22,7 +22,6 @@ function Feed({user, postsData, errorLoading, increaseSizeAnim}) {
 
     const fetchDataOnScroll = async () => {
         try {
-            console.log(`no. of posts on feed: ${posts.length}`);
             const res = await axios.get(`${baseUrl}/api/posts`, {
                 headers: {Authorization: cookie.get("token")},
                 params: {pageNumber: pageNumber, userId: '654224ee643b1a129ada19ec'},
@@ -38,7 +37,6 @@ function Feed({user, postsData, errorLoading, increaseSizeAnim}) {
             setPosts((prev) => [...prev, ...res.data]);
             setPageNumber((prev) => prev + 1);
         } catch (error) {
-            console.log(error);
             alert("Error fetching posts");
         }
     };
@@ -74,14 +72,14 @@ function Feed({user, postsData, errorLoading, increaseSizeAnim}) {
                                 dataLength={posts.length}
                                 // end message is the component which will get displayed when no more posts to be fetched from backend
                             >
-                                {/*{posts && posts.length > 0 ? posts.map((post) => (*/}
-                                {/*    <PostCard*/}
-                                {/*        key={post.id}*/}
-                                {/*        post={post}*/}
-                                {/*        user={user}*/}
-                                {/*        setPosts={setPosts}*/}
-                                {/*    />*/}
-                                {/*)) : ''}*/}
+                                {posts && posts?.length > 0 ? posts.map((post) => (
+                                    <PostCard
+                                        key={post.id}
+                                        post={post}
+                                        user={user}
+                                        setPosts={setPosts}
+                                    />
+                                )) : ''}
                             </InfiniteScroll>
                         )
                     ) : (
