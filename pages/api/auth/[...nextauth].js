@@ -8,7 +8,7 @@ import axios from 'axios';
 // For more information on each option (and a full list of options) go to
 // https://next-auth.js.org/configuration/options
 
-export default async function auth(req: any, res: any) {
+export default async function auth(req, res) {
   const providers = [
     CredentialsProvider({
       name: "Ethereum",
@@ -28,14 +28,15 @@ export default async function auth(req: any, res: any) {
         try {
           const para = new SiweMessage(JSON.parse(credentials?.message || "{}"))
           const nextAuthUrl = new URL(process.env.NEXTAUTH_URL)
-
-          const result = await para.verify({
-            signature: credentials?.signature || "",
-            domain: nextAuthUrl.host,
-            nonce: await getCsrfToken({ req }),
-          })
-
-          if (result.success) {
+          let result = null
+          if(para){
+             result = await para.verify({
+              signature: credentials?.signature || "",
+              domain: nextAuthUrl.host,
+              nonce: await getCsrfToken({ req }),
+            })
+          }
+          if (result&&result.success) {
             return {
               id: para.address,
             }
@@ -64,7 +65,7 @@ export default async function auth(req: any, res: any) {
     },
     secret:  process.env.NEXTAUTH_SECRET,
     callbacks: {
-      async session({ session, token }: { session: any; token: any }) {
+      async session({ session, token }) {
         let userAndFollowStats = (await axios.get( baseUrl+"/api/user", {
           params: {
             address: token.sub

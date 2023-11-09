@@ -10,7 +10,7 @@ import {ApolloClient, InMemoryCache, useQuery} from "@apollo/client";
 import {gql} from "graphql-tag";
 import {useRouter} from "next/router";
 const client = new ApolloClient({
-    uri: 'http://192.168.8.104:8000/subgraphs/name/levi/uniswapv2', cache: new InMemoryCache(),
+    uri: 'http://192.168.8.101:8000/subgraphs/name/levi/uniswapv2', cache: new InMemoryCache(),
 });
 export default function NewPair() {
     const GET_DATA = gql`

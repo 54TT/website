@@ -79,12 +79,8 @@
     display: flex;
     align-items: center;
     border-bottom: 1px solid rgb(128,128,128);
-    padding: 10px 20px;
+    padding: 8px 20px;
     justify-content: space-between;
-}
-
-.rightUl li:first-child, .rightUl li:last-child {
-    border-bottom: none;
 }
 
 .rightUl .li {
@@ -103,11 +99,16 @@
     background-color: rgb(208, 255, 149);
 }
 
-.rightUl > li:last-child {
+.rightUl > li:last-child{
     margin-bottom: 0;
+    border-radius: 0 0 8px 8px;
+    border-bottom: none;
+}
+.rightUl li:first-child{
+    border-bottom: none;
 }
 
-.button {
+ .button {
     border-radius: 12px;
     background: rgba(229, 171, 103, 0.20);
     box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25) inset

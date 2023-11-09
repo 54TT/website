@@ -1,21 +1,11 @@
 import "../styles/tailwind.css";
 import "../styles/slick.css";
-import axios from 'axios'
-import  baseUrl from '/utils/baseUrl'
-// import "semantic-ui-css/semantic.min.css"; //semantic ui css package
-// import {
-//   getDefaultWallets,
-//   RainbowKitProvider,
-//   darkTheme,
-//   RainbowKitAuthenticationProvider,
-//   createAuthenticationAdapter
-// } from '@rainbow-me/rainbowkit';
 import { SessionProvider } from "next-auth/react"
 import { configureChains,createClient ,WagmiConfig,chain } from 'wagmi';
 import { publicProvider } from 'wagmi/providers/public';
 import {redirectUser} from '../utils/set'
 export const { chains, publicClient, webSocketPublicClient,provider } = configureChains(
-  [chain.mainnet, chain.polygon, chain.optimism, chain.arbitrum],
+  [chain.mainnet,chain.polygon, chain.optimism, chain.arbitrum],
   [
     publicProvider()
   ]
@@ -48,15 +38,10 @@ const client = createClient({
 })
 
 
-// config={wagmiConfig}
 function DexPert({ Component, pageProps }) {
   return (
     <WagmiConfig client={client}>
         <SessionProvider session={pageProps.session} refetchInterval={0}>
-        {/*<RainbowKitProvider chains={chains} theme={darkTheme()} appInfo={{*/}
-        {/*  appName: 'Dex Pert App',*/}
-        {/*  disclaimer: Disclaimer,*/}
-        {/*}}>*/}
           <Component {...pageProps} />
         {/*</RainbowKitProvider>*/}
         </SessionProvider>

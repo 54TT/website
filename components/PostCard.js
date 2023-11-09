@@ -34,7 +34,7 @@ function PostCard({ post, user, setPosts, postById }) {
   const [error, setError] = useState(null);
   const isLiked =
    likes && likes.length > 0 &&
-    likes.filter((like) => like.user.id === user.id).length > 0; //check if post has been liked by logged in user
+    likes.filter((like) => like?.user?.id === user?.id).length > 0; //check if post has been liked by logged in user
   const [commentText, setCommentText] = useState("");
   const [showComments, setShowComments] = useState(postById ? true : false);
   const [loading, setLoading] = useState(false);
@@ -56,7 +56,7 @@ function PostCard({ post, user, setPosts, postById }) {
   };
 
   const handleLike = async () => {
-    await likePost(post.id, user.id, setLikes, isLiked ? false : true);
+    await likePost(post?.id, user?.id, setLikes, isLiked ? false : true);
   };
 
   //Dialog functions
@@ -84,14 +84,14 @@ function PostCard({ post, user, setPosts, postById }) {
       <Toaster />
       <div className="p-4">
         <div className="flex space-x-3 items-center ml-2 relative">
-          <Image src={post.user ? post.user.profilePicUrl: ''} alt="userimg" />
+          <Image src={post?.user ? post?.user?.profilePicUrl: ''} alt="userimg" />
           <div>
             <UserPTag
               onClick={() => {
-                router.push(`/${post.user.username}`);
+                router.push(`/${post?.user?.username}`);
               }}
             >
-              {post.user ? post.user.name : ''}
+              {post?.user ? post?.user?.name : ''}
             </UserPTag>
             <p
               style={{
@@ -111,7 +111,7 @@ function PostCard({ post, user, setPosts, postById }) {
             handleAgree={handleAgree}
             handleDisagree={handleDisagree}
           />
-          {post.user_id === user.id && !postById && (
+          {post?.user_id === user?.id && !postById && (
             <ThreeDotsDiv
               onClick={() => {
                 handleClickOpen();
@@ -185,7 +185,7 @@ function PostCard({ post, user, setPosts, postById }) {
         </div>
         <div
           onClick={() => {
-            navigator.clipboard.writeText(`${process.env.baseUrl}/post/${post.id}`);
+            navigator.clipboard.writeText(`${baseUrl}/post/${post.id}`);
 
             notifyCopyLink();
           }}
@@ -201,10 +201,9 @@ function PostCard({ post, user, setPosts, postById }) {
           <div className="flex items-center pt-4 pl-5 pr-5 ">
             <form className="w-full">
               {/* div which contains the profilepic and the input div */}
-              <div className="flex w-full space-x-2 items-center">
+              <div className="flex space-x-2 items-center">
                 <Image
-                  style={{ height: "2.45rem", width: "2.45rem" }}
-                  src={user.profilePicUrl}
+                  src={user?.profilePicUrl}
                   alt="profile pic"
                 />
                 <div
@@ -297,8 +296,8 @@ export default PostCard;
 
 const Image = styled.img`
   object-fit: cover;
-  height: 2.95rem;
-  width: 2.95rem;
+  height: 100px;
+  width: 100px;
   border-radius: 50%;
 `;
 

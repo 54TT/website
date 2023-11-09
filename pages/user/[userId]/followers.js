@@ -35,7 +35,6 @@ function FollowersPage({ followers, errorLoading }) {
 
   return (
     <div className="bg-gray-100 h-screen">
-      <Header user={user} />
       <main
         style={{
           height: "calc(100vh - 4.5rem)",

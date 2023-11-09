@@ -2,21 +2,21 @@ import axios from "axios";
 import cookie from "js-cookie";
 import router from "next/router";
 import catchErrors from "../utils/catchErrors";
-
+import baseUrl from  '/utils/baseUrl'
 const Axios = axios.create({
-  baseURL: `${process.env.baseUrl}/api/profile`,
+  baseURL: `${baseUrl}/api/profile`,
   headers: { Authorization: cookie.get("token") },
 });
 
 export const followUser = async (
   userToFollowId,
   setUserFollowStats,
-  setLoadingFollowStats
+  setLoadingFollowStats,
+  userId
 ) => {
   try {
     setLoadingFollowStats(true);
-    await Axios.post(`/follow/${userToFollowId}`);
-
+    await Axios.post(`/follow/${userToFollowId}`,{userId});
     setUserFollowStats((prev) => ({
       ...prev,
       following: [...prev.following, { user: userToFollowId }],
@@ -24,19 +24,19 @@ export const followUser = async (
     //userFollowStats consists of followers and following. prev comprises of them both. we're spreading the prev and then updating following with the newly added following. since in followerModel, key is user, we also used user here
     setLoadingFollowStats(false);
   } catch (error) {
-    alert(catchErrors(error));
+    console.log(catchErrors(error));
   }
 };
 
 export const unfollowUser = async (
   userToUnfollowId,
   setUserFollowStats,
-  setLoadingFollowStats
+  setLoadingFollowStats,
+  userId
 ) => {
   try {
     setLoadingFollowStats(true);
-    await Axios.put(`/unfollow/${userToUnfollowId}`);
-
+    await Axios.put(`/unfollow/${userToUnfollowId}`,{userId});
     setUserFollowStats((prev) => ({
       ...prev,
       following: prev.following.filter(
@@ -45,7 +45,7 @@ export const unfollowUser = async (
     })); //removes the userToUnfollow from the following array
     setLoadingFollowStats(false);
   } catch (error) {
-    alert(catchErrors(error));
+    console.log(catchErrors(error));
   }
 };
 
@@ -58,7 +58,6 @@ export const profileUpdate = async (
 ) => {
   try {
     const { bio, facebook, youtube, twitter, instagram } = profile;
-
     await Axios.post(`/update`, { ...profile, profilePicUrl });
     setLoading(false);
     router.reload();

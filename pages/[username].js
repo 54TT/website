@@ -24,18 +24,21 @@ import PostCard from "../components/PostCard";
 import InfoBox from "../components/HelperComponents/InfoBox";
 import { EmojiSadIcon } from "@heroicons/react/outline";
 import { Facebook as FacebookLoader } from "react-content-loader";
+import {useSession} from "next-auth/react";
 // https://images.pexels.com/photos/114979/pexels-photo-114979.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260
 // https://images.pexels.com/photos/552789/pexels-photo-552789.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260
 
-function ProfilePage({
-  user,
-  userFollowStats,
-  profile
-}) {
+function ProfilePage() {
+  const {data: session, status} = useSession()
+
   const didMountRef = useRef(false);
   const isMountRef = useRef(false);
   const coverImageRef = useRef(null);
   const profilePicRef = useRef(null);
+  const [user,setUser] =useState(null)
+  const [profile,setProfile] =useState(null)
+  const [userFollowStats, setUserFollowStats] = useState(null);
+
   const [coverPic, setCoverPic] = useState(null);
   const [coverPicPreview, setCoverPicPreview] = useState(null);
   const [profilePic, setProfilePic] = useState(null);
@@ -47,18 +50,21 @@ function ProfilePage({
 
   //state for rendering posts
   const router = useRouter();
+  const params = router.query
   const [posts, setPosts] = useState([]);
   const [loadingPosts, setLoadingPosts] = useState(false);
-
   //state for follow stats
-  const [loggedUserFollowStats, setUserFollowStats] = useState(userFollowStats);
   const [loadingFollowStats, setLoadingFollowStats] = useState(false);
-
+  const [followBol, setFollowBol] = useState(false);
   const isLoggedInUserFollowing =
-    loggedUserFollowStats?.following?.length > 0 &&
-    loggedUserFollowStats.following?.filter(
+      userFollowStats?.following?.length > 0 &&
+      userFollowStats.following?.filter(
       (following) => following?.following_id === profile?.user_id
     ).length > 0;
+
+  useEffect(()=>{
+    setFollowBol(isLoggedInUserFollowing)
+  },[isLoggedInUserFollowing])
 
   const addImageFromDevice = async (e, name) => {
     const { files } = e.target;
@@ -127,37 +133,49 @@ function ProfilePage({
       updateCoverPic();
     }
   }, [coverPic]);
-
-  //   const { username, pageNumber } = router.query;
-  //for future reference, url will look like localhost:3000/jane?pageNumber=22 if we use multiple queries, (which i havent here)
-  /* router.query.username is the username in [username].js */
-  //for chaining multiple queries
-  useEffect(() => {
-    const getPosts = async () => {
-      setLoadingPosts(true);
-
-      try {
-        const { username } = router.query;
-        const token = cookie.get("token");
-
-        const res = await axios.get(
-          `${process.env.baseUrl}/api/profile/posts/${username}`,
+  const getPosts = async () => {
+    setLoadingPosts(true);
+    try {
+      const { username } = router.query;
+      const token = cookie.get("token");
+      const res = await axios.get(
+          `${baseUrl}/api/profile/posts/${username}`,
           {
             headers: { Authorization: token },
           }
-        );
+      );
+      setPosts(res.data);
+    } catch (error) {
+      console.log("Error Loading Posts");
+    }
+    setLoadingPosts(false);
+  };
+  const getProfile =async ()=>{
+    try {
+      const { username } = params;
+      const res = await axios.get(`${baseUrl}/api/profile/${username}`);
+      const { profile, followersLength, followingLength } = res.data;
+      setProfile(profile)
+    } catch (error) {
+      return { errorLoading: true };
+    }
+  }
+  const chang=()=>{
+    setFollowBol(!followBol)
+  }
 
-        setPosts(res.data);
-      } catch (error) {
-        alert("Error Loading Posts");
-      }
-
-      setLoadingPosts(false);
-    };
-
-    getPosts();
-  }, [router.query.username]); //only once on the first component render
-  //this should run whenever the username changes to get the posts of that user
+  useEffect(() => {
+    if(params&&params.username){
+      getPosts();
+      getProfile()
+    }
+  }, [params]);
+  useEffect(() => {
+    if(session){
+      setUser(session?.user?session.user:{})
+      setUserFollowStats(session?.userFollowStats?session.userFollowStats:{})
+    }
+  }, [session]);
 
   return (
     <>
@@ -201,14 +219,16 @@ function ProfilePage({
             {/* <Username className="text-xl font-normal text-gray-600">{`@${profile.user.username}`}</Username> */}
 
             {!isUserOnOwnAccount &&
-              (isLoggedInUserFollowing ? (
+              (followBol ? (
                 <FollowButton
                   onClick={async () => {
                     await unfollowUser(
                       profile?.user_id,
                       setUserFollowStats,
-                      setLoadingFollowStats
+                      setLoadingFollowStats,
+                        user?.id,
                     );
+                    chang()
                   }}
                 >
                   <CheckCircleIcon className="h-6" />
@@ -220,8 +240,9 @@ function ProfilePage({
                     await followUser(
                       profile?.user_id,
                       setUserFollowStats,
-                      setLoadingFollowStats
+                      setLoadingFollowStats,  user?.id
                     );
+                    chang()
                   }}
                 >
                   <UserAddIcon className="h-6" />
@@ -344,19 +365,6 @@ function ProfilePage({
     </>
   );
 }
-
-ProfilePage.getInitialProps = async (ctx) => {
-  try {
-    const { username } = ctx.query;
-
-    const res = await axios.get(`${process.env.baseUrl}/api/profile/${username}`);
-    const { profile, followersLength, followingLength } = res.data;
-    return { profile, followersLength, followingLength };
-  } catch (error) {
-    return { errorLoading: true };
-  }
-};
-
 export default ProfilePage;
 
 const CoverImage = styled.img`

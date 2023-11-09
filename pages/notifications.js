@@ -11,6 +11,7 @@ import FollowNotification from "../components/Notification/FollowNotification";
 import cookie from "js-cookie";
 import { ExclamationCircleIcon } from "@heroicons/react/outline";
 import {useSession} from "next-auth/react";
+import {notification} from "antd";
 
 function Notifications({ notifications, errorLoading }) {
   const {user, userFollowStats,} = useSession()
@@ -26,7 +27,9 @@ function Notifications({ notifications, errorLoading }) {
           }
         );
       } catch (error) {
-        console.log(error);
+        notification.error({
+          message: `Please note`, description: 'Error reported', placement: 'topLeft',
+        });
       }
     };
 
@@ -34,7 +37,9 @@ function Notifications({ notifications, errorLoading }) {
   }, []);
 
   if (errorLoading) {
-    console.log("errorLoading:",errorLoading)
+    notification.error({
+      message: `Please note`, description: `${errorLoading}`, placement: 'topLeft',
+    });
     return (
       <InfoBox
         Icon={ExclamationCircleIcon}

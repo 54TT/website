@@ -11,12 +11,14 @@ import {getCsrfToken, signIn, useSession} from "next-auth/react";
 import {useConnect, useAccount, useSignMessage} from "wagmi";
 import {InjectedConnector} from "wagmi/connectors/injected";
 import {SiweMessage} from "siwe";
-
-function Index({postsData, chatsData, errorLoading}) {
+function Index() {
     const {address, isConnected} = useAccount()
-    // const {user, userFollowStats,} = useSession()
     const {data: session, status} = useSession()
     const {signMessageAsync} = useSignMessage()
+    const [postsData,setPostsData] = useState([])
+    const [errorLoading,setErrorLoading] = useState(false)
+    const [chatsData,setChatsData] = useState([])
+
     const handleLogin = async () => {
         try {
             const callbackUrl = "/protected"
@@ -39,28 +41,34 @@ function Index({postsData, chatsData, errorLoading}) {
                 callbackUrl,
             })
         } catch (error) {
-            window.alert(error)
+            console.log(error)
         }
     }
-    const {connect} = useConnect({
-        connector: new InjectedConnector(),
-    });
+    const getParams = async ()=>{
+        const res = await axios.get(`${baseUrl}/api/posts`, {
+            params: {pageNumber: 1, userId:session?.user.id},
+        });
+        const {data} =res
+        setPostsData(data)
+        const chatRes = await axios.get(`${baseUrl}/api/chats`,{
+            params: { userId:session?.user.id},
+        });
+            setChatsData(chatRes&&chatRes?.data.length>0?chatRes.data:[])
+    }
     useEffect(()=>{
-        if(isConnected&&!session){
-            handleLogin()
-        }else if(!isConnected){
-            connect()
+        if(session&&session.user&&session?.user.id){
+            getParams()
         }
-    },[isConnected])
+    },[session])
 
     return (
         <>
             <Layout>
                 <div className="bg-gray-100 min-h-screen">
                     <main className="flex">
-                        <Sidebar user={session?session.user:''}/>
+                        <Sidebar user={session&&session.user?session.user:''}/>
                         <Feed
-                            user={session?session.user:''}
+                            user={session&&session.user?session.user:''}
                             postsData={postsData}
                             errorLoading={errorLoading}
                             increaseSizeAnim={{
@@ -70,7 +78,7 @@ function Index({postsData, chatsData, errorLoading}) {
                         />
                         <RightSideColumn
                             chatsData={chatsData}
-                            userFollowStats={ session?session.userFollowStats:''}
+                            userFollowStats={ session&&session.userFollowStats?session.userFollowStats:{}}
                             user={session?session.user:''}
                         />
                     </main>
@@ -80,17 +88,5 @@ function Index({postsData, chatsData, errorLoading}) {
     );
 }
 
-Index.getInitialProps = async (ctx) => {
-    try {
-        const res = await axios.get(`${baseUrl}/api/posts`, {
-            params: {pageNumber: 1},
-        });
-
-        const chatRes = await axios.get(`${baseUrl}/api/chats`);
-        return {postsData: res.data, chatsData: chatRes.data};
-    } catch (error) {
-        return {errorLoading: true};
-    }
-};
 
 export default Index;

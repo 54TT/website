@@ -11,6 +11,7 @@ import { Facebook } from "react-content-loader";
 import Link from "next/link";
 import { useClickAway } from "react-use";
 import baseUrl from "../../utils/baseUrl";
+import {notification} from "antd";
 
 let cancel;
 
@@ -51,7 +52,9 @@ function ChatSearch({ setShowChatSearch, setChats, chats }) {
 
       setSearchResults(res.data);
     } catch (error) {
-      console.log("Error Searching");
+      notification.error({
+        message: `Please note`, description: 'Error reported', placement: 'topLeft',
+      });
     }
 
     setLoading(false);

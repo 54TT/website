@@ -10,33 +10,28 @@ function FollowingUsers({ profile, userFollowStats, user }) {
   const router = useRouter();
   const [following, setFollowing] = useState([]);
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    let didCancel = false;
-    const getFollowing = async () => {
-      setLoading(true);
-
-      try {
-        const res = await axios.get(
-          `${process.env.baseUrl}/api/profile/following/${profile.user_id}`,
+  const getFollowing = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.get(
+          `${baseUrl}/api/profile/following/${profile.user_id}`,
           {
             headers: { Authorization: cookie.get("token") },
           }
-        );
+      );
 
-        !didCancel && setFollowing(res.data);
-      } catch (error) {
-        alert("Error Loading Following");
-      }
+      setFollowing(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+    setLoading(false);
+  };
 
-      !didCancel && setLoading(false);
-    };
-
-    getFollowing();
-    return () => {
-      didCancel = true;
-    };
-  }, []); //this runs on first component render
+  useEffect(() => {
+    if(profile&&profile.user_id){
+      getFollowing();
+    }
+  }, [profile]); //this runs on first component render
 
   return (
     <div
@@ -61,7 +56,7 @@ function FollowingUsers({ profile, userFollowStats, user }) {
 
         {following && following.length > 0 && (
           <p
-            onClick={() => router.push(`/user/${profile.user_id}/following`)}
+            onClick={() => router.push(`/user/${profile?.user_id}/following`)}
             className="text-md font-normal cursor-pointer select-none text-purple-400 hover:underline"
             style={{ fontFamily: "inherit" }}
           >
@@ -91,12 +86,12 @@ function FollowingUsers({ profile, userFollowStats, user }) {
                 </div>
               ))}
             </GridContainer>
-          ) : profile.user_id === user.id ? (
+          ) : profile?.user_id === user?.id ? (
             <p className="text-md text-gray-500">
               {`You've not followed anyone. What are you waiting for?`}
             </p>
           ) : (
-            <p className="text-md text-gray-500">{`${profile.name} hasn't followed anyone yet.`}</p>
+            <p className="text-md text-gray-500">{`${profile?.name} hasn't followed anyone yet.`}</p>
           )}
         </>
       )}

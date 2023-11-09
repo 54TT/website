@@ -23,11 +23,8 @@ const Header =   () => {
     const { chain } = useNetwork()
     const inputRef = useRef(null);
     const [api, contextHolder] = notification.useNotification();
-    const [hotPairs, setHotPairs] = useState([]);
     const {address, isConnected} = useAccount()
-
     const {data: session, status} = useSession()
-
     const {signMessageAsync} = useSignMessage()
     const {disconnect} = useDisconnect()
     const {connect} = useConnect({
@@ -139,24 +136,9 @@ const Header =   () => {
             setTime(data)
         }
     };
-
-    useEffect(() => {
-        const fetchHotPairs = async () => {
-            const headers = {
-                'x-api-key': '922e0369e89a40d9be91d68fde539325', // 替换为你的授权令牌
-                'Content-Type': 'application/json', // 根据需要添加其他标头
-            };
-            let pairs = await axios.get( baseUrl+'/queryHotPairAndToken', {
-                headers: headers,
-                params: {}
-            });
-            setHotPairs(pairs.data);
-        }
-        // fetchHotPairs();
-    }, []);
     const handleLogin = async () => {
+        console.log(window.location.origin)
         try {
-            const callbackUrl = "/protected"
             const message = new SiweMessage({
                 domain: window.location.host,
                 address: address,
@@ -169,21 +151,22 @@ const Header =   () => {
             const signature = await signMessageAsync({
                 message: message.prepareMessage(),
             })
-            signIn("credentials", {
+            await signIn("credentials", {
                 message: JSON.stringify(message),
                 redirect: false,
                 signature,
-                callbackUrl,
+                callbackUrl:'/',
             })
         } catch (error) {
-            window.alert(error)
+            // notification.error({
+            //     message: `Please note`, description: 'Error reported', placement: 'topLeft',
+            // });
         }
     }
-
     useEffect(() => {
-        if (isConnected && !session) {
-            handleLogin()
-        }
+            if (isConnected && !session) {
+                handleLogin()
+            }
     }, [isConnected])
 
     const items = [

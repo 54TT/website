@@ -10,15 +10,12 @@ import PostCard from "./PostCard";
 import axios from "axios";
 import cookie from "js-cookie";
 import {Facebook} from "react-content-loader";
+import {notification} from "antd";
 
 function Feed({user, postsData, errorLoading, increaseSizeAnim}) {
     const [posts, setPosts] = useState(postsData);
     const [hasMore, setHasMore] = useState(true); //means if there is more data to fetch frm backend, then it'll be true
     const [pageNumber, setPageNumber] = useState(2); //we set it to 2 initially because from getInitialProps below, posts of pageNumber 1 have already been fetched. So now, it's set to pageNumber 2 for next pagination call
-    // useEffect(() => {
-    //   showToaster && setTimeout(() => setShowToaster(false), 3000);
-    //   //if showToastr is true, setShowToastr to false after 3s
-    // }, [showToaster]);
 
     const fetchDataOnScroll = async () => {
         try {
@@ -37,7 +34,9 @@ function Feed({user, postsData, errorLoading, increaseSizeAnim}) {
             setPosts((prev) => [...prev, ...res.data]);
             setPageNumber((prev) => prev + 1);
         } catch (error) {
-            alert("Error fetching posts");
+            notification.error({
+                message: `Please note`, description: 'Error reported', placement: 'topLeft',
+            });
         }
     };
 
@@ -50,7 +49,6 @@ function Feed({user, postsData, errorLoading, increaseSizeAnim}) {
                         setPosts={setPosts}
                         increaseSizeAnim={increaseSizeAnim}
                     />
-
                     {posts ? (
                         posts.length === 0 || errorLoading ? (
                             <InfoBox

@@ -14,35 +14,39 @@ import axios from "axios";
 import { followUser, unfollowUser } from "../utils/profileActions";
 import { useRouter } from "next/router";
 import Loader from "react-loader-spinner";
+import {notification} from "antd";
 
 function RightSideColumn({ user, chatsData, userFollowStats }) {
   const router = useRouter();
   const [loggedInUserFollowStats, setLoggedInUserFollowStats] =
-    useState(userFollowStats);
-
+    useState({});
+  console.log(loggedInUserFollowStats)
+  useEffect(()=>{
+    if(userFollowStats&&userFollowStats!=={}){
+      setLoggedInUserFollowStats(userFollowStats)
+      getUsersToFollow();
+    }
+  },[userFollowStats])
   const [usersToFollow, setUsersToFollow] = useState([]);
   const [loading, setLoading] = useState(false);
   const [loadingWhoToF, setLoadingWhoToF] = useState(false);
-
-  useEffect(() => {
-    const getUsersToFollow = async () => {
-      try {
-        setLoadingWhoToF(true);
-        const res = await axios.get(
+  const getUsersToFollow = async () => {
+    try {
+      setLoadingWhoToF(true);
+      const res = await axios.get(
           `${baseUrl}/api/profile/home/youMayLikeToFollow`,
           {
             headers: { Authorization: cookie.get("token") },
           }
-        );
-        setUsersToFollow(res.data);
-        setLoadingWhoToF(false);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    getUsersToFollow();
-  }, [loggedInUserFollowStats]);
+      );
+      setUsersToFollow(res.data);
+      setLoadingWhoToF(false);
+    } catch (error) {
+      notification.error({
+        message: `Please note`, description: 'Error reported', placement: 'topLeft',
+      });
+    }
+  };
 
   return (
     <ContainerDiv
@@ -56,13 +60,14 @@ function RightSideColumn({ user, chatsData, userFollowStats }) {
             loggedInUserFollowStats?.following?.length > 0 &&
             loggedInUserFollowStats?.following?.filter(
               (loggedInUserFollowing) =>
-                loggedInUserFollowing.user.id === fol.id
+                loggedInUserFollowing?.user?.id === fol?.id
             ).length > 0||'';
+
           return (
             <div key={fol.id}>
               {fol?.id !== user?.id && (
                 <div
-                  style={{ border: ".5px solid lightgrey" }}
+                  style={{ border: ".5px solid lightgrey"}}
                   key={fol.id}
                   className="flex justify-between items-center p-4 mb-4 rounded-lg"
                 >
@@ -97,13 +102,14 @@ function RightSideColumn({ user, chatsData, userFollowStats }) {
                   </div>
                   {fol?.id !== user?.id ? (
                     <>
+                      {/*关注*/}
                       {isLoggedInUserFollowing ? (
                         <FollowButton
                           onClick={async () => {
                             await unfollowUser(
                               fol.id,
                               setLoggedInUserFollowStats,
-                              setLoading
+                              setLoading,user?.id
                             );
                           }}
                         >
@@ -114,8 +120,8 @@ function RightSideColumn({ user, chatsData, userFollowStats }) {
                           onClick={async () => {
                             await followUser(
                               fol.id,
-                              setLoggedInUserFollowStats,
-                              setLoading
+                                setLoggedInUserFollowStats,
+                              setLoading,user?.id
                             );
                           }}
                         >

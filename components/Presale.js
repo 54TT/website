@@ -1,25 +1,24 @@
 import React, {useEffect, useState} from "react";
 import axios from 'axios';
-import Link from "next/link";import  baseUrl from '/utils/baseUrl';
-import Image from 'next/image';
-import {formatDecimal, sendGetRequestWithSensitiveData, getRelativeTimeDifference, formatDateTime} from './Utils';
+import baseUrl from '/utils/baseUrl';
 // import { useAccount, useNetwork} from "wagmi";
 import {useRouter} from 'next/router';
 import dayjs from 'dayjs';
 import {notification, Pagination, Table, Card} from "antd";
 import _ from "lodash";
 import {get} from "../utils/axios";
+import {GlobalOutlined, SendOutlined, TwitterOutlined} from "@ant-design/icons";
 
 export default function Presale() {
-    // const { chain } = useNetwork();
     const router = useRouter();
+    const [launchPageSize, setLaunchPageSize] = useState(10);
+    const [launchCurrent, setLaunchCurrent] = useState(1);
+    const [launchAll, setLaunchAll] = useState(0);
     const [launch, setLaunch] = useState([]);
     const [launchBol, setLaunchBol] = useState(true);
     const [presales, setPresales] = useState([]);
-    const [chainId, setChainId] = useState("ethereum");
-    const [currentPage, setCurrentPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(30);
     const [presaleCount, setPresaleCount] = useState(0);
+
     const hint = () => {
         notification.error({
             message: `Please note`, description: 'Error reported', placement: 'topLeft',
@@ -33,14 +32,10 @@ export default function Presale() {
     const getParams = (url, params) => {
         get(url, params).then((res) => {
             if (res.status === 200) {
-                let data = res.data
-                if (data.data && data.data.length > 0) {
-                    setLaunch(data.data)
-                    setLaunchBol(false)
-                } else {
-                    setLaunch([])
-                    setLaunchBol(false)
-                }
+                let {data, count} = res.data
+                setLaunch(data && data.length > 0 ? data : [])
+                setLaunchAll(count&&count.length>0 ? count[0].count : 0)
+                setLaunchBol(false)
             }
         }).catch(err => {
             hint()
@@ -48,9 +43,10 @@ export default function Presale() {
     }
 
     useEffect(() => {
-        getParams('/queryPresaleAndLaunch', '')
-        // const intervalId = setInterval(updateRefreshedTime, 1000);
-        // return () => clearInterval(intervalId);
+        getParams('/queryPresaleAndLaunch', {
+            pageIndex: launchCurrent - 1,
+            pageSize: launchPageSize
+        },)
     }, []);
     const changeImg = (record) => {
         const data = _.cloneDeep(launch)
@@ -62,25 +58,22 @@ export default function Presale() {
         })
         setLaunch(data)
     }
-
     const push = (record, name) => {
         if (name === 'a') {
             window.open(record.telegram)
         } else if (name === 'b') {
             window.open(record.twitter)
         } else {
-            window.open(record.website)
+            window.open(record.website.includes('http')?record.website:'https://'+record.website)
         }
     }
-
     const columns = [
         {
             title: '',
-            dataIndex: 'age',
-            key: 'age',
+            dataIndex: 'address',
             width: 100,
-            render: () => {
-                return <img src="/avatar.png" alt="" width={'50px'}/>
+            render: (_,record) => {
+                return    <p style={{width:'40px',borderRadius:'50%',backgroundColor:'black',color:'white',textAlign:'center',lineHeight:'40px'}}>{record?.symbol?.slice(0,1)}</p>
             }
         },
         {
@@ -97,9 +90,9 @@ export default function Presale() {
             render: (text, record) => {
                 return <div
                     style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer'}}>
-                    <img src={'/Telegram.png'} alt="" width={'40px'} onClick={() => push(record, 'a')}/>
-                    <img src={'/TwitterCircled.png'} alt="" width={'40px'} onClick={() => push(record, 'b')}/>
-                    <img src={'/Website.png'} alt="" width={'40px'} onClick={() => push(record, 'c')}/>
+                    <GlobalOutlined style={{cursor: 'pointer',fontSize:'20px'}} onClick={() => push(record, 'one')}/>
+                    <TwitterOutlined style={{cursor: 'pointer',fontSize:'20px'}} onClick={() => push(record, 'two')}/>
+                    <SendOutlined style={{cursor: 'pointer',fontSize:'20px'}} onClick={() => push(record, 'three')}/>
                 </div>
             }
         },
@@ -113,7 +106,6 @@ export default function Presale() {
                     return dayjs(pa).isBefore(data)
                 }
             },
-            // dayjs('2010-10-20').isBefore('2010-10-21');
             render: (text) => {
                 return <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}><img
                     src="/Time.png" alt="" width={'30px'}/> <span>{dayjs(text).format('YYYY-MM-DD:HH:mm:ss')}</span>
@@ -138,7 +130,7 @@ export default function Presale() {
         },
         {
             title: 'Actions',
-            key: 'action',
+            dataIndex: 'launch_time',
             width: 50,
             render: (text, record) => {
                 return <img src={`${record.img ? "/StarHave.png" : "/StarNone.png"}`} alt="" width={'20px'}
@@ -153,13 +145,13 @@ export default function Presale() {
                 'Content-Type': 'application/json', // 根据需要添加其他标头
             };
 
-            let pairCount = await axios.get( baseUrl+'/queryAllPresaleCount', {
+            let pairCount = await axios.get(baseUrl + '/queryAllPresaleCount', {
                 headers: headers,
                 params: {}
             });
             setPresaleCount(pairCount.data[0].count);
 
-            let data = await axios.get( baseUrl+'/queryAllPresale', {
+            let data = await axios.get(baseUrl + '/queryAllPresale', {
                 headers: headers,
                 params: {
                     pageIndex: pageIndex,
@@ -174,23 +166,10 @@ export default function Presale() {
             });
         }
     };
-
-    // useEffect(() => {
-    //   let chainName = chain.name;
-    //   chainName = chainName.toLocaleLowerCase();
-    //   setChainId(chainName);
-    //
-    //   fetchData(chainName, currentPage, rowsPerPage);
-    //
-    //   const timer = setInterval(() => {
-    //     fetchData(chainName, currentPage, rowsPerPage);
-    //   }, 5000);
-    //
-    //   return () => {
-    //     clearInterval(timer);
-    //   };
-    // }, [chain, currentPage, rowsPerPage]);
-
+    const change = (e, a) => {
+        setLaunchCurrent(e)
+        setLaunchPageSize(a)
+    }
     return (
         <div style={{marginRight: '20px'}}>
             <Card style={{
@@ -208,9 +187,15 @@ export default function Presale() {
                         <img src="/Group.png" alt="" width={'70px'}/>
                         <span style={{fontWeight: 'bold', fontSize: '26px'}}>PRESALE & LAUNCH</span>
                     </div>
-                    <Pagination defaultCurrent={1} total={50} pageSize={10}/>
                 </div>
-                <Table className={'hotTable presale'} columns={columns} bordered={launchBol} dataSource={launch}
+                {/**/}
+                <div style={{display:'flex',justifyContent:'end',marginBottom:'20px'}}>
+                    <Pagination defaultCurrent={1} current={launchCurrent} showSizeChanger onChange={change}
+                                total={launchAll} pageSize={launchPageSize}/>
+                </div>
+
+                <Table className={'hotTable presale'} bordered={false} columns={columns} loading={launchBol}
+                       dataSource={launch} rowKey={(record)=>record.symbol+record.address}
                        pagination={false}/>
             </Card>
             <p style={{
@@ -222,116 +207,4 @@ export default function Presale() {
             }}>©DEXPert.io</p>
         </div>
     )
-    {/*<div className="mx-auto mt-20 ml-20 mr-5">*/
-    }
-    {/*  <div className="mx-auto flex flex-col text-center justify-center h-full">*/
-    }
-    {/*    <div className="grid grid-flow-row sm:grid-flow-col grid-cols-1 mt-5">*/
-    }
-    {/*      <div className="flex flex-col rounded-lg">*/
-    }
-    {/*        <TableContainer>*/
-    }
-    {/*          <Table size="medium">*/
-    }
-    {/*            <TableHead sx={{*/
-    }
-    {/*              [`& .${tableCellClasses.root}`]: {*/
-    }
-    {/*                borderBottom: "none"*/
-    }
-    {/*              }*/
-    }
-    {/*            }}>*/
-    }
-    {/*              <TableRow>*/
-    }
-    {/*                <TableCell><span>token</span></TableCell>*/
-    }
-    {/*                <TableCell><span>platform</span></TableCell>*/
-    }
-    {/*                <TableCell><span>time</span></TableCell>*/
-    }
-    {/*                <TableCell><span>link</span></TableCell>*/
-    }
-    {/*              </TableRow>*/
-    }
-    {/*            </TableHead>*/
-    }
-    {/*            <TableBody*/
-    }
-    {/*              sx={{*/
-    }
-    {/*                [`& .${tableCellClasses.root}`]: {*/
-    }
-    {/*                  borderBottom: ".0625rem solid #23323c!important",*/
-    }
-    {/*                }*/
-    }
-    {/*              }}>*/
-    }
-    {/*              {presales.map((row) => (*/
-    }
-    {/*                <TableRow key={row.tokenAddress} className="pair-row">*/
-    }
-    {/*                  <TableCell>*/
-    }
-    {/*                    <Link href={``}>*/
-    }
-    {/*                      <Image src={`http://192.168.8.104:3004/${row.tokenLogo}`} width={20} height={20} className="inline mr-2" />*/
-    }
-    {/*                      <span></span><span>{row.tokenSymbol}</span>*/
-    }
-    {/*                    </Link>*/
-    }
-    {/*                  </TableCell>*/
-    }
-    {/*                  <TableCell><span>{row.presalePlatform}</span></TableCell>*/
-    }
-    {/*                  <TableCell><span>{getRelativeTimeDifference(formatDateTime(row.presaleTime))}</span></TableCell>*/
-    }
-    {/*                  <TableCell><span>{row.presaleLink}</span></TableCell>*/
-    }
-    {/*                </TableRow>*/
-    }
-    {/*              ))}*/
-    }
-    {/*            </TableBody>*/
-    }
-    {/*          </Table>*/
-    }
-    {/*        </TableContainer>*/
-    }
-    {/*        <TablePagination*/
-    }
-    {/*          rowsPerPageOptions={[10, 30]} // 设置每页行数选项*/
-    }
-    {/*          component="div"*/
-    }
-    {/*          count={presaleCount} // 数据总数*/
-    }
-    {/*          rowsPerPage={rowsPerPage}*/
-    }
-    {/*          page={currentPage}*/
-    }
-    {/*          onPageChange={(event, newPage) => setCurrentPage(newPage)} // 处理页码变化的回调*/
-    }
-    {/*          onRowsPerPageChange={(event) => {*/
-    }
-    {/*            setRowsPerPage(parseInt(event.target.value, 10));*/
-    }
-    {/*            setCurrentPage(0); // 当每页行数变化时，回到第一页*/
-    }
-    {/*          }}*/
-    }
-    {/*        />*/
-    }
-    {/*      </div>*/
-    }
-    {/*    </div>*/
-    }
-    {/*  </div>*/
-    }
-    {/*</div>*/
-    }
 }
