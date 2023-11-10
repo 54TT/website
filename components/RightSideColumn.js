@@ -1,195 +1,208 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import styled from "styled-components";
 import Link from "next/link";
-import  baseUrl from '/utils/baseUrl'
+import baseUrl from '/utils/baseUrl'
 import calculateTime from "../utils/calculateTime";
 import cookie from "js-cookie";
 import {
-  CheckCircleIcon,
-  ExclamationCircleIcon,
-  UserAddIcon,
+    CheckCircleIcon,
+    ExclamationCircleIcon,
+    UserAddIcon,
 } from "@heroicons/react/solid";
-import { Facebook } from "react-content-loader";
+import {Facebook} from "react-content-loader";
 import axios from "axios";
-import { followUser, unfollowUser } from "../utils/profileActions";
-import { useRouter } from "next/router";
-import Loader from "react-loader-spinner";
+import {followUser, unfollowUser} from "../utils/profileActions";
+import {useRouter} from "next/router";
 import {notification} from "antd";
+import {LoadingOutlined} from '@ant-design/icons'
 
-function RightSideColumn({ user, chatsData, userFollowStats }) {
-  const router = useRouter();
-  const [loggedInUserFollowStats, setLoggedInUserFollowStats] =
-    useState({});
-  console.log(loggedInUserFollowStats)
-  useEffect(()=>{
-    if(userFollowStats&&userFollowStats!=={}){
-      setLoggedInUserFollowStats(userFollowStats)
-      getUsersToFollow();
+function RightSideColumn({user, chatsData, userFollowStats}) {
+    const [bol, setBol] = useState(false)
+    const chang = () => {
+        setBol(!bol)
     }
-  },[userFollowStats])
-  const [usersToFollow, setUsersToFollow] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [loadingWhoToF, setLoadingWhoToF] = useState(false);
-  const getUsersToFollow = async () => {
-    try {
-      setLoadingWhoToF(true);
-      const res = await axios.get(
-          `${baseUrl}/api/profile/home/youMayLikeToFollow`,
-          {
-            headers: { Authorization: cookie.get("token") },
-          }
-      );
-      setUsersToFollow(res.data);
-      setLoadingWhoToF(false);
-    } catch (error) {
-      notification.error({
-        message: `Please note`, description: 'Error reported', placement: 'topLeft',
-      });
-    }
-  };
+    const router = useRouter();
+    const [loggedInUserFollowStats, setLoggedInUserFollowStats] =
+        useState([]);
+    useEffect(() => {
+        if (userFollowStats && userFollowStats !== {}) {
+            if (userFollowStats.following) {
+                setLoggedInUserFollowStats(userFollowStats.following)
+            } else {
+                setLoggedInUserFollowStats([])
+            }
+        }
+    }, [userFollowStats])
+    useEffect(()=>{
+        getUsersToFollow();
+    },[bol])
+    const [usersToFollow, setUsersToFollow] = useState([]);
+    const [loadingWhoToF, setLoadingWhoToF] = useState(false);
+    const getUsersToFollow = async () => {
+        try {
+            setLoadingWhoToF(true);
+            const res = await axios.get(
+                `${baseUrl}/api/profile/home/youMayLikeToFollow`,
+                {
+                    headers: {Authorization: cookie.get("token")},
+                }
+            );
+            if (res && res.data) {
+                setUsersToFollow(res.data);
+            } else {
+                setUsersToFollow([]);
+            }
+            setLoadingWhoToF(false);
+        } catch (error) {
+            notification.error({
+                message: `Please note`, description: 'Error reported', placement: 'topLeft',
+            });
+        }
+    };
 
-  return (
-    <ContainerDiv
-      className="hidden  p-2 lg:block max-w-[300px] lg:min-w-[290px] xl:min-w-[300px] sticky xl:mr-8"
-      style={{ alignSelf: "flex-start", top: "5.45rem" }}
-    >
-      <Title>Who to follow</Title>
-      {usersToFollow && usersToFollow.length > 0&&Array.isArray(usersToFollow) ? (
-        usersToFollow.map((fol) => {
-          const isLoggedInUserFollowing =
-            loggedInUserFollowStats?.following?.length > 0 &&
-            loggedInUserFollowStats?.following?.filter(
-              (loggedInUserFollowing) =>
-                loggedInUserFollowing?.user?.id === fol?.id
-            ).length > 0||'';
-
-          return (
-            <div key={fol.id}>
-              {fol?.id !== user?.id && (
-                <div
-                  style={{ border: ".5px solid lightgrey"}}
-                  key={fol.id}
-                  className="flex justify-between items-center p-4 mb-4 rounded-lg"
-                >
-                  <div className="flex items-center">
-                    <UserImage src={fol.profilePicUrl} alt="userimg" />
-                    <div>
-                      <Name
-                        className="ml-3 cursor-pointer hover:underline"
-                        onClick={() => router.push(`/${fol.username}`)}
-                      >
-                        {fol.name}
-                      </Name>
-                      {loadingWhoToF ? (
-                        <div
-                          style={{
-                            marginLeft: "1.5rem",
-                            marginTop: "-0.95rem",
-                          }}
-                        >
-                          <Loader
-                            type="ThreeDots"
-                            color="grey"
-                            height={15}
-                            width={15}
-                            timeout={5000} //3 secs
-                          />
+    return (
+        <ContainerDiv
+            className="hidden  p-2 lg:block max-w-[300px] lg:min-w-[290px] xl:min-w-[300px] sticky xl:mr-8"
+            style={{alignSelf: "flex-start", top: "5.45rem"}}
+        >
+            <Title>Who to follow</Title>
+            {usersToFollow && usersToFollow.length > 0 && Array.isArray(usersToFollow) ? (
+                usersToFollow.map((fol) => {
+                    const isLoggedInUserFollowing =
+                        loggedInUserFollowStats?.length > 0 &&
+                        loggedInUserFollowStats?.filter(
+                            (loggedInUserFollowing) =>
+                                loggedInUserFollowing?.user?.id === fol?.id
+                        ).length > 0 || '';
+                    return (
+                        <div key={fol.id}>
+                            {fol?.id !== user?.id && (
+                                <div
+                                    style={{border: ".5px solid lightgrey"}}
+                                    key={fol.id}
+                                    className="flex justify-between items-center p-4 mb-4 rounded-lg"
+                                >
+                                    <div className="flex items-center">
+                                        <img src={fol?.profilePicUrl ? fol.profilePicUrl : '/Ellipse5.png'}
+                                             style={{width: '40px', borderRadius: '50%'}} alt="userimg"/>
+                                        <div>
+                                            <p
+                                                className="ml-3 cursor-pointer hover:underline"
+                                                onClick={() => router.push(`/${fol?.username}`)}
+                                            >
+                                                {fol?.name.length > 7 ? fol.name.slice(0, 3) + '...' + fol.name.slice('-3') : fol.name}
+                                            </p>
+                                            {loadingWhoToF ? (
+                                                <div
+                                                    style={{
+                                                        marginLeft: "1.5rem",
+                                                        marginTop: "-0.95rem",
+                                                    }}
+                                                >
+                                                    <LoadingOutlined/>
+                                                </div>
+                                            ) : (
+                                                <p style={{color: 'grey',}}
+                                                   className="ml-3">{fol?.followers ? fol?.followers.length : 0} followers</p>
+                                            )}
+                                        </div>
+                                    </div>
+                                    {fol?.id !== user?.id ? (
+                                        <>
+                                            {/*关注*/}
+                                            {isLoggedInUserFollowing? (
+                                                <FollowButton
+                                                    onClick={async () => {
+                                                        const data = await unfollowUser(
+                                                            fol.id,
+                                                            '',
+                                                            user?.id
+                                                        );
+                                                        if (data && data.status === 200) {
+                                                            chang()
+                                                        }
+                                                    }}
+                                                >
+                                                    <CheckCircleIcon className="h-6"/>
+                                                </FollowButton>
+                                            ) : (
+                                                <FollowButton
+                                                    onClick={async () => {
+                                                        const data = await followUser(
+                                                            fol.id,
+                                                            '',
+                                                            user?.id
+                                                        );
+                                                        if (data && data.status === 200) {
+                                                            chang()
+                                                        }
+                                                    }}
+                                                >
+                                                    <UserAddIcon className="h-6 w-6"/>
+                                                </FollowButton>
+                                            )}
+                                        </>
+                                    ) : (
+                                        <></>
+                                    )}
+                                </div>
+                            )}
                         </div>
-                      ) : (
-                        <TextPreview className="ml-3">{`${fol.followers ? fol.followers.length: 0} followers`}</TextPreview>
-                      )}
-                    </div>
-                  </div>
-                  {fol?.id !== user?.id ? (
-                    <>
-                      {/*关注*/}
-                      {isLoggedInUserFollowing ? (
-                        <FollowButton
-                          onClick={async () => {
-                            await unfollowUser(
-                              fol.id,
-                              setLoggedInUserFollowStats,
-                              setLoading,user?.id
-                            );
-                          }}
+                    );
+                })
+            ) : (
+                <Facebook/>
+            )}
+            <Title>Recent chats</Title>
+            <ChatContainerParent>
+                {chatsData && Array.isArray(chatsData) ? (
+                    chatsData.map((chat) => (
+                        <ChatDiv
+                            className="hover:bg-gray-200"
+                            key={chat.textsWith}
+                            onClick={() => router.push(`/chats?chat=${chat.textsWith}`)}
                         >
-                          <CheckCircleIcon className="h-6" />
-                        </FollowButton>
-                      ) : (
-                        <FollowButton
-                          onClick={async () => {
-                            await followUser(
-                              fol.id,
-                                setLoggedInUserFollowStats,
-                              setLoading,user?.id
-                            );
-                          }}
-                        >
-                          <UserAddIcon className="h-6 w-6" />
-                        </FollowButton>
-                      )}
-                    </>
-                  ) : (
-                    <></>
-                  )}
-                </div>
-              )}
-            </div>
-          );
-        })
-      ) : (
-        <Facebook />
-      )}
-      <Title>Recent chats</Title>
-      <ChatContainerParent>
-        {chatsData&&Array.isArray(chatsData) ? (
-          chatsData.map((chat) => (
-            <ChatDiv
-              className="hover:bg-gray-200"
-              key={chat.textsWith}
-              onClick={() => router.push(`/chats?chat=${chat.textsWith}`)}
-            >
-              <div className="relative">
-                <UserImage src={chat.profilePicUrl} alt="userimg" />
-              </div>
-
-              <div className="ml-1">
-                <Name>{chat.name}</Name>
-                <TextPreview>
-                  {chat.texts && chat.texts.length > 30
-                    ? `${chat.texts.substring(0, 30)}...`
-                    : chat.texts}
-                </TextPreview>
-              </div>
-              {chat.created_at && (
-                <Date className="hidden xl:flex">
-                  {calculateTime(chat.created_at, true)}
-                </Date>
-              )}
-            </ChatDiv>
-          ))
-        ) : (
-          <p>
-            You do not have any chats yet. Start a{" "}
-            <Link href={`/chats`} passHref>
-              chat
-            </Link>{" "}
-            with someone!
-          </p>
-        )}
-      </ChatContainerParent>
-    </ContainerDiv>
-  );
+                            <div className="relative">
+                                <img src={chat?.profilePicUrl ? chat.profilePicUrl : '/Ellipse5.png'}
+                                     style={{width: '40px', borderRadius: '50%'}} alt="userimg"/>
+                            </div>
+                            <div className="ml-1">
+                                <Name>{chat.name}</Name>
+                                <p style={{color: 'grey',}}>
+                                    {chat.texts && chat.texts.length > 30
+                                        ? `${chat.texts.substring(0, 30)}...`
+                                        : chat.texts}
+                                </p>
+                            </div>
+                            {chat.created_at && (
+                                <Date className="hidden xl:flex">
+                                    {calculateTime(chat.created_at, true)}
+                                </Date>
+                            )}
+                        </ChatDiv>
+                    ))
+                ) : (
+                    <p>
+                        You do not have any chats yet. Start a{" "}
+                        <Link href={`/chats`} passHref>
+                            chat
+                        </Link>{" "}
+                        with someone!
+                    </p>
+                )}
+            </ChatContainerParent>
+        </ContainerDiv>
+    );
 }
 
 export default RightSideColumn;
 
 const Title = styled.p`
-  font-size: 1.21rem;
+  font-size: 1.1rem;
   font-family: inherit;
   font-weight: 500;
   margin-left: 0.4rem;
-  margin-top: 2rem;
+  margin-top: 1.5rem;
 `;
 
 const ContainerDiv = styled.div`
@@ -211,6 +224,7 @@ const ChatDiv = styled.div`
   padding: 0.9rem 0.8rem;
   align-items: flex-start;
   column-gap: 0.6rem;
+
   :hover {
   }
 `;
@@ -252,6 +266,7 @@ const FollowButton = styled.div`
   font-size: 1.1rem;
   font-family: "Inter";
   font-weight: 400;
+
   :hover {
     background-color: rgba(109, 40, 217);
   }

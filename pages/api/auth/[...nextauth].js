@@ -33,7 +33,7 @@ export default async function auth(req, res) {
              result = await para.verify({
               signature: credentials?.signature || "",
               domain: nextAuthUrl.host,
-              nonce: await getCsrfToken({ req }),
+               nonce: await getCsrfToken({ req: { headers: req.headers } }),
             })
           }
           if (result&&result.success) {
@@ -71,9 +71,18 @@ export default async function auth(req, res) {
             address: token.sub
           }
         })).data;
-        if(!userAndFollowStats.user){
-          userAndFollowStats = (await axios.post( baseUrl+"/api/user",{
-              address: token.sub
+        if (!userAndFollowStats.user) {
+          const forwardedIpsStr = req.headers['x-forwarded-for'];
+          let ipAddress = '';
+          if (forwardedIpsStr) {
+            const forwardedIps = forwardedIpsStr.split(',');
+            ipAddress = forwardedIps[0];
+          } else {
+            const ipv6Address = req.connection.remoteAddress;
+            ipAddress = ipv6Address.split(':').pop()
+          }
+          userAndFollowStats = (await axios.post(baseUrl+"/api/user", {
+            address: token.sub, ipAddress
           })).data
         }
         session.address = token.sub

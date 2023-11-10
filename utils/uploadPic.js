@@ -6,13 +6,14 @@ const uploadPic = async (media) => {
     const formData = new FormData();
     formData.append('image', media);
 
-    const response = await axios.post(process.env.baseUrl+'/uploadImage', formData, {
+    const response = await axios.post(baseUrl+'/uploadImage', formData, {
       headers : {
         'Content-Type': 'multipart/form-data', // 根据需要添加其他标头
       }
     })
-
-    return process.env.baseUrl+response.data.logoPath;
+    if(response.status===200&&response.data){
+      return baseUrl+'/'+response?.data.logoPath;
+    }
   } catch (error) {
     return;
   }

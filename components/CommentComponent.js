@@ -12,7 +12,7 @@ const notifyCommentDelete = () =>
     position: "bottom-center",
   });
 
-function CommentComponent({ comment, postId, user, setComments }) {
+function CommentComponent({ comment, postId,change, user, setComments }) {
   const router = useRouter();
   const [isHovering, setIsHovering] = useState(false);
   const [open, setOpen] = useState(false);
@@ -33,10 +33,8 @@ function CommentComponent({ comment, postId, user, setComments }) {
     setOpen(false);
   };
 
-  const handleAgree = () => {
-    deleteComment(postId, comment._id, setComments, notifyCommentDelete);
-
-    handleClose();
+  const handleAgree = async () => {
+    await deleteComment(postId, comment.id, setComments, notifyCommentDelete,handleClose,user?.id,change);
   };
   const handleDisagree = () => {
     handleClose();
@@ -46,8 +44,8 @@ function CommentComponent({ comment, postId, user, setComments }) {
     <div className="flex items-start pl-5 pr-3 mt-3">
       <Toaster position="bottom-center" />
       <Image
-        src={comment.profilePicUrl}
-        style={{ height: "2.45rem", width: "2.45rem", marginTop: ".2rem" }}
+        src={comment?.user?.profilePicUrl}
+        style={{  width: "2.45rem", marginTop: ".2rem" }}
         className="mr-2"
       />
       {/* extra div for flex of comment text div and the three dots  */}
@@ -79,7 +77,7 @@ function CommentComponent({ comment, postId, user, setComments }) {
             {comment.text}
           </p>
         </div>
-        {isHovering && comment.user._id === user._id ? (
+        {isHovering && comment.user.id === user.id ? (
           <div style={{ width: "3rem", marginLeft: "0.2rem" }}>
             <ThreeDotsDiv
               onClick={() => {

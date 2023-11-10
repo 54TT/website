@@ -10,10 +10,9 @@ import { SearchIcon } from "@heroicons/react/outline";
 import styled from "styled-components";
 import calculateTime from "../utils/calculateTime";
 import Chat from "../components/Chat/Chat";
-import Loader from "react-loader-spinner";
 import cookie from "js-cookie";
 import { Facebook } from "react-content-loader";
-import {AppleOutlined} from '@ant-design/icons'
+import {AppleOutlined,LoadingOutlined} from '@ant-design/icons'
 function ChatsPage({ user, chatsData }) {
   const [chats, setChats] = useState(chatsData);
   const router = useRouter();

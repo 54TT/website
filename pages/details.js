@@ -1,5 +1,4 @@
 import React,{useState,useEffect} from 'react';
-import Layout from "../components/Layout/Layout";
 import {useRouter} from 'next/router';
 import  baseUrl from '/utils/baseUrl'
 import style from '../styles/details.module.css'
@@ -188,7 +187,6 @@ function Details(props) {
         }
     }
     return (
-        <Layout>
             <div className={style['box']}>
                 <div className={style['top']}>
                     <div style={{display: 'flex', alignItems: 'center'}}>
@@ -270,8 +268,6 @@ function Details(props) {
                     </div>
                 </div>
             </div>
-
-        </Layout>
     );
 }
 

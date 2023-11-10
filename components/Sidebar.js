@@ -24,9 +24,10 @@ function Sidebar({user, topDist, maxWidth}) {
             }}
         >
             <SidebarRow
-                src={user ? user.profilePicUrl : ''}
-                title={user ? user.name : ''}
-                route={user ? `/${user.username}` : ''}
+                src={user&&user.profilePicUrl ? user.profilePicUrl : ''}
+                title={user&&user.name ? user.name : ''}
+                route={user&&user.username ? `/${user?.username}` : ''}
+                name={'1'}
             />
             <SidebarRow
                 Icon={UsersIcon}

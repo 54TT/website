@@ -12,7 +12,7 @@ import {
   unfollowUser,
   profilePicturesUpdate,
 } from "../utils/profileActions";
-import Loader from "react-loader-spinner";
+import {LoadingOutlined} from '@ant-design/icons'
 import { parseCookies } from "nookies";
 import axios from "axios";
 import ProfileFields from "../components/ProfileComponents/ProfileFields";
@@ -54,7 +54,6 @@ function ProfilePage() {
   const [posts, setPosts] = useState([]);
   const [loadingPosts, setLoadingPosts] = useState(false);
   //state for follow stats
-  const [loadingFollowStats, setLoadingFollowStats] = useState(false);
   const [followBol, setFollowBol] = useState(false);
   const isLoggedInUserFollowing =
       userFollowStats?.following?.length > 0 &&
@@ -225,7 +224,6 @@ function ProfilePage() {
                     await unfollowUser(
                       profile?.user_id,
                       setUserFollowStats,
-                      setLoadingFollowStats,
                         user?.id,
                     );
                     chang()
@@ -240,7 +238,7 @@ function ProfilePage() {
                     await followUser(
                       profile?.user_id,
                       setUserFollowStats,
-                      setLoadingFollowStats,  user?.id
+                      user?.id
                     );
                     chang()
                   }}
@@ -255,12 +253,7 @@ function ProfilePage() {
                 <CameraIconDiv onClick={() => profilePicRef.current.click()}>
                   {loadingProfilePic ? (
                     <>
-                      <Loader
-                        type="Puff"
-                        color="black"
-                        height={20}
-                        width={20}
-                      />
+                      <LoadingOutlined/>
                     </>
                   ) : (
                     <CameraIcon className="h-7 text-purple-600" />
@@ -269,12 +262,7 @@ function ProfilePage() {
                 <EditCoverPicDiv onClick={() => coverImageRef.current.click()}>
                   {loadingCoverPic ? (
                     <>
-                      <Loader
-                        type="Puff"
-                        color="black"
-                        height={20}
-                        width={20}
-                      />
+                      <LoadingOutlined/>
                     </>
                   ) : (
                     <CameraIcon className="h-7 text-gray-600" />
@@ -308,24 +296,17 @@ function ProfilePage() {
                   isUserOnOwnAccount={isUserOnOwnAccount}
                 />
 
-                {loadingFollowStats ? (
-                  <FacebookLoader />
-                ) : (
+                {
                   <FollowingUsers
                     profile={profile}
                     userFollowStats={userFollowStats}
                     user={user}
-                  />
-                )}
-                {loadingFollowStats ? (
-                  <FacebookLoader />
-                ) : (
-                  <FollowerUsers
+                  />}
+                {<FollowerUsers
                     profile={profile}
                     userFollowStats={userFollowStats}
                     user={user}
-                  />
-                )}
+                  />}
 
                 <div className="h-9"></div>
               </>

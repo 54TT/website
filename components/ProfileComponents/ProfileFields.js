@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { ArrowSmRightIcon, PencilAltIcon } from "@heroicons/react/solid";
 import { profileUpdate } from "../../utils/profileActions";
-import {YoutubeOutlined,TwitterOutlined,FacebookOutlined,InstagramOutlined} from '@ant-design/icons'
-import Loader from "react-loader-spinner";
+import {YoutubeOutlined,TwitterOutlined,FacebookOutlined,InstagramOutlined,LoadingOutlined} from '@ant-design/icons'
 import toast, { Toaster } from "react-hot-toast";
 import { useEffect } from "react";
 const notifyError = () =>
@@ -64,13 +63,7 @@ function ProfileFields({ profile, isUserOnOwnAccount, newComp }) {
           </h1>
           <Toaster />
           {loading ? (
-            <Loader
-              type="Puff"
-              color="black"
-              height={20}
-              width={20}
-              timeout={5000} //3 secs
-            />
+              <LoadingOutlined />
           ) : (
             <ArrowSmRightIcon
               onClick={updateProfile}

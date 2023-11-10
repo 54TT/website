@@ -12,20 +12,22 @@ import cookie from "js-cookie";
 import {Facebook} from "react-content-loader";
 import {notification} from "antd";
 
-function Feed({user, postsData, errorLoading, increaseSizeAnim}) {
-    const [posts, setPosts] = useState(postsData);
+function Feed({user, postsData, errorLoading,change, increaseSizeAnim}) {
+    useEffect(() => {
+        if (postsData && postsData.length > 0) {
+            setPosts(postsData)
+        } else {
+            setPosts([])
+        }
+    }, [postsData])
+    const [posts, setPosts] = useState([]);
     const [hasMore, setHasMore] = useState(true); //means if there is more data to fetch frm backend, then it'll be true
-    const [pageNumber, setPageNumber] = useState(2); //we set it to 2 initially because from getInitialProps below, posts of pageNumber 1 have already been fetched. So now, it's set to pageNumber 2 for next pagination call
-
+    const [pageNumber, setPageNumber] = useState(1); //we set it to 2 initially because from getInitialProps below, posts of pageNumber 1 have already been fetched. So now, it's set to pageNumber 2 for next pagination call
     const fetchDataOnScroll = async () => {
         try {
             const res = await axios.get(`${baseUrl}/api/posts`, {
-                headers: {Authorization: cookie.get("token")},
-                params: {pageNumber: pageNumber, userId: '654224ee643b1a129ada19ec'},
-                // params sent using ^ are received on backend with req.query
-                // or we could've done: `${baseUrl}/api/posts/${pageNumber}`
+                params: {pageNumber: pageNumber, userId: user.id},
             });
-
             if (res.data.length === 0) {
                 setHasMore(false); //for stopping function call (inside of InfinitScroll component) after all posts have been fetched
             }
@@ -49,6 +51,7 @@ function Feed({user, postsData, errorLoading, increaseSizeAnim}) {
                         setPosts={setPosts}
                         increaseSizeAnim={increaseSizeAnim}
                     />
+
                     {posts ? (
                         posts.length === 0 || errorLoading ? (
                             <InfoBox
@@ -56,29 +59,34 @@ function Feed({user, postsData, errorLoading, increaseSizeAnim}) {
                                 message="Sorry, no posts..."
                                 content="Please follow another user or create a new post to start seeing posts."
                             ></InfoBox>
-                        ) : (
-                            <InfiniteScroll
-                                /* next is the function for fetching data from backend when the user reaches the end */
-                                hasMore={hasMore}
-                                next={fetchDataOnScroll}
-                                loader={<Facebook/>}
-                                endMessage={
-                                    <div className="w-full mt-6 mb-6">
-                                        {/*<RefreshIcon className="h-7 mx-auto" />*/}
-                                    </div>
-                                }
-                                dataLength={posts.length}
-                                // end message is the component which will get displayed when no more posts to be fetched from backend
+                        ) :
+                            (
+                                // InfiniteScroll
+                            <div
+                                // hasMore={hasMore}
+                                // next={fetchDataOnScroll}
+                                // loader={<Facebook/>}
+                                // endMessage={
+                                //     <div className="w-full mt-6 mb-6">
+                                //         11111
+                                //         {/*<RefreshIcon className="h-7 mx-auto" />*/}
+                                //     </div>
+                                // }
+                                // dataLength={posts.length}
                             >
-                                {posts && posts?.length > 0 ? posts.map((post) => (
-                                    <PostCard
+                                {posts && posts?.length > 0 ? posts.map((post) => {
+                                    const isLiked =
+                                        post.likes && post.likes.length > 0 &&
+                                        post.likes.filter((like) => like?.user?.id === user?.id).length > 0;
+                                    return <PostCard
+                                        change={change}
+                                        liked={isLiked}
                                         key={post.id}
                                         post={post}
                                         user={user}
-                                        setPosts={setPosts}
                                     />
-                                )) : ''}
-                            </InfiniteScroll>
+                                }) : ''}
+                            </div>
                         )
                     ) : (
                         <Facebook/>
@@ -86,7 +94,8 @@ function Feed({user, postsData, errorLoading, increaseSizeAnim}) {
                 </div>
             </div>
         </>
-    );
+    )
+        ;
 }
 
 export default Feed;

@@ -3,7 +3,6 @@ import axios from 'axios';
 import  baseUrl from '/utils/baseUrl'
 import { useRouter } from 'next/router';
 import Image from 'next/image';
-import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { formatDecimal } from './Utils';
 import Link from "next/link";
 // import { useAccount, useNetwork } from "wagmi";

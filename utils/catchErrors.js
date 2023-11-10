@@ -16,7 +16,6 @@ const catchErrors = (error) => {
       // if something else happened while making the request
       errorMsg = error.message;
   
-      console.error(errorMsg);
     }
     return errorMsg;
   };

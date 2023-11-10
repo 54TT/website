@@ -9,7 +9,6 @@ import {
   ExclamationCircleIcon,
   UserAddIcon,
 } from "@heroicons/react/solid";
-import Header from "../../../components/Header";
 import styled from "styled-components";
 import { followUser, unfollowUser } from "../../../utils/profileActions";
 import Sidebar from "../../../components/Sidebar";
@@ -21,8 +20,6 @@ function FollowersPage({ followers, errorLoading }) {
   const [followersArrayState, setFollowersArrayState] = useState(followers);
   const [loggedUserFollowStats, setLoggedUserFollowStats] =
     useState(userFollowStats);
-  const [loading, setLoading] = useState(false);
-
   if (errorLoading) {
     return (
       <InfoBox
@@ -86,7 +83,6 @@ function FollowersPage({ followers, errorLoading }) {
                               await unfollowUser(
                                 fol.user.id,
                                 setLoggedUserFollowStats,
-                                setLoading
                               );
                             }}
                           >
@@ -99,7 +95,6 @@ function FollowersPage({ followers, errorLoading }) {
                               await followUser(
                                 fol.user.id,
                                 setLoggedUserFollowStats,
-                                setLoading
                               );
                             }}
                           >

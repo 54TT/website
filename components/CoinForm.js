@@ -156,7 +156,6 @@ export default function CoinForm() {
         });
     } else {
       if (pair === "0x0000000000000000000000000000000000000000") {
-        console.log("pair not exists");
         return;
       }
       const formData = new FormData();

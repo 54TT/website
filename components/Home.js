@@ -31,7 +31,7 @@ import {gql} from 'graphql-tag';
 import {HeartFilled, HeartOutlined, RetweetOutlined, MessageOutlined,TwitterOutlined, SendOutlined,ShareAltOutlined,GlobalOutlined} from '@ant-design/icons'
 
 const client = new ApolloClient({
-    uri: 'http://192.168.8.101:8000/subgraphs/name/levi/uniswapv2', cache: new InMemoryCache(),
+    uri: 'http://192.168.8.39:8000/subgraphs/name/levi/uniswapv2', cache: new InMemoryCache(),
 });
 
 export default function Home() {

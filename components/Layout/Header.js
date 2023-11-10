@@ -137,37 +137,39 @@ const Header =   () => {
         }
     };
     const handleLogin = async () => {
-        console.log(window.location.origin)
-        try {
-            const message = new SiweMessage({
-                domain: window.location.host,
-                address: address,
-                statement: "Sign in with Ethereum to the app.",
-                uri: window.location.origin,
-                version: "1",
-                chainId: chain?.id,
-                nonce: await getCsrfToken(),
-            })
-            const signature = await signMessageAsync({
-                message: message.prepareMessage(),
-            })
-            await signIn("credentials", {
-                message: JSON.stringify(message),
-                redirect: false,
-                signature,
-                callbackUrl:'/',
-            })
-        } catch (error) {
-            // notification.error({
-            //     message: `Please note`, description: 'Error reported', placement: 'topLeft',
-            // });
+        if(!session){
+            try {
+                const message = new SiweMessage({
+                    domain: window.location.host,
+                    address: address,
+                    statement: "Sign in with Ethereum to the app.",
+                    uri: window.location.origin,
+                    version: "1",
+                    chainId: chain?.id,
+                    nonce: await getCsrfToken(),
+                })
+                const signature = await signMessageAsync({
+                    message: message.prepareMessage(),
+                })
+                await signIn("credentials", {
+                    message: JSON.stringify(message),
+                    redirect: false,
+                    signature,
+                    callbackUrl:'/',
+                })
+            } catch (error) {
+                // notification.error({
+                //     message: `Please note`, description: 'Error reported', placement: 'topLeft',
+                // });
+            }
         }
+
     }
     useEffect(() => {
             if (isConnected && !session) {
                 handleLogin()
             }
-    }, [isConnected])
+    }, [session,isConnected])
 
     const items = [
         {
@@ -198,9 +200,7 @@ const Header =   () => {
         <>
             <header
                 className={
-                    "top-0 w-full  z-30 transition-all headerClass"
-                }
-            >
+                    "top-0 w-full  z-30 transition-all headerClass"}>
                 <div className={styles['aaa']}>
                     <div></div>
                     <p className={styles['search']}>Search pair by symbol,name,contract or token</p>
