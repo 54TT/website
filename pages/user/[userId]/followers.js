@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import axios from "axios";
 import { useRouter } from "next/router";
 import baseUrl from "../../../utils/baseUrl";
@@ -14,12 +14,41 @@ import { followUser, unfollowUser } from "../../../utils/profileActions";
 import Sidebar from "../../../components/Sidebar";
 import {useSession} from "next-auth/react";
 
-function FollowersPage({ followers, errorLoading }) {
+function FollowersPage() {
   const router = useRouter();
-  const {user, userFollowStats,} = useSession()
-  const [followersArrayState, setFollowersArrayState] = useState(followers);
+  const {data: session, status} = useSession()
+  useEffect(() => {
+    if(session&&session.user){
+      setUserPar(session.user)
+    }
+    if(session&&session.userFollowStats){
+      setLoggedUserFollowStats(session.userFollowStats)
+    }
+  }, [session,session?.user,session?.userFollowStats]);
+
   const [loggedUserFollowStats, setLoggedUserFollowStats] =
-    useState(userFollowStats);
+    useState([]);
+  const [userPar, setUserPar] = useState(null);
+
+  const [errorLoading, setErrorLoading] = useState(false);
+  const [followers, setFollowers] = useState([]);
+  const getParams =async ()=>{
+    if(userPar&&userPar.id){
+      const res = await axios.get(
+          `${baseUrl}/api/profile/followers/${userPar.id}`,
+      );
+      if(res.status===200){
+        setFollowers(res.data)
+      }else {
+        setFollowers([])
+        setErrorLoading(true)
+      }
+    }
+  }
+  useEffect(()=>{
+    getParams()
+  },[])
+
   if (errorLoading) {
     return (
       <InfoBox
@@ -39,7 +68,7 @@ function FollowersPage({ followers, errorLoading }) {
           display: "flex",
         }}
       >
-        <Sidebar user={user} topDist={"0"} maxWidth={"250px"} />
+        <Sidebar user={userPar} topDist={"0"} maxWidth={"250px"} />
         <div
           style={{ fontFamily: "Inter" }}
           className="mx-auto h-full w-full flex-1 max-w-md md:max-w-xl lg:max-w-[61.5rem] xl:max-w-[67rem] bg-white p-4 shadow-lg rounded-lg overflow-y-auto"
@@ -47,41 +76,41 @@ function FollowersPage({ followers, errorLoading }) {
           <div className="flex items-center ml-2">
             <Title>Followers ·</Title>
             <FollowersNumber className="text-gray-500 ml-2">
-              {followersArrayState.length}
+              {followers.length}
             </FollowersNumber>
           </div>
-          {followersArrayState.length > 0 ? (
+          {followers.length > 0 ? (
             <GridContainer className="grid-cols-1 lg:grid-cols-2">
-              {followersArrayState.map((fol) => {
+              {followers.map((fol) => {
                 const isLoggedInUserFollowing =
                   loggedUserFollowStats?.following?.length > 0 &&
                   loggedUserFollowStats?.following?.filter(
                     (loggedInUserFollowing) =>
-                      loggedInUserFollowing.user === fol.user.id
+                      loggedInUserFollowing?.user === fol?.user?.id
                   ).length > 0;
 
                 return (
                   <div
                     style={{ border: "1px solid #eee" }}
-                    key={fol.user.id}
+                    key={fol?.user?.id}
                     className="flex items-center justify-between p-4 mb-4 rounded-lg bg-white"
                   >
                     <div className="flex items-center  ">
                       <Image src={fol.user.profilePicUrl} alt="userimg" />
                       <Name
                         className="ml-3"
-                        onClick={() => router.push(`/${fol.user.username}`)}
+                        onClick={() => router.push(`/${fol?.user?.username}`)}
                       >
-                        {fol.user.name}
+                        {fol?.user?.name}
                       </Name>
                     </div>
-                    {fol.user.id !== user.id ? (
+                    {fol?.user?.id !== userPar?.id ? (
                       <>
                         {isLoggedInUserFollowing ? (
                           <FollowButton
                             onClick={async () => {
                               await unfollowUser(
-                                fol.user.id,
+                                fol?.user?.id,
                                 setLoggedUserFollowStats,
                               );
                             }}
@@ -93,7 +122,7 @@ function FollowersPage({ followers, errorLoading }) {
                           <FollowButton
                             onClick={async () => {
                               await followUser(
-                                fol.user.id,
+                                fol?.user?.id,
                                 setLoggedUserFollowStats,
                               );
                             }}
@@ -110,7 +139,7 @@ function FollowersPage({ followers, errorLoading }) {
                 );
               })}
             </GridContainer>
-          ) : router.query.userId === user.id ? (
+          ) : router?.query?.userId === userPar?.id ? (
             <p className="text-md text-gray-500">
               {`You don't have any followers ☹️. The trick is to follow someone and then
           wait for them to follow you back.`}
@@ -124,22 +153,6 @@ function FollowersPage({ followers, errorLoading }) {
     </div>
   );
 }
-
-FollowersPage.getInitialProps = async (ctx) => {
-  try {
-    const { token } = parseCookies(ctx);
-
-    const res = await axios.get(
-      `${baseUrl}/api/profile/followers/${ctx.query.userId}`,
-      {
-        headers: { Authorization: token },
-      }
-    );
-    return { followers: res.data };
-  } catch (error) {
-    return { errorLoading: true };
-  }
-};
 
 export default FollowersPage;
 

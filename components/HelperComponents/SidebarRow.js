@@ -1,7 +1,6 @@
 import React from "react";
 import styled from "styled-components";
 import Link from "next/link";
-
 function SidebarRow({ Icon, title, src, route,name }) {
   return (
     <Link href={route} passHref>
@@ -16,7 +15,7 @@ function SidebarRow({ Icon, title, src, route,name }) {
           }}
           className="hidden sm:inline-flex text-l"
         >
-            <span>{name?title.slice(0,3)+'...'+title.slice(-3):title}</span>
+            <span>{name?title&&title.length>0?title.slice(0,3)+'...'+title.slice(-3):title:title}</span>
         </p>
       </div>
     </Link>

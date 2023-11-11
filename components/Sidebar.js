@@ -37,13 +37,13 @@ function Sidebar({user, topDist, maxWidth}) {
             <SidebarRow
                 Icon={UsersIcon}
                 title="Following"
-                route={user ? `/user/${user.id}/following` : ''}
+                route={user&&user.id ? `/user/${user.id}/following` : ''}
             />
 
             <SidebarRow
                 Icon={UserGroupIcon}
                 title="Followers"
-                route={user ? `/user/${user.id}/followers` : ''}
+                route={user&&user.id ? `/user/${user.id}/followers` : ''}
             />
             <SidebarRow
                 Icon={BellIcon}

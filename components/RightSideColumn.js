@@ -25,17 +25,17 @@ function RightSideColumn({user, chatsData, userFollowStats}) {
     const [loggedInUserFollowStats, setLoggedInUserFollowStats] =
         useState([]);
     useEffect(() => {
-        if (userFollowStats && userFollowStats !== {}) {
-            if (userFollowStats.following) {
-                setLoggedInUserFollowStats(userFollowStats.following)
-            } else {
-                setLoggedInUserFollowStats([])
-            }
+        if (userFollowStats.following.length > 0) {
+            setLoggedInUserFollowStats(userFollowStats.following)
+        } else {
+            setLoggedInUserFollowStats([])
         }
     }, [userFollowStats])
-    useEffect(()=>{
+
+
+    useEffect(() => {
         getUsersToFollow();
-    },[bol])
+    }, [bol])
     const [usersToFollow, setUsersToFollow] = useState([]);
     const [loadingWhoToF, setLoadingWhoToF] = useState(false);
     const getUsersToFollow = async () => {
@@ -74,6 +74,8 @@ function RightSideColumn({user, chatsData, userFollowStats}) {
                             (loggedInUserFollowing) =>
                                 loggedInUserFollowing?.user?.id === fol?.id
                         ).length > 0 || '';
+
+
                     return (
                         <div key={fol.id}>
                             {fol?.id !== user?.id && (
@@ -110,7 +112,7 @@ function RightSideColumn({user, chatsData, userFollowStats}) {
                                     {fol?.id !== user?.id ? (
                                         <>
                                             {/*关注*/}
-                                            {isLoggedInUserFollowing? (
+                                            {isLoggedInUserFollowing ? (
                                                 <FollowButton
                                                     onClick={async () => {
                                                         const data = await unfollowUser(

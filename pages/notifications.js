@@ -13,26 +13,48 @@ import { ExclamationCircleIcon } from "@heroicons/react/outline";
 import {useSession} from "next-auth/react";
 import {notification} from "antd";
 
-function Notifications({ notifications, errorLoading }) {
-  const {user, userFollowStats,} = useSession()
-  //for setting notifications to read on cleanup of the component / before re-render
+function Notifications() {
+  const [notifications,setNotifications] =useState([])
+  const [errorLoading,setErrorLoading] =useState(false)
+  const [userPar,setUserPar] =useState(null)
+  const [userFollowStats,setLoggedUserFollowStats] =useState(null)
+  const {data: session, status} = useSession()
   useEffect(() => {
-    const notificationRead = async () => {
+    if(session&&session.user){
+      setUserPar(session.user)
+    }
+    if(session&&session.userFollowStats){
+      setLoggedUserFollowStats(session.userFollowStats)
+    }
+  }, [session,session?.user,session?.userFollowStats]);
+
+
+
+  const notificationRead = async () => {
+    if(userPar&&userPar.id){
       try {
-        await axios.post(
-          `${baseUrl}/api/notifications`,
-          {},
-          {
-            headers: { Authorization: cookie.get("token") },
-          }
+        const data =   await axios.post(
+            `${baseUrl}/api/notifications`,
+            {userId:userPar.id},
+            {
+              headers: { Authorization: cookie.get("token") },
+            }
         );
+        if(data.status===200&&data.data){
+          setNotifications(data.data)
+          setErrorLoading(false)
+        }
       } catch (error) {
+        setErrorLoading(true)
         notification.error({
           message: `Please note`, description: 'Error reported', placement: 'topLeft',
         });
       }
-    };
+    }
 
+  };
+
+  useEffect(() => {
     notificationRead();
   }, []);
 
@@ -55,7 +77,7 @@ function Notifications({ notifications, errorLoading }) {
         className="flex"
         style={{ height: "calc(100vh - 4.5rem)", overflowY: "auto" }}
       >
-        <Sidebar user={user} />
+        <Sidebar user={userPar} />
         <div className="flex-grow mx-auto max-w-md md:max-w-lg lg:max-w-2xl bg-white p-4 shadow-lg rounded-lg overflow-y-auto">
           <div className="flex items-center ml-2">
             <Title>Notifications ·</Title>
@@ -88,7 +110,7 @@ function Notifications({ notifications, errorLoading }) {
             </div>
           ) : (
             <p className="text-md text-gray-500">
-              {`You don't have any notifications, ${user.name}.`}
+              {`You don't have any notifications, ${userPar?.name}.`}
             </p>
           )}
         </div>
@@ -97,15 +119,6 @@ function Notifications({ notifications, errorLoading }) {
     </div>
   );
 }
-
-Notifications.getInitialProps = async (ctx) => {
-  try {
-    const res = await axios.get(`${baseUrl}/api/notifications`);
-    return { notifications: res.data };
-  } catch (error) {
-    return { errorLoading: true };
-  }
-};
 
 export default Notifications;
 

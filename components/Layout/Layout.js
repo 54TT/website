@@ -1,17 +1,15 @@
 import React from "react";
 import Footer from "./Footer";
 import Header from "./Header";
-// import DrawerPage from './drawer'
-
+import {useRouter} from "next/router";
 const Layout = ({ children }) => {
+  const router = useRouter()
   return (
     <div className={'layout'}>
       <Header />
-        {/*<DrawerPage/>*/}
-        <div style={children?.type?.name==='Home'?{}:{marginLeft:'90px'}}>
+        <div style={router.pathname==='/'?{}:router.pathname==='/statement'?{marginLeft:'20px'}:{marginLeft:'90px'}}>
           {children}
         </div>
-      {/* <Footer /> */}
     </div>
   )
 };

@@ -13,13 +13,11 @@ import { useClickAway } from "react-use";
 import baseUrl from "../../utils/baseUrl";
 import {notification} from "antd";
 
-let cancel;
 
-function ChatSearch({ setShowChatSearch, setChats, chats }) {
+function ChatSearch({ setShowChatSearch, setChats, chats,user }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(false);
-
   const handleChange = async (e) => {
     const { value } = e.target;
     if (value.length === 0) {
@@ -27,29 +25,14 @@ function ChatSearch({ setShowChatSearch, setChats, chats }) {
       setSearchResults([]);
       return;
     }
-
     setSearchTerm(value);
-
     setLoading(true);
     try {
-      //if cancel is true that means an old request is there and cancel() will cancel that pending request
-      cancel && cancel();
-      const CancelToken = axios.CancelToken;
-      const token = cookie.get("token");
-
-      const res = await axios.get(`${baseUrl}/api/search/${value}`, {
-        headers: { Authorization: token },
-        //initialise cancel token. set canceler to 'cancel' variable
-        cancelToken: new CancelToken((canceler) => {
-          cancel = canceler;
-        }),
-      });
-
+      const res = await axios.get(`${baseUrl}/api/search/${value}`, {params:{userId:user.id}});
       if (res.data.length === 0) {
         searchResults.length > 0 && setSearchResults([]);
         return setLoading(false);
       }
-
       setSearchResults(res.data);
     } catch (error) {
       notification.error({

@@ -29,9 +29,9 @@ import dayjs from 'dayjs'
 import {useQuery, ApolloClient, InMemoryCache} from '@apollo/client';
 import {gql} from 'graphql-tag';
 import {HeartFilled, HeartOutlined, RetweetOutlined, MessageOutlined,TwitterOutlined, SendOutlined,ShareAltOutlined,GlobalOutlined} from '@ant-design/icons'
-
+import Bott from "./Bottom";
 const client = new ApolloClient({
-    uri: 'http://192.168.8.39:8000/subgraphs/name/levi/uniswapv2', cache: new InMemoryCache(),
+    uri: 'http://192.168.31.95:8000/subgraphs/name/levi/uniswapv2', cache: new InMemoryCache(),
 });
 
 export default function Home() {
@@ -343,7 +343,7 @@ query NewPair {
                                             {/*        style={{width: '23%'}}>{i.priceUsd ? '$' + formatDecimal(i.priceUsd, 3) : null}</span>*/}
                                             {/*</Tooltip>*/}
                                             <div style={{width: '35%'}}>
-                                                <p style={{textAlign:'center',lineHeight:'1.2'}}>$0</p>
+                                                <p style={{textAlign:'center',lineHeight:'1.3'}}>$0</p>
                                                 <div style={{
                                                     display: 'flex',
                                                     alignItems: 'center',
@@ -513,10 +513,7 @@ query NewPair {
                 </div>
             </div>
             {/*右边*/}
-            <div style={{width: '34%', position: 'relative'}}>
-                {/*<img src={` /Group1.png`} alt="" width={'75px'}*/}
-                {/*     style={{position: 'absolute', top: '-40px', left: '-33px'}}/>*/}
-                <div style={{backgroundColor: 'rgb(251,238,181)', borderRadius: '12px', padding: '10px 8px'}}>
+                <div style={{width: '34%', backgroundColor: 'rgb(251,238,181)', borderRadius: '12px', padding: '10px 8px'}}>
                     <p className={styles['dis']} style={{padding: '0 34px'}}>
                         <span style={{fontSize: '20px', fontWeight: 'bold'}}>Hotly discussed</span>
                         <span style={{fontSize: '20px', color: '#2394D4', cursor: 'pointer'}}>more></span>
@@ -584,35 +581,7 @@ query NewPair {
                         </ul>
                     </div>
                 </div>
-            </div>
         </div>
-        <div className={styles['boxBott']}>
-            <div style={{width: '20%'}}>
-                <img src="/video.png" alt="" width={'50%'} style={{margin: '0 auto'}}/>
-                <p style={{fontSize: '20px', fontWeight: 'bold', textAlign: 'center'}}>Instructional video</p>
-            </div>
-            <p style={{width: '78%', color: 'rgb(98,98,98)', fontSize: '18px', fontWeight: 'bold', lineHeight: 1,}}>All
-                content provided on our website, hyperlinked websites, and applications, forums, blogs, social media
-                accounts and other DEX-related platforms are intended to provide you with general information only. We
-                make no guarantees of any kind regarding our content, including but not limited to the accuracy and
-                timeliness of the information. Nothing we provide should be construed as financial, legal, or any other
-                type of advice on which you specifically rely for any purpose. Any use or reliance you make on our
-                content is entirely at your own risk. What you should do is do your own research, review and analysis
-                and verify our content before relying on it. Trading is a high-risk activity that can result in
-                significant losses, so you should consult your financial advisor before making any decisions. Nothing on
-                our website should be considered an invitation or offer to take any action</p>
-        </div>
-        <div className={styles['boxLogo']}>
-            <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between', width: '20%'
-            }}>
-                <img src="/TwitterX.png" alt="" width={'45px'}/>
-                <img src="/TelegramApp.png" alt="" width={'45px'}/>
-                <img src="/Discord.png" alt="" width={'45px'}/>
-                <img src="/Medium.png" alt="" width={'45px'}/>
-            </div>
-        </div>
+        <Bott/>
     </div>);
 }

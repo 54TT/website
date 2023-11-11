@@ -78,7 +78,7 @@ const Drawer = () => {
         <>
             <Drawer variant="permanent" open={openDrawer} onMouseEnter={handleDrawerOpen}
                     onMouseLeave={handleDrawerClose}>
-                <div onClick={() => push('/')}>
+                <div onClick={() => push('/statement')} style={{cursor:'pointer'}}>
                     <DrawerHeader sx={{
                         minHeight: 48,
                         justifyContent: openDrawer ? 'center' : 'center',

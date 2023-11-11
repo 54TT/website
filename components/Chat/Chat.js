@@ -1,11 +1,11 @@
 import React from "react";
 import styled from "styled-components";
 
-function Chat({ user, text, setTexts, textsWith }) {
-  const isTextFromLoggedInUser = text.sender_id === user.id;
+function Chat({ user, text}) {
+  // const isTextFromLoggedInUser = text.sender_id === user.id;
   return (
     <>
-      {isTextFromLoggedInUser ? (
+      {text?.sender_id === user?.id ||text?.senderId === user?.id ? (
         <TextDiv direction="left">
           <p>{text.text}</p>
         </TextDiv>

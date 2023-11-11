@@ -22,7 +22,6 @@ function Index() {
         setChangeBol(!changeBol)
     }
 
-
     const handleLogin = async () => {
         try {
             const callbackUrl = "/protected"
@@ -82,7 +81,7 @@ function Index() {
                         />
                         <RightSideColumn
                             chatsData={chatsData}
-                            userFollowStats={ session&&session.userFollowStats?session.userFollowStats:{}}
+                            userFollowStats={ session&&session.userFollowStats?session.userFollowStats:{following:[],followers:[]}}
                             user={session&&session.user?session.user:{}}
                         />
                     </main>

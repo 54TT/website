@@ -17,10 +17,13 @@ const {Option} = Select;
 import {get, post, del} from '/utils/axios'
 import _ from 'lodash'
 import dayjs from 'dayjs'
+import cookie from 'js-cookie'
+import {useRouter} from 'next/router'
 
 const Header =   () => {
     const [form] = Form.useForm();
     const { chain } = useNetwork()
+    const router =useRouter()
     const inputRef = useRef(null);
     const [api, contextHolder] = notification.useNotification();
     const {address, isConnected} = useAccount()
@@ -137,7 +140,8 @@ const Header =   () => {
         }
     };
     const handleLogin = async () => {
-        if(!session){
+        const cook = cookie.get('name')
+        if(!session&&!cook){
             try {
                 const message = new SiweMessage({
                     domain: window.location.host,
@@ -163,11 +167,16 @@ const Header =   () => {
                 // });
             }
         }
-
     }
+    // Cookies.set('name', 'value', { expires: 7, path: '' });
     useEffect(() => {
             if (isConnected && !session) {
                 handleLogin()
+            }
+            if(session&&session.address){
+                cookie.set('name', session.address, { expires: 7, path: '/' });
+            }else {
+                cookie.set('name', '');
             }
     }, [session,isConnected])
 
