@@ -44,7 +44,6 @@ export const unfollowUser = async (
                 ),
             }));
         }
-
         return data
     } catch (error) {
         console.log(catchErrors(error));

@@ -9,36 +9,40 @@ import _ from 'lodash'
 import {ApolloClient, InMemoryCache, useQuery} from "@apollo/client";
 import {gql} from "graphql-tag";
 import {useRouter} from "next/router";
+import dayjs from "dayjs";
 const client = new ApolloClient({
-    uri: 'http://192.168.31.95:8000/subgraphs/name/levi/uniswapv2', cache: new InMemoryCache(),
+    uri: 'http://192.168.8.39:8000/subgraphs/name/levi/uniswapv2', cache: new InMemoryCache(),
 });
 export default function NewPair() {
-    const GET_DATA = gql`
-query NewPair {
-  pairs(orderBy: createdAtTimestamp, orderDirection: desc, first: 10) {
-    reserveETH
-    createdAtTimestamp
-    txCount
-    token1 {
-      id
-      name
-      symbol
-    }
-    token0 {
-      id
-      symbol
-      name
-    }
-  }
-}
-`;
     const router= useRouter()
     const [pairs, setPairs] = useState([]);
     const [chainId, setChainId] = useState("ethereum");
     const [timeFilter, setTimeFilter] = useState("24h");
-    const [currentPage, setCurrentPage] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [pairCount, setPairCount] = useState(0);
+    const GET_DATA = gql`
+query liveNewPair {
+  pairs(first: ${rowsPerPage}, skip: ${(currentPage-1)*10}, orderBy: createdAtTimestamp, orderDirection: desc) {
+    createdAtTimestamp
+    id
+    txCount
+    token0 {
+      name
+      symbol
+      id
+    }
+    token1 {
+      name
+      symbol
+      id
+    }
+  }
+   uniswapFactories {
+    pairCount
+  }
+}
+`;
     const dataParams = [
         {
             key: '1',
@@ -63,6 +67,7 @@ query NewPair {
         },
     ];
     const [tableParams, setTableParams] = useState([]);
+    const [tableTotal, setTableTotal] = useState(0);
     const [loadingBool, setLoadingBool] = useState(true);
     const fetchData = async (chainIdParam, timeFilterParam, pageIndex, pageSize) => {
         try {
@@ -152,16 +157,27 @@ query NewPair {
             return number.toFixed(2).replace(/\.?0*$/, '');
         }
     };
+    const {loading, error, data} = useQuery(GET_DATA, {client});
     useEffect(() => {
-        // fetchData(chainId, timeFilter, currentPage, rowsPerPage);
+        if (!loading) {
+            if (data && data?.pairs.length > 0) {
+                setTableParams(data?.pairs)
+                setTableTotal(data?.uniswapFactories[0]?.pairCount)
+                setLoadingBool(false)
+            } else {
+                setTableParams([])
+                setLoadingBool(false)
+            }
+        } else {
+            setLoadingBool(true)
+        }
+    }, [loading,data]);
+const chang=(e,a)=>{
+    setCurrentPage(e)
+    setRowsPerPage(a)
+}
 
-        // const timer = setInterval(() => {
-        //     fetchData(chainId, timeFilter, currentPage, rowsPerPage);
-        // }, 5000);
-
-        // return () => {
-        //     clearInterval(timer);
-        // };
+    useEffect(() => {
     }, [chainId, timeFilter, currentPage, rowsPerPage]);
     const changeImg=(record)=>{
         const data = _.cloneDeep(tableParams)
@@ -178,83 +194,80 @@ query NewPair {
         {
             title: 'Pair',
             dataIndex: 'name',
-            key: 'name',
-            render: (text) => <div style={{display: 'flex', alignItems: 'center'}}>
-                <img src="/avatar.png" alt="" width={'40px'}/>
+            render: (text,record) => <div style={{display: 'flex', alignItems: 'center'}}>
+                <p style={{borderRadius:'50%',fontSize:'20px',width:'40px',lineHeight:'40px',textAlign:"center",backgroundColor:'black',color:'white'}}>{record?.token0?.symbol?.slice(0,1)}</p>
                 <div style={{marginLeft: '15px'}}>
                     <p style={{display: 'flex', alignItems: 'flex-end', lineHeight: '1'}}><span
-                        style={{fontSize: '18px'}}>CAT/</span><span style={{color: 'rgb(98,98,98)'}}>WATTH</span></p>
-                    <p style={{lineHeight:'1',marginTop:'3px'}}>98a09fs0fhsd8f9a0sf</p>
+                        style={{fontSize: '18px'}}>{record?.token0?.symbol?record.token0.symbol+'/':''}</span><span style={{color: 'rgb(98,98,98)'}}>{record?.token1?.symbol?record.token1.symbol:''}</span></p>
+                    <p style={{lineHeight:'1',marginTop:'3px',}}>{record?.id?.slice(0,4)}...{record?.id?.slice(-4)}</p>
                 </div>
             </div>,
         },
         {
             title: 'Price',
             dataIndex: 'age',
-            key: 'age',
             render:()=>{
-                return <p>$1.3435435435</p>
+                return <p>-</p>
             }
         },
         {
             title: '%24',
             dataIndex: 'address',
-            key: 'address',
-            sorter: {
-                compare: (a, b) => a.chinese - b.chinese,
-            },
+            // sorter: {
+            //     compare: (a, b) => a.chinese - b.chinese,
+            // },
             render:()=>{
-                return <p style={{lineHeight:1,width:'84%',backgroundColor:'rgb(188,238,125)',textAlign:'center',padding:'5px 0',borderRadius:'5px'}}>6345%</p>
+                return <p style={{lineHeight:1,width:'84%',backgroundColor:'rgb(188,238,125)',textAlign:'center',padding:'5px 0',borderRadius:'5px'}}>-</p>
             }
         },
         {
             title: 'Created',
-            key: 'tags',
             dataIndex: 'tags',
-            sorter: {
-                compare: (a, b) => a.chinese - b.chinese,
-            },
-            render:()=>{
-                return <span>3 year</span>
+            // sorter: {
+            //     compare: (a, b) => a.chinese - b.chinese,
+            // },
+            render:(_,record)=>{
+                return <span>{record?.createdAtTimestamp?dayjs.unix(Number(record.createdAtTimestamp)).format('YYYY-MM-DD HH:mm:ss'):''}</span>
             }
         },
         {
             title: 'Volume',
-            key: 'action',
-            sorter: {
-                compare: (a, b) => a.chinese - b.chinese,
-            },
+            dataIndex: 'tags',
+            // sorter: {
+            //     compare: (a, b) => a.chinese - b.chinese,
+            // },
             render:()=>{
-                return <span>$218.06M</span>
+                return <span>-</span>
             }
         },
         {
-            title: 'Swaps',
-            key: 'action',
-            sorter: {
-                compare: (a, b) => a.chinese - b.chinese,
-            },   render:()=>{
-                return <span>4.58K</span>
+            title: 'txCount',
+            dataIndex: 'txCount',
+            // sorter: {
+            //     compare: (a, b) => a.chinese - b.chinese,
+            // },
+            render:(text)=>{
+                return <span>{text?text:''}</span>
             }
         },
         {
             title: 'Liquidity',
-            key: 'action',
-            sorter: {
-                compare: (a, b) => a.chinese - b.chinese,
-            },
+            dataIndex: 'liquidity',
+            // sorter: {
+            //     compare: (a, b) => a.chinese - b.chinese,
+            // },
             render:()=>{
-                return <span>134.53M</span>
+                return <span>-</span>
             }
         },
         {
             title: 'T.M.Cap',
             key: 'action',
-            sorter: {
-                compare: (a, b) => a.chinese - b.chinese,
-            },
+            // sorter: {
+            //     compare: (a, b) => a.chinese - b.chinese,
+            // },
             render:()=>{
-                return <span>$65.32B</span>
+                return <span>-</span>
             }
         },
         {
@@ -266,20 +279,6 @@ query NewPair {
             }
         },
     ];
-    const {loading, error, data} = useQuery(GET_DATA, {client});
-    useEffect(() => {
-        if (!loading) {
-            if (data && data?.pairs.length > 0) {
-                setTableParams(data?.pairs)
-                setLoadingBool(false)
-            } else {
-                setTableParams([])
-                setLoadingBool(false)
-            }
-        } else {
-            setLoadingBool(true)
-        }
-    }, [data, loading])
     return (
         <div style={{marginRight: '20px'}}>
             <Card style={{
@@ -297,9 +296,9 @@ query NewPair {
                         <img src="/wallet.png" alt="" width={'70px'}/>
                         <span style={{fontWeight: 'bold', fontSize: '26px'}}>COMING SOON</span>
                     </div>
-                    <Pagination defaultCurrent={1} total={50} pageSize={10}/>
+                    <Pagination defaultCurrent={1} current={currentPage} onChange={chang} total={tableTotal} pageSize={rowsPerPage}/>
                 </div>
-                <Table rowKey={(i)=> i?.token0?.id}    onRow={(record) => {
+                <Table rowKey={(i)=> i.id+i?.token0?.id+i?.token1?.id+i?.token0?.name}    onRow={(record) => {
                     return {
                         onClick: (event) => {
                             // const data  = record.pairAddress

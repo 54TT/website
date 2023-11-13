@@ -26,12 +26,25 @@ import {
     Drawer
 } from 'antd'
 import dayjs from 'dayjs'
+import duration from   'dayjs/plugin/duration'
+dayjs.extend(duration)
+
 import {useQuery, ApolloClient, InMemoryCache} from '@apollo/client';
 import {gql} from 'graphql-tag';
-import {HeartFilled, HeartOutlined, RetweetOutlined, MessageOutlined,TwitterOutlined, SendOutlined,ShareAltOutlined,GlobalOutlined} from '@ant-design/icons'
+import {
+    HeartFilled,
+    HeartOutlined,
+    RetweetOutlined,
+    MessageOutlined,
+    TwitterOutlined,
+    SendOutlined,
+    ShareAltOutlined,
+    GlobalOutlined
+} from '@ant-design/icons'
 import Bott from "./Bottom";
+
 const client = new ApolloClient({
-    uri: 'http://192.168.31.95:8000/subgraphs/name/levi/uniswapv2', cache: new InMemoryCache(),
+    uri: 'http://192.168.8.39:8000/subgraphs/name/levi/uniswapv2', cache: new InMemoryCache(),
 });
 
 export default function Home() {
@@ -99,7 +112,7 @@ query NewPair {
             if (res.status === 200) {
                 let data = res.data
                 if (name === 'featured') {
-                    if (data &&data.data.length>0) {
+                    if (data && data.data.length > 0) {
                         const pairArray = data.data.map(item => item.pairAddress).join(",");
                         const pairInfosResponse = await axios.get(`https://api.dexscreener.com/latest/dex/pairs/ethereum/${pairArray}`);
                         if (pairInfosResponse.status === 200) {
@@ -115,7 +128,7 @@ query NewPair {
                     }
                 } else if (name === 'launch') {
                     setLaunchBol(true)
-                    const { data:{data}} = res
+                    const {data: {data}} = res
                     setLaunch(data && data.length > 0 ? data : [])
                 }
             }
@@ -149,23 +162,24 @@ query NewPair {
         },
         {
             title: 'Create Time', render: (text, record) => {
-                return <p>{record?.pairCreatedAt ? getRelativeTimeDifference(formatDateTime(record.pairCreatedAt)) : ''}</p>
+                const data = record.pairCreatedAt.toString().length > 10 ? Number(record.pairCreatedAt.toString().slice(0, 10)) : record.pairCreatedAt
+                return <p>{record?.pairCreatedAt ? getRelativeTimeDifference(formatDateTime(data)) : ''}</p>
             }
         },
         {
-            title: 'PRICECHANGE', render: (text, record) => {
+            title: <span>{'% ' + time}</span>, render: (text, record) => {
                 return <p
-                    style={{color: record?.priceChange[time] > 0 ? 'green' : 'red'}}>{record?.priceChange[time]}</p>
+                    style={{color: record?.priceChange[time] > 0 ? 'green' : 'red'}}>{record?.priceChange[time] ? record.priceChange[time] : 0}</p>
             }
         },
         {
             title: 'TXNS', render: (text, record) => {
-                return <p>{(record?.txns[time]?.buys + record?.txns[time]?.sells) ? autoConvert(record?.txns[time]?.buys + record?.txns[time]?.sells) : ''}</p>
+                return <p>{(record?.txns[time]?.buys + record?.txns[time]?.sells) ? autoConvert(record?.txns[time]?.buys + record?.txns[time]?.sells) : 0}</p>
             }
         },
         {
             title: 'VOLUME', render: (text, record) => {
-                return <p>{record?.volume[time] ? autoConvert(record?.volume[time]) : ''}</p>
+                return <p>{record?.volume[time] ? autoConvert(record?.volume[time]) : 0}</p>
             }
         },
         {
@@ -237,7 +251,6 @@ query NewPair {
     const loveChange = () => {
         setLoveChange(!loveChanges)
     }
-
     function getDateTime(dateTime, format = 'DD:HH:mm') {
         // YYYY-MM-DD:HH:mm:ss
         return dayjs(dateTime).format(format);
@@ -260,9 +273,15 @@ query NewPair {
                 break;
         }
     }
+
+    // console.log(dayjs('2023-11-01T08:25:26.000Z'))
+    // console.log(dayjs())
+   const aaa =  dayjs().diff(dayjs("2023-11-01T08:25:26.000Z"), 'minutes')
+    // console.log(aaa)
+    // console.log( dayjs("2023-11-01T08:25:26.000Z").isAfter(dayjs()))
     const pushRouter = (name) => {
         if (name === 'live') {
-            router.push('/launch')
+            router.push('/newPair')
         } else if (name === 'swap') {
             router.push('/featured')
         } else {
@@ -277,9 +296,24 @@ query NewPair {
         } else if (e === '6h') {
             setTime('h6')
         } else if (e === '24h') {
-            setTime('m24')
+            setTime('h24')
         }
     }
+
+const [diffTime,setDiffTime]= useState(null)
+    let timer=null
+    useEffect(() => {
+        // 开启定时器
+        // if (diffTime == 0) {
+            // window.clearInterval(timer);
+            // console.log("清除定时器");
+        // }
+        // if (timer) return;
+        // timer = window.setInterval(() => {
+        //     setDiffTime((diffTime) => diffTime - 1);
+        // }, 10000);
+    }, [diffTime]);
+
     return (<div className={styles['box']}>
         <div className={styles['boxPar']}>
             {/*左边*/}
@@ -343,7 +377,7 @@ query NewPair {
                                             {/*        style={{width: '23%'}}>{i.priceUsd ? '$' + formatDecimal(i.priceUsd, 3) : null}</span>*/}
                                             {/*</Tooltip>*/}
                                             <div style={{width: '35%'}}>
-                                                <p style={{textAlign:'center',lineHeight:'1.3'}}>$0</p>
+                                                <p style={{textAlign: 'center', lineHeight: '1.3'}}>$0</p>
                                                 <div style={{
                                                     display: 'flex',
                                                     alignItems: 'center',
@@ -382,11 +416,16 @@ query NewPair {
                                        onClick={() => pushRouter('coming')}>more></p>
                                 </li>
                                 {
-                                    launchBol?launch.length > 0 ? launch.map((i, index) => {
+                                    launchBol ? launch.length > 0 ? launch.map((i, index) => {
                                         if (index > 2) {
                                             return ''
                                         } else {
-                                            return <li className={styles['li']} key={index}>
+                                            if(i.presale_time&&dayjs(i.presale_time).isAfter(dayjs())){
+                                                // const data = dayjs(i.presale_time).diff(dayjs(), "seconds")
+                                                // console.log(data)
+                                                // setDiffTime(data)
+                                            }
+                                            return <li className={`${styles.li} ${dayjs(i.presale_time).isAfter(dayjs())?styles.be:styles.de}`} style={dayjs(i.presale_time).isAfter(dayjs())?{backgroundColor:' rgb(188, 238, 125)'}:{}} key={index}>
                                                 <p style={{
                                                     textAlign: 'center',
                                                     width: '40px',
@@ -413,15 +452,12 @@ query NewPair {
                                                     }}>
                                                         {/*<img src={` /Website.png`} alt={`${i.website}`}*/}
                                                         {/*     width={'25%'}/>*/}
-                                                        <GlobalOutlined style={{cursor: 'pointer',fontSize:'20px'}} onClick={() => push(i, 'one')}/>
-                                                        <TwitterOutlined style={{cursor: 'pointer',fontSize:'20px'}} onClick={() => push(i, 'two')}/>
-                                                        <SendOutlined style={{cursor: 'pointer',fontSize:'20px'}} onClick={() => push(i, 'three')}/>
-                                                        {/*<img src={` /TwitterCircled.png`} alt={`${i.twitter}`}*/}
-                                                        {/*     onClick={() => push(i, 'two')} width={'25%'}*/}
-                                                        {/*     style={{cursor: 'pointer'}}/>*/}
-                                                        {/*<img src={` /Telegram.png`} alt={`${i.telegram}`}*/}
-                                                        {/*     onClick={() => push(i, 'three')} width={'25%'}*/}
-                                                        {/*     style={{cursor: 'pointer'}}/>*/}
+                                                        <GlobalOutlined style={{cursor: 'pointer', fontSize: '20px'}}
+                                                                        onClick={() => push(i, 'one')}/>
+                                                        <TwitterOutlined style={{cursor: 'pointer', fontSize: '20px'}}
+                                                                         onClick={() => push(i, 'two')}/>
+                                                        <SendOutlined style={{cursor: 'pointer', fontSize: '20px'}}
+                                                                      onClick={() => push(i, 'three')}/>
                                                     </div>
                                                 </div>
                                                 {/*<div style={{width: '50%'}}>*/}
@@ -442,16 +478,24 @@ query NewPair {
                                                 {/*    </div>*/}
                                                 {/*</div>*/}
                                                 <div>
-                                                    <p style={{
-                                                        lineHeight: 1,
-                                                        letterSpacing: '1px',
-                                                        textAlign: 'center'
-                                                    }}>Pre-sale ends</p>
-                                                    <div style={{display: 'flex', alignItems: 'center', lineHeight: 1}}>
-                                                        <img src={`/Time.png`} alt="" width={'22px'}/>
-                                                        <span
-                                                            style={{letterSpacing: '2px', fontSize: '18px'}}>{i.presale_time?dayjs(i.presale_time).format('hh:mm:ss'):''}</span>
-                                                    </div>
+                                                    {
+                                                        dayjs(i.presale_time).isAfter(dayjs())?<div>
+                                                            <p style={{
+                                                                lineHeight: 1,
+                                                                letterSpacing: '1px',
+                                                                textAlign: 'center'
+                                                            }}>Pre-sale ends</p>
+                                                            <div style={{display: 'flex', alignItems: 'center', lineHeight: 1}}>
+                                                                <img src={`/Time.png`} alt="" width={'22px'}/>
+                                                                <span
+                                                                    style={{
+                                                                        letterSpacing: '2px',
+                                                                        fontSize: '18px'
+                                                                    }}>{i.presale_time ? dayjs(i.presale_time).format('hh:mm:ss') : ''}</span>
+                                                            </div>
+                                                        </div>:''
+                                                    }
+
                                                     <p style={{
                                                         lineHeight: 1,
                                                         letterSpacing: '1px',
@@ -460,14 +504,22 @@ query NewPair {
                                                     <div style={{display: 'flex', alignItems: 'center', lineHeight: 1}}>
                                                         <img src={` /Time.png`} alt="" width={'22px'}/>
                                                         <span
-                                                            style={{letterSpacing: '2px', fontSize: '18px'}}>{i.launch_time?dayjs(i.launch_time).format('hh:mm:ss'):''}</span>
+                                                            style={{
+                                                                letterSpacing: '2px',
+                                                                fontSize: '18px'
+                                                            }}>{i.launch_time ? dayjs(i.launch_time).format('hh:mm:ss') : ''}</span>
                                                     </div>
                                                 </div>
                                             </li>
                                         }
-                                    }) : []: [1, 2, 3, ].map((i, index) => {
+                                    }) : [] : [1, 2, 3,].map((i, index) => {
                                         return <li key={index}>
-                                            <div style={{display: 'flex', alignItems: 'center', width: '100%',lineHeight:'50px'}}>
+                                            <div style={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                width: '100%',
+                                                lineHeight: '50px'
+                                            }}>
                                                 <Skeleton.Avatar active={true} size={'default'} shape={'circle'}
                                                                  style={{marginRight: '15px'}}/>
                                                 <Skeleton.Input active={true} size={'default'} block={true}/>
@@ -497,13 +549,22 @@ query NewPair {
                         <div className={styles['dis']}>
                             {/*时间选择*/}
                             <Segmented options={['5m', '1h', '6h', '24h']} onChange={changSeg} defaultValue={'24h'}/>
-                            <p style={{color: '#2394D4', cursor: 'pointer', fontSize: '20px',marginLeft:'10px'}}
+                            <p style={{color: '#2394D4', cursor: 'pointer', fontSize: '20px', marginLeft: '10px'}}
                                onClick={() => pushRouter('swap')}>more></p>
                         </div>
                     </div>
                     {/*表格*/}
-                    <Table columns={columns} rowKey={(record) => record?.baseToken?.address+record?.quoteToken?.address} loading={loadingBool}
-                           className={'tablesss'}
+                    <Table columns={columns}
+                           rowKey={(record) => record?.baseToken?.address + record?.quoteToken?.address}
+                           loading={loadingBool}
+                           className={'tablesss'} onRow={(record) => {
+                        return {
+                            onClick: (event) => {
+                                const data = record.pairAddress
+                                router.push(`/details?pairAddress=${data}`,)
+                            },
+                        };
+                    }}
                            dataSource={featured.length > 5 ? featured.slice(0, 5) : featured}
                            pagination={false}/>
                     <div style={{
@@ -513,74 +574,74 @@ query NewPair {
                 </div>
             </div>
             {/*右边*/}
-                <div style={{width: '34%', backgroundColor: 'rgb(251,238,181)', borderRadius: '12px', padding: '10px 8px'}}>
-                    <p className={styles['dis']} style={{padding: '0 34px'}}>
-                        <span style={{fontSize: '20px', fontWeight: 'bold'}}>Hotly discussed</span>
-                        <span style={{fontSize: '20px', color: '#2394D4', cursor: 'pointer'}}>more></span>
-                    </p>
-                    <div style={{
-                        backgroundColor: 'rgb(248,229,161)', padding: '16px', borderRadius: '12px', marginTop: '13px'
-                    }}>
-                        <ul>
-                            <li style={{backgroundColor: 'white', padding: '10px', borderRadius: '12px'}}>
-                                <div style={{
-                                    display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '38%'
-                                }}>
-                                    <img src={` /Ellipse.png`} alt="" width={'35px'}/>
-                                    <div style={{width: '65%'}}>
-                                        <div style={{
-                                            display: 'flex',
-                                            lineHeight: '1',
-                                            alignItems: 'center',
-                                            justifyContent: 'space-between',
-                                        }}><span>name</span>
-                                            <span style={{color: '#F8E5A1', fontSize: '14px'}}>时间</span></div>
-                                        <div style={{
-                                            display: 'flex',
-                                            lineHeight: '1',
-                                            marginTop: '3px',
-                                            color: '#666666',
-                                            alignItems: 'center',
-                                        }}>name to<span style={{color: '#2294D4', marginLeft: '5px'}}> 时间</span>
-                                            {/*<span style={{color: '#F8E5A1', fontSize: '14px'}}></span>*/}
-                                        </div>
+            <div style={{width: '34%', backgroundColor: 'rgb(251,238,181)', borderRadius: '12px', padding: '10px 8px'}}>
+                <p className={styles['dis']} style={{padding: '0 34px'}}>
+                    <span style={{fontSize: '20px', fontWeight: 'bold'}}>Hotly discussed</span>
+                    <span style={{fontSize: '20px', color: '#2394D4', cursor: 'pointer'}}>more></span>
+                </p>
+                <div style={{
+                    backgroundColor: 'rgb(248,229,161)', padding: '16px', borderRadius: '12px', marginTop: '13px'
+                }}>
+                    <ul>
+                        <li style={{backgroundColor: 'white', padding: '10px', borderRadius: '12px'}}>
+                            <div style={{
+                                display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '38%'
+                            }}>
+                                <img src={` /Ellipse.png`} alt="" width={'35px'}/>
+                                <div style={{width: '65%'}}>
+                                    <div style={{
+                                        display: 'flex',
+                                        lineHeight: '1',
+                                        alignItems: 'center',
+                                        justifyContent: 'space-between',
+                                    }}><span>name</span>
+                                        <span style={{color: '#F8E5A1', fontSize: '14px'}}>时间</span></div>
+                                    <div style={{
+                                        display: 'flex',
+                                        lineHeight: '1',
+                                        marginTop: '3px',
+                                        color: '#666666',
+                                        alignItems: 'center',
+                                    }}>name to<span style={{color: '#2294D4', marginLeft: '5px'}}> 时间</span>
+                                        {/*<span style={{color: '#F8E5A1', fontSize: '14px'}}></span>*/}
                                     </div>
                                 </div>
-                                <p style={{fontSize: '14px', margin: '10px 0 7px 0'}}>发的文案啦</p>
-                                <img src={` /Rectangle.png`} alt="" width={'100%'}/>
-                                <ul style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'space-between',
-                                    padding: '0 5px'
-                                }}>
-                                    <li style={{color: 'rgb(83,100 ,113)'}}>
-                                        {/*  信息*/}
-                                        <MessageOutlined style={{cursor: 'pointer'}}/>
-                                        <span style={{marginLeft: '10px'}}>21</span>
-                                    </li>
-                                    <li>
-                                        {/*旋转*/}
-                                        <RetweetOutlined style={{cursor: 'pointer'}}/>
-                                        <span style={{marginLeft: '10px'}}>21</span>
-                                    </li>
-                                    <li>
-                                        {/*爱心*/}
-                                        {!loveChanges ?
-                                            <HeartOutlined style={{cursor: 'pointer'}} onClick={loveChange}/> :
-                                            <HeartFilled style={{cursor: 'pointer', color: 'red'}}
-                                                         onClick={loveChange}/>}
-                                        <span style={{marginLeft: '10px'}}>21</span>
-                                    </li>
-                                    <li>
-                                        {/*  分享*/}
-                                        <ShareAltOutlined style={{cursor: 'pointer'}}/>
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </div>
+                            </div>
+                            <p style={{fontSize: '14px', margin: '10px 0 7px 0'}}>发的文案啦</p>
+                            <img src={` /Rectangle.png`} alt="" width={'100%'}/>
+                            <ul style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                padding: '0 5px'
+                            }}>
+                                <li style={{color: 'rgb(83,100 ,113)'}}>
+                                    {/*  信息*/}
+                                    <MessageOutlined style={{cursor: 'pointer'}}/>
+                                    <span style={{marginLeft: '10px'}}>21</span>
+                                </li>
+                                <li>
+                                    {/*旋转*/}
+                                    <RetweetOutlined style={{cursor: 'pointer'}}/>
+                                    <span style={{marginLeft: '10px'}}>21</span>
+                                </li>
+                                <li>
+                                    {/*爱心*/}
+                                    {!loveChanges ?
+                                        <HeartOutlined style={{cursor: 'pointer'}} onClick={loveChange}/> :
+                                        <HeartFilled style={{cursor: 'pointer', color: 'red'}}
+                                                     onClick={loveChange}/>}
+                                    <span style={{marginLeft: '10px'}}>21</span>
+                                </li>
+                                <li>
+                                    {/*  分享*/}
+                                    <ShareAltOutlined style={{cursor: 'pointer'}}/>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
                 </div>
+            </div>
         </div>
         <Bott/>
     </div>);

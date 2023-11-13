@@ -14,11 +14,13 @@ import cookie from "js-cookie";
 import {Facebook} from "react-content-loader";
 import {AppleOutlined, LoadingOutlined} from '@ant-design/icons'
 import {useSession} from "next-auth/react";
+import _ from 'lodash'
 
 function ChatsPage() {
     const [chats, setChats] = useState([]);
     const [userPar, setUserPar] = useState({});
     const [userFollowStats, setLoggedUserFollowStats] = useState([]);
+    const [userFoBolts, setLoggeBols] = useState(false);
     const {data: session, status} = useSession()
     useEffect(() => {
         if (session && session.user) {
@@ -63,7 +65,6 @@ function ChatsPage() {
             socket.current = io(baseUrl); //establishing connection with server;
         }
         if (socket.current) {
-            //to send data from socket, we use emit
             socket.current.emit("join", {userId: userPar.id});
             socket.current.on("connectedUsers", ({users}) => {
                 setConnectedUsers(users);
@@ -75,25 +76,15 @@ function ChatsPage() {
             !router.query.chat &&
             router.pathname === "/chats"
         ) {
-            if (!cookie.get("token")) {
-                return;
-            }
             router.push(`/chats?chat=${chats[0].textsWith}`, undefined, {
                 shallow: true,
             });
             //shallow is used to push a page on the router stack without refreshing
         }
-
-        // cleanup not needed in v4.0.1
-        // return () => {
-        //   //cleanup function to disconnect the user. This is called on component unmount
-        //   // if (socket.current) {
-        //   //   socket.current.emit("disconnect");
-        //   //   socket.current.off(); //this removes the event listener
-        //   // }
-        //   console.log("exiting chat");
-        // };
-    }, []);
+        if (userPar && userPar.id) {
+            postPar();
+        }
+    }, [userPar]);
 
     //LOAD TEXTS useEffect. Runs whenever router.query.chat changes, so basically whenever the user clicks on a different user
     useEffect(() => {
@@ -104,7 +95,6 @@ function ChatsPage() {
                     textsWith: router.query.chat,
                 });
                 socket?.current.on("textsLoaded", ({chat, textsWithDetails}) => {
-                    //in the case when previous chat isnt there with a user and logged in user clicks on that user from search
                     if (textsWithDetails) {
                         setTexts([]);
                         setChatUserData({
@@ -113,7 +103,7 @@ function ChatsPage() {
                         });
                         openChatId.current = router.query?.chat;
                     } else {
-                        setTexts(chat?.texts&&chat.texts.length>0?chat?.texts:[]);
+                        setTexts(chat?.texts && chat.texts.length > 0 ? chat?.texts : []);
                         scrollToBottom();
                         setChatUserData({
                             name: chat?.textsWith.name,
@@ -128,7 +118,6 @@ function ChatsPage() {
             }
         }
     }, [router.query.chat, userPar]);
-
     const sendText = (e, text) => {
         e.preventDefault();
         if (text) {
@@ -148,7 +137,6 @@ function ChatsPage() {
     useEffect(() => {
         if (socket.current) {
             socket.current.on("textSent", ({newText}) => {
-                console.log(newText)
                 if (newText.receiverId === openChatId?.current) {
                     setTexts((prev) => [...prev, newText]);
                     setChats((prev) => {
@@ -162,9 +150,6 @@ function ChatsPage() {
                 }
             });
             socket.current.on("newTextReceived", async ({newText, userDetails}) => {
-                console.log(1111111111111111)
-                console.log(newText)
-                //if router.query.message is same as id of the sender of the new text received, i.e. when the receiver has chat opened and sender sends a text
                 if (newText?.senderId === openChatId?.current) {
                     setTexts((prev) => [...prev, newText]);
                     setChats((prev) => {
@@ -202,7 +187,13 @@ function ChatsPage() {
                 }
             });
         }
-    }, []);
+        return () => {
+            if (socket.current) {
+                socket.current.off("textSent");
+                socket.current.off("newTextReceived");
+            }
+        };
+    }, [newText, socket,session]);
     const endOfMessagesRef = useRef(null);
     const scrollToBottom = () => {
         endOfMessagesRef.current.scrollIntoView({
@@ -224,12 +215,6 @@ function ChatsPage() {
 
         }
     }
-    useEffect(() => {
-        if (userPar && userPar.id) {
-            postPar();
-        }
-    }, []);
-
     return (
         <div className="bg-gray-100">
             <main className="flex" style={{height: "calc(100vh - 4.5rem)"}}>
@@ -319,7 +304,7 @@ function ChatsPage() {
                             </>
                         </div>
                     </div>
-                    {router.query.chat && (
+                    {router.query?.chat && (
                         <div
                             style={{
                                 minWidth: "27rem",

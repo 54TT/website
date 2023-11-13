@@ -83,19 +83,14 @@
 }
 
 .rightUl .li {
-    background-color: rgb(188, 238, 125);
-}
-
-.rightUl .li:nth-child(even) {
+    height: 92px;
     background-color: rgb(253, 213, 62);
 }
-
-.rightUl .li:nth-child(even):hover {
-    background-color: rgb(254, 239, 146);
-}
-
-.rightUl .li:nth-child(odd):hover {
+.rightUl .be:hover {
     background-color: rgb(208, 255, 149);
+}
+.rightUl .de:hover {
+    background-color: rgb(254, 239, 146);
 }
 
 .rightUl > li:last-child{

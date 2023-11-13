@@ -25,12 +25,10 @@ import InfoBox from "../components/HelperComponents/InfoBox";
 import { EmojiSadIcon } from "@heroicons/react/outline";
 import { Facebook as FacebookLoader } from "react-content-loader";
 import {useSession} from "next-auth/react";
-// https://images.pexels.com/photos/114979/pexels-photo-114979.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260
 // https://images.pexels.com/photos/552789/pexels-photo-552789.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260
 
 function ProfilePage() {
   const {data: session, status} = useSession()
-
   const didMountRef = useRef(false);
   const isMountRef = useRef(false);
   const coverImageRef = useRef(null);
@@ -38,7 +36,6 @@ function ProfilePage() {
   const [user,setUser] =useState(null)
   const [profile,setProfile] =useState(null)
   const [userFollowStats, setUserFollowStats] = useState(null);
-
   const [coverPic, setCoverPic] = useState(null);
   const [coverPicPreview, setCoverPicPreview] = useState(null);
   const [profilePic, setProfilePic] = useState(null);
@@ -182,9 +179,9 @@ function ProfilePage() {
         className={` ${
           !isUserOnOwnAccount ? "min-h-[32.4rem]" : "min-h-[29.3rem]"
         }  shadow-lg`}
-        style={{ fontFamily: "Inter", backgroundColor: "white" }}
+        style={{ fontFamily: "Inter", backgroundColor: "white"}}
       >
-        <div className="mx-auto max-w-lg sm:max-w-xl md:max-w-3xl lg:max-w-[1000px]">
+        <div className="mx-auto max-w-lg sm:max-w-xl md:max-w-3xl lg:max-w-[1000px]" >
           <div style={{ position: "relative" }}>
             <input
               type="file"
@@ -195,11 +192,10 @@ function ProfilePage() {
               style={{ display: "none" }}
             ></input>
             {coverPicPreview !== null ? (
-              <CoverImage src={coverPicPreview} alt="cover pic" />
+              <img src={coverPicPreview} alt="cover pic" width={'100%'} />
             ) : (
-              <CoverImage src={profile?.coverPicUrl} alt="cover pic" />
+              <img src={profile?.cover_pic_url} alt="cover pic" width={'100%'} />
             )}
-
             <input
               type="file"
               accept="image/*"
@@ -211,9 +207,8 @@ function ProfilePage() {
             {profilePicPreview !== null ? (
               <ProfileImage src={profilePicPreview} alt="profilepic" />
             ) : (
-              <ProfileImage src={profile?.profilePicUrl} alt="profilepic" />
+              <img src={profile?.profile_pic_url} alt="profilepic"  style={{width:'100px',border:'2px solid #f7f5ff',position:'absolute',borderRadius:'50%',top:'83%',left:'42%',}}/>
             )}
-
             <Name className="font-semibold text-3xl">{profile?.name}</Name>
             {/* <Username className="text-xl font-normal text-gray-600">{`@${profile.user.username}`}</Username> */}
 
@@ -275,7 +270,7 @@ function ProfilePage() {
       </div>
       <div
         className="bg-gray-100 w-full"
-        style={{ marginTop: ".18rem", minHeight: "calc(100vh - 26rem)" }}
+        style={{ marginTop: ".18rem", minHeight: "calc(100vh - 26rem)" ,paddingTop:'60px'}}
       >
         <div className=" md:flex space-x-4 mx-auto max-w-[30rem] sm:max-w-xl md:max-w-3xl lg:max-w-[1000px]">
           <div
@@ -374,7 +369,7 @@ const CameraIconDiv = styled.div`
   background-color: white;
   box-shadow: 0.5px 0.5px 0.5px 0.5px #ccc;
   position: absolute;
-  top: 119%;
+  top: 104%;
   left: 55.5%;
   transform: translate(-50%, -50%);
   border-radius: 50%;
@@ -392,7 +387,7 @@ const EditCoverPicDiv = styled.div`
 
 const Name = styled.p`
   position: absolute;
-  top: 135%;
+  top: 110%;
   left: 50%;
   transform: translate(-50%, -50%);
   font-family: inherit;

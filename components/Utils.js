@@ -1,6 +1,7 @@
 const axios = require('axios');
 const dayjs = require('dayjs');
-import moment from 'moment'
+var duration = require('dayjs/plugin/duration')
+dayjs.extend(duration)
 const dotenv = require('dotenv');
 dotenv.config();
 
@@ -157,12 +158,12 @@ function formatDateTime(dateTime, format = 'YYYY-MM-DD:HH:mm:ss') {
 
 function getRelativeTimeDifference(dateTime) {
   const now = dayjs();
-  const targetDateTime = dayjs(dateTime);
-
+  const targetDateTime =dayjs(dateTime)
   if (targetDateTime.isSame(now)) {
     return 'Just now';
   } else if (targetDateTime.isAfter(now)) {
-    const duration = moment.duration(targetDateTime.diff(now));
+    // aaaa
+    const duration = dayjs.duration(targetDateTime.diff(now));
     if (duration.asYears() >= 1) {
       return `${Math.floor(duration.asYears())} years after`;
     } else if (duration.asMonths() >= 1) {
@@ -177,7 +178,8 @@ function getRelativeTimeDifference(dateTime) {
       return 'Just now';
     }
   } else {
-    const duration = moment.duration(now.diff(targetDateTime));
+    // aaaaa
+    const duration = dayjs.duration(now.diff(targetDateTime));
     if (duration.asYears() >= 1) {
       return `${Math.floor(duration.asYears())} years ago`;
     } else if (duration.asMonths() >= 1) {

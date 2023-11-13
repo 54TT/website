@@ -140,7 +140,7 @@ const Header =   () => {
         }
     };
     const handleLogin = async () => {
-        const cook = cookie.get('name')
+        const cook = window.localStorage.getItem('name')
         if(!session&&!cook){
             try {
                 const message = new SiweMessage({
@@ -170,15 +170,22 @@ const Header =   () => {
     }
     // Cookies.set('name', 'value', { expires: 7, path: '' });
     useEffect(() => {
-            if (isConnected && !session) {
+            if (!session) {
                 handleLogin()
             }
             if(session&&session.address){
-                cookie.set('name', session.address, { expires: 7, path: '/' });
-            }else {
-                cookie.set('name', '');
+                window.localStorage.setItem('name', session.address);
             }
     }, [session,isConnected])
+    const set=()=>{
+        window.localStorage.setItem('name','')
+        const a =window.localStorage.getItem('name')
+        if(!a){
+            disconnect()
+            signOut()
+        }
+
+    }
 
     const items = [
         {
@@ -195,11 +202,7 @@ const Header =   () => {
         {
             key: '2',
             label: (
-                <span onClick={(e) => {
-                    e.preventDefault()
-                    disconnect()
-                    signOut()
-                }}>
+                <span onClick={set}>
             Sign out
           </span>
             ),

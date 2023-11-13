@@ -16,7 +16,7 @@ import {useRouter} from "next/router";
 import {notification} from "antd";
 import {LoadingOutlined} from '@ant-design/icons'
 
-function RightSideColumn({user, chatsData, userFollowStats}) {
+function RightSideColumn({user, chatsData, userFollowStats,change}) {
     const [bol, setBol] = useState(false)
     const chang = () => {
         setBol(!bol)
@@ -25,34 +25,24 @@ function RightSideColumn({user, chatsData, userFollowStats}) {
     const [loggedInUserFollowStats, setLoggedInUserFollowStats] =
         useState([]);
     useEffect(() => {
-        if (userFollowStats.following.length > 0) {
+        getUsersToFollow();
+        if (userFollowStats&&userFollowStats.following&&userFollowStats.following.length > 0) {
             setLoggedInUserFollowStats(userFollowStats.following)
         } else {
             setLoggedInUserFollowStats([])
         }
-    }, [userFollowStats])
-
-
-    useEffect(() => {
-        getUsersToFollow();
-    }, [bol])
+    }, [bol,userFollowStats])
     const [usersToFollow, setUsersToFollow] = useState([]);
-    const [loadingWhoToF, setLoadingWhoToF] = useState(false);
     const getUsersToFollow = async () => {
         try {
-            setLoadingWhoToF(true);
             const res = await axios.get(
                 `${baseUrl}/api/profile/home/youMayLikeToFollow`,
-                {
-                    headers: {Authorization: cookie.get("token")},
-                }
             );
             if (res && res.data) {
                 setUsersToFollow(res.data);
             } else {
                 setUsersToFollow([]);
             }
-            setLoadingWhoToF(false);
         } catch (error) {
             notification.error({
                 message: `Please note`, description: 'Error reported', placement: 'topLeft',
@@ -74,8 +64,6 @@ function RightSideColumn({user, chatsData, userFollowStats}) {
                             (loggedInUserFollowing) =>
                                 loggedInUserFollowing?.user?.id === fol?.id
                         ).length > 0 || '';
-
-
                     return (
                         <div key={fol.id}>
                             {fol?.id !== user?.id && (
@@ -94,19 +82,9 @@ function RightSideColumn({user, chatsData, userFollowStats}) {
                                             >
                                                 {fol?.name.length > 7 ? fol.name.slice(0, 3) + '...' + fol.name.slice('-3') : fol.name}
                                             </p>
-                                            {loadingWhoToF ? (
-                                                <div
-                                                    style={{
-                                                        marginLeft: "1.5rem",
-                                                        marginTop: "-0.95rem",
-                                                    }}
-                                                >
-                                                    <LoadingOutlined/>
-                                                </div>
-                                            ) : (
+                                            {
                                                 <p style={{color: 'grey',}}
-                                                   className="ml-3">{fol?.followers ? fol?.followers.length : 0} followers</p>
-                                            )}
+                                                   className="ml-3">{fol?.followers ? fol?.followers.length : 0} followers</p>}
                                         </div>
                                     </div>
                                     {fol?.id !== user?.id ? (
@@ -122,6 +100,7 @@ function RightSideColumn({user, chatsData, userFollowStats}) {
                                                         );
                                                         if (data && data.status === 200) {
                                                             chang()
+                                                            change()
                                                         }
                                                     }}
                                                 >
@@ -137,6 +116,7 @@ function RightSideColumn({user, chatsData, userFollowStats}) {
                                                         );
                                                         if (data && data.status === 200) {
                                                             chang()
+                                                            change()
                                                         }
                                                     }}
                                                 >

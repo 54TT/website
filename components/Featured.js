@@ -16,6 +16,7 @@ export default function Featured() {
     const ref = useRef(null)
     const [featuredPageSize, setFeaturedPageSize] = useState(10);
     const [featuredCurrent, setFeaturedCurrent] = useState(1);
+    const [featuredAll, setFeaturedAll] = useState(null);
     const [featuredBol, setFeaturedBol] = useState(true);
     const [refreshedTime, setRefreshedTime] = useState(dayjs());
     const [time, setTime] = useState('h24')
@@ -51,7 +52,7 @@ export default function Featured() {
         } else if (e === '6h') {
             setTime('h6')
         } else if (e === '24h') {
-            setTime('m24')
+            setTime('h24')
         }
     }
     const changeImg = (record) => {
@@ -90,23 +91,24 @@ export default function Featured() {
         },
         {
             title: 'Create Time', render: (text, record) => {
-                return <p>{record?.pairCreatedAt ? getRelativeTimeDifference(formatDateTime(record.pairCreatedAt)) : ''}</p>
+                const data =  record.pairCreatedAt.toString().length>10?Number(record.pairCreatedAt.toString().slice(0,10)):record.pairCreatedAt
+                return <p>{record?.pairCreatedAt ? getRelativeTimeDifference(formatDateTime(data)) : ''}</p>
             }
         },
         {
-            title: 'PRICECHANGE', render: (text, record) => {
+            title: <span>{'% '+time}</span> , render: (text, record) => {
                 return <p
-                    style={{color: record?.priceChange[time] > 0 ? 'green' : 'red'}}>{record?.priceChange[time]}</p>
+                    style={{color: record?.priceChange[time] > 0 ? 'green' : 'red'}}>{record?.priceChange[time]?record.priceChange[time]:0}</p>
             }
         },
         {
             title: 'TXNS', render: (text, record) => {
-                return <p>{record?.txns[time]?.buys + record?.txns[time]?.sells ? autoConvert(record?.txns[time]?.buys + record?.txns[time]?.sells) : ''}</p>
+                return <p>{record?.txns[time]?.buys + record?.txns[time]?.sells ? autoConvert(record?.txns[time]?.buys + record?.txns[time]?.sells) : 0}</p>
             }
         },
         {
             title: 'VOLUME', render: (text, record) => {
-                return <p>{record?.volume[time] ? autoConvert(record?.volume[time]) : ''}</p>
+                return <p>{record?.volume[time] ? autoConvert(record?.volume[time]) : 0}</p>
             }
         },
         {
@@ -167,6 +169,11 @@ export default function Featured() {
             if (res.status === 200) {
                 let data = res.data
                 if (data && data.data.length > 0) {
+                    if(data.count){
+                        setFeaturedAll(data.count[0].count)
+                    }else {
+                        setFeaturedAll(0)
+                    }
                     const pairArray = data.data.map(item => item.pairAddress).join(",");
                     const pairInfosResponse = await axios.get(`https://api.dexscreener.com/latest/dex/pairs/ethereum/${pairArray}`);
                     if (pairInfosResponse.status === 200) {
@@ -192,6 +199,7 @@ export default function Featured() {
         })
     }, [featuredPageSize, featuredCurrent]);
     const changePag = (e, a) => {
+        setFeaturedBol(true)
         setFeaturedCurrent(e)
         setFeaturedPageSize(a)
     }
@@ -225,7 +233,7 @@ export default function Featured() {
                 }} loading={featuredBol} bordered={false} dataSource={tableParams} pagination={false}/>
                 <div style={{display: 'flex', alignItems: 'center', justifyContent: 'end'}}>
                     <Pagination defaultCurrent={1} style={{marginTop: '20px'}} showSizeChanger current={featuredCurrent}
-                                total={tableParams.length ? tableParams.length : 0} onChange={changePag}
+                                total={featuredAll} onChange={changePag}
                                 pageSize={featuredPageSize}/>
                 </div>
             </Card>

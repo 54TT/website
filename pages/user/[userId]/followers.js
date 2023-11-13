@@ -33,7 +33,6 @@ function FollowersPage() {
   const [errorLoading, setErrorLoading] = useState(false);
   const [followers, setFollowers] = useState([]);
   const getParams =async ()=>{
-    if(userPar&&userPar.id){
       const res = await axios.get(
           `${baseUrl}/api/profile/followers/${userPar.id}`,
       );
@@ -43,12 +42,13 @@ function FollowersPage() {
         setFollowers([])
         setErrorLoading(true)
       }
-    }
+
   }
   useEffect(()=>{
-    getParams()
-  },[])
-
+    if(userPar&&userPar.id) {
+      getParams()
+    }
+  },[userPar])
   if (errorLoading) {
     return (
       <InfoBox

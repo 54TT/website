@@ -15,7 +15,6 @@ import {notification} from "antd";
 
 function Notifications() {
   const [notifications,setNotifications] =useState([])
-  const [errorLoading,setErrorLoading] =useState(false)
   const [userPar,setUserPar] =useState(null)
   const [userFollowStats,setLoggedUserFollowStats] =useState(null)
   const {data: session, status} = useSession()
@@ -31,45 +30,26 @@ function Notifications() {
 
 
   const notificationRead = async () => {
-    if(userPar&&userPar.id){
       try {
-        const data =   await axios.post(
-            `${baseUrl}/api/notifications`,
-            {userId:userPar.id},
-            {
-              headers: { Authorization: cookie.get("token") },
-            }
+        const data =   await axios.get(
+            `${baseUrl}/api/notifications`,{params:{userId:userPar.id}}
         );
         if(data.status===200&&data.data){
           setNotifications(data.data)
-          setErrorLoading(false)
         }
       } catch (error) {
-        setErrorLoading(true)
         notification.error({
           message: `Please note`, description: 'Error reported', placement: 'topLeft',
         });
       }
-    }
-
   };
 
   useEffect(() => {
-    notificationRead();
-  }, []);
+    if(userPar&&userPar.id) {
+      notificationRead();
+    }
+  }, [userPar]);
 
-  if (errorLoading) {
-    notification.error({
-      message: `Please note`, description: `${errorLoading}`, placement: 'topLeft',
-    });
-    return (
-      <InfoBox
-        Icon={ExclamationCircleIcon}
-        message={"Oops, an error occured"}
-        content={`There was an error while fetching the notifications.`}
-      />
-    );
-  }
 
   return (
     <div className="bg-gray-100">
@@ -82,13 +62,13 @@ function Notifications() {
           <div className="flex items-center ml-2">
             <Title>Notifications ·</Title>
             <NotificationCount className="text-gray-500 ml-2">
-              {notifications.length}
+              {notifications?.length}
             </NotificationCount>
           </div>
 
           {notifications.length > 0 ? (
             <div style={{ borderTop: "1px solid #efefef" }}>
-              {notifications.map((notification) => (
+              {notifications?.map((notification) => (
                 <div key={notification.id}>
                   {notification.type === "newLike" &&
                     notification.post !== null && (
