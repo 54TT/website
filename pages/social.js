@@ -10,11 +10,10 @@ import {getCsrfToken, signIn, useSession} from "next-auth/react";
 import {useConnect, useAccount, useSignMessage} from "wagmi";
 import {InjectedConnector} from "wagmi/connectors/injected";
 import {SiweMessage} from "siwe";
+import {notification} from "antd";
 
 function Index() {
-    const {address, isConnected} = useAccount()
     const {data: session, status} = useSession()
-    const {signMessageAsync} = useSignMessage()
     const [postsData, setPostsData] = useState([])
     const [postSession, setPostSession] = useState({})
     const [errorLoading, setErrorLoading] = useState(false)
@@ -22,32 +21,6 @@ function Index() {
     const [changeBol, setChangeBol] = useState(true)
     const change = () => {
         setChangeBol(!changeBol)
-    }
-
-    const handleLogin = async () => {
-        try {
-            const callbackUrl = "/protected"
-            const message = new SiweMessage({
-                domain: window.location.host,
-                address: address,
-                statement: "Sign in with Ethereum to the app.",
-                uri: window.location.origin,
-                version: "1",
-                // chainId: chain?.id,
-                nonce: await getCsrfToken(),
-            })
-            const signature = await signMessageAsync({
-                message: message.prepareMessage(),
-            })
-            signIn("credentials", {
-                message: JSON.stringify(message),
-                redirect: false,
-                signature,
-                callbackUrl,
-            })
-        } catch (error) {
-            console.log(error)
-        }
     }
     const getParams = async () => {
         const res = await axios.get(`${baseUrl}/api/posts`, {

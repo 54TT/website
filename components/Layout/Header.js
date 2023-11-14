@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useRef} from "react";
 import {getCsrfToken, signIn, useSession, signOut} from "next-auth/react"
 import {SiweMessage} from "siwe"
-import  baseUrl from '/utils/baseUrl'
+import baseUrl from '/utils/baseUrl'
 import {useAccount, useConnect, useNetwork, useSignMessage, useDisconnect,} from "wagmi"
 import Link from "next/link"
 import Marquee from "react-fast-marquee";
@@ -11,7 +11,7 @@ import axios from 'axios';
 import {Dropdown, Drawer, Form, Select, Input, DatePicker, Button, notification,} from 'antd'
 import {CaretDownFilled, CaretRightFilled} from '@ant-design/icons';
 import getConfig from "next/config";
-import styles  from './css/header.module.css'
+import styles from './css/header.module.css'
 
 const {Option} = Select;
 import {get, post, del} from '/utils/axios'
@@ -20,10 +20,10 @@ import dayjs from 'dayjs'
 import cookie from 'js-cookie'
 import {useRouter} from 'next/router'
 
-const Header =   () => {
+const Header = () => {
     const [form] = Form.useForm();
-    const { chain } = useNetwork()
-    const router =useRouter()
+    const {chain} = useNetwork()
+    const router = useRouter()
     const inputRef = useRef(null);
     const [api, contextHolder] = notification.useNotification();
     const {address, isConnected} = useAccount()
@@ -89,7 +89,13 @@ const Header =   () => {
                 cursor: 'all',
             });
         } else {
-            const token = {...tokenForm, address: values.token, twitter: values.twitter, website: values.website,telegram:values.telegram}
+            const token = {
+                ...tokenForm,
+                address: values.token,
+                twitter: values.twitter,
+                website: values.website,
+                telegram: values.telegram
+            }
             const presale = {
                 presaleTime: timeForm.presale,
                 presalePlatformId: values.presalePlatformId,
@@ -100,9 +106,9 @@ const Header =   () => {
                 launchPlatformId: values.launchPlatformId,
                 launchLink: values.launchLink
             }
-            const data = {token,presale,launch}
+            const data = {token, presale, launch}
             post('/addPresaleAndLaunch', data).then(res => {
-                if(res&&res.data?.success){
+                if (res && res.data?.success) {
                     form.resetFields()
                     setTokenForm({})
                     setTime({})
@@ -110,7 +116,7 @@ const Header =   () => {
                     api.success({
                         message: `Success`, description: 'Added successfully', placement: 'topLeft',
                     });
-                }else {
+                } else {
                     api.warning({
                         message: `warning`, description: 'add failed,Please try again', placement: 'topLeft',
                     });
@@ -132,16 +138,21 @@ const Header =   () => {
     const onChangeDate = (name, value, dateString) => {
         let data = _.clone(timeForm)
         if (name === 'launch') {
-            data.launch= dateString
+            data.launch = dateString
             setTime(data)
         } else {
-            data.presale= dateString
+            data.presale = dateString
             setTime(data)
         }
     };
+    const geoUser = async () => {
+        const data = await axios.post(baseUrl + "/api/user", {
+            address: token.sub, ipAddress
+        })
+    }
     const handleLogin = async () => {
         const cook = window.localStorage.getItem('name')
-        if(!session&&!cook){
+        if (!session && !cook) {
             try {
                 const message = new SiweMessage({
                     domain: window.location.host,
@@ -159,8 +170,9 @@ const Header =   () => {
                     message: JSON.stringify(message),
                     redirect: false,
                     signature,
-                    callbackUrl:'/',
+                    callbackUrl: '/',
                 })
+                window.localStorage.setItem('name', address);
             } catch (error) {
                 // notification.error({
                 //     message: `Please note`, description: 'Error reported', placement: 'topLeft',
@@ -168,33 +180,31 @@ const Header =   () => {
             }
         }
     }
-    // Cookies.set('name', 'value', { expires: 7, path: '' });
     useEffect(() => {
-            if (!session) {
-                handleLogin()
-            }
-            if(session&&session.address){
-                window.localStorage.setItem('name', session.address);
-            }
-    }, [session,isConnected])
-    const set=()=>{
-        window.localStorage.setItem('name','')
-        const a =window.localStorage.getItem('name')
-        if(!a){
+        if (!session) {
+            handleLogin()
+        }
+    }, [session, isConnected])
+
+    const set = () => {
+        window.localStorage.setItem('name', '')
+        const a = window.localStorage.getItem('name')
+        if (!a) {
             disconnect()
             signOut()
         }
-
+    }
+    const push=()=>{
+        if(session&&session.user&&session.user.username){
+            router.push(`/${session.user.username}`)
+        }
     }
 
     const items = [
         {
             key: '1',
             label: (
-                // <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
-                //   Personal
-                // </a>
-                <span>
+                <span onClick={push}>
       Personal
     </span>
             ),
@@ -216,10 +226,14 @@ const Header =   () => {
                 <div className={styles['aaa']}>
                     <div></div>
                     <p className={styles['search']}>Search pair by symbol,name,contract or token</p>
-                    <div>
-                        <Button type={'primary'} className={styles['but']} style={{marginRight: '20px',backgroundColor:'rgb(254,239,146)'}} onClick={showDrawer}>Add Coin</Button>
+                    <div style={{display:'flex',alignItems:'center'}}>
+                        <Button type={'primary'} className={styles['but']}
+                                style={{marginRight: '20px', backgroundColor: 'rgb(254,239,146)'}} onClick={showDrawer}>Add
+                            Coin</Button>
                         {
-                            !session ? <Button type={'primary'}  className={styles['but']} style={{backgroundColor:'rgb(254,239,146)'}}  onClick={(e) => {
+                            !session || !window?.localStorage?.getItem('name') ?
+                                <Button type={'primary'} className={styles['but']}
+                                        style={{backgroundColor: 'rgb(254,239,146)'}} onClick={(e) => {
                                     e.preventDefault()
                                     if (!isConnected) {
                                         connect()
@@ -227,6 +241,8 @@ const Header =   () => {
                                         handleLogin()
                                     }
                                 }}>Login</Button> :
+                                <div style={{display:'flex',alignItems:'center'}}>
+                                    <img style={{marginRight:'10px',width:'30px',borderRadius:'50%',height:'30px'}} src={session?.user?.profilePicUrl} alt=""/>
                                 <Dropdown
                                     menu={{
                                         items,
@@ -234,9 +250,13 @@ const Header =   () => {
                                     placement="bottomLeft"
                                     arrow
                                 >
-                                    <Button type={'primary'}  className={styles['but']}
-                                            style={{color: 'black',backgroundColor:'rgb(254,239,146)'}}>{session?.address?.slice(0, 5) + '...'}</Button>
+                                    <Button type={'primary'} className={styles['but']}
+                                            style={{
+                                                color: 'black',
+                                                backgroundColor: 'rgb(254,239,146)'
+                                            }}>{session?.user?.username?.slice(0, 5) + '...'}</Button>
                                 </Dropdown>
+                                </div>
                         }
                     </div>
                 </div>
@@ -341,7 +361,7 @@ const Header =   () => {
                                         presalePlatform.length > 0 ? presalePlatform.map((i, index) => {
                                             return <Option value={i.id} key={index}>
                                                 <div style={{display: 'flex', alignItems: 'center'}}>
-                                                    <img src={ baseUrl + `${i.logo}`} alt=""
+                                                    <img src={baseUrl + `${i.logo}`} alt=""
                                                          width={'20px'}/> <span>{i.name}</span>
                                                 </div>
                                             </Option>
@@ -416,7 +436,7 @@ const Header =   () => {
                                         launchPlatform.length > 0 ? launchPlatform.map((i, index) => {
                                             return <Option value={i.id} key={index}>
                                                 <div style={{display: 'flex', alignItems: 'center'}}>
-                                                    <img src={ baseUrl + `${i.logo}`} alt=""
+                                                    <img src={baseUrl + `${i.logo}`} alt=""
                                                          width={'20px'}/> <span>{i.name}</span>
                                                 </div>
                                             </Option>

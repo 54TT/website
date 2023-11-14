@@ -80,7 +80,7 @@ function RightSideColumn({user, chatsData, userFollowStats,change}) {
                                                 className="ml-3 cursor-pointer hover:underline"
                                                 onClick={() => router.push(`/${fol?.username}`)}
                                             >
-                                                {fol?.name.length > 7 ? fol.name.slice(0, 3) + '...' + fol.name.slice('-3') : fol.name}
+                                                {fol?.username.length > 7 ? fol.username.slice(0, 3) + '...' + fol.username.slice('-3') : fol.name}
                                             </p>
                                             {
                                                 <p style={{color: 'grey',}}

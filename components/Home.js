@@ -187,50 +187,6 @@ query NewPair {
                 return <p> {record?.liquidity?.usd ? autoConvert(record.liquidity.usd) : ''}</p>
             }
         },
-        // {
-        //     title: 'TxCount', dataIndex: 'address', // sorter: {
-        //     //     compare: (a, b) => a.chinese - b.chinese,
-        //     // },
-        //     render: (text, record) => {
-        //         return <p style={{letterSpacing: '2px'}}>{record?.txCount}</p>
-        //     }
-        // },
-        // {
-        //     title: 'ReserveETH', // sorter: {
-        //     //     compare: (a, b) => a.chinese - b.chinese,
-        //     // },
-        //     dataIndex: 'address', render: (text, record) => {
-        //         return <p style={{letterSpacing: '2px'}}>{record?.reserveETH}</p>
-        //     }
-        // },
-        // {
-        //     title: 'Volume',
-        //     dataIndex: 'address',
-        //     sorter: {
-        //         compare: (a, b) => a.chinese - b.chinese,
-        //     },width:150
-        // },
-        // {
-        //     title: 'Liquidity',
-        //     dataIndex: 'address',
-        //     sorter: {
-        //         compare: (a, b) => a.chinese - b.chinese,
-        //     },width:150
-        // },
-        // {
-        //     title: 'T.M.Cap',
-        //     dataIndex: 'address',
-        //     sorter: {
-        //         compare: (a, b) => a.chinese - b.chinese,
-        //     },width:150
-        // },
-        // {
-        //     title: '',
-        //     dataIndex: 'address',align:'right',
-        //     render:(text,record)=>{
-        //         return <span style={{cursor:'pointer'}}>...</span>
-        //     },
-        // },
     ]
     useEffect(() => {
         getParams('/queryFeatured', {
@@ -251,11 +207,6 @@ query NewPair {
     const loveChange = () => {
         setLoveChange(!loveChanges)
     }
-    function getDateTime(dateTime, format = 'DD:HH:mm') {
-        // YYYY-MM-DD:HH:mm:ss
-        return dayjs(dateTime).format(format);
-    }
-
     const push = (i, name) => {
         switch (name) {
             case 'one':
@@ -361,21 +312,9 @@ const [diffTime,setDiffTime]= useState(null)
                                                         <span
                                                             style={{color: 'rgb(98,98,98)'}}>{i.token1?.symbol ? i.token1?.symbol : ''}</span>
                                                     </div>
-                                                    {/*<p style={{*/}
-                                                    {/*    backgroundColor: 'rgb(188,238,125)',*/}
-                                                    {/*    padding: '5px 10px',*/}
-                                                    {/*    textAlign:'center',*/}
-                                                    {/*    margin: '0 auto',*/}
-                                                    {/*    width: '50%',*/}
-                                                    {/*    lineHeight: 1,*/}
-                                                    {/*    borderRadius: '6px'*/}
-                                                    {/*}}>{i.txCount?Number(i.txCount)*100+'%':''}</p>*/}
+
                                                 </div>
                                             </div>
-                                            {/*<Tooltip title={i.priceUsd}>*/}
-                                            {/*    <span*/}
-                                            {/*        style={{width: '23%'}}>{i.priceUsd ? '$' + formatDecimal(i.priceUsd, 3) : null}</span>*/}
-                                            {/*</Tooltip>*/}
                                             <div style={{width: '35%'}}>
                                                 <p style={{textAlign: 'center', lineHeight: '1.3'}}>$0</p>
                                                 <div style={{
@@ -460,23 +399,6 @@ const [diffTime,setDiffTime]= useState(null)
                                                                       onClick={() => push(i, 'three')}/>
                                                     </div>
                                                 </div>
-                                                {/*<div style={{width: '50%'}}>*/}
-                                                {/*    <div className={styles['dis']} style={{fontSize: '28px', lineHeight: '1'}}>*/}
-                                                {/*        /!*{*!/*/}
-                                                {/*        /!*  getRelativeTimeDifference(formatDateTime(i.time))*!/*/}
-                                                {/*        /!*}*!/*/}
-                                                {/*        <span>{getDateTime(i.time).slice(0, 2)}</span>*/}
-                                                {/*        <span>{getDateTime(i.time).slice(2, 3)}</span>*/}
-                                                {/*        <span>{getDateTime(i.time).slice(3, 5)}</span>*/}
-                                                {/*        <span>{getDateTime(i.time).slice(5, 6)}</span>*/}
-                                                {/*        <span>{getDateTime(i.time).slice(6)}</span>*/}
-                                                {/*    </div>*/}
-                                                {/*    <div className={styles['dis']}>*/}
-                                                {/*        <span style={{letterSpacing: '-1px'}}>days</span>*/}
-                                                {/*        <span style={{letterSpacing: '-1px'}}>hours</span>*/}
-                                                {/*        <span style={{letterSpacing: '-1px'}}>minutes</span>*/}
-                                                {/*    </div>*/}
-                                                {/*</div>*/}
                                                 <div>
                                                     {
                                                         dayjs(i.presale_time).isAfter(dayjs())?<div>

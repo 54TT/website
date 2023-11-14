@@ -23,12 +23,12 @@ function Sidebar({user, topDist, maxWidth}) {
                 fontFamily: "Inter",
             }}
         >
-            <SidebarRow
-                src={user&&user.profilePicUrl ? user.profilePicUrl : ''}
-                title={user&&user.name ? user.name : ''}
-                route={user&&user.username ? `/${user?.username}` : ''}
-                name={'1'}
-            />
+            {/*<SidebarRow*/}
+            {/*    src={user&&user.profilePicUrl ? user.profilePicUrl : ''}*/}
+            {/*    title={user&&user.name ? user.name : ''}*/}
+            {/*    route={user&&user.username ? `/${user?.username}` : ''}*/}
+            {/*    name={'1'}*/}
+            {/*/>*/}
             <SidebarRow
                 Icon={UsersIcon}
                 title="Home"

@@ -4,12 +4,11 @@ import cookie from "js-cookie";
 import styled from "styled-components";
 import { useRouter } from "next/router";
 import  baseUrl from '/utils/baseUrl'
+import {notification} from "antd";
 function FollowerUsers({ profile, userFollowStats, user }) {
   const router = useRouter();
   const [followers, setFollowers] = useState([]);
-  const [loading, setLoading] = useState(false);
   const getFollowers = async () => {
-    setLoading(true);
     try {
       const res = await axios.get(
           `${baseUrl}/api/profile/followers/${profile.user_id}`,
@@ -20,11 +19,14 @@ function FollowerUsers({ profile, userFollowStats, user }) {
 
       setFollowers(res.data);
     } catch (error) {
-      console.log("Error Loading Followers");
+      hint()
     }
-
-    setLoading(false);
   };
+  const hint = () => {
+    notification.error({
+      message: `Please note`, description: 'Error reported', placement: 'topLeft',
+    });
+  }
   useEffect(() => {
     if(profile&&profile.user_id){
       getFollowers();
@@ -65,16 +67,18 @@ function FollowerUsers({ profile, userFollowStats, user }) {
 
       {followers && followers.length > 0 ? (
         <GridContainer>
-          {followers.map((fol) => (
+          {followers.map((fol,i) => i<5&&(
             <div
               className="mb-5 cursor-pointer"
-              key={fol.user.id}
-              onClick={() => router.push(`/${fol.user.username}`)}
+              key={fol?.user?.id}
+              style={{width:'30%'}}
+              onClick={() => router.push(`/${fol?.user?.username}`)}
             >
-              <FollowersImage src={fol.user.profilePicUrl} alt="userprof" />
-              <NameOfUser onClick={() => router.push(`/${fol.user.username}`)}>
-                {fol.user.name}
-              </NameOfUser>
+              <img src={fol?.user?.profilePicUrl} alt="userprof" style={{width:'50px',}} />
+              <p style={{overflow:"hidden",textOverflow:'ellipsis',whiteSpace:'nowrap'}}
+                 onClick={() => router.push(`/${fol?.user?.username}`)}>
+                {fol?.user?.username.slice(0,6)}
+              </p>
             </div>
           ))}
         </GridContainer>
@@ -92,27 +96,9 @@ function FollowerUsers({ profile, userFollowStats, user }) {
 
 export default FollowerUsers;
 
-const FollowersImage = styled.img`
-  width: 7.6rem;
-  height: 7.6rem;
-  border-radius: 0.5rem;
-  object-fit: cover;
-  border: 1px solid #efefef;
-`;
 
 const GridContainer = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  width: 100%;
-  column-gap: 1rem;
-`;
-
-const NameOfUser = styled.div`
-  font-family: inherit;
-  font-weight: 600;
-  font-size: 0.95rem;
-  margin-top: 0.1rem;
-  :hover {
-    text-decoration: underline;
-  }
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 `;

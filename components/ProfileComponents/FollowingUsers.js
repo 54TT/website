@@ -22,7 +22,6 @@ function FollowingUsers({ profile, userFollowStats, user }) {
 
       setFollowing(res.data);
     } catch (error) {
-      console.log(error);
     }
     setLoading(false);
   };
@@ -53,7 +52,6 @@ function FollowingUsers({ profile, userFollowStats, user }) {
             {following && following.length > 0 ? following.length : "0"}
           </span>
         </div>
-
         {following && following.length > 0 && (
           <p
             onClick={() => router.push(`/user/${profile?.user_id}/following`)}
@@ -64,25 +62,25 @@ function FollowingUsers({ profile, userFollowStats, user }) {
           </p>
         )}
       </div>
-
       {loading ? (
         <Facebook />
       ) : (
         <>
           {following && following.length > 0 ? (
             <GridContainer>
-              {following.map((fol) => (
+              {following.map((fol,index) => index<5&&(
                 <div
                   className="mb-5 cursor-pointer"
-                  key={fol.user.id}
-                  onClick={() => router.push(`/${fol.user.username}`)}
+                  key={fol?.user?.id}
+                  style={{width:'30%'}}
+                  onClick={() => router.push(`/${fol?.user?.username}`)}
                 >
-                  <FollowingImage src={fol.user.profilePicUrl} alt="userprof" />
-                  <NameOfUser
-                    onClick={() => router.push(`/${fol.user.username}`)}
+                  <img src={fol?.user?.profilePicUrl} alt="userprof" style={{width:'50px',}} />
+                  <p style={{overflow:"hidden",textOverflow:'ellipsis',whiteSpace:'nowrap'}}
+                    onClick={() => router.push(`/${fol?.user?.username}`)}
                   >
-                    {fol.user.name}
-                  </NameOfUser>
+                    {fol?.user?.username.slice(0,6)}
+                  </p>
                 </div>
               ))}
             </GridContainer>
@@ -101,27 +99,10 @@ function FollowingUsers({ profile, userFollowStats, user }) {
 
 export default FollowingUsers;
 
-const FollowingImage = styled.img`
-  width: 7.6rem;
-  height: 7.6rem;
-  border-radius: 0.5rem;
-  object-fit: cover;
-  border: 1px solid #efefef;
-`;
 
 const GridContainer = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  width: 100%;
-  column-gap: 1rem;
-`;
-
-const NameOfUser = styled.div`
-  font-family: inherit;
-  font-weight: 600;
-  font-size: 0.95rem;
-  margin-top: 0.1rem;
-  :hover {
-    text-decoration: underline;
-  }
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  
 `;

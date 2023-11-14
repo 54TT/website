@@ -64,7 +64,7 @@ function ChatsPage() {
         if (!socket.current) {
             socket.current = io(baseUrl); //establishing connection with server;
         }
-        if (socket.current) {
+        if (socket.current&&userPar&&userPar.id) {
             socket.current.emit("join", {userId: userPar.id});
             socket.current.on("connectedUsers", ({users}) => {
                 setConnectedUsers(users);
@@ -85,10 +85,9 @@ function ChatsPage() {
             postPar();
         }
     }, [userPar]);
-
     //LOAD TEXTS useEffect. Runs whenever router.query.chat changes, so basically whenever the user clicks on a different user
     useEffect(() => {
-        if (userPar && router.query.chat) {
+        if (userPar&&userPar.id && router.query.chat) {
             const loadTexts = () => {
                 socket?.current.emit("loadTexts", {
                     userId: userPar.id,
@@ -98,7 +97,7 @@ function ChatsPage() {
                     if (textsWithDetails) {
                         setTexts([]);
                         setChatUserData({
-                            name: textsWithDetails.name,
+                            name: textsWithDetails.username,
                             profilePicUrl: textsWithDetails.profilePicUrl,
                         });
                         openChatId.current = router.query?.chat;
@@ -106,7 +105,7 @@ function ChatsPage() {
                         setTexts(chat?.texts && chat.texts.length > 0 ? chat?.texts : []);
                         scrollToBottom();
                         setChatUserData({
-                            name: chat?.textsWith.name,
+                            name: chat?.textsWith.username,
                             profilePicUrl: chat?.textsWith.profilePicUrl,
                         });
                         openChatId.current = chat?.texts_with_id; //insert value in router.query ref
@@ -140,9 +139,15 @@ function ChatsPage() {
                 if (newText.receiverId === openChatId?.current) {
                     setTexts((prev) => [...prev, newText]);
                     setChats((prev) => {
-                        const previousChat = prev.find(
+                        let previousChat = prev.find(
                             (chat) => chat.textsWith === newText.receiverId
                         );
+                        if (!previousChat||!previousChat.lastText){
+                            previousChat={
+                                lastText:'',
+                                created_at:''
+                            }
+                        }
                         previousChat.lastText = newText.text;
                         previousChat.created_at = newText.created_at;
                         return [...prev];
@@ -153,22 +158,33 @@ function ChatsPage() {
                 if (newText?.senderId === openChatId?.current) {
                     setTexts((prev) => [...prev, newText]);
                     setChats((prev) => {
-                        const previousChat = prev.find(
+                        let previousChat = prev.find(
                             (chat) => chat.textsWith === newText.senderId
                         );
+                        if (!previousChat||!previousChat.lastText){
+                            previousChat={
+                                lastText:'',
+                                created_at:''
+                            }
+                        }
                         previousChat.lastText = newText.text;
                         previousChat.created_at = newText.created_at;
                         return [...prev];
                     });
                 } else {
                     const ifPreviouslyTexted =
-                        chats.filter((chat) => chat.textsWith === newText.senderId).length >
-                        0;
+                        chats.filter((chat) => chat.textsWith === newText.senderId).length > 0;
                     if (ifPreviouslyTexted) {
                         setChats((prev) => {
-                            const previousChat = prev.find(
+                            let previousChat = prev.find(
                                 (chat) => chat.textsWith === newText.senderId
                             );
+                            if (!previousChat||!previousChat.lastText){
+                                previousChat={
+                                    lastText:'',
+                                    created_at:''
+                                }
+                            }
                             previousChat.lastText = newText.text;
                             previousChat.created_at = newText.created_at;
                             return [...prev];
@@ -226,6 +242,7 @@ function ChatsPage() {
                             borderLeft: "1px solid lightgrey",
                             borderRight: "1px solid lightgrey",
                             fontFamily: "Inter",
+                            overflowY:'auto'
                         }}
                         className="lg:min-w-[27rem] relative pt-4"
                     >
@@ -250,7 +267,6 @@ function ChatsPage() {
                                 user={userPar}
                             />
                         )}
-
                         <div className="mt-4" style={{borderTop: "1px solid #efefef"}}>
                             <>
                                 {chats && chats.length > 0 ? (
@@ -280,9 +296,8 @@ function ChatsPage() {
                                                     <></>
                                                 )}
                                             </div>
-
                                             <div className="ml-1">
-                                                <Name>{chat.name}</Name>
+                                                <Name>{chat.username}</Name>
                                                 <TextPreview>
                                                     {chat.lastText && chat.lastText.length > 30
                                                         ? `${chat.lastText.substring(0, 30)}...`
@@ -311,7 +326,7 @@ function ChatsPage() {
                                 flex: "1",
                                 borderRight: "1px solid lightgrey",
                                 fontFamily: "Inter",
-                                height: "calc(100vh - 4.5rem)",
+                                // height: "calc(100vh - 4.5rem)",
                             }}
                         >
                             {/*右边聊天*/}
@@ -319,7 +334,7 @@ function ChatsPage() {
                                 <ChatHeaderDiv>
                                     <UserImage src={chatUserData.profilePicUrl} alt="userimg"/>
                                     <div>
-                                        <ChatName>{chatUserData.name}</ChatName>
+                                        <ChatName>{chatUserData?.name.length > 7 ? chatUserData.name.slice(0, 3) + '...' + chatUserData.name.slice(-3) : chatUserData.name}</ChatName>
                                         {connectedUsers.length > 0 &&
                                             connectedUsers.filter(
                                                 (user) => user?.userId === openChatId?.current
@@ -410,8 +425,8 @@ const Title = styled.p`
 `;
 
 const UserImage = styled.img`
-  height: 3.8rem;
-  width: 3.8rem;
+  height: 80px;
+  width: 80px;
   border-radius: 50%;
   object-fit: cover;
 `;
@@ -444,7 +459,8 @@ const ChatHeaderDiv = styled.div`
 const Name = styled.p`
   user-select: none;
   font-weight: 600;
-  font-size: 1.08rem;
+  font-size: 18px;
+  margin-bottom: 10px;
   font-family: Inter;
 `;
 
@@ -452,6 +468,7 @@ const ChatName = styled.p`
   user-select: none;
   font-weight: 600;
   font-size: 1.2rem;
+  margin-bottom: 10px;
   font-family: Inter;
 `;
 

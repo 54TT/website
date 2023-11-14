@@ -11,36 +11,31 @@ import {
     ShareIcon,
     ThumbUpIcon as ThumbUpOutlineIcon,
 } from "@heroicons/react/outline";
-import {Input} from 'antd'
+import {Input, notification} from 'antd'
 import {deletePost, likePost, postComment} from "../utils/postActions";
 import CommentComponent from "./CommentComponent";
 import {useRouter} from "next/router";
 import ReusableDialog from "./ReusableDialog";
-import toast, {Toaster} from "react-hot-toast";
 
 const {TextArea} = Input
-const notify = () =>
-    toast.success("Post deleted successfully!", {
-        position: "bottom-center",
+const notify = () => {
+    notification.success({
+        message: `Post deleted successfully!`, placement: 'topLeft',
     });
+}
 
-const notifyCopyLink = () =>
-    toast.success("Post link copied to clipboard!", {
-        position: "bottom-center",
-    });
-
-function PostCard({post, user, postById, change,liked}) {
+function PostCard({post, user, postById, change, liked}) {
     const router = useRouter();
     const [comments, setComments] = useState([]);
     useEffect(() => {
-        if (post &&post.comments&& post.comments.length > 0) {
+        if (post && post.comments && post.comments.length > 0) {
             setComments(post?.comments)
         } else {
             setComments([])
         }
     }, [post])
     const [commentText, setCommentText] = useState("");
-    const [showComments, setShowComments] = useState( false);
+    const [showComments, setShowComments] = useState(false);
     const [loading, setLoading] = useState(false);
     const buttonRef = useRef(null);
     const [open, setOpen] = useState(false);
@@ -57,8 +52,8 @@ function PostCard({post, user, postById, change,liked}) {
         }
     };
 
-    const handleLike =  async () => {
-        await likePost(post?.id, user?.id, liked ? false : true,change)
+    const handleLike = async () => {
+        await likePost(post?.id, user?.id, liked ? false : true, change)
     };
 
     const handleClickOpen = () => {
@@ -71,7 +66,7 @@ function PostCard({post, user, postById, change,liked}) {
     };
 
     const handleAgree = async () => {
-        await deletePost(post?.id, setComments, notify,change,user.id);
+        await deletePost(post?.id, setComments, notify, change, user.id);
         // handleClose();
     };
     const handleDisagree = () => {
@@ -83,17 +78,16 @@ function PostCard({post, user, postById, change,liked}) {
             style={{fontFamily: "Inter"}}
             className="mb-7 bg-white flex flex-col justify-start rounded-2xl shadow-md"
         >
-            <Toaster/>
             <div className="p-4">
                 <div className="flex space-x-3 items-center ml-2 relative">
-                    <Image src={user && user.profilePicUrl ? user.profilePicUrl : ''} alt="userimg"/>
+                    <Image src={post && post?.user?.profilePicUrl ? post.user.profilePicUrl : ''} alt="userimg"/>
                     <div>
                         <UserPTag
                             onClick={() => {
                                 router.push(`/${post?.user?.username}`);
                             }}
                         >
-                            {post?.user ? post?.user?.name : ''}
+                            {post?.user?.username?post?.user?.username.length>10 ? post.user.username.slice(0,8):post.user.username : ''}
                         </UserPTag>
                         <p
                             style={{
@@ -130,7 +124,7 @@ function PostCard({post, user, postById, change,liked}) {
                 <p className="ml-2 mt-5">{post.text}</p>
             </div>
 
-            {post&&post.picUrl? <img src={post.picUrl} alt={''} style={{width:'100%',}}/>:''}
+            {post && post.picUrl ? <img src={post.picUrl} alt={''} style={{width: '100%',}}/> : ''}
             <div style={{marginTop: "0.65rem"}} className="ml-5 mr-5">
                 <div className="flex justify-between w-full">
                     <div className="flex items-center space-x-0.5 cursor-pointer hover:underline">
@@ -245,17 +239,17 @@ function PostCard({post, user, postById, change,liked}) {
                             ></button>
                         </form>
                     </div>
-                            {comments&&comments.length > 0 &&
-                                comments.map((comment) => (
-                                    <CommentComponent
-                                        key={comment.id}
-                                        change={change}
-                                        comment={comment}
-                                        postId={post.id}
-                                        user={user}
-                                        setComments={setComments}
-                                    />
-                                ))}
+                    {comments && comments.length > 0 &&
+                        comments.map((comment) => (
+                            <CommentComponent
+                                key={comment.id}
+                                change={change}
+                                comment={comment}
+                                postId={post.id}
+                                user={user}
+                                setComments={setComments}
+                            />
+                        ))}
                     {/*{comments.length > 3 && (*/}
                     {/*    <p*/}
                     {/*        onClick={() => router.push(`/post/${post.id}`)}*/}
@@ -275,6 +269,7 @@ export default PostCard;
 const Image = styled.img`
   object-fit: cover;
   width: 50px;
+  height: 50px;
   border-radius: 50%;
 `;
 
@@ -294,8 +289,7 @@ const UserPTag = styled.p`
   cursor: pointer;
   margin-bottom: -0.09rem;
   font-weight: 500;
-  font-size: 1.05rem;
-
+  font-size:20px;
   :hover {
     text-decoration: underline;
   }

@@ -1,410 +1,451 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, {useEffect, useRef, useState} from "react";
 import styled from "styled-components";
-import  baseUrl from '/utils/baseUrl'
+import baseUrl from '/utils/baseUrl'
 import {
-  CameraIcon,
-  CheckCircleIcon,
-  UserAddIcon,
+    CameraIcon,
+    CheckCircleIcon,
+    UserAddIcon,
 } from "@heroicons/react/solid";
 import uploadPic from "../utils/uploadPic";
 import {
-  followUser,
-  unfollowUser,
-  profilePicturesUpdate,
+    followUser,
+    unfollowUser,
+    profilePicturesUpdate,
 } from "../utils/profileActions";
-import {LoadingOutlined} from '@ant-design/icons'
-import { parseCookies } from "nookies";
+import {
+    LoadingOutlined,
+    UserOutlined,
+    CameraOutlined,
+    FormOutlined,
+    CloseOutlined,
+    CheckOutlined
+} from '@ant-design/icons'
+import {Avatar, Image, Input, notification} from 'antd'
+import {parseCookies} from "nookies";
 import axios from "axios";
 import ProfileFields from "../components/ProfileComponents/ProfileFields";
 import FollowingUsers from "../components/ProfileComponents/FollowingUsers";
 import FollowerUsers from "../components/ProfileComponents/FollowerUsers";
-import { useRouter } from "next/router";
+import {useRouter} from "next/router";
 import cookie from "js-cookie";
 import PostCard from "../components/PostCard";
 import InfoBox from "../components/HelperComponents/InfoBox";
-import { EmojiSadIcon } from "@heroicons/react/outline";
-import { Facebook as FacebookLoader } from "react-content-loader";
+import {EmojiSadIcon} from "@heroicons/react/outline";
+import {Facebook as FacebookLoader} from "react-content-loader";
 import {useSession} from "next-auth/react";
+
 // https://images.pexels.com/photos/552789/pexels-photo-552789.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260
 
 function ProfilePage() {
-  const {data: session, status} = useSession()
-  const didMountRef = useRef(false);
-  const isMountRef = useRef(false);
-  const coverImageRef = useRef(null);
-  const profilePicRef = useRef(null);
-  const [user,setUser] =useState(null)
-  const [profile,setProfile] =useState(null)
-  const [userFollowStats, setUserFollowStats] = useState(null);
-  const [coverPic, setCoverPic] = useState(null);
-  const [coverPicPreview, setCoverPicPreview] = useState(null);
-  const [profilePic, setProfilePic] = useState(null);
-  const [profilePicPreview, setProfilePicPreview] = useState(null);
-  const [error, setError] = useState(null);
-  const [loadingCoverPic, setLoadingCoverPic] = useState(false);
-  const [loadingProfilePic, setLoadingProfilePic] = useState(false);
-  const isUserOnOwnAccount = profile?.user_id === user?.id;
+    const {data: session, status} = useSession()
+    const didMountRef = useRef(false);
+    const isMountRef = useRef(false);
+    const coverImageRef = useRef(null);
+    const profilePicRef = useRef(null);
+    const [user, setUser] = useState(null)
+    const [profile, setProfile] = useState(null)
+    const [userFollowStats, setUserFollowStats] = useState(null);
+    const [coverPic, setCoverPic] = useState(null);
+    const [coverPicPreview, setCoverPicPreview] = useState('');
+    const [profilePic, setProfilePic] = useState(null);
+    const [profilePicPreview, setProfilePicPreview] = useState(null);
+    const [error, setError] = useState(null);
+    const [loadingCoverPic, setLoadingCoverPic] = useState(false);
+    const [loadingProfilePic, setLoadingProfilePic] = useState(false);
+    const isUserOnOwnAccount = profile?.user_id === user?.id;
+    const [loadingBol, setLoadingBol] = useState(false);
+    const [editProfile, setEditProfile] = useState(false);
+    const [editInput, setEditInput] = useState('');
+    const [editInputBol, setEditInputBol] = useState(false);
 
-  //state for rendering posts
-  const router = useRouter();
-  const params = router.query
-  const [posts, setPosts] = useState([]);
-  const [loadingPosts, setLoadingPosts] = useState(false);
-  //state for follow stats
-  const [followBol, setFollowBol] = useState(false);
-  const isLoggedInUserFollowing =
-      userFollowStats?.following?.length > 0 &&
-      userFollowStats.following?.filter(
-      (following) => following?.following_id === profile?.user_id
-    ).length > 0;
-
-  useEffect(()=>{
-    setFollowBol(isLoggedInUserFollowing)
-  },[isLoggedInUserFollowing])
-
-  const addImageFromDevice = async (e, name) => {
-    const { files } = e.target;
-    if (name === "cover") {
-      setCoverPic(files[0]); //files that we receive from e.target is automatically an array, so we don't need Array.from
-      setCoverPicPreview(URL.createObjectURL(files[0]));
-    } else {
-      setProfilePic(files[0]); //files that we receive from e.target is automatically an array, so we don't need Array.from
-      setProfilePicPreview(URL.createObjectURL(files[0]));
+    const changeImg = () => {
+        setLoadingBol(!loadingBol)
     }
-  };
 
-  //profilePic
-  useEffect(() => {
-    if (!didMountRef.current || profilePicPreview === null) {
-      didMountRef.current = true;
-      return;
-    } else {
-      async function updateProfilePic() {
+    const router = useRouter();
+    const params = router.query
+    const [posts, setPosts] = useState([]);
+    const [followBol, setFollowBol] = useState(false);
+    const isLoggedInUserFollowing =
+        userFollowStats?.following?.length > 0 &&
+        userFollowStats.following?.filter(
+            (following) => following?.following_id === profile?.user_id
+        ).length > 0;
+
+    useEffect(() => {
+        setFollowBol(isLoggedInUserFollowing)
+    }, [isLoggedInUserFollowing])
+
+    const addImageFromDevice = async (e, name) => {
+        const {files} = e.target;
+        if (name === "cover") {
+            setCoverPic(files[0]); //files that we receive from e.target is automatically an array, so we don't need Array.from
+            setCoverPicPreview(URL.createObjectURL(files[0]));
+            changeImg()
+        } else {
+            setProfilePic(files[0]); //files that we receive from e.target is automatically an array, so we don't need Array.from
+            setProfilePicPreview(URL.createObjectURL(files[0]));
+            changeImg()
+        }
+    };
+    const updateProfilePic = async () => {
         let profileImageUrl;
         setLoadingProfilePic(true);
         if (profilePic !== null) {
-          profileImageUrl = await uploadPic(profilePic);
-          if (!profileImageUrl) {
+            profileImageUrl = await uploadPic(profilePic);
+            if (!profileImageUrl) {
+                setLoadingProfilePic(false);
+                return setError("Error uploading image");
+            }
+            await profilePicturesUpdate(
+                profileImageUrl,
+                null,
+                setLoadingProfilePic,
+                setError, user?.id
+            );
             setLoadingProfilePic(false);
-            return setError("Error uploading image");
-          }
-          await profilePicturesUpdate(
-            profileImageUrl,
-            null,
-            setLoadingProfilePic,
-            setError
-          );
-          setLoadingProfilePic(false);
         }
-      }
-
-      updateProfilePic();
     }
-  }, [profilePic]);
-
-  //coverPic
-  useEffect(() => {
-    if (coverPic === null || !isMountRef.current) {
-      isMountRef.current = true;
-      return;
-    } else {
-      async function updateCoverPic() {
+    const updateCoverPic = async () => {
         let picUrl;
         setLoadingCoverPic(true);
         if (coverPic !== null) {
-          picUrl = await uploadPic(coverPic);
-          if (!picUrl) {
+            picUrl = await uploadPic(coverPic);
+            if (!picUrl) {
+                setLoadingCoverPic(false);
+                return setError("Error uploading image");
+            }
+            await profilePicturesUpdate(
+                null,
+                picUrl,
+                setLoadingCoverPic,
+                setError, user?.id
+            );
             setLoadingCoverPic(false);
-            return setError("Error uploading image");
-          }
-          await profilePicturesUpdate(
-            null,
-            picUrl,
-            setLoadingCoverPic,
-            setError
-          );
-          setLoadingCoverPic(false);
         }
-      }
-      updateCoverPic();
     }
-  }, [coverPic]);
-  const getPosts = async () => {
-    setLoadingPosts(true);
-    try {
-      const { username } = router.query;
-      const token = cookie.get("token");
-      const res = await axios.get(
-          `${baseUrl}/api/profile/posts/${username}`,
-          {
-            headers: { Authorization: token },
-          }
-      );
-      setPosts(res.data);
-    } catch (error) {
-      console.log("Error Loading Posts");
+    const hint = () => {
+        notification.error({
+            message: `Please note`, description: 'Error reported', placement: 'topLeft',
+        });
     }
-    setLoadingPosts(false);
-  };
-  const getProfile =async ()=>{
-    try {
-      const { username } = params;
-      const res = await axios.get(`${baseUrl}/api/profile/${username}`);
-      const { profile, followersLength, followingLength } = res.data;
-      setProfile(profile)
-    } catch (error) {
-      return { errorLoading: true };
+    useEffect(() => {
+        if (user && user.id) {
+            if (profilePic) {
+                updateProfilePic();
+            }
+            if (coverPic) {
+                updateCoverPic();
+            }
+        }
+
+    }, [loadingBol]);
+    const getPosts = async () => {
+        try {
+            const res = await axios.get(
+                `${baseUrl}/api/profile/posts/${params?.username}`,
+            );
+            if (res.status === 200) {
+                setPosts(res.data);
+            } else {
+                setPosts([]);
+            }
+        } catch (error) {
+            hint()
+        }
+    };
+
+    const getProfile = async () => {
+        try {
+            const {username} = params;
+            const res = await axios.get(`${baseUrl}/api/profile/${username}`);
+            const {profile, followersLength, followingLength} = res.data;
+            setProfile(profile)
+            setEditInput(profile.username)
+        } catch (error) {
+            return {errorLoading: true};
+        }
     }
-  }
-  const chang=()=>{
-    setFollowBol(!followBol)
-  }
-
-  useEffect(() => {
-    if(params&&params.username){
-      getPosts();
-      getProfile()
+    const chang = () => {
+        setFollowBol(!followBol)
     }
-  }, [params]);
-  useEffect(() => {
-    if(session){
-      setUser(session?.user?session.user:{})
-      setUserFollowStats(session?.userFollowStats?session.userFollowStats:{})
+    const [changeBol, setChangeBol] = useState(true)
+    useEffect(() => {
+        if (params && params.username) {
+            getProfile()
+            getPosts();
+        }
+    }, [params]);
+    useEffect(() => {
+        if (params && params.username) {
+            getPosts();
+        }
+    }, [changeBol]);
+    useEffect(() => {
+        if (session) {
+            setUser(session?.user ? session.user : {})
+            setUserFollowStats(session?.userFollowStats ? session.userFollowStats : {})
+        }
+    }, [session]);
+    const change = () => {
+        setChangeBol(!changeBol)
     }
-  }, [session]);
+    const setName = async () => {
+        if (editInputBol) {
+            if (editInput) {
+                const data = await axios.post(baseUrl + '/api/user/updateUserName', {
+                        userName: editInput,
+                        userId: profile.user_id
+                })
 
-  return (
-    <>
-      <div
-        className={` ${
-          !isUserOnOwnAccount ? "min-h-[32.4rem]" : "min-h-[29.3rem]"
-        }  shadow-lg`}
-        style={{ fontFamily: "Inter", backgroundColor: "white"}}
-      >
-        <div className="mx-auto max-w-lg sm:max-w-xl md:max-w-3xl lg:max-w-[1000px]" >
-          <div style={{ position: "relative" }}>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => addImageFromDevice(e, "cover")}
-              name="media"
-              ref={coverImageRef}
-              style={{ display: "none" }}
-            ></input>
-            {coverPicPreview !== null ? (
-              <img src={coverPicPreview} alt="cover pic" width={'100%'} />
-            ) : (
-              <img src={profile?.cover_pic_url} alt="cover pic" width={'100%'} />
-            )}
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => addImageFromDevice(e, "profile")}
-              name="media"
-              ref={profilePicRef}
-              style={{ display: "none" }}
-            ></input>
-            {profilePicPreview !== null ? (
-              <ProfileImage src={profilePicPreview} alt="profilepic" />
-            ) : (
-              <img src={profile?.profile_pic_url} alt="profilepic"  style={{width:'100px',border:'2px solid #f7f5ff',position:'absolute',borderRadius:'50%',top:'83%',left:'42%',}}/>
-            )}
-            <Name className="font-semibold text-3xl">{profile?.name}</Name>
-            {/* <Username className="text-xl font-normal text-gray-600">{`@${profile.user.username}`}</Username> */}
-
-            {!isUserOnOwnAccount &&
-              (followBol ? (
-                <FollowButton
-                  onClick={async () => {
-                    await unfollowUser(
-                      profile?.user_id,
-                      setUserFollowStats,
-                        user?.id,
-                    );
-                    chang()
-                  }}
-                >
-                  <CheckCircleIcon className="h-6" />
-                  <p className="ml-1.5">Following</p>
-                </FollowButton>
-              ) : (
-                <FollowButton
-                  onClick={async () => {
-                    await followUser(
-                      profile?.user_id,
-                      setUserFollowStats,
-                      user?.id
-                    );
-                    chang()
-                  }}
-                >
-                  <UserAddIcon className="h-6" />
-                  <p className="ml-1.5">Follow</p>
-                </FollowButton>
-              ))}
-
-            {isUserOnOwnAccount && (
-              <>
-                <CameraIconDiv onClick={() => profilePicRef.current.click()}>
-                  {loadingProfilePic ? (
-                    <>
-                      <LoadingOutlined/>
-                    </>
-                  ) : (
-                    <CameraIcon className="h-7 text-purple-600" />
-                  )}
-                </CameraIconDiv>
-                <EditCoverPicDiv onClick={() => coverImageRef.current.click()}>
-                  {loadingCoverPic ? (
-                    <>
-                      <LoadingOutlined/>
-                    </>
-                  ) : (
-                    <CameraIcon className="h-7 text-gray-600" />
-                  )}
-                </EditCoverPicDiv>{" "}
-              </>
-            )}
-          </div>
-        </div>
-      </div>
-      <div
-        className="bg-gray-100 w-full"
-        style={{ marginTop: ".18rem", minHeight: "calc(100vh - 26rem)" ,paddingTop:'60px'}}
-      >
-        <div className=" md:flex space-x-4 mx-auto max-w-[30rem] sm:max-w-xl md:max-w-3xl lg:max-w-[1000px]">
-          <div
-            className="max-w-[28rem] ml-4 static mt-3 md:sticky md:mt-6 flex-1 md:max-w-[27rem]"
-            style={{
-              // position: "-webkit-sticky" /* for Safari */,
-              // position: "sticky",
-              top: "6rem",
-              alignSelf: "flex-start",
-            }}
-          >
-            {loadingPosts ? (
-              <FacebookLoader />
-            ) : (
-              <>
-                <ProfileFields
-                  profile={profile}
-                  isUserOnOwnAccount={isUserOnOwnAccount}
-                />
-
-                {
-                  <FollowingUsers
-                    profile={profile}
-                    userFollowStats={userFollowStats}
-                    user={user}
-                  />}
-                {<FollowerUsers
-                    profile={profile}
-                    userFollowStats={userFollowStats}
-                    user={user}
-                  />}
-
-                <div className="h-9"></div>
-              </>
-            )}
-          </div>
-          <div className="flex-1 flex-grow mt-6 max-w-md md:max-w-lg lg:max-w-2xl ">
-            {loadingPosts ? (
-              <FacebookLoader />
-            ) : posts.length > 0 ? (
-              posts.map((post) => (
-                <PostCard
-                  key={post.id}
-                  post={post}
-                  user={user}
-                  setPosts={setPosts}
-                />
-              ))
-            ) : (
-              <InfoBox
-                marginTop={1}
-                Icon={EmojiSadIcon}
-                message={
-                  isUserOnOwnAccount
-                    ? `You don't have any posts, ${profile?.name}.`
-                    : "No posts"
+                if(data.status===200&&data?.updateUserNameResult?.changedRows){
+                    setEditInput(editInput)
                 }
-                content={
-                  isUserOnOwnAccount
-                    ? `Create a new post to start seeing posts here and get your faeshare of attention.`
-                    : "This user hasn't made a single post. It looks like they are only interested in viewing other posts and lurking around."
-                }
-              />
-            )}
-          </div>
-        </div>
-      </div>
-    </>
-  );
+            } else {
+                setEditInput(profile?.name)
+                setEditProfile(false)
+            }
+        } else {
+            notification.error({
+                message: `Please note`, description: 'The name is repeated, please re-enter it. ', placement: 'topLeft',
+            });
+        }
+    }
+    const changeIn = async (e) => {
+        setEditInput(e.target.value)
+        const data = await axios.get(baseUrl + '/api/user/isUpdateUserName', {params: {userName: e.target.value}})
+        if (data.status === 200) {
+            setEditInputBol(data?.data?.flag)
+        }
+    }
+    return (
+        <>
+            {/*上面*/}
+            <div
+                className={` ${
+                    !isUserOnOwnAccount ? "min-h-[32.4rem]" : "min-h-[29.3rem]"
+                }  shadow-lg`}
+                style={{
+                    fontFamily: "Inter",
+                    backgroundColor: "rgb(188,238,125)",
+                    marginRight: '20px',
+                    borderRadius: '10px'
+                }}
+            >
+                <div style={{
+                    position: "relative",
+                    width: '100%',
+                    height: '250px',
+                    overflow: 'hidden',
+                    borderRadius: '10px 10px 0 0'
+                }}>
+                    <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => addImageFromDevice(e, "cover")}
+                        name="media"
+                        ref={coverImageRef}
+                        style={{display: "none"}}
+                    ></input>
+                    {/*背景图*/}
+                    <Image src={coverPicPreview ? coverPicPreview : profile?.cover_pic_url} alt="cover pic"
+                           width={'100%'} height={'100%'}/>
+                    <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => addImageFromDevice(e, "profile")}
+                        name="media"
+                        ref={profilePicRef}
+                        style={{display: "none"}}
+                    ></input>
+                    {/*图像*/}
+                    <Avatar src={profilePicPreview ? profilePicPreview : profile?.profile_pic_url} size={100} style={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        translate: '-50% -50%'
+                    }}/>
+                    <div style={{
+                        position: 'absolute',
+                        left: '50%',
+                        bottom: '-10px',
+                        transform: 'translate(-50%, -50%)', display: 'flex', alignItems: 'center', width: '40%',justifyContent:'center'
+                    }}>
+                        {
+                            editProfile ? <Input onChange={changeIn} value={editInput}
+                                                 style={{fontSize: '20px', fontWeight: 'bold'}}/> :
+                                <p style={{fontSize: '20px', fontWeight: 'bold'}}>{editInput}</p>
+                        }
+                        {
+                            editProfile ? <div style={{display: 'flex', alignItems: 'center', marginLeft: '10px'}}>
+                                <CloseOutlined style={{fontSize: '20px', fontWeight: 'bold'}}
+                                               onClick={() => setEditProfile(false)}/> <CheckOutlined
+                                style={{fontSize: '20px', fontWeight: 'bold', marginLeft: '10px'}} onClick={setName}/>
+                            </div> : <FormOutlined
+                                style={{fontSize: '20px', fontWeight: 'bold', marginLeft: '10px', color: 'blue'}}
+                                onClick={() => setEditProfile(true)}/>
+                        }
+
+                    </div>
+                    {/* <Username className="text-xl font-normal text-gray-600">{`@${profile.user.username}`}</Username> */}
+                    {!isUserOnOwnAccount &&
+                        (followBol ? (
+                            <FollowButton
+                                onClick={async () => {
+                                    await unfollowUser(
+                                        profile?.user_id,
+                                        setUserFollowStats,
+                                        user?.id,
+                                    );
+                                    chang()
+                                }}
+                            >
+                                <CheckCircleIcon className="h-6"/>
+                                <p className="ml-1.5">Following</p>
+                            </FollowButton>
+                        ) : (
+                            <FollowButton
+                                onClick={async () => {
+                                    await followUser(
+                                        profile?.user_id,
+                                        setUserFollowStats,
+                                        user?.id
+                                    );
+                                    chang()
+                                }}
+                            >
+                                <UserAddIcon className="h-6"/>
+                                <p className="ml-1.5">Follow</p>
+                            </FollowButton>
+                        ))}
+
+                    {isUserOnOwnAccount && (
+                        <>
+                            <div style={{
+                                padding: '10px',
+                                cursor: 'pointer',
+                                backgroundColor: 'white',
+                                position: 'absolute',
+                                top: '50%',
+                                left: '50%',
+                                borderRadius: '50%'
+                            }} onClick={() => profilePicRef.current.click()}>
+                                {loadingProfilePic ? (
+                                    <>
+                                        <LoadingOutlined/>
+                                    </>
+                                ) : (
+                                    <CameraOutlined
+                                        style={{fontSize: '20px', color: 'purple', fontWeight: 'bold'}}/>
+                                )}
+                            </div>
+                            <div style={{
+                                padding: '10px',
+                                backgroundColor: 'white',
+                                cursor: 'pointer',
+                                position: 'absolute',
+                                right: '2%',
+                                bottom: '2%',
+                                borderRadius: '50%'
+                            }} onClick={() => coverImageRef.current.click()}>
+                                {loadingCoverPic ? (
+                                    <>
+                                        <LoadingOutlined/>
+                                    </>
+                                ) : (
+                                    <CameraOutlined style={{fontSize: '20px', color: 'gray', fontWeight: 'bold'}}/>
+                                )}
+                            </div>
+                        </>
+                    )}
+                </div>
+                {/*下面*/}
+                <div
+                    className="bg-gray-100 w-full"
+                    style={{marginTop: ".18rem", minHeight: "calc(100vh - 26rem)", paddingTop: '60px'}}
+                >
+                    <div
+                        className=" md:flex space-x-4 mx-auto max-w-[30rem] sm:max-w-xl md:max-w-3xl lg:max-w-[1000px]">
+                        {/*左边关注*/}
+                        <div
+                            className="max-w-[28rem] ml-4 static mt-3 md:sticky md:mt-6 flex-1 md:max-w-[27rem]"
+                            style={{
+                                // position: "-webkit-sticky" /* for Safari */,
+                                // position: "sticky",
+                                top: "6rem",
+                                alignSelf: "flex-start",
+                            }}
+                        >
+                            {
+                                <>
+                                    <ProfileFields
+                                        profile={profile}
+                                        user={user}
+                                        change={change}
+                                        isUserOnOwnAccount={isUserOnOwnAccount}
+                                    />
+                                    {
+                                        <FollowingUsers
+                                            profile={profile}
+                                            userFollowStats={userFollowStats}
+                                            user={user}
+                                        />}
+                                    {<FollowerUsers
+                                        profile={profile}
+                                        userFollowStats={userFollowStats}
+                                        user={user}
+                                    />}
+
+                                    <div className="h-9"></div>
+                                </>}
+                        </div>
+                        {/*右边推文*/}
+                        <div className="flex-1 flex-grow mt-6 max-w-md md:max-w-lg lg:max-w-2xl ">
+                            {posts.length > 0 ? (
+                                posts.map((post) => {
+                                    const isLiked =
+                                        post.likes && post.likes.length > 0 &&
+                                        post.likes.filter((like) => like?.user?.id === user?.id).length > 0;
+                                    return <PostCard
+                                        key={post.id}
+                                        liked={isLiked}
+                                        post={post}
+                                        user={user}
+                                        setPosts={setPosts}
+                                        change={change}
+                                    />
+                                })
+                            ) : (
+                                <InfoBox
+                                    marginTop={1}
+                                    Icon={EmojiSadIcon}
+                                    message={
+                                        isUserOnOwnAccount
+                                            ? `You don't have any posts, ${editInput}.`
+                                            : "No posts"
+                                    }
+                                    content={
+                                        isUserOnOwnAccount
+                                            ? `Create a new post to start seeing posts here and get your faeshare of attention.`
+                                            : "This user hasn't made a single post. It looks like they are only interested in viewing other posts and lurking around."
+                                    }
+                                />
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </>
+    );
 }
+
 export default ProfilePage;
-
-const CoverImage = styled.img`
-  object-fit: cover;
-  width: 100%;
-  height: 20rem;
-  border-bottom-left-radius: 0.8rem;
-  border-bottom-right-radius: 0.8rem;
-`;
-
-const ProfileImage = styled.img`
-  object-fit: cover;
-  position: absolute;
-  height: 13rem;
-  width: 13rem;
-  border-radius: 50%;
-  top: 95%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  border: 0.4rem solid #f7f5ff;
-`;
-
-const CameraIconDiv = styled.div`
-  padding: 0.75rem;
-  cursor: pointer;
-  background-color: white;
-  box-shadow: 0.5px 0.5px 0.5px 0.5px #ccc;
-  position: absolute;
-  top: 104%;
-  left: 55.5%;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-`;
-
-const EditCoverPicDiv = styled.div`
-  padding: 0.75rem;
-  background-color: white;
-  cursor: pointer;
-  position: absolute;
-  right: 1.5rem;
-  bottom: 1.2rem;
-  border-radius: 50%;
-`;
-
-const Name = styled.p`
-  position: absolute;
-  top: 110%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-family: inherit;
-`;
-
-const Username = styled.p`
-  position: absolute;
-  top: 144%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-`;
 
 const FollowButton = styled.div`
   display: flex;
   position: absolute;
   cursor: pointer;
-  top: 151%;
+  bottom: 10px;
   left: 50%;
   transform: translate(-50%, -50%);
   padding: 0.45rem 0.5rem;

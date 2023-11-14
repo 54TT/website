@@ -2,34 +2,27 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { ArrowSmRightIcon, PencilAltIcon } from "@heroicons/react/solid";
 import { profileUpdate } from "../../utils/profileActions";
-import {YoutubeOutlined,TwitterOutlined,FacebookOutlined,InstagramOutlined,LoadingOutlined} from '@ant-design/icons'
-import toast, { Toaster } from "react-hot-toast";
+import {YoutubeOutlined,TwitterOutlined,ArrowRightOutlined,FacebookOutlined,FormOutlined,InstagramOutlined,LoadingOutlined,ArrowLeftOutlined} from '@ant-design/icons'
 import { useEffect } from "react";
-const notifyError = () =>
-  toast.error("Please enter a bio.", {
-    position: "bottom-center",
+import {notification} from "antd";
+const notifyError = () =>{
+  notification.error({
+    message: `Please enter a bio.`, description: 'Error reported', placement: 'topLeft',
   });
-
-function ProfileFields({ profile, isUserOnOwnAccount, newComp }) {
-  const [bio, setBio] = useState(profile?.bio ? profile.bio : "");
-  const [social, setSocial] = useState({
-    youtube:
-      profile?.social && profile.social?.youtube ? profile.social.youtube : "",
-    twitter:
-      profile?.social && profile.social?.twitter ? profile.social.twitter : "",
-    instagram:
-      profile?.social && profile.social?.instagram
-        ? profile.social.instagram
-        : "",
-    facebook:
-      profile?.social && profile.social?.facebook ? profile.social.facebook : "",
-  });
+}
+function ProfileFields({ profile, isUserOnOwnAccount,user ,change}) {
+  const [bio, setBio] = useState("");
+  useEffect(()=>{
+    if(profile){
+      setBio(profile.bio)
+      setSocial({youtube:profile?.youtube,twitter: profile?.twitter, instagram:
+        profile?.instagram,facebook:profile?.facebook})
+    }
+  },[profile])
+  const [social, setSocial] = useState({});
   const [editProfile, setEditProfile] = useState(false);
   const [error, setError] = useState(false);
-  const [loading, setLoading] = useState(false);
-
   const { youtube, twitter, instagram, facebook } = social;
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "bio") {
@@ -44,8 +37,11 @@ function ProfileFields({ profile, isUserOnOwnAccount, newComp }) {
       notifyError();
       return;
     }
-    setLoading(true);
-    await profileUpdate({ ...social, bio }, setLoading, setError, null);
+   const data =  await profileUpdate({ ...social, bio },  setError, null,user.id);
+  if(data){
+    change()
+    setEditProfile(false)
+  }
   };
 
   return (
@@ -61,15 +57,10 @@ function ProfileFields({ profile, isUserOnOwnAccount, newComp }) {
           >
             Intro
           </h1>
-          <Toaster />
-          {loading ? (
-              <LoadingOutlined />
-          ) : (
-            <ArrowSmRightIcon
-              onClick={updateProfile}
-              className="h-7 w-7 cursor-pointer mb-5"
-            />
-          )}
+          <div style={{display:'flex',alignItems:'center',}}>
+          <ArrowLeftOutlined style={{fontSize:'20px',fontWeight:'bold',marginRight:'10px',}} onClick={()=>setEditProfile(false)}/>
+            <ArrowRightOutlined style={{fontSize:'20px',fontWeight:'bold'}}   onClick={updateProfile}/>
+          </div>
         </div>
       ) : (
         <>
@@ -81,16 +72,15 @@ function ProfileFields({ profile, isUserOnOwnAccount, newComp }) {
               Intro
             </h1>
             {isUserOnOwnAccount && (
-              <PencilAltIcon
+              <FormOutlined style={{fontSize:'20px',fontWeight:'bold'}}
                 onClick={() => setEditProfile(true)}
-                className="h-6 w-6 cursor-pointer"
               />
             )}
           </div>
         </>
       )}
       {editProfile ? (
-        <Container>
+        <div>
           <Bio
             name="bio"
             value={bio}
@@ -137,7 +127,7 @@ function ProfileFields({ profile, isUserOnOwnAccount, newComp }) {
               />
             </SocialMedia>
           </div>
-        </Container>
+        </div>
       ) : (
         <>
           {bio !== "" ? (
@@ -160,19 +150,19 @@ function ProfileFields({ profile, isUserOnOwnAccount, newComp }) {
             )
           ) : (
             <div className="mt-5">
-              {social.youtube !== "" && (
+              {social?.youtube && (
                 <AnchorTag
                   target="_blank"
-                  href={`https://${social.youtube}`}
+                  href={`https://${social?.youtube}`}
                   rel="noopener noreferrer"
                 >
                   <SocialMediaDisplayDiv>
                     <YoutubeOutlined style={{ color: "#8f85de" }}/>
-                    <p>{social.youtube}</p>
+                    <p>{social?.youtube}</p>
                   </SocialMediaDisplayDiv>
                 </AnchorTag>
               )}
-              {social.twitter !== "" && (
+              {social?.twitter&& (
                 <AnchorTag
                   target="_blank"
                   href={`https://${social.twitter}`}
@@ -180,11 +170,11 @@ function ProfileFields({ profile, isUserOnOwnAccount, newComp }) {
                 >
                   <SocialMediaDisplayDiv>
                     <TwitterOutlined style={{ color: "#8f85de" }}/>
-                    <p>{social.twitter}</p>
+                    <p>{social?.twitter}</p>
                   </SocialMediaDisplayDiv>
                 </AnchorTag>
               )}
-              {social.facebook !== "" && (
+              {social?.facebook && (
                 <AnchorTag
                   target="_blank"
                   href={`https://${social.facebook}`}
@@ -192,11 +182,11 @@ function ProfileFields({ profile, isUserOnOwnAccount, newComp }) {
                 >
                   <SocialMediaDisplayDiv>
                     <FacebookOutlined style={{ color: "#8f85de" }}/>
-                    <p>{social.facebook}</p>
+                    <p>{social?.facebook}</p>
                   </SocialMediaDisplayDiv>
                 </AnchorTag>
               )}
-              {social.instagram !== "" && (
+              {social?.instagram && (
                 <AnchorTag
                   target="_blank"
                   href={`https://${social.instagram}`}
@@ -204,7 +194,7 @@ function ProfileFields({ profile, isUserOnOwnAccount, newComp }) {
                 >
                   <SocialMediaDisplayDiv>
                     <InstagramOutlined style={{ color: "#8f85de" }}/>
-                    <p>{social.instagram}</p>
+                    <p>{social?.instagram}</p>
                   </SocialMediaDisplayDiv>
                 </AnchorTag>
               )}
@@ -230,7 +220,6 @@ const AddDiv = styled.div`
   font-weight: 500;
 `;
 
-const Container = styled.div``;
 
 const Bio = styled.textarea`
   overflow: hidden;

@@ -5,7 +5,6 @@ const uploadPic = async (media) => {
   try {
     const formData = new FormData();
     formData.append('image', media);
-
     const response = await axios.post(baseUrl+'/uploadImage', formData, {
       headers : {
         'Content-Type': 'multipart/form-data', // 根据需要添加其他标头

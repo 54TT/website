@@ -51,7 +51,6 @@ function Feed({user, postsData, errorLoading,change, increaseSizeAnim}) {
                         setPosts={setPosts}
                         increaseSizeAnim={increaseSizeAnim}
                     />
-
                     {posts ? (
                         posts.length === 0 || errorLoading ? (
                             <InfoBox

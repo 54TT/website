@@ -52,18 +52,16 @@ export const unfollowUser = async (
 
 export const profileUpdate = async (
     profile,
-    setLoading,
     setError,
-    profilePicUrl
+    profilePicUrl,userId
 ) => {
     try {
-        const {bio, facebook, youtube, twitter, instagram} = profile;
-        await Axios.post(`/update`, {...profile, profilePicUrl});
-        setLoading(false);
-        router.reload();
+      const data =   await Axios.post(`/update`, {...profile, profilePicUrl,userId});
+      if(data.status===200){
+          return true
+      }
     } catch (error) {
         setError(catchErrors(error));
-        setLoading(false);
     }
 };
 
@@ -71,14 +69,13 @@ export const profilePicturesUpdate = async (
     profilePicUrl,
     coverPicUrl,
     setLoading,
-    setError
+    setError,userId
 ) => {
     try {
-        await Axios.post(`/updatepictures`, {profilePicUrl, coverPicUrl});
+        await Axios.post(`/updatepictures`, {profilePicUrl, coverPicUrl,userId});
         setLoading(false);
-        router.reload();
+        // router.reload();
     } catch (error) {
-        console.log(error);
         setError(catchErrors(error));
         setLoading(false);
     }

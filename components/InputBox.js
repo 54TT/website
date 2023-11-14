@@ -134,10 +134,10 @@ function InputBox({user, setPosts, increaseSizeAnim}) {
                     <>
                         <div className="pt-6 pl-6 pr-6">
                             <div className="flex space-x-4 items-center">
-                                <img src={user&&user.profilePicUrl ? user.profilePicUrl : '/Ellipse5.png'} alt="" style={{width:'50px',borderRadius:'50%'}}/>
+                                <img src={user&&user.profilePicUrl ? user.profilePicUrl : '/Ellipse5.png'} alt="" style={{width:'50px',height:'50px',borderRadius:'50%'}}/>
                                 <div>
                                     <p style={{marginBottom: 0, fontWeight: "600"}}>
-                                        {user.name}
+                                        {user.username}
                                     </p>
                                     <div className="flex text-gray-500 text-sm space-x-1 items-center">
                                         <GlobalOutlined style={{fontSize: "1rem"}}/>
@@ -155,7 +155,6 @@ function InputBox({user, setPosts, increaseSizeAnim}) {
                                         value={postText}
                                         type="text"
                                         rows="4"
-                                        maxlength="4"
                                         onChange={handleChange}
                                         className={`outline-none  bg-transparent font-light text-md placeholder-gray-400 text-lg `}
                                         placeholder={`What's on your mind, ${user.name}?`}
