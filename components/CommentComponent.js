@@ -12,7 +12,6 @@ const notifyCommentDelete = () =>{
     duration:2
   });
 }
-
 function CommentComponent({ comment, postId,change, user, setComments }) {
   const router = useRouter();
   const [isHovering, setIsHovering] = useState(false);
