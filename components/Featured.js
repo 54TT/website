@@ -42,6 +42,7 @@ export default function Featured() {
     const hint = () => {
         notification.error({
             message: `Please note`, description: 'Error reported', placement: 'topLeft',
+            duration:2
         });
     }
     const changSeg = (e) => {
@@ -67,7 +68,7 @@ export default function Featured() {
         setTableParams(data)
     }
     const columns = [{
-        title: '', render: (text, record) => {
+        title: '',align: 'center',  render: (text, record) => {
             return <p style={{
                 width: '30px',
                 backgroundColor: 'black',
@@ -78,41 +79,41 @@ export default function Featured() {
             }}>{record?.baseToken?.symbol?.slice(0, 1)}</p>
         }
     }, {
-        title: 'PAIR', render: (text, record) => {
+        title: 'PAIR',align: 'center',  render: (text, record) => {
             return <div style={{display: 'flex', alignItems: 'center'}}>
                 <span>{record.baseToken?.symbol}/{record.quoteToken?.symbol}</span>
             </div>
         }
     },
         {
-            title: 'PRICE', render: (text, record) => {
+            title: 'PRICE',align: 'center',  render: (text, record) => {
                 return <div>{record?.priceUsd ? formatDecimal(record?.priceUsd, 3) : ''}</div>
             }
         },
         {
-            title: 'Create Time', render: (text, record) => {
+            title: 'Create Time',align: 'center',  render: (text, record) => {
                 const data =  record.pairCreatedAt.toString().length>10?Number(record.pairCreatedAt.toString().slice(0,10)):record.pairCreatedAt
                 return <p>{record?.pairCreatedAt ? getRelativeTimeDifference(formatDateTime(data)) : ''}</p>
             }
         },
         {
-            title: <span>{'% '+time}</span> , render: (text, record) => {
+            title: <span>{'% '+time}</span> ,align: 'center',  render: (text, record) => {
                 return <p
                     style={{color: record?.priceChange[time] > 0 ? 'green' : 'red'}}>{record?.priceChange[time]?record.priceChange[time]:0}</p>
             }
         },
         {
-            title: 'TXNS', render: (text, record) => {
+            title: 'TXNS',align: 'center',  render: (text, record) => {
                 return <p>{record?.txns[time]?.buys + record?.txns[time]?.sells ? autoConvert(record?.txns[time]?.buys + record?.txns[time]?.sells) : 0}</p>
             }
         },
         {
-            title: 'VOLUME', render: (text, record) => {
+            title: 'VOLUME',align: 'center',  render: (text, record) => {
                 return <p>{record?.volume[time] ? autoConvert(record?.volume[time]) : 0}</p>
             }
         },
         {
-            title: 'LIQUIDITY', render: (text, record) => {
+            title: 'LIQUIDITY',align: 'center',  render: (text, record) => {
                 return <p> {record?.liquidity?.usd ? autoConvert(record.liquidity.usd) : ''}</p>
             }
         },

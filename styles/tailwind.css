@@ -208,11 +208,29 @@ li.check:before {
     background-color: rgb(188, 238, 125);
     border: none;
 }
+.presale .ant-table .ant-table-content .ant-table-thead .ant-table-cell {
+    background-color: #BCEE7D;
+    border: none;
+}
+
+.anyHave .ant-table-cell {
+    background-color: #BCEE7D !important;
+}
+
+.oneHave .ant-table-cell {
+    background-color: rgb(253, 213, 62) !important;
+}
+
+.noHave .ant-table-cell {
+    background-color:rgb(209,209,209) !important;
+}
 
 .hotTable .ant-table .ant-table-content .ant-table-tbody .ant-table-row .ant-table-cell {
     background-color: rgb(253, 213, 62);
-    border-bottom-color: red;
-
+    border-bottom-color: #626262;
+}
+.presale .ant-table .ant-table-content .ant-table-tbody .ant-table-row:hover .ant-table-cell {
+    background-color: rgb(254, 239, 146) !important;
 }
 
 .hotTable .ant-table .ant-table-content .ant-table-tbody .ant-table-row:hover .ant-table-cell {

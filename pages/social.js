@@ -2,7 +2,6 @@ import React, {useEffect, useState} from "react";
 import axios from "axios";
 import Sidebar from "../components/Sidebar";
 import baseUrl from '/utils/baseUrl'
-// import { parseCookies } from "nookies";
 import Feed from "../components/Feed";
 import styles from "../styles/social.module.css";
 import RightSideColumn from "../components/RightSideColumn";

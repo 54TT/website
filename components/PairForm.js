@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import axios from 'axios';
 import Link from "next/link";
 import  baseUrl from '/utils/baseUrl'
-import { Input } from "@material-tailwind/react";
 import { formatDecimal, sendGetRequestWithSensitiveData, sendPostRequestWithSensitiveData } from './Utils';
 import { useRouter } from 'next/router';
 import {notification} from "antd";
@@ -38,6 +37,7 @@ export default function CoinForm() {
       .catch(error => {
         notification.error({
           message: `Please note`, description: 'Error reported', placement: 'topLeft',
+          duration:2
         });
       });
 
@@ -96,6 +96,7 @@ export default function CoinForm() {
       .catch(error => {
         notification.error({
           message: `Please note`, description: 'Error reported', placement: 'topLeft',
+          duration:2
         });
       });
   };

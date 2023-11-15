@@ -3,12 +3,8 @@ import InputBox from "./InputBox";
 import baseUrl from '/utils/baseUrl'
 import {EmojiSadIcon} from "@heroicons/react/outline";
 import InfoBox from "./HelperComponents/InfoBox";
-// import { RefreshIcon } from "@heroicons/react/outline";
-import InfiniteScroll from "react-infinite-scroll-component"; //for infinite scrolling
-import {PlaceHolderPosts} from "./HelperComponents/Placeholders";
 import PostCard from "./PostCard";
 import axios from "axios";
-import cookie from "js-cookie";
 import {Facebook} from "react-content-loader";
 import {notification} from "antd";
 
@@ -38,6 +34,7 @@ function Feed({user, postsData, errorLoading,change, increaseSizeAnim}) {
         } catch (error) {
             notification.error({
                 message: `Please note`, description: 'Error reported', placement: 'topLeft',
+                duration:2
             });
         }
     };

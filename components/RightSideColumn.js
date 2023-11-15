@@ -3,7 +3,6 @@ import styled from "styled-components";
 import Link from "next/link";
 import baseUrl from '/utils/baseUrl'
 import calculateTime from "../utils/calculateTime";
-import cookie from "js-cookie";
 import {
     CheckCircleIcon,
     ExclamationCircleIcon,
@@ -46,6 +45,7 @@ function RightSideColumn({user, chatsData, userFollowStats,change}) {
         } catch (error) {
             notification.error({
                 message: `Please note`, description: 'Error reported', placement: 'topLeft',
+                duration:2
             });
         }
     };
@@ -227,13 +227,6 @@ const TextPreview = styled.p`
 const Date = styled.p`
   font-family: Inter;
   margin-left: auto;
-`;
-
-const UserImage = styled.img`
-  height: 2.8rem;
-  width: 2.8rem;
-  border-radius: 50%;
-  object-fit: cover;
 `;
 
 const FollowButton = styled.div`

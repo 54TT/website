@@ -1,6 +1,5 @@
 import axios from "axios";
 import {useRouter} from "next/router";
-import {parseCookies} from "nookies";
 import React, {useState, useEffect, useRef} from "react";
 import baseUrl from "../utils/baseUrl";
 import io from "socket.io-client"; //socket.io import
@@ -64,7 +63,7 @@ function ChatsPage() {
         if (!socket.current) {
             socket.current = io(baseUrl); //establishing connection with server;
         }
-        if (socket.current&&userPar&&userPar.id) {
+        if (socket.current && userPar && userPar.id) {
             socket.current.emit("join", {userId: userPar.id});
             socket.current.on("connectedUsers", ({users}) => {
                 setConnectedUsers(users);
@@ -87,7 +86,7 @@ function ChatsPage() {
     }, [userPar]);
     //LOAD TEXTS useEffect. Runs whenever router.query.chat changes, so basically whenever the user clicks on a different user
     useEffect(() => {
-        if (userPar&&userPar.id && router.query.chat) {
+        if (userPar && userPar.id && router.query.chat) {
             const loadTexts = () => {
                 socket?.current.emit("loadTexts", {
                     userId: userPar.id,
@@ -142,10 +141,10 @@ function ChatsPage() {
                         let previousChat = prev.find(
                             (chat) => chat.textsWith === newText.receiverId
                         );
-                        if (!previousChat||!previousChat.lastText){
-                            previousChat={
-                                lastText:'',
-                                created_at:''
+                        if (!previousChat || !previousChat.lastText) {
+                            previousChat = {
+                                lastText: '',
+                                created_at: ''
                             }
                         }
                         previousChat.lastText = newText.text;
@@ -161,10 +160,10 @@ function ChatsPage() {
                         let previousChat = prev.find(
                             (chat) => chat.textsWith === newText.senderId
                         );
-                        if (!previousChat||!previousChat.lastText){
-                            previousChat={
-                                lastText:'',
-                                created_at:''
+                        if (!previousChat || !previousChat.lastText) {
+                            previousChat = {
+                                lastText: '',
+                                created_at: ''
                             }
                         }
                         previousChat.lastText = newText.text;
@@ -179,10 +178,10 @@ function ChatsPage() {
                             let previousChat = prev.find(
                                 (chat) => chat.textsWith === newText.senderId
                             );
-                            if (!previousChat||!previousChat.lastText){
-                                previousChat={
-                                    lastText:'',
-                                    created_at:''
+                            if (!previousChat || !previousChat.lastText) {
+                                previousChat = {
+                                    lastText: '',
+                                    created_at: ''
                                 }
                             }
                             previousChat.lastText = newText.text;
@@ -209,7 +208,7 @@ function ChatsPage() {
                 socket.current.off("newTextReceived");
             }
         };
-    }, [newText, socket,session]);
+    }, [newText, socket, session]);
     const endOfMessagesRef = useRef(null);
     const scrollToBottom = () => {
         endOfMessagesRef.current.scrollIntoView({
@@ -242,7 +241,7 @@ function ChatsPage() {
                             borderLeft: "1px solid lightgrey",
                             borderRight: "1px solid lightgrey",
                             fontFamily: "Inter",
-                            overflowY:'auto'
+                            overflowY: 'auto'
                         }}
                         className="lg:min-w-[27rem] relative pt-4"
                     >
@@ -258,7 +257,6 @@ function ChatsPage() {
                                 placeholder="Search users"
                             />
                         </div>
-
                         {showChatSearch && (
                             <ChatSearch
                                 setShowChatSearch={setShowChatSearch}
@@ -267,6 +265,7 @@ function ChatsPage() {
                                 user={userPar}
                             />
                         )}
+
                         <div className="mt-4" style={{borderTop: "1px solid #efefef"}}>
                             <>
                                 {chats && chats.length > 0 ? (
@@ -278,8 +277,11 @@ function ChatsPage() {
                                             }
                                         >
                                             <div className="relative">
-                                                <UserImage src={chat.profilePicUrl} alt="userimg"/>
-                                                {connectedUsers.length > 0 &&
+                                                <img style={{
+                                                    width: '80px',
+                                                    borderRadius: '50%'
+                                                }} src={chat.profilePicUrl} alt="userimg"/>
+                                                {connectedUsers?.length > 0 &&
                                                 connectedUsers.filter(
                                                     (user) => user.userId === chat.textsWith
                                                 ).length > 0 ? (
@@ -319,6 +321,7 @@ function ChatsPage() {
                             </>
                         </div>
                     </div>
+                    {/*右边聊天*/}
                     {router.query?.chat && (
                         <div
                             style={{
@@ -332,7 +335,10 @@ function ChatsPage() {
                             {/*右边聊天*/}
                             {chatUserData && chatUserData.profilePicUrl ? (
                                 <ChatHeaderDiv>
-                                    <UserImage src={chatUserData.profilePicUrl} alt="userimg"/>
+                                    <img style={{
+                                        width: '80px',
+                                        borderRadius: '50%'
+                                    }} src={chatUserData?.profilePicUrl} alt="userimg"/>
                                     <div>
                                         <ChatName>{chatUserData?.name.length > 7 ? chatUserData.name.slice(0, 3) + '...' + chatUserData.name.slice(-3) : chatUserData.name}</ChatName>
                                         {connectedUsers.length > 0 &&
@@ -422,13 +428,6 @@ const Title = styled.p`
   font-weight: 600;
   font-family: Inter;
   margin: 1rem;
-`;
-
-const UserImage = styled.img`
-  height: 80px;
-  width: 80px;
-  border-radius: 50%;
-  object-fit: cover;
 `;
 
 const ChatDiv = styled.div`

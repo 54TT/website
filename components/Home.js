@@ -1,13 +1,7 @@
 import React, {useEffect, useState, useRef} from "react";
 import styles from "../styles/home.module.css";
 import axios from 'axios';
-import baseUrl from '/utils/baseUrl'
-import Link from "next/link";
-import Image from 'next/image';
 import {formatDecimal, sendGetRequestWithSensitiveData, getRelativeTimeDifference, formatDateTime} from './Utils';
-// import {useAccount, chain} from "wagmi";
-import {presalePlatforms, presalePlatformMatchLogos, launchPlatformMatchLogos} from "./Constant"
-import getConfig from "next/config";
 import {useRouter} from 'next/router';
 import {get, post, del} from '/utils/axios'
 import {
@@ -26,9 +20,9 @@ import {
     Drawer
 } from 'antd'
 import dayjs from 'dayjs'
-import duration from   'dayjs/plugin/duration'
-dayjs.extend(duration)
+import duration from 'dayjs/plugin/duration'
 
+dayjs.extend(duration)
 import {useQuery, ApolloClient, InMemoryCache} from '@apollo/client';
 import {gql} from 'graphql-tag';
 import {
@@ -44,7 +38,7 @@ import {
 import Bott from "./Bottom";
 
 const client = new ApolloClient({
-    uri: 'http://192.168.8.39:8000/subgraphs/name/levi/uniswapv2', cache: new InMemoryCache(),
+    uri: 'http://174.138.25.199:8000/subgraphs/name/levi/uniswapv2', cache: new InMemoryCache(),
 });
 
 export default function Home() {
@@ -72,6 +66,7 @@ query NewPair {
     const hint = () => {
         notification.error({
             message: `Please note`, description: 'Error reported', placement: 'topLeft',
+            duration: 2
         });
     }
     const autoConvert = (number) => {
@@ -87,9 +82,9 @@ query NewPair {
     const [newPair, setNewPair] = useState([])
     const [loveChanges, setLoveChange] = useState(false);
     const [launch, setLaunch] = useState([]);
-    const [launchAll, setLaunchAll] = useState(0);
     const [launchBol, setLaunchBol] = useState(false);
-
+    const da = "2023-11-30T09:16:29.000Z"
+    const dd = "2023-12-09T09:16:24.000Z"
     const [featuredBol, setFeaturedBol] = useState(false);
     const [featured, setFeatured] = useState([]);
     const {loading, error, data} = useQuery(GET_DATA, {client});
@@ -103,10 +98,10 @@ query NewPair {
                 setLoadingBool(false)
             }
         } else {
-            setLoadingBool(true)
+            setLoadingBool(false)
+            setNewPair([])
         }
     }, [data, loading])
-
     const getParams = (url, params, name) => {
         get(url, params).then(async (res) => {
             if (res.status === 200) {
@@ -138,7 +133,7 @@ query NewPair {
     }
     const [time, setTime] = useState('h24')
     const columns = [{
-        title: '', render: (text, record) => {
+        title: '', align: 'center', render: (text, record) => {
             return <p style={{
                 width: '30px',
                 backgroundColor: 'black',
@@ -149,41 +144,41 @@ query NewPair {
             }}>{record?.baseToken?.symbol?.slice(0, 1)}</p>
         }
     }, {
-        title: 'PAIR', render: (text, record) => {
+        title: 'PAIR',align: 'center',  render: (text, record) => {
             return <div style={{display: 'flex', alignItems: 'center'}}>
                 <span>{record.baseToken?.symbol}/{record.quoteToken?.symbol}</span>
             </div>
         }
     },
         {
-            title: 'PRICE', render: (text, record) => {
+            title: 'PRICE',align: 'center',  render: (text, record) => {
                 return <div>{record?.priceUsd ? formatDecimal(record?.priceUsd, 3) : ''}</div>
             }
         },
         {
-            title: 'Create Time', render: (text, record) => {
+            title: 'Create Time',align: 'center',  render: (text, record) => {
                 const data = record.pairCreatedAt.toString().length > 10 ? Number(record.pairCreatedAt.toString().slice(0, 10)) : record.pairCreatedAt
                 return <p>{record?.pairCreatedAt ? getRelativeTimeDifference(formatDateTime(data)) : ''}</p>
             }
         },
         {
-            title: <span>{'% ' + time}</span>, render: (text, record) => {
+            title: <span>{'% ' + time}</span>,align: 'center',  render: (text, record) => {
                 return <p
                     style={{color: record?.priceChange[time] > 0 ? 'green' : 'red'}}>{record?.priceChange[time] ? record.priceChange[time] : 0}</p>
             }
         },
         {
-            title: 'TXNS', render: (text, record) => {
+            title: 'TXNS',align: 'center',  render: (text, record) => {
                 return <p>{(record?.txns[time]?.buys + record?.txns[time]?.sells) ? autoConvert(record?.txns[time]?.buys + record?.txns[time]?.sells) : 0}</p>
             }
         },
         {
-            title: 'VOLUME', render: (text, record) => {
+            title: 'VOLUME',align: 'center',  render: (text, record) => {
                 return <p>{record?.volume[time] ? autoConvert(record?.volume[time]) : 0}</p>
             }
         },
         {
-            title: 'LIQUIDITY', render: (text, record) => {
+            title: 'LIQUIDITY',align: 'center',  render: (text, record) => {
                 return <p> {record?.liquidity?.usd ? autoConvert(record.liquidity.usd) : ''}</p>
             }
         },
@@ -224,12 +219,6 @@ query NewPair {
                 break;
         }
     }
-
-    // console.log(dayjs('2023-11-01T08:25:26.000Z'))
-    // console.log(dayjs())
-   const aaa =  dayjs().diff(dayjs("2023-11-01T08:25:26.000Z"), 'minutes')
-    // console.log(aaa)
-    // console.log( dayjs("2023-11-01T08:25:26.000Z").isAfter(dayjs()))
     const pushRouter = (name) => {
         if (name === 'live') {
             router.push('/newPair')
@@ -250,20 +239,26 @@ query NewPair {
             setTime('h24')
         }
     }
-
-const [diffTime,setDiffTime]= useState(null)
-    let timer=null
+    const [diffTime, setDiffTime] = useState(null)
+    const refSet = useRef(null)
     useEffect(() => {
-        // 开启定时器
-        // if (diffTime == 0) {
-            // window.clearInterval(timer);
-            // console.log("清除定时器");
-        // }
-        // if (timer) return;
-        // timer = window.setInterval(() => {
-        //     setDiffTime((diffTime) => diffTime - 1);
-        // }, 10000);
-    }, [diffTime]);
+        refSet.current = setInterval(() => setDiffTime(diffTime - 1), 1000)
+        return () => {
+            clearInterval(refSet.current)
+        }
+    }, [diffTime])
+    const dao = (name) => {
+        if (name) {
+            var day = Math.floor((name / (24 * 3600)))
+            var hour = Math.floor((name - (24 * 3600 * day)) / (3600))
+            var min = Math.floor((name - (24 * 3600 * day) - (hour * 3600)) / (60))
+            var s=Math.floor(name-(24*3600*day)-(hour*3600)-(min*60))
+            const m = min.toString().length === 1 ? '0' + min : min
+            return day + ':' + hour + ':' + m+':'+s
+        } else {
+            return '00:00:00'
+        }
+    }
 
     return (<div className={styles['box']}>
         <div className={styles['boxPar']}>
@@ -315,6 +310,7 @@ const [diffTime,setDiffTime]= useState(null)
 
                                                 </div>
                                             </div>
+                                            {/*时间*/}
                                             <div style={{width: '35%'}}>
                                                 <p style={{textAlign: 'center', lineHeight: '1.3'}}>$0</p>
                                                 <div style={{
@@ -359,12 +355,12 @@ const [diffTime,setDiffTime]= useState(null)
                                         if (index > 2) {
                                             return ''
                                         } else {
-                                            if(i.presale_time&&dayjs(i.presale_time).isAfter(dayjs())){
-                                                // const data = dayjs(i.presale_time).diff(dayjs(), "seconds")
-                                                // console.log(data)
-                                                // setDiffTime(data)
-                                            }
-                                            return <li className={`${styles.li} ${dayjs(i.presale_time).isAfter(dayjs())?styles.be:styles.de}`} style={dayjs(i.presale_time).isAfter(dayjs())?{backgroundColor:' rgb(188, 238, 125)'}:{}} key={index}>
+                                            // var second = dayjs(i.presale_time).isAfter(dayjs())?dayjs(i.presale_time).diff(dayjs(), 'seconds'):''
+                                            // setDiffTime(second)
+                                            return <li
+                                                className={`${styles.li} ${dayjs(i.presale_time).isAfter(dayjs()) ? styles.be : styles.de}`}
+                                                style={dayjs(i.presale_time).isAfter(dayjs()) ? {backgroundColor: ' rgb(188, 238, 125)'} : !dayjs(i.launch_time).isAfter(dayjs()) ? {backgroundColor: 'rgb(209,209,209)'} : {}}
+                                                key={index}>
                                                 <p style={{
                                                     textAlign: 'center',
                                                     width: '40px',
@@ -401,23 +397,27 @@ const [diffTime,setDiffTime]= useState(null)
                                                 </div>
                                                 <div>
                                                     {
-                                                        dayjs(i.presale_time).isAfter(dayjs())?<div>
+                                                        dayjs(i.presale_time).isAfter(dayjs()) ? <div>
                                                             <p style={{
                                                                 lineHeight: 1,
                                                                 letterSpacing: '1px',
                                                                 textAlign: 'center'
                                                             }}>Pre-sale ends</p>
-                                                            <div style={{display: 'flex', alignItems: 'center', lineHeight: 1}}>
+                                                            <div style={{
+                                                                display: 'flex',
+                                                                alignItems: 'center',
+                                                                lineHeight: 1
+                                                            }}>
                                                                 <img src={`/Time.png`} alt="" width={'22px'}/>
                                                                 <span
                                                                     style={{
                                                                         letterSpacing: '2px',
                                                                         fontSize: '18px'
-                                                                    }}>{i.presale_time ? dayjs(i.presale_time).format('hh:mm:ss') : ''}</span>
+                                                                    }}>{i.presale_time ? dao(dayjs(i.presale_time).isAfter(dayjs()) ? dayjs(i.presale_time).diff(dayjs(), 'seconds') : '') : ''}</span>
                                                             </div>
-                                                        </div>:''
+                                                        </div> : ''
                                                     }
-
+                                                    {/*时间*/}
                                                     <p style={{
                                                         lineHeight: 1,
                                                         letterSpacing: '1px',
@@ -429,7 +429,7 @@ const [diffTime,setDiffTime]= useState(null)
                                                             style={{
                                                                 letterSpacing: '2px',
                                                                 fontSize: '18px'
-                                                            }}>{i.launch_time ? dayjs(i.launch_time).format('hh:mm:ss') : ''}</span>
+                                                            }}>{i?.launch_time ? dao(dayjs(i.launch_time).isAfter(dayjs()) ? dayjs(i.launch_time).diff(dayjs(), 'seconds') : '') : ''}</span>
                                                     </div>
                                                 </div>
                                             </li>
@@ -496,73 +496,69 @@ const [diffTime,setDiffTime]= useState(null)
                 </div>
             </div>
             {/*右边*/}
-            <div style={{width: '34%', backgroundColor: 'rgb(251,238,181)', borderRadius: '12px', padding: '10px 8px'}}>
-                <p className={styles['dis']} style={{padding: '0 34px'}}>
-                    <span style={{fontSize: '20px', fontWeight: 'bold'}}>Hotly discussed</span>
-                    <span style={{fontSize: '20px', color: '#2394D4', cursor: 'pointer'}}>more></span>
-                </p>
-                <div style={{
-                    backgroundColor: 'rgb(248,229,161)', padding: '16px', borderRadius: '12px', marginTop: '13px'
-                }}>
-                    <ul>
-                        <li style={{backgroundColor: 'white', padding: '10px', borderRadius: '12px'}}>
-                            <div style={{
-                                display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '38%'
-                            }}>
-                                <img src={` /Ellipse.png`} alt="" width={'35px'}/>
-                                <div style={{width: '65%'}}>
-                                    <div style={{
-                                        display: 'flex',
-                                        lineHeight: '1',
-                                        alignItems: 'center',
-                                        justifyContent: 'space-between',
-                                    }}><span>name</span>
-                                        <span style={{color: '#F8E5A1', fontSize: '14px'}}>时间</span></div>
-                                    <div style={{
-                                        display: 'flex',
-                                        lineHeight: '1',
-                                        marginTop: '3px',
-                                        color: '#666666',
-                                        alignItems: 'center',
-                                    }}>name to<span style={{color: '#2294D4', marginLeft: '5px'}}> 时间</span>
-                                        {/*<span style={{color: '#F8E5A1', fontSize: '14px'}}></span>*/}
-                                    </div>
+            <div style={{width: '34%', backgroundColor: '#BCEE7D', borderRadius: '12px', padding: '10px 8px'}}>
+                {/*<div style={{*/}
+                {/*    backgroundColor: 'rgb(248,229,161)', padding: '16px', borderRadius: '12px', marginTop: '13px'*/}
+                {/*}}>*/}
+                <ul>
+                    <li style={{backgroundColor: 'white', padding: '20px', margin: '20px', borderRadius: '12px'}}>
+                        <div style={{
+                            display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '38%'
+                        }}>
+                            <img src={` /Ellipse.png`} alt="" width={'35px'}/>
+                            <div style={{width: '65%'}}>
+                                <div style={{
+                                    display: 'flex',
+                                    lineHeight: '1',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                }}><span>name</span>
+                                    <span style={{color: '#F8E5A1', fontSize: '14px'}}>时间</span></div>
+                                <div style={{
+                                    display: 'flex',
+                                    lineHeight: '1',
+                                    marginTop: '3px',
+                                    color: '#666666',
+                                    alignItems: 'center',
+                                }}>name to<span style={{color: '#2294D4', marginLeft: '5px'}}> 时间</span>
+                                    {/*<span style={{color: '#F8E5A1', fontSize: '14px'}}></span>*/}
                                 </div>
                             </div>
-                            <p style={{fontSize: '14px', margin: '10px 0 7px 0'}}>发的文案啦</p>
-                            <img src={` /Rectangle.png`} alt="" width={'100%'}/>
-                            <ul style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'space-between',
-                                padding: '0 5px'
-                            }}>
-                                <li style={{color: 'rgb(83,100 ,113)'}}>
-                                    {/*  信息*/}
-                                    <MessageOutlined style={{cursor: 'pointer'}}/>
-                                    <span style={{marginLeft: '10px'}}>21</span>
-                                </li>
-                                <li>
-                                    {/*旋转*/}
-                                    <RetweetOutlined style={{cursor: 'pointer'}}/>
-                                    <span style={{marginLeft: '10px'}}>21</span>
-                                </li>
-                                <li>
-                                    {/*爱心*/}
-                                    {!loveChanges ?
-                                        <HeartOutlined style={{cursor: 'pointer'}} onClick={loveChange}/> :
-                                        <HeartFilled style={{cursor: 'pointer', color: 'red'}}
-                                                     onClick={loveChange}/>}
-                                    <span style={{marginLeft: '10px'}}>21</span>
-                                </li>
-                                <li>
-                                    {/*  分享*/}
-                                    <ShareAltOutlined style={{cursor: 'pointer'}}/>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                </div>
+                        </div>
+                        <p style={{fontSize: '14px', margin: '10px 0 7px 0'}}>发的文案啦</p>
+                        <img src={` /Rectangle.png`} alt="" width={'100%'}/>
+                        <ul style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            padding: '0 5px'
+                        }}>
+                            <li style={{color: 'rgb(83,100 ,113)'}}>
+                                {/*  信息*/}
+                                <MessageOutlined style={{cursor: 'pointer'}}/>
+                                <span style={{marginLeft: '10px'}}>21</span>
+                            </li>
+                            <li>
+                                {/*旋转*/}
+                                <RetweetOutlined style={{cursor: 'pointer'}}/>
+                                <span style={{marginLeft: '10px'}}>21</span>
+                            </li>
+                            <li>
+                                {/*爱心*/}
+                                {!loveChanges ?
+                                    <HeartOutlined style={{cursor: 'pointer'}} onClick={loveChange}/> :
+                                    <HeartFilled style={{cursor: 'pointer', color: 'red'}}
+                                                 onClick={loveChange}/>}
+                                <span style={{marginLeft: '10px'}}>21</span>
+                            </li>
+                            <li>
+                                {/*  分享*/}
+                                <ShareAltOutlined style={{cursor: 'pointer'}}/>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+                {/*</div>*/}
             </div>
         </div>
         <Bott/>

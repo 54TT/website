@@ -1,9 +1,7 @@
 import React, {useEffect, useRef, useState} from "react";
 import styled from "styled-components";
 import calculateTime from "../utils/calculateTime";
-import baseUrl from '/utils/baseUrl'
 import {ThumbUpIcon} from "@heroicons/react/solid";
-import _ from 'lodash'
 import copy from 'copy-to-clipboard'
 import {
     ChatAltIcon,
@@ -21,6 +19,7 @@ const {TextArea} = Input
 const notify = () => {
     notification.success({
         message: `Post deleted successfully!`, placement: 'topLeft',
+        duration:2
     });
 }
 
@@ -53,7 +52,7 @@ function PostCard({post, user, postById, change, liked}) {
     };
 
     const handleLike = async () => {
-        await likePost(post?.id, user?.id, liked ? false : true, change)
+        await likePost(post?.id, user?.id, !liked, change)
     };
 
     const handleClickOpen = () => {
@@ -80,11 +79,11 @@ function PostCard({post, user, postById, change, liked}) {
         >
             <div className="p-4">
                 <div className="flex space-x-3 items-center ml-2 relative">
-                    <Image src={post && post?.user?.profilePicUrl ? post.user.profilePicUrl : ''} alt="userimg"/>
+                    <img  style={{width:'50px',borderRadius:'50%'}} src={post && post?.user?.profilePicUrl ? post.user.profilePicUrl : ''} alt="userimg"/>
                     <div>
                         <UserPTag
                             onClick={() => {
-                                router.push(`/${post?.user?.username}`);
+                                router.push(`/${post?.user?.address}`);
                             }}
                         >
                             {post?.user?.username?post?.user?.username.length>10 ? post.user.username.slice(0,8):post.user.username : ''}
@@ -177,16 +176,15 @@ function PostCard({post, user, postById, change, liked}) {
                     <ChatAltIcon className="h-6"/>
                     <p style={{userSelect: "none"}}>Comment</p>
                 </div>
-                <div
-                    onClick={() => {
-                        // copy(`${baseUrl}/post/${post.id}`);
-                        // notifyCopyLink();
-                    }}
-                    className="flex flex-grow justify-center hover:bg-gray-100 space-x-2 mb-1 mt-1 pt-2 pb-2 pl-2.5 pr-2.5 rounded-xl cursor-pointer"
-                >
-                    <ShareIcon className="h-6"/>
-                    <p style={{userSelect: "none"}}>Share</p>
-                </div>
+                {/*<div*/}
+                {/*    onClick={() => {*/}
+                {/*        copy(`${baseUrl}/post/${post.id}`);*/}
+                {/*    }}*/}
+                {/*    className="flex flex-grow justify-center hover:bg-gray-100 space-x-2 mb-1 mt-1 pt-2 pb-2 pl-2.5 pr-2.5 rounded-xl cursor-pointer"*/}
+                {/*>*/}
+                {/*    <ShareIcon className="h-6"/>*/}
+                {/*    <p style={{userSelect: "none"}}>Share</p>*/}
+                {/*</div>*/}
             </div>
             {/*发送消息*/}
             {showComments && (
@@ -195,7 +193,7 @@ function PostCard({post, user, postById, change, liked}) {
                         <form className="w-full">
                             {/* div which contains the profilepic and the input div */}
                             <div className="flex space-x-2 items-center">
-                                <Image
+                                <img  style={{width:'50px',borderRadius:'50%'}}
                                     src={user?.profilePicUrl}
                                     alt="profile pic"
                                 />
@@ -250,14 +248,6 @@ function PostCard({post, user, postById, change, liked}) {
                                 setComments={setComments}
                             />
                         ))}
-                    {/*{comments.length > 3 && (*/}
-                    {/*    <p*/}
-                    {/*        onClick={() => router.push(`/post/${post.id}`)}*/}
-                    {/*        className="hover:underline ml-5 mt-3 text-gray-500 cursor-pointer font-normal"*/}
-                    {/*    >*/}
-                    {/*        View all comments*/}
-                    {/*    </p>*/}
-                    {/*)}*/}
                 </div>
             )}
         </div>
@@ -265,25 +255,6 @@ function PostCard({post, user, postById, change, liked}) {
 }
 
 export default PostCard;
-
-const Image = styled.img`
-  object-fit: cover;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-`;
-
-const PostImage = styled.img`
-  object-fit: contain;
-  height: auto;
-  max-height: 455px;
-  width: 100%;
-  margin-top: 0.35rem;
-  margin-bottom: 1.2rem;
-  transition: all 0.22s ease-out;
-  border-top: 0.7px solid lightgrey;
-  border-bottom: 0.7px solid lightgrey;
-`;
 
 const UserPTag = styled.p`
   cursor: pointer;

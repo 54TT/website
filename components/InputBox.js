@@ -180,10 +180,15 @@ function InputBox({user, setPosts, increaseSizeAnim}) {
                                             >
                                                 <XIcon className="h-6 text-gray-700"/>
                                             </ImagePreviewDiv>
-                                            <ImagePreview
+                                            <img  style={{ height: '300px',
+                                                width: '90%',
+                                                marginLeft: 'auto',
+                                                marginRight: 'auto',
+                                                marginBottom: '20px',
+                                                transition: 'all 0.22s ease-out'}}
                                                 src={imagePreview}
                                                 alt="imagePreview"
-                                            ></ImagePreview>
+                                            ></img>
                                         </ImageContainerDiv>
                                     </>
                                 )}
@@ -230,10 +235,15 @@ function InputBox({user, setPosts, increaseSizeAnim}) {
                                             >
                                                 <XIcon className="h-6 text-gray-700"/>
                                             </ImagePreviewDiv>
-                                            <ImagePreview
+                                            <img style={{ height: '300px',
+                                                width: '90%',
+                                                marginLeft: 'auto',
+                                                marginRight: 'auto',
+                                                marginBottom: '20px',
+                                                transition: 'all 0.22s ease-out'}}
                                                 src={imagePreview}
                                                 alt="imagePreview"
-                                            ></ImagePreview>
+                                            ></img>
                                         </ImageContainerDiv>
                                     </>
                                 )}
@@ -267,30 +277,10 @@ const ImagePreviewDiv = styled.div`
   z-index: 70;
 `;
 
-const ImagePreview = styled.img`
-  object-fit: contain;
-  height: 300px;
-  width: 90%;
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 1.2rem;
-  transition: all 0.22s ease-out;
-`;
-
 const ImageContainerDiv = styled.div`
   position: relative;
-
-  & ${ImagePreviewDiv}:hover + ${ImagePreview} {
-    opacity: 0.55;
-    filter: brightness(107%) contrast(80%);
-  }
 `;
 
-const Image = styled.img`
-  object-fit: cover;
-  width: 50px;
-  border-radius: 50%;
-`;
 
 const InputTextarea = styled.textarea`
   resize: none;

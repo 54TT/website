@@ -162,9 +162,9 @@ function Details(props) {
                     </div>
                     <div>
                         <p style={{fontSize: '18px'}}>PLUR: <span
-                            style={{color: 'rgb(32,134,192)'}}>{featured?.baseToken?.address||''}</span></p>
+                            style={{color: 'rgb(32,134,192)'}}>{featured?.baseToken?.address?featured.baseToken.address.slice(0,3)+'...'+featured.baseToken.address.slice(-4):''}</span></p>
                         <p style={{fontSize: '18px'}}>PAIR: <span
-                            style={{color: 'rgb(32,134,192)'}}>{featured?.pairAddress||''}</span></p>
+                            style={{color: 'rgb(32,134,192)'}}>{featured?.pairAddress?featured.pairAddress.slice(0,3)+'...'+featured.pairAddress.slice(-4):''}</span></p>
                     </div>
                     <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '20%'}}>
                         <img src="/LOGOTOU.png" alt="" width={'30px'}/>
@@ -202,7 +202,7 @@ function Details(props) {
                                     params.map((i, index) => {
                                         return <div key={index} className={style['keyOne']} style={params.length-1===index||params.length-2===index?{}:{marginBottom:'20px'}}>
                                             <p style={{color: 'rgb(98,98,98)'}}>{i.name}</p>
-                                            <p style={{fontWeight: 'bold', fontSize: '18px'}}>{i.nu ? i.nu : '-'}</p>
+                                            <p style={{fontWeight: 'bold',lineHeight:'1', fontSize: i.nu.length>8?'12px':'15px'}}>{i.nu ? i.nu : '-'}</p>
                                         </div>
                                     })
                                 }
@@ -212,7 +212,7 @@ function Details(props) {
                                 <img src="/LOGOTOU.png" alt="" width={'40px'}/>
                             </div>
                         </div>
-                        <div style={{width:'70%'}}>
+                        <div style={{width:'80%'}}>
                             <iframe src={`https://dexscreener.com/ethereum/${data?.pairAddress}?embed=1&theme=dark`} style={{width:'100%',height:'100%'}}></iframe>
                         </div>
                     </div>

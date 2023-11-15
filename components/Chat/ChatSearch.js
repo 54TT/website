@@ -37,6 +37,7 @@ function ChatSearch({ setShowChatSearch, setChats, chats,user }) {
     } catch (error) {
       notification.error({
         message: `Please note`, description: 'Error reported', placement: 'topLeft',
+          duration:2
       });
     }
 
@@ -120,8 +121,8 @@ function ChatSearch({ setShowChatSearch, setChats, chats,user }) {
                 }}
                 className="flex items-center space-x-3 mt-2 cursor-pointer hover:bg-gray-100 rounded-lg p-2"
               >
-                <Image src={resultUser.profilePicUrl} alt="userimg" />
-                <Name>{resultUser.name}</Name>
+                <img style={{width:'50px',borderRadius:'50%'}} src={resultUser?.profilePicUrl} alt="userimg" />
+                <Name>{resultUser?.name}</Name>
               </div>
             </Link>
           ))}
@@ -151,13 +152,6 @@ const ArrowDiv = styled.div`
   :hover {
     background-color: #eee;
   }
-`;
-
-const Image = styled.img`
-  object-fit: cover;
-  border-radius: 50%;
-  height: 2.7rem;
-  width: 2.7rem;
 `;
 
 const Name = styled.p`

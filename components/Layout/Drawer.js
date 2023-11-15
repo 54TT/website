@@ -219,7 +219,7 @@ const Drawer = () => {
                                         justifyContent: 'center',
                                     }}
                                 >
-                                    <img src={` /ChatS.png`} alt="logo" width={32}/>
+                                    <img src={`/Users.png`} alt="logo" width={32}/>
                                 </ListItemIcon>
                                 <ListItemText primary="comminicate" sx={{opacity: openDrawer ? 1 : 0}}/>
                             </ListItemButton>

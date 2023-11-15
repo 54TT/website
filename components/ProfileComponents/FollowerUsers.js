@@ -25,6 +25,7 @@ function FollowerUsers({ profile, userFollowStats, user }) {
   const hint = () => {
     notification.error({
       message: `Please note`, description: 'Error reported', placement: 'topLeft',
+      duration:2
     });
   }
   useEffect(() => {
@@ -72,11 +73,11 @@ function FollowerUsers({ profile, userFollowStats, user }) {
               className="mb-5 cursor-pointer"
               key={fol?.user?.id}
               style={{width:'30%'}}
-              onClick={() => router.push(`/${fol?.user?.username}`)}
+              onClick={() => router.push(`/${fol?.user?.address}`)}
             >
               <img src={fol?.user?.profilePicUrl} alt="userprof" style={{width:'50px',}} />
               <p style={{overflow:"hidden",textOverflow:'ellipsis',whiteSpace:'nowrap'}}
-                 onClick={() => router.push(`/${fol?.user?.username}`)}>
+                 onClick={() => router.push(`/${fol?.user?.address}`)}>
                 {fol?.user?.username.slice(0,6)}
               </p>
             </div>

@@ -2,7 +2,6 @@ import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {useRouter} from "next/router";
 import baseUrl from "../../../utils/baseUrl";
-import {parseCookies} from "nookies";
 import InfoBox from "../../../components/HelperComponents/InfoBox";
 import {
     CheckCircleIcon,

@@ -1,5 +1,4 @@
 import axios from "axios";
-import { parseCookies } from "nookies";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import InfoBox from "../components/HelperComponents/InfoBox";

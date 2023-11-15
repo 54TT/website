@@ -4,7 +4,6 @@ import {SiweMessage} from "siwe"
 import baseUrl from '/utils/baseUrl'
 import {useAccount, useConnect, useNetwork, useSignMessage, useDisconnect,} from "wagmi"
 import Link from "next/link"
-import Marquee from "react-fast-marquee";
 import DrawerPage from './drawer'
 import {InjectedConnector} from 'wagmi/connectors/injected'
 import axios from 'axios';
@@ -25,7 +24,6 @@ const Header = () => {
     const {chain} = useNetwork()
     const router = useRouter()
     const inputRef = useRef(null);
-    const [api, contextHolder] = notification.useNotification();
     const {address, isConnected} = useAccount()
     const {data: session, status} = useSession()
     const {signMessageAsync} = useSignMessage()
@@ -48,7 +46,7 @@ const Header = () => {
         get('/getTokenNameAndSymbol', {
             tokenAddress: e?.target?.value ? e.target.value : ''
         }).then(res => {
-            if (res.status === 200 && res.data) {
+            if (res.status === 200 && res?.data?.symbol) {
                 setTokenForm(res.data)
                 setTokenFormBol(false)
             } else {
@@ -83,6 +81,12 @@ const Header = () => {
         })
 
     };
+    const onFinishFailed = (a) => {
+        notification.warning({
+            message: `warning`, description: 'Please enter complete data!', placement: 'topLeft',
+            duration:2
+        });
+    }
     const onFinish = (values) => {
         if (tokenFormBol) {
             inputRef.current.focus({
@@ -96,33 +100,65 @@ const Header = () => {
                 website: values.website,
                 telegram: values.telegram
             }
-            const presale = {
-                presaleTime: timeForm.presale,
-                presalePlatformId: values.presalePlatformId,
-                presaleLink: values.presaleLink
+            let presale = {}
+            let launch = {}
+            let bol = false
+            if (!timeForm.presale && !values.presalePlatformId && !values.presaleLink) {
+            } else if (!timeForm.presale || !values.presalePlatformId || !values.presaleLink) {
+                bol = true
+                notification.warning({
+                    message: `warning`, description: 'Presale please enter complete!', placement: 'topLeft',
+                    duration:2
+                });
+            } else {
+                presale.presaleTime = timeForm?.presale;
+                presale.presalePlatformId = values?.presalePlatformId;
+                presale.presaleLink = values?.presaleLink;
             }
-            const launch = {
-                launchTime: timeForm.launch,
-                launchPlatformId: values.launchPlatformId,
-                launchLink: values.launchLink
+            if (!timeForm.launch && !values.launchPlatformId && !values.launchLink) {
+            } else if (!timeForm.launch || !values.launchPlatformId || !values.launchLink) {
+                bol = true
+                notification.warning({
+                    message: `warning`, description: 'Launch please enter complete!', placement: 'topLeft',
+                    duration:2
+                });
+            } else {
+                launch.launchTime = timeForm?.launch;
+                launch.launchPlatformId = values?.launchPlatformId;
+                launch.launchLink = values?.launchLink;
             }
-            const data = {token, presale, launch}
-            post('/addPresaleAndLaunch', data).then(res => {
-                if (res && res.data?.success) {
-                    form.resetFields()
-                    setTokenForm({})
-                    setTime({})
-                    setOpen(false);
-                    api.success({
-                        message: `Success`, description: 'Added successfully', placement: 'topLeft',
-                    });
-                } else {
-                    api.warning({
-                        message: `warning`, description: 'add failed,Please try again', placement: 'topLeft',
-                    });
+            var arrPresale = Object.keys(presale);
+            var arrLaunch = Object.keys(launch);
+            if (arrPresale.length === 0 && arrLaunch.length === 0 && !bol) {
+                notification.warning({
+                    message: `warning`, description: 'Presale or Launch please enter complete!', placement: 'topLeft',
+                    duration:2
+                });
+            } else if (!bol) {
+                const data = {
+                    token,
+                    presale: arrPresale.length === 0 ? '' : presale,
+                    launch: arrLaunch.length === 0 ? '' : launch
                 }
-            }).catch(err => {
-            })
+                post('/addPresaleAndLaunch', data).then(res => {
+                    if (res && res.data?.success) {
+                        form.resetFields()
+                        setTokenForm({})
+                        setTime({})
+                        setOpen(false);
+                        notification.success({
+                            message: `Success`, description: 'Added successfully', placement: 'topLeft',
+                            duration:2
+                        });
+                    } else {
+                        notification.warning({
+                            message: `warning`, description: 'add failed,Please try again', placement: 'topLeft',
+                            duration:2
+                        });
+                    }
+                }).catch(err => {
+                })
+            }
         }
     };
     const hidePresale = () => {
@@ -194,9 +230,9 @@ const Header = () => {
             signOut()
         }
     }
-    const push=()=>{
-        if(session&&session.user&&session.user.username){
-            router.push(`/${session.user.username}`)
+    const push = () => {
+        if (session && session.user && session.user.address) {
+            router.push(`/${session.user.address}`)
         }
     }
 
@@ -226,7 +262,7 @@ const Header = () => {
                 <div className={styles['aaa']}>
                     <div></div>
                     <p className={styles['search']}>Search pair by symbol,name,contract or token</p>
-                    <div style={{display:'flex',alignItems:'center'}}>
+                    <div style={{display: 'flex', alignItems: 'center'}}>
                         <Button type={'primary'} className={styles['but']}
                                 style={{marginRight: '20px', backgroundColor: 'rgb(254,239,146)'}} onClick={showDrawer}>Add
                             Coin</Button>
@@ -241,59 +277,37 @@ const Header = () => {
                                         handleLogin()
                                     }
                                 }}>Login</Button> :
-                                <div style={{display:'flex',alignItems:'center'}}>
-                                    <img style={{marginRight:'10px',width:'30px',borderRadius:'50%',height:'30px'}} src={session?.user?.profilePicUrl} alt=""/>
-                                <Dropdown
-                                    menu={{
-                                        items,
-                                    }}
-                                    placement="bottomLeft"
-                                    arrow
-                                >
-                                    <Button type={'primary'} className={styles['but']}
-                                            style={{
-                                                color: 'black',
-                                                backgroundColor: 'rgb(254,239,146)'
-                                            }}>{session?.user?.username?.slice(0, 5) + '...'}</Button>
-                                </Dropdown>
+                                <div style={{display: 'flex', alignItems: 'center'}}>
+                                    <img style={{
+                                        marginRight: '10px',
+                                        width: '30px',
+                                        borderRadius: '50%',
+                                        height: '30px'
+                                    }} src={session?.user?.profilePicUrl} alt=""/>
+                                    <Dropdown
+                                        menu={{
+                                            items,
+                                        }}
+                                        placement="bottomLeft"
+                                        arrow
+                                    >
+                                        <Button type={'primary'} className={styles['but']}
+                                                style={{
+                                                    color: 'black',
+                                                    backgroundColor: 'rgb(254,239,146)'
+                                                }}>{session?.user?.username?.slice(0, 5) + '...'}</Button>
+                                    </Dropdown>
                                 </div>
                         }
                     </div>
                 </div>
-                {/*<nav className="max-w-screen-xl pl-6 mx-auto grid grid-flow-col grid-cols-3 py-3">*/}
-                {/*  /!*<div className="flex items-center">*!/*/}
-                {/*    /!*<div className="w-full">*!/*/}
-                {/*    /!*  /!*<Marquee*!/*!/*/}
-                {/*    /!*  /!*  pauseOnHover={true}*!/*!/*/}
-                {/*    /!*  /!*  speed={30}*!/*!/*/}
-                {/*    /!*  /!*  gradientWidth={100}*!/*!/*/}
-                {/*    /!*  /!*>*!/*!/*/}
-                {/*    /!*    /!*<div>aaaaaaaaaaaaaaaaaaaaaaa</div>*!/*!/*/}
-                {/*    /!*    /!*{hotPairs.map((item, index) => (*!/*!/*/}
-                {/*    /!*    /!*  <span key={item.address}>*!/*!/*/}
-                {/*    /!*    /!*    <span># {index}</span>*!/*!/*/}
-                {/*    /!*    /!*    <Image src={`http://192.168.8.104:3004/${item.logo}`} width={20} height={20} className="mx-3 inline rounded-full" />*!/*!/*/}
-                {/*    /!*    /!*    <span>{item.symbol}</span>*!/*!/*/}
-                {/*    /!*    /!*  </span>*!/*!/*/}
-                {/*    /!*    /!*))}*!/*!/*/}
-                {/*    /!*  </Marquee>*!/*/}
-                {/*    /!*</div>*!/*/}
-                {/*  /!*</div>*!/*/}
-                {/*  <div className="flex justify-center ml-9">*/}
-                {/*  </div>*/}
-
-                {/*  <div>*/}
-                {/*    /!*<Link href="/addCoin">*!/*/}
-                {/*    /!*</Link>*!/*/}
-                {/*    /!*<Connect />*!/*/}
-                {/*  </div>*/}
-                {/*</nav>*/}
                 <DrawerPage/>
                 <Drawer title="Basic Drawer" destroyOnClose={true} placement="right" onClose={onClose} open={open}>
                     <Form
                         name="basic"
                         form={form}
                         onFinish={onFinish}
+                        onFinishFailed={onFinishFailed}
                         autoComplete="off"
                     >
                         <Form.Item
@@ -314,24 +328,18 @@ const Header = () => {
                         {/*presale*/}
                         <div style={{display: 'flex', alignItems: 'center', marginBottom: '10px'}}>
                             {
-                                openPresale ? <CaretRightFilled style={{cursor: 'pointer', fontSize: '20px',}}
-                                                                onClick={hidePresale}/> :
+                                !openPresale ? <CaretRightFilled style={{cursor: 'pointer', fontSize: '20px',}}
+                                                                 onClick={hidePresale}/> :
                                     <CaretDownFilled onClick={hidePresale}
                                                      style={{cursor: 'pointer', fontSize: '20px', marginTop: '5px'}}/>
                             }
                             <p style={{lineHeight: 1, cursor: 'pointer'}} onClick={hidePresale}>presale</p>
                             <p style={{width: '100%', height: '1px', backgroundColor: 'gray'}}></p>
                         </div>
-                        <div style={openPresale ? {display: 'none'} : {}}>
+                        <div style={!openPresale ? {display: 'none'} : {}}>
                             <Form.Item
                                 label="Time"
                                 name="presaleTime"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Please input your time!',
-                                    },
-                                ]}
                                 labelCol={{
                                     span: 6,
                                 }}
@@ -342,12 +350,6 @@ const Header = () => {
                             <Form.Item
                                 label="Platform"
                                 name="presalePlatformId"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Select input your PresalePlatform!',
-                                    },
-                                ]}
                                 labelCol={{
                                     span: 8,
                                 }}
@@ -372,12 +374,6 @@ const Header = () => {
                             <Form.Item
                                 label="Link"
                                 name="presaleLink"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Please input your link!',
-                                    },
-                                ]}
                                 labelCol={{
                                     span: 6,
                                 }}
@@ -388,25 +384,19 @@ const Header = () => {
                         {/*launch*/}
                         <div style={{display: 'flex', alignItems: 'center', marginBottom: '10px'}}>
                             {
-                                openLaunch ? <CaretRightFilled style={{cursor: 'pointer', fontSize: '20px',}}
-                                                               onClick={hideLaunch}/> :
+                                !openLaunch ? <CaretRightFilled style={{cursor: 'pointer', fontSize: '20px',}}
+                                                                onClick={hideLaunch}/> :
                                     <CaretDownFilled onClick={hideLaunch}
                                                      style={{cursor: 'pointer', fontSize: '20px', marginTop: '5px'}}/>
                             }
                             <p style={{lineHeight: 1, cursor: 'pointer'}} onClick={hideLaunch}>launch</p>
                             <p style={{width: '100%', height: '1px', backgroundColor: 'gray'}}></p>
                         </div>
-                        <div style={openLaunch ? {display: 'none'} : {}}>
+                        <div style={!openLaunch ? {display: 'none'} : {}}>
                             <Form.Item
                                 label="Time"
                                 name="launchTime"
                                 className={'bbb'}
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Please input your time!',
-                                    },
-                                ]}
                                 labelCol={{
                                     span: 6,
                                 }}
@@ -418,14 +408,9 @@ const Header = () => {
                                 label="Platform"
                                 name="launchPlatformId"
                                 className={'bbb'}
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Select input your launchPlatform!',
-                                    },
-                                ]} labelCol={{
-                                span: 8,
-                            }}
+                                labelCol={{
+                                    span: 8,
+                                }}
                             >
                                 <Select
                                     placeholder="Select a option and change input text above"
@@ -448,14 +433,9 @@ const Header = () => {
                                 label="Link"
                                 name="launchLink"
                                 className={'bbb'}
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Please input your link!',
-                                    },
-                                ]} labelCol={{
-                                span: 6,
-                            }}
+                                labelCol={{
+                                    span: 6,
+                                }}
                             >
                                 <Input/>
                             </Form.Item>

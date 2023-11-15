@@ -8,6 +8,7 @@ import {notification} from "antd";
 const notifyError = () =>{
   notification.error({
     message: `Please enter a bio.`, description: 'Error reported', placement: 'topLeft',
+    duration:2
   });
 }
 function ProfileFields({ profile, isUserOnOwnAccount,user ,change}) {

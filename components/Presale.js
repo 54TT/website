@@ -1,8 +1,4 @@
-import React, {useEffect, useState} from "react";
-import axios from 'axios';
-import baseUrl from '/utils/baseUrl';
-// import { useAccount, useNetwork} from "wagmi";
-import {useRouter} from 'next/router';
+import React, {useEffect, useRef, useState} from "react";
 import dayjs from 'dayjs';
 import {notification, Pagination, Table, Card} from "antd";
 import _ from "lodash";
@@ -10,36 +6,49 @@ import {get} from "../utils/axios";
 import {GlobalOutlined, SendOutlined, TwitterOutlined} from "@ant-design/icons";
 
 export default function Presale() {
-    const router = useRouter();
     const [launchPageSize, setLaunchPageSize] = useState(10);
     const [launchCurrent, setLaunchCurrent] = useState(1);
     const [launchAll, setLaunchAll] = useState(0);
     const [launch, setLaunch] = useState([]);
     const [launchBol, setLaunchBol] = useState(true);
-    const [presales, setPresales] = useState([]);
-    const [presaleCount, setPresaleCount] = useState(0);
 
     const hint = () => {
         notification.error({
             message: `Please note`, description: 'Error reported', placement: 'topLeft',
+            duration: 2
         });
     }
-    const [refreshedTime, setRefreshedTime] = useState(dayjs());
-    const updateRefreshedTime = () => {
-        setRefreshedTime(dayjs());
-    };
-
     const getParams = (url, params) => {
         get(url, params).then((res) => {
             if (res.status === 200) {
                 let {data, count} = res.data
                 setLaunch(data && data.length > 0 ? data : [])
-                setLaunchAll(count&&count.length>0 ? count[0].count : 0)
+                setLaunchAll(count && count.length > 0 ? count[0].count : 0)
                 setLaunchBol(false)
             }
         }).catch(err => {
             hint()
         })
+    }
+    const [diffTime, setDiffTime] = useState(null)
+    const refSet = useRef(null)
+    useEffect(() => {
+        refSet.current = setInterval(() => setDiffTime(diffTime - 1), 1000)
+        return () => {
+            clearInterval(refSet.current)
+        }
+    }, [diffTime])
+    const dao = (name) => {
+        if (name) {
+            var day = Math.floor((name / (24 * 3600)))
+            var hour = Math.floor((name - (24 * 3600 * day)) / (3600))
+            var min = Math.floor((name - (24 * 3600 * day) - (hour * 3600)) / (60))
+            // var s=Math.floor(name-(24*3600*day)-(hour*3600)-(min*60))
+            const m = min.toString().length === 1 ? '0' + min : min
+            return day + ':' + hour + ':' + m
+        } else {
+            return '00:00:00'
+        }
     }
 
     useEffect(() => {
@@ -64,108 +73,99 @@ export default function Presale() {
         } else if (name === 'b') {
             window.open(record.twitter)
         } else {
-            window.open(record.website.includes('http')?record.website:'https://'+record.website)
+            window.open(record.website.includes('http') ? record.website : 'https://' + record.website)
         }
     }
+    const [va, setVa] = useState('')
     const columns = [
         {
             title: '',
-            dataIndex: 'address',
+            dataIndex: 'address',align: 'center',
             width: 100,
-            render: (_,record) => {
-                return    <p style={{width:'40px',borderRadius:'50%',backgroundColor:'black',color:'white',textAlign:'center',lineHeight:'40px'}}>{record?.symbol?.slice(0,1)}</p>
+            render: (_, record) => {
+                return <p style={{
+                    width: '40px',
+                    borderRadius: '50%',
+                    backgroundColor: 'black',
+                    color: 'white',
+                    textAlign: 'center',
+                    lineHeight: '40px'
+                }}>{record?.symbol?.slice(0, 1)}</p>
             }
         },
         {
             title: 'Pair',
-            dataIndex: 'name',
+            dataIndex: 'name',align: 'center',
             render: (text) => {
                 return <p style={{fontWeight: 'bold', fontSize: '20px', textAlign: 'center'}}>{text}</p>
             }
         },
         {
             title: 'Social Info',
-            dataIndex: 'address',
+            dataIndex: 'address',align: 'center',
             width: 200,
             render: (text, record) => {
                 return <div
                     style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer'}}>
-                    <GlobalOutlined style={{cursor: 'pointer',fontSize:'20px'}} onClick={() => push(record, 'one')}/>
-                    <TwitterOutlined style={{cursor: 'pointer',fontSize:'20px'}} onClick={() => push(record, 'two')}/>
-                    <SendOutlined style={{cursor: 'pointer',fontSize:'20px'}} onClick={() => push(record, 'three')}/>
+                    <GlobalOutlined style={{cursor: 'pointer', fontSize: '20px'}} onClick={() => push(record, 'one')}/>
+                    <TwitterOutlined style={{cursor: 'pointer', fontSize: '20px'}} onClick={() => push(record, 'two')}/>
+                    <SendOutlined style={{cursor: 'pointer', fontSize: '20px'}} onClick={() => push(record, 'three')}/>
                 </div>
             }
         },
         {
             title: 'Pre-sale ends',
-            dataIndex: 'presale_time',
+            dataIndex: 'presale_time',align: 'center',
             sorter: {
                 compare: (a, b) => {
-                    const data = dayjs(a.presale_time).format('YYYY-MM-DD HH:mm:ss')
-                    const pa = dayjs(b.presale_time).format('YYYY-MM-DD HH:mm:ss')
+                    const data = a.presale_time ? dayjs(a.presale_time).format('YYYY-MM-DD HH:mm:ss') : 0
+                    const pa = b.presale_time ? dayjs(b.presale_time).format('YYYY-MM-DD HH:mm:ss') : 0
                     return dayjs(pa).isBefore(data)
                 }
             },
-            render: (text) => {
-                return <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}><img
-                    src="/Time.png" alt="" width={'30px'}/> <span>{dayjs(text).format('YYYY-MM-DD:HH:mm:ss')}</span>
-                </div>
+            render: (text, record) => {
+                if (text) {
+                    return <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}><img
+                        src="/Time.png" alt="" width={'30px'}/>
+                        <span>{dao(dayjs(text).isAfter(dayjs()) ? dayjs(text).diff(dayjs(), 'seconds') : '')}</span>
+                    </div>
+                } else {
+                    return <p style={{textAlign: 'center'}}>0</p>
+                }
             }
         },
         {
             title: 'Launch time',
-            dataIndex: 'launch_time',
+            dataIndex: 'launch_time',align: 'center',
             sorter: {
                 compare: (a, b) => {
-                    const data = dayjs(a.launch_time).format('YYYY-MM-DD HH:mm:ss')
-                    const pa = dayjs(b.launch_time).format('YYYY-MM-DD HH:mm:ss')
+                    const data = a.launch_time ? dayjs(a.launch_time).format('YYYY-MM-DD HH:mm:ss') : 0
+                    const pa = b.launch_time ? dayjs(b.launch_time).format('YYYY-MM-DD HH:mm:ss') : 0
                     return dayjs(pa).isBefore(data)
                 },
             },
             render: (text) => {
-                return <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}><img
-                    src="/Time.png" alt="" width={'30px'}/> <span>{dayjs(text).format('YYYY-MM-DD HH:mm:ss')}</span>
-                </div>
+                if (text) {
+                    return <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}><img
+                        src="/Time.png" alt="" width={'30px'}/>
+                        <span>{dao(dayjs(text).isAfter(dayjs()) ? dayjs(text).diff(dayjs(), 'seconds') : '')}</span>
+                    </div>
+                } else {
+                    return <p style={{textAlign: 'center'}}>0</p>
+                }
             }
         },
         {
             title: 'Actions',
-            dataIndex: 'launch_time',
+            dataIndex: 'launch_time',align: 'center',
             width: 50,
             render: (text, record) => {
                 return <img src={`${record.img ? "/StarHave.png" : "/StarNone.png"}`} alt="" width={'20px'}
-                            style={{cursor: 'pointer'}} onClick={() => changeImg(record)}/>
+                            style={{cursor: 'pointer'}}/>
+                // onClick={() => changeImg(record)}
             }
         },
     ];
-    const fetchData = async (chainIdParam, pageIndex, pageSize) => {
-        try {
-            const headers = {
-                'x-api-key': '922e0369e89a40d9be91d68fde539325', // 替换为你的授权令牌
-                'Content-Type': 'application/json', // 根据需要添加其他标头
-            };
-
-            let pairCount = await axios.get(baseUrl + '/queryAllPresaleCount', {
-                headers: headers,
-                params: {}
-            });
-            setPresaleCount(pairCount.data[0].count);
-
-            let data = await axios.get(baseUrl + '/queryAllPresale', {
-                headers: headers,
-                params: {
-                    pageIndex: pageIndex,
-                    pageSize: pageSize
-                }
-            });
-            data = data.data
-            setPresales(data);
-        } catch (error) {
-            notification.error({
-                message: `Please note`, description: 'Error reported', placement: 'topLeft',
-            });
-        }
-    };
     const change = (e, a) => {
         setLaunchCurrent(e)
         setLaunchPageSize(a)
@@ -188,15 +188,23 @@ export default function Presale() {
                         <span style={{fontWeight: 'bold', fontSize: '26px'}}>PRESALE & LAUNCH</span>
                     </div>
                 </div>
-                {/**/}
-                <div style={{display:'flex',justifyContent:'end',marginBottom:'20px'}}>
+
+                <div style={{display: 'flex', justifyContent: 'end', marginBottom: '20px'}}>
                     <Pagination defaultCurrent={1} current={launchCurrent} showSizeChanger onChange={change}
                                 total={launchAll} pageSize={launchPageSize}/>
                 </div>
 
-                <Table className={'hotTable presale'} bordered={false} columns={columns} loading={launchBol}
-                       dataSource={launch} rowKey={(record)=>record.symbol+record.address}
-                       pagination={false}/>
+                <Table className={`presale`} bordered={false} columns={columns} loading={launchBol}
+                       dataSource={launch} rowKey={(record) => record.symbol + record.address}
+                       pagination={false} rowClassName={(record) => {
+                    if (dayjs(record.presale_time).isAfter(dayjs()) && dayjs(record.launch_time).isAfter(dayjs())) {
+                        return 'anyHave'
+                    } else if (dayjs(record.presale_time).isAfter(dayjs()) || dayjs(record.launch_time).isAfter(dayjs())) {
+                        return 'oneHave'
+                    } else {
+                        return 'noHave'
+                    }
+                }}/>
             </Card>
             <p style={{
                 marginTop: '80px',

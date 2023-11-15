@@ -7,7 +7,7 @@ function LikeNotification({ notification }) {
   return (
     notification.type === "newLike" && (
       <NotificationDiv>
-        <UserImage src={notification.user.profilePicUrl} alt="userimg" />
+        <img style={{width:'60px',borderRadius:'50%'}} src={notification?.user?.profilePicUrl} alt="userimg" />
         <div className="select-none">
           <p>
             <Link href={`/${notification.user.username}`} passHref>
@@ -31,14 +31,6 @@ function LikeNotification({ notification }) {
 }
 
 export default LikeNotification;
-
-const UserImage = styled.img`
-  height: 3.8rem;
-  width: 3.8rem;
-  border-radius: 50%;
-  object-fit: cover;
-`;
-
 const NotificationDiv = styled.div`
   display: flex;
   cursor: pointer;

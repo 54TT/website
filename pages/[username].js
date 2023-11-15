@@ -21,7 +21,6 @@ import {
     CheckOutlined
 } from '@ant-design/icons'
 import {Avatar, Image, Input, notification} from 'antd'
-import {parseCookies} from "nookies";
 import axios from "axios";
 import ProfileFields from "../components/ProfileComponents/ProfileFields";
 import FollowingUsers from "../components/ProfileComponents/FollowingUsers";
@@ -61,7 +60,6 @@ function ProfilePage() {
     const changeImg = () => {
         setLoadingBol(!loadingBol)
     }
-
     const router = useRouter();
     const params = router.query
     const [posts, setPosts] = useState([]);
@@ -197,9 +195,9 @@ function ProfilePage() {
                         userName: editInput,
                         userId: profile.user_id
                 })
-
-                if(data.status===200&&data?.updateUserNameResult?.changedRows){
+                if(data.status===200&&data?.data?.updateUserNameResult?.changedRows){
                     setEditInput(editInput)
+                    setEditProfile(false)
                 }
             } else {
                 setEditInput(profile?.name)

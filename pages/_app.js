@@ -4,7 +4,7 @@ import {SessionProvider} from "next-auth/react"
 import {configureChains, createClient, WagmiConfig, chain} from 'wagmi';
 import {publicProvider} from 'wagmi/providers/public';
 import {redirectUser} from '../utils/set'
-
+require('dotenv').config({ path: '.env' })
 export const {chains, publicClient, webSocketPublicClient, provider} = configureChains(
     [chain.mainnet, chain.polygon, chain.optimism, chain.arbitrum],
     [

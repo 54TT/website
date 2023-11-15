@@ -2,7 +2,6 @@ import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {useRouter} from "next/router";
 import baseUrl from "../../../utils/baseUrl";
-import {parseCookies} from "nookies";
 import InfoBox from "../../../components/HelperComponents/InfoBox";
 import {
     CheckCircleIcon,
@@ -126,7 +125,8 @@ function FollowingPage() {
                                     key={fol?.user?.id}
                                 >
                                     <div className="flex items-center ">
-                                        <Image src={fol?.user?.profilePicUrl} alt="userimg"/>
+                                        <img style={{  width: '60px',
+                                            borderRadius: '50%'}} src={fol?.user?.profilePicUrl} alt="userimg"/>
                                         <Name
                                             className="ml-3"
                                             onClick={() => router.push(`/${fol?.user?.username}`)}
@@ -183,41 +183,6 @@ function FollowingPage() {
         </div>
     );
 }
-
-{
-    /* {followingArrayState.map((fol) => (
-              <div
-                style={{ border: "1px solid #eee" }}
-                key={fol.id}
-                className="flex justify-between mb-4 rounded-lg bg-white"
-              >
-                <div className="flex items-center p-4 ">
-                  <Image src={fol.pic} />
-                  <Name className="ml-3">{fol.name}</Name>
-                </div> */
-}
-{
-    /* {isLoggedInUserFollowing ? (
-                  <FollowButton
-                  //   onClick={async () => {
-                  //     await unfollowUser(profile.user._id, setUserFollowStats);
-                  //   }}
-                  >
-                    <CheckCircleIcon className="h-6" />
-                    <p className="ml-1.5">Following</p>
-                  </FollowButton>
-                ) : (
-                  <FollowButton
-                  //   onClick={async () => {
-                  //     await followUser(profile.user._id, setUserFollowStats);
-                  //   }}
-                  >
-                    <UserAddIcon className="h-6" />
-                    <p className="ml-1.5">Follow</p>
-                  </FollowButton>
-                )} */
-}
-
 export default FollowingPage;
 
 const FollowButton = styled.div`
@@ -233,14 +198,6 @@ const FollowButton = styled.div`
   font-weight: 400;
 `;
 
-const GridContainer = styled.div`
-  display: grid;
-`;
-
-const Image = styled.img`
-  width: 60px;
-  border-radius: 50%;
-`;
 
 const Name = styled.p`
   cursor: pointer;

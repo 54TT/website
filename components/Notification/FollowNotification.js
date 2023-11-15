@@ -18,7 +18,7 @@ function FollowNotification({ notification, userFollowStats }) {
   return (
     notification.type === "newFollower" && (
       <NotificationDiv>
-        <UserImage src={notification.user.profilePicUrl} alt="userimg" />
+        <img style={{width:'60px',borderRadius:'50%'}} src={notification.user.profilePicUrl} alt="userimg" />
         <div>
           <p className="select-none">
             <Link href={`/${notification.user.username}`} passHref>
@@ -64,12 +64,6 @@ function FollowNotification({ notification, userFollowStats }) {
 
 export default FollowNotification;
 
-const UserImage = styled.img`
-  height: 3.8rem;
-  width: 3.8rem;
-  border-radius: 50%;
-  object-fit: cover;
-`;
 
 const NotificationDiv = styled.div`
   display: flex;

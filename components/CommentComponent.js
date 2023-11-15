@@ -9,6 +9,7 @@ import {notification} from "antd";
 const notifyCommentDelete = () =>{
   notification.success({
     message: `Comment deleted successfully!`, placement: 'topLeft',
+    duration:2
   });
 }
 
@@ -42,9 +43,8 @@ function CommentComponent({ comment, postId,change, user, setComments }) {
 
   return (
     <div className="flex items-start pl-5 pr-3 mt-3">
-      <Image
+      <img  alt={''}  style={{width:'50px',borderRadius:'50%',marginTop:'10px'}}
         src={comment?.user?.profilePicUrl}
-        style={{  width: "2.45rem", marginTop: ".2rem" }}
         className="mr-2"
       />
       {/* extra div for flex of comment text div and the three dots  */}
@@ -115,13 +115,6 @@ function CommentComponent({ comment, postId,change, user, setComments }) {
 }
 
 export default CommentComponent;
-
-const Image = styled.img`
-  object-fit: cover;
-  height: 2.95rem;
-  width: 2.95rem;
-  border-radius: 50%;
-`;
 
 const UserPTag = styled.p`
   font-weight: 500;
