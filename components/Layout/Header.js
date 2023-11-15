@@ -4,7 +4,7 @@ import {SiweMessage} from "siwe"
 import baseUrl from '/utils/baseUrl'
 import {useAccount, useConnect, useNetwork, useSignMessage, useDisconnect,} from "wagmi"
 import Link from "next/link"
-import DrawerPage from './drawer'
+import DrawerPage from './Drawer'
 import {InjectedConnector} from 'wagmi/connectors/injected'
 import axios from 'axios';
 import {Dropdown, Drawer, Form, Select, Input, DatePicker, Button, notification,} from 'antd'
