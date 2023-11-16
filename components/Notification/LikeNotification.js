@@ -7,23 +7,22 @@ function LikeNotification({ notification }) {
   return (
     notification.type === "newLike" && (
       <NotificationDiv>
-        <img style={{width:'60px',borderRadius:'50%'}} src={notification?.user?.profilePicUrl} alt="userimg" />
-        <div className="select-none">
+        <img style={{width:'60px',borderRadius:'50%'}} src={notification?.user?.profilePicUrl||''} alt="userimg" />
+        <div className="select-none"  style={{marginLeft:'10px'}}>
           <p>
             <Link href={`/${notification.user.username}`} passHref>
-              {notification.user.name}
-            </Link>{" "}
-            liked your{" "}
-            <Link href={`/post/${notification.post.id}`} passHref>
-              post
+              {notification?.user?.name?notification?.user?.name?.length>10?notification.user.name.slice(0,3)+'...'+notification.user.name.slice(-4):notification.user.name:''}
             </Link>
-            .
+            liked your
+            {/*<Link href={`/post/${notification.post.id}`} passHref>*/}
+            {/*  post*/}
+            {/*</Link>*/}
+            {/*.*/}
           </p>
-          <p className="text-gray-500" style={{ marginTop: "-.7rem" }}>
+          <p className="text-gray-500" style={{ marginTop: "0" }}>
             {calculateTime(notification.date, true)}
           </p>
         </div>
-
         {/* {notification.post.picUrl} */}
       </NotificationDiv>
     )
@@ -37,9 +36,8 @@ const NotificationDiv = styled.div`
   border-radius: 0.3rem;
   border-bottom: 1px solid #efefef;
   font-family: Inter;
-  padding: 0.6rem;
+  padding: 10px;
   align-items: center;
-  column-gap: 0.6rem;
   :hover {
     background-color: rgba(243, 244, 246);
   }

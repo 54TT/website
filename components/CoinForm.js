@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from 'axios';
-import Link from "next/link";
 import { formatDecimal, sendGetRequestWithSensitiveData, sendPostRequestWithSensitiveData, getPairByTokenAddress } from './Utils';
 import { useRouter } from 'next/router';
-import { useAccount, useNetwork } from "wagmi";
-import Image from 'next/image';
 import { presalePlatforms, launchPlatforms } from "./Constant"
 import {notification} from "antd";
 import  baseUrl from '/utils/baseUrl'
@@ -14,8 +11,6 @@ export default function CoinForm() {
   const router = useRouter();
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
-  const [logoPath, setLogoPath] = useState("")
-  // const { chain } = useNetwork();
 
   const [showAdditionalFields, setShowAdditionalFields] = useState(false);
 
@@ -40,7 +35,6 @@ export default function CoinForm() {
       .then(responseData => {
         if (responseData.message === "success") {
           const resLogoPath = responseData.logoPath;
-          setLogoPath(resLogoPath);
           setTokenInfo({
             ...tokenInfo,
             ['logo']: resLogoPath,
@@ -301,7 +295,7 @@ export default function CoinForm() {
                     type="text"
                     id="presaleLink"
                     name="presaleLink"
-                    value={presale.presaleLink}
+                    value={presale?.presaleLink}
                     onChange={handlePresaleChange}
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="Presale Link"

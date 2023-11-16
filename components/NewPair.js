@@ -11,7 +11,7 @@ import {gql} from "graphql-tag";
 import {useRouter} from "next/router";
 import dayjs from "dayjs";
 const client = new ApolloClient({
-    uri: 'http://174.138.25.199:8000/subgraphs/name/levi/uniswapv2', cache: new InMemoryCache(),
+    uri: 'http://192.168.232.18:8000/subgraphs/name/levi/uniswapv2', cache: new InMemoryCache(),
 });
 export default function NewPair() {
     const [pairs, setPairs] = useState([]);
@@ -83,7 +83,7 @@ const chang=(e,a)=>{
         {
             title: 'Pair',
             dataIndex: 'name',align: 'center',
-            render: (text,record) => <div style={{display: 'flex', alignItems: 'center'}}>
+            render: (text,record) => <div style={{display: 'flex', alignItems: 'center',justifyContent:'space-between',width:'60%',margin:'0 auto'}}>
                 <p style={{borderRadius:'50%',fontSize:'20px',width:'40px',lineHeight:'40px',textAlign:"center",backgroundColor:'black',color:'white'}}>{record?.token0?.symbol?.slice(0,1)}</p>
                 <div style={{marginLeft: '15px'}}>
                     <p style={{display: 'flex', alignItems: 'flex-end', lineHeight: '1'}}><span

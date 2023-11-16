@@ -25,7 +25,6 @@ export const followUser = async (
 
         return data
     } catch (error) {
-        console.log(catchErrors(error));
     }
 };
 
@@ -46,7 +45,7 @@ export const unfollowUser = async (
         }
         return data
     } catch (error) {
-        console.log(catchErrors(error));
+
     }
 };
 
@@ -88,7 +87,6 @@ export const passwordUpdate = async (setSuccess, userPasswords) => {
         await Axios.post(`/settings/password`, {currentPassword, newPassword});
         setSuccess(true);
     } catch (error) {
-        alert(catchErrors(error));
     }
 };
 
@@ -102,6 +100,5 @@ export const toggleMessagePopup = async (
         setPopupSetting(!popupSetting); //if it's true, it'll be set to false and vice versa
         setSuccess(true);
     } catch (error) {
-        alert(catchErrors(error));
     }
 };

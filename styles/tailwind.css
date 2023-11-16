@@ -7,11 +7,28 @@ html {
 }
 
 body {
+
     /*background-image: url("/img/background.png");*/
     /*background-position: center;*/
     /*background-size:cover ;*/
     /*background-repeat: no-repeat;*/
     background-color: rgb(249, 181, 54);
+}
+
+body::-webkit-scrollbar {
+    width: 10px;
+    background-color: #F5F5F5;
+}
+
+/*定义滚动条轨道：内阴影+圆角*/
+body::-webkit-scrollbar-track {
+    background-color: #F5F5F5;
+}
+
+/*定义滑块：内阴影+圆角*/
+body::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background-color: #555;
 }
 
 p {
@@ -92,18 +109,22 @@ li.check:before {
     box-shadow: 0 -8px 4px 0 hsla(0, 0%, 100%, .5);
 }
 
+
 .drawerItem:hover {
     background-color: #DDF1E2;
 }
 
 .headerClass {
     opacity: 1;
-    /*background-image: url("/assets/home-background.png");;*/
 }
 
-/* .block {
-  border: .0625rem solid #23323c!important;
-} */
+.leftMoe:hover {
+    background-color: #D0FF95;
+}
+
+.aaaa .MuiDrawer-paper {
+    background-color: rgb(253, 213, 62);
+}
 
 .more {
     color: #00b8d8;
@@ -112,8 +133,16 @@ li.check:before {
 
 .pair-row {
     cursor: pointer;
-    /* background-color: #0B1319; */
+}
 
+.rightSideCard {
+    border: 2px #626262 solid;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+
+.rightSideCard:hover {
+    background-color: #D0FF95;
 }
 
 .pair-row:hover {
@@ -181,14 +210,17 @@ li.check:before {
 }
 
 .tablesss .ant-table .ant-table-content .ant-table-thead .ant-table-cell {
-    background-color: rgb(223, 242, 193);
+    background-color: rgb(253, 213, 62);
     padding: 8px !important;
-    border: none;
+    border: none!important;
+}
+.tablesss .ant-table .ant-table-content .ant-table-thead .ant-table-cell:before {
+    display: none;
 }
 
 .tablesss .ant-table .ant-table-content .ant-table-tbody .ant-table-row .ant-table-cell {
     background-color: rgb(253, 213, 62);
-    border: none;
+    border: none!important;
     padding: 8px !important;
 }
 
@@ -208,9 +240,16 @@ li.check:before {
     background-color: rgb(188, 238, 125);
     border: none;
 }
+.hotTable .ant-table .ant-table-content .ant-table-thead .ant-table-cell:before {
+   display: none;
+}
+
 .presale .ant-table .ant-table-content .ant-table-thead .ant-table-cell {
     background-color: #BCEE7D;
     border: none;
+}
+.presale .ant-table .ant-table-content .ant-table-thead .ant-table-cell:before {
+   display: none;
 }
 
 .anyHave .ant-table-cell {
@@ -222,13 +261,14 @@ li.check:before {
 }
 
 .noHave .ant-table-cell {
-    background-color:rgb(209,209,209) !important;
+    background-color: rgb(209, 209, 209) !important;
 }
 
 .hotTable .ant-table .ant-table-content .ant-table-tbody .ant-table-row .ant-table-cell {
     background-color: rgb(253, 213, 62);
     border-bottom-color: #626262;
 }
+
 .presale .ant-table .ant-table-content .ant-table-tbody .ant-table-row:hover .ant-table-cell {
     background-color: rgb(254, 239, 146) !important;
 }
@@ -247,14 +287,35 @@ li.check:before {
 }
 
 .detailSegmented .ant-segmented-item-selected {
-    background-color: rgb(254, 139, 146) !important;
+    background-color: #FEEF92 !important;
 }
 
 .cardParams .ant-card .ant-card-body {
     padding: 0 !important;
 }
 
+.cardParams {
+    border-radius: 6px;
+    transition: box-shadow 0.3s;
+}
 
+.cardParams:hover {
+    box-shadow: 15px 15px 0 rgb(188, 158, 54)
+}
+
+.homeTable {
+    width: 100%;
+    position: relative;
+    background-color: rgb(253, 213, 62);
+    margin-top: 35px;
+    padding: 10px 0;
+    border-radius: 12px;
+    transition: box-shadow 0.3s;
+}
+
+.homeTable:hover {
+    box-shadow: 15px 15px 0 rgb(188, 158, 54)
+}
 
 
 

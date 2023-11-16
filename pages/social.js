@@ -50,7 +50,7 @@ function Index() {
 
     return (
         <>
-            <div className="bg-gray-100 min-h-screen">
+            <div className="min-h-screen" style={{backgroundColor:'#BCEE7D',marginRight:'20px',borderRadius:'10px'}}>
                 <main className="flex">
                     <Sidebar user={session && session.user ? session.user : ''}/>
                     <Feed

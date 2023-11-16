@@ -2,31 +2,24 @@ import axios from "axios";
 import {useRouter} from "next/router";
 import React, {useState, useEffect, useRef} from "react";
 import baseUrl from "../utils/baseUrl";
-import io from "socket.io-client"; //socket.io import
+import io from "socket.io-client";
 import Sidebar from "../components/Sidebar";
 import ChatSearch from "../components/Chat/ChatSearch";
 import {SearchIcon} from "@heroicons/react/outline";
 import styled from "styled-components";
 import calculateTime from "../utils/calculateTime";
 import Chat from "../components/Chat/Chat";
-import cookie from "js-cookie";
 import {Facebook} from "react-content-loader";
 import {AppleOutlined, LoadingOutlined} from '@ant-design/icons'
 import {useSession} from "next-auth/react";
-import _ from 'lodash'
 
 function ChatsPage() {
     const [chats, setChats] = useState([]);
     const [userPar, setUserPar] = useState({});
-    const [userFollowStats, setLoggedUserFollowStats] = useState([]);
-    const [userFoBolts, setLoggeBols] = useState(false);
     const {data: session, status} = useSession()
     useEffect(() => {
         if (session && session.user) {
             setUserPar(session.user)
-        }
-        if (session && session.userFollowStats) {
-            setLoggedUserFollowStats(session.userFollowStats)
         }
     }, [session, session?.user, session?.userFollowStats]);
     const router = useRouter();
@@ -53,10 +46,11 @@ function ChatsPage() {
     useEffect(() => {
         getParams()
     }, [userPar])
-    //This ref is for persisting the state of query string in the url(i.e. the chat.textsWith) throughout re-renders
-    //when the component re-rendered, the query string was resetting due to a bug in next.js
     const openChatId = useRef("");
     const [showChatSearch, setShowChatSearch] = useState(false);
+    const da = () => {
+        setShowChatSearch(!showChatSearch)
+    }
 
     //SOCKET.io useEffect (used for connection)
     useEffect(() => {
@@ -231,7 +225,7 @@ function ChatsPage() {
         }
     }
     return (
-        <div className="bg-gray-100">
+        <div style={{backgroundColor:'rgb(188,238,125)',marginRight:'20px',borderRadius:'10px'}}>
             <main className="flex" style={{height: "calc(100vh - 4.5rem)"}}>
                 <Sidebar user={userPar} maxWidth={"250px"}/>
                 <div
@@ -241,31 +235,30 @@ function ChatsPage() {
                             borderLeft: "1px solid lightgrey",
                             borderRight: "1px solid lightgrey",
                             fontFamily: "Inter",
-                            overflowY: 'auto'
+                            overflowY: 'auto',
+                            backgroundColor:'rgb(178,219,126)'
                         }}
-                        className="lg:min-w-[27rem] relative pt-4"
+                        className="lg:min-w-[27rem] pt-4"
                     >
                         <Title>Chats</Title>
                         <div
                             onClick={() => setShowChatSearch(true)}
-                            className="flex items-center rounded-full bg-gray-100 p-2  m-4 h-12"
-                        >
+                            className="flex items-center  relative rounded-full bg-gray-100 p-2  m-4 h-12">
                             <SearchIcon className="h-5 text-gray-600 px-1.5 md:px-0 cursor-pointer"/>
                             <input
                                 className="ml-2 bg-transparent outline-none placeholder-gray-500 w-full font-thin hidden md:flex md:items-center flex-shrink"
                                 type="text"
                                 placeholder="Search users"
                             />
+                            {showChatSearch && (
+                                <ChatSearch
+                                    setShowChatSearch={da}
+                                    chats={chats}
+                                    setChats={setChats}
+                                    user={userPar}
+                                />
+                            )}
                         </div>
-                        {showChatSearch && (
-                            <ChatSearch
-                                setShowChatSearch={setShowChatSearch}
-                                chats={chats}
-                                setChats={setChats}
-                                user={userPar}
-                            />
-                        )}
-
                         <div className="mt-4" style={{borderTop: "1px solid #efefef"}}>
                             <>
                                 {chats && chats.length > 0 ? (
@@ -280,10 +273,10 @@ function ChatsPage() {
                                                 <img style={{
                                                     width: '80px',
                                                     borderRadius: '50%'
-                                                }} src={chat.profilePicUrl} alt="userimg"/>
+                                                }} src={chat?.profilePicUrl} alt="userimg"/>
                                                 {connectedUsers?.length > 0 &&
                                                 connectedUsers.filter(
-                                                    (user) => user.userId === chat.textsWith
+                                                    (user) => user.userId === chat?.textsWith
                                                 ).length > 0 ? (
                                                     <AppleOutlined
                                                         style={{
@@ -329,7 +322,6 @@ function ChatsPage() {
                                 flex: "1",
                                 borderRight: "1px solid lightgrey",
                                 fontFamily: "Inter",
-                                // height: "calc(100vh - 4.5rem)",
                             }}
                         >
                             {/*右边聊天*/}
@@ -388,7 +380,6 @@ function ChatsPage() {
                                     }}
                                 >
                                     <form
-                                        // onClick={() => setShowChatSearch(true)}
                                         className="flex items-center rounded-full bg-gray-100 p-4 m-4 max-h-12"
                                     >
                                         <input
@@ -439,10 +430,6 @@ const ChatDiv = styled.div`
   padding: 1rem 0.9rem;
   align-items: flex-start;
   column-gap: 0.6rem;
-
-  :hover {
-    background-color: rgba(243, 244, 246);
-  }
 `;
 
 const ChatHeaderDiv = styled.div`
@@ -486,10 +473,6 @@ const LastActive = styled.p`
   font-size: 0.9rem;
   color: rgba(107, 114, 128);
   margin-top: -1.1rem;
-`;
-
-const TextInputDiv = styled.div`
-  padding: 1rem;
 `;
 
 const EndOfMessage = styled.div`

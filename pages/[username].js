@@ -26,19 +26,12 @@ import ProfileFields from "../components/ProfileComponents/ProfileFields";
 import FollowingUsers from "../components/ProfileComponents/FollowingUsers";
 import FollowerUsers from "../components/ProfileComponents/FollowerUsers";
 import {useRouter} from "next/router";
-import cookie from "js-cookie";
 import PostCard from "../components/PostCard";
 import InfoBox from "../components/HelperComponents/InfoBox";
 import {EmojiSadIcon} from "@heroicons/react/outline";
-import {Facebook as FacebookLoader} from "react-content-loader";
 import {useSession} from "next-auth/react";
-
-// https://images.pexels.com/photos/552789/pexels-photo-552789.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260
-
 function ProfilePage() {
     const {data: session, status} = useSession()
-    const didMountRef = useRef(false);
-    const isMountRef = useRef(false);
     const coverImageRef = useRef(null);
     const profilePicRef = useRef(null);
     const [user, setUser] = useState(null)
@@ -56,7 +49,6 @@ function ProfilePage() {
     const [editProfile, setEditProfile] = useState(false);
     const [editInput, setEditInput] = useState('');
     const [editInputBol, setEditInputBol] = useState(false);
-
     const changeImg = () => {
         setLoadingBol(!loadingBol)
     }

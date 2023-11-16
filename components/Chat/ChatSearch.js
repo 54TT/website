@@ -6,15 +6,11 @@ import {
 import axios from "axios";
 import React, { useState, useRef } from "react";
 import styled from "styled-components";
-import cookie from "js-cookie";
-import { Facebook } from "react-content-loader";
 import Link from "next/link";
 import { useClickAway } from "react-use";
 import baseUrl from "../../utils/baseUrl";
 import {notification} from "antd";
-
-
-function ChatSearch({ setShowChatSearch, setChats, chats,user }) {
+function ChatSearch({ setShowChatSearch, setChats, chats,user, }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -43,34 +39,30 @@ function ChatSearch({ setShowChatSearch, setChats, chats,user }) {
 
     setLoading(false);
   };
-
-  // SearchDropdown.handleClickOutside = () => setShowChatSearch(false);
   const ref = useRef(null);
   useClickAway(ref, () => {
-    setShowChatSearch(false);
+    setShowChatSearch();
   });
-
   return (
     <div
       ref={ref}
       style={{
         position: "absolute",
-        top: "4.35rem",
-        left: "0rem",
-        minHeight: "6rem",
-        width: "26.9rem",
+        top: "0",
+        left: "0",
+        width: "100%",
         backgroundColor: "white",
         zIndex: "100",
-        padding: "0.67rem",
-        borderRadius: "0.7rem",
+        padding: "10px",
+        borderRadius: "10px",
         boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
         fontFamily: "Inter",
       }}
     >
       <div className="flex items-center">
-        <ArrowDiv onClick={() => setShowChatSearch(false)}>
-          <ArrowLeftIcon className="h-5" />
-        </ArrowDiv>
+        {/*<ArrowDiv onClick={clickBack}>*/}
+        {/*  <ArrowLeftIcon className="h-5" />*/}
+        {/*</ArrowDiv>*/}
         <div className="flex mr-2 ml-1 items-center rounded-full bg-gray-100 p-1 h-12 flex-grow">
           {/* <SearchIcon className="h-5 text-gray-600" /> */}
           <input
@@ -88,7 +80,7 @@ function ChatSearch({ setShowChatSearch, setChats, chats,user }) {
           <DotsHorizontalIcon className="h-6 text-gray-400" />
         </div>
       ) : searchResults.length > 0 ? (
-        <>
+        <div   style={{overflowY:'auto',height:'500px'}}>
           {searchResults.map((resultUser) => (
             <Link
               key={resultUser.id}
@@ -122,11 +114,11 @@ function ChatSearch({ setShowChatSearch, setChats, chats,user }) {
                 className="flex items-center space-x-3 mt-2 cursor-pointer hover:bg-gray-100 rounded-lg p-2"
               >
                 <img style={{width:'50px',borderRadius:'50%'}} src={resultUser?.profilePicUrl} alt="userimg" />
-                <Name>{resultUser?.name}</Name>
+                <Name>{resultUser?.name?resultUser.name.length>10?resultUser.name.slice(0,5)+'...'+resultUser.name.slice(-5):resultUser.name:''}</Name>
               </div>
             </Link>
           ))}
-        </>
+        </div>
       ) : (
         <div className="w-full flex items-center justify-center mt-5 mb-2">
           <p className="text-gray-400 font-thin ">

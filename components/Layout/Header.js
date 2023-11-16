@@ -3,7 +3,6 @@ import {getCsrfToken, signIn, useSession, signOut} from "next-auth/react"
 import {SiweMessage} from "siwe"
 import baseUrl from '/utils/baseUrl'
 import {useAccount, useConnect, useNetwork, useSignMessage, useDisconnect,} from "wagmi"
-import Link from "next/link"
 import DrawerPage from './Drawer'
 import {InjectedConnector} from 'wagmi/connectors/injected'
 import axios from 'axios';
@@ -15,9 +14,9 @@ import styles from './css/header.module.css'
 const {Option} = Select;
 import {get, post, del} from '/utils/axios'
 import _ from 'lodash'
-import dayjs from 'dayjs'
 import cookie from 'js-cookie'
 import {useRouter} from 'next/router'
+import ChatSearch from "../Chat/ChatSearch";
 
 const Header = () => {
     const [form] = Form.useForm();
@@ -55,12 +54,10 @@ const Header = () => {
         }).catch(err => {
         })
     }, 1500)
-
     const onClose = () => {
         setOpen(false);
         form.resetFields()
     };
-
     const showDrawer = () => {
         setOpen(true);
         get('/selectPresalePlatform', '').then(res => {
@@ -84,7 +81,7 @@ const Header = () => {
     const onFinishFailed = (a) => {
         notification.warning({
             message: `warning`, description: 'Please enter complete data!', placement: 'topLeft',
-            duration:2
+            duration: 2
         });
     }
     const onFinish = (values) => {
@@ -108,7 +105,7 @@ const Header = () => {
                 bol = true
                 notification.warning({
                     message: `warning`, description: 'Presale please enter complete!', placement: 'topLeft',
-                    duration:2
+                    duration: 2
                 });
             } else {
                 presale.presaleTime = timeForm?.presale;
@@ -120,7 +117,7 @@ const Header = () => {
                 bol = true
                 notification.warning({
                     message: `warning`, description: 'Launch please enter complete!', placement: 'topLeft',
-                    duration:2
+                    duration: 2
                 });
             } else {
                 launch.launchTime = timeForm?.launch;
@@ -132,7 +129,7 @@ const Header = () => {
             if (arrPresale.length === 0 && arrLaunch.length === 0 && !bol) {
                 notification.warning({
                     message: `warning`, description: 'Presale or Launch please enter complete!', placement: 'topLeft',
-                    duration:2
+                    duration: 2
                 });
             } else if (!bol) {
                 const data = {
@@ -148,12 +145,12 @@ const Header = () => {
                         setOpen(false);
                         notification.success({
                             message: `Success`, description: 'Added successfully', placement: 'topLeft',
-                            duration:2
+                            duration: 2
                         });
                     } else {
                         notification.warning({
                             message: `warning`, description: 'add failed,Please try again', placement: 'topLeft',
-                            duration:2
+                            duration: 2
                         });
                     }
                 }).catch(err => {
@@ -170,7 +167,27 @@ const Header = () => {
     const hideLink = () => {
         setOpenLink(!openLink)
     }
-
+    const [showChatSearch, setShowChatSearch] = useState(false);
+    const [chats, setChats] = useState([]);
+    const [userPar, setUserPar] = useState({});
+    const da = () => {
+        setShowChatSearch(!showChatSearch)
+    }
+    const getParams = async () => {
+        const res = await axios.get(`${baseUrl}/api/chats`, {
+            params: {userId: userPar.id}
+        });
+        if (res.status === 200) {
+            setChats(res.data)
+        } else {
+            setChats([])
+        }
+    }
+    useEffect(() => {
+        if (userPar && userPar.id) {
+            getParams()
+        }
+    }, [userPar])
     const onChangeDate = (name, value, dateString) => {
         let data = _.clone(timeForm)
         if (name === 'launch') {
@@ -181,13 +198,8 @@ const Header = () => {
             setTime(data)
         }
     };
-    const geoUser = async () => {
-        const data = await axios.post(baseUrl + "/api/user", {
-            address: token.sub, ipAddress
-        })
-    }
     const handleLogin = async () => {
-        const cook = window.localStorage.getItem('name')
+        const cook = cookie.get('name')
         if (!session && !cook) {
             try {
                 const message = new SiweMessage({
@@ -208,14 +220,16 @@ const Header = () => {
                     signature,
                     callbackUrl: '/',
                 })
-                window.localStorage.setItem('name', address);
+                cookie.set('name', address, {expires: 3})
             } catch (error) {
-                // notification.error({
-                //     message: `Please note`, description: 'Error reported', placement: 'topLeft',
-                // });
             }
         }
     }
+    useEffect(() => {
+        if (session && session.user) {
+            setUserPar(session.user)
+        }
+    }, [session]);
     useEffect(() => {
         if (!session) {
             handleLogin()
@@ -223,19 +237,22 @@ const Header = () => {
     }, [session, isConnected])
 
     const set = () => {
-        window.localStorage.setItem('name', '')
-        const a = window.localStorage.getItem('name')
+        cookie.remove('name');
+        const a = cookie.get('name') || ''
         if (!a) {
             disconnect()
             signOut()
         }
     }
     const push = () => {
-        if (session && session.user && session.user.address) {
-            router.push(`/${session.user.address}`)
+        if (userPar && userPar.address) {
+            router.push(`/${userPar.address}`)
+        }
+        const cook = cookie.get('name') || ''
+        if (cook) {
+            router.push(`/${cook}`)
         }
     }
-
     const items = [
         {
             key: '1',
@@ -261,13 +278,25 @@ const Header = () => {
                     "top-0 w-full  z-30 transition-all headerClass"}>
                 <div className={styles['aaa']}>
                     <div></div>
-                    <p className={styles['search']}>Search pair by symbol,name,contract or token</p>
+
+                    <div style={{position: 'relative', width: '30%'}}>
+                        <p className={styles['search']} onClick={() => setShowChatSearch(true)}>Search pair by
+                            symbol,name,contract or token</p>
+                        {showChatSearch && (
+                            <ChatSearch
+                                setShowChatSearch={da}
+                                chats={chats}
+                                setChats={setChats}
+                                user={userPar}
+                            />
+                        )}
+                    </div>
                     <div style={{display: 'flex', alignItems: 'center'}}>
                         <Button type={'primary'} className={styles['but']}
                                 style={{marginRight: '20px', backgroundColor: 'rgb(254,239,146)'}} onClick={showDrawer}>Add
                             Coin</Button>
                         {
-                            !session || !window?.localStorage?.getItem('name') ?
+                            !session ?
                                 <Button type={'primary'} className={styles['but']}
                                         style={{backgroundColor: 'rgb(254,239,146)'}} onClick={(e) => {
                                     e.preventDefault()
@@ -283,7 +312,7 @@ const Header = () => {
                                         width: '30px',
                                         borderRadius: '50%',
                                         height: '30px'
-                                    }} src={session?.user?.profilePicUrl} alt=""/>
+                                    }} src={userPar?.profilePicUrl ? userPar.profilePicUrl : ''} alt=""/>
                                     <Dropdown
                                         menu={{
                                             items,
@@ -295,7 +324,8 @@ const Header = () => {
                                                 style={{
                                                     color: 'black',
                                                     backgroundColor: 'rgb(254,239,146)'
-                                                }}>{session?.user?.username?.slice(0, 5) + '...'}</Button>
+                                                    // typeof window!=='undefined'&& window?.localStorage?.getItem('name')?window.localStorage.getItem('name').slice(0, 5) + '...':
+                                                }}>{userPar && userPar.username ? userPar.username.slice(0, 5) + '...' : cookie.get('name') ? cookie.get('name').slice(0, 5) + '...' : ''}</Button>
                                     </Dropdown>
                                 </div>
                         }

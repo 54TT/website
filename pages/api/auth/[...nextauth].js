@@ -58,7 +58,6 @@ export default async function auth(req, res) {
   }
 
   return await NextAuth(req, res, {
-    // https://next-auth.js.org/configuration/providers/oauth
     providers,
     session: {
       strategy: "jwt",

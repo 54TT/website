@@ -65,12 +65,11 @@ function RightSideColumn({user, chatsData, userFollowStats,change}) {
                                 loggedInUserFollowing?.user?.id === fol?.id
                         ).length > 0 || '';
                     return (
-                        <div key={fol.id}>
+                        <div  className={'rightSideCard'} key={fol.id}>
                             {fol?.id !== user?.id && (
                                 <div
-                                    style={{border: ".5px solid lightgrey"}}
                                     key={fol.id}
-                                    className="flex justify-between items-center p-4 mb-4 rounded-lg"
+                                    className="flex justify-between items-center p-4 rounded-lg"
                                 >
                                     <div className="flex items-center">
                                         <img src={fol?.profilePicUrl ? fol.profilePicUrl : '/Ellipse5.png'}
@@ -168,7 +167,7 @@ function RightSideColumn({user, chatsData, userFollowStats,change}) {
                         You do not have any chats yet. Start a{" "}
                         <Link href={`/chats`} passHref>
                             chat
-                        </Link>{" "}
+                        </Link>
                         with someone!
                     </p>
                 )}

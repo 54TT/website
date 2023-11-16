@@ -23,6 +23,7 @@ function FollowingPage() {
     const chang = () => {
         setUserFollowBol(!userFollowBol)
     }
+
     useEffect(() => {
         if (session) {
             setUser(session?.user ? session.user : {})
@@ -69,7 +70,7 @@ function FollowingPage() {
     // }
 
     return (
-        <div className="bg-gray-100 h-screen">
+        <div className=" h-screen"  style={{backgroundColor:'#BCEE7D',marginRight:'20px',borderRadius:'10px'}}>
             <main
                 style={{
                     height: "calc(100vh - 4.5rem)",
@@ -84,9 +85,9 @@ function FollowingPage() {
                         width: '50%',
                         margin: '20px auto 0',
                         overflowY: 'auto',
-                        borderRadius: '5px',
-                        border: '1px solid rgb(128,128,128)',
-                        padding: '20px'
+                        borderRadius: '10px',
+                        padding: '20px',
+                        backgroundColor:'#B2DB7E'
                     }}
                     // className="mx-auto flex-1 max-w-md md:max-w-xl lg:max-w-[61.5rem] xl:max-w-[67rem] bg-white p-4 shadow-lg rounded-lg overflow-y-auto"
                 >
@@ -114,18 +115,19 @@ function FollowingPage() {
                                     style={{
                                         marginBottom: '10px',
                                         border: "1px solid gray",
-                                        width: '48%',
+                                        width: '30%',
                                         padding: '20px',
                                         display: 'flex',
                                         alignItems: 'center',
                                         justifyContent: 'space-between',
+                                        flexWrap:'wrap',
                                         borderRadius: '10px',
-                                        backgroundColor: 'white'
+                                        backgroundColor: '#BCEE7D'
                                     }}
                                     key={fol?.user?.id}
                                 >
                                     <div className="flex items-center ">
-                                        <img style={{  width: '60px',
+                                        <img style={{  width: '40px',
                                             borderRadius: '50%'}} src={fol?.user?.profilePicUrl} alt="userimg"/>
                                         <Name
                                             className="ml-3"
@@ -150,7 +152,7 @@ function FollowingPage() {
                                                     }}
                                                 >
                                                     <CheckCircleIcon className="h-6"/>
-                                                    <p className="ml-1.5">Following</p>
+                                                    {/*<p className="ml-1.5">Following</p>*/}
                                                 </FollowButton>
                                             ) : (
                                                 <FollowButton
@@ -166,7 +168,7 @@ function FollowingPage() {
                                                     }}
                                                 >
                                                     <UserAddIcon className="h-6 "/>
-                                                    <p className="ml-1.5">Follow</p>
+                                                    {/*<p className="ml-1.5">Follow</p>*/}
                                                 </FollowButton>
                                             )}
                                         </>
@@ -197,8 +199,6 @@ const FollowButton = styled.div`
   font-family: "Inter";
   font-weight: 400;
 `;
-
-
 const Name = styled.p`
   cursor: pointer;
   user-select: none;

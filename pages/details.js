@@ -1,12 +1,8 @@
 import React,{useState,useEffect} from 'react';
 import {useRouter} from 'next/router';
-import  baseUrl from '/utils/baseUrl'
 import style from '../styles/details.module.css'
 import {Table, Card, Segmented,Progress } from 'antd'
-// import {useNetwork,chain} from 'wagmi'
 import axios from 'axios'
-import { formatDecimal } from '../components/Utils';
-
 function Details(props) {
     const router = useRouter();
     // const { chain } = useNetwork();
@@ -167,12 +163,12 @@ function Details(props) {
                             style={{color: 'rgb(32,134,192)'}}>{featured?.pairAddress?featured.pairAddress.slice(0,3)+'...'+featured.pairAddress.slice(-4):''}</span></p>
                     </div>
                     <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '20%'}}>
-                        <img src="/LOGOTOU.png" alt="" width={'30px'}/>
-                        <img src="/LOGOTOU.png" alt="" width={'30px'}/>
-                        <img src="/LOGOTOU.png" alt="" width={'30px'}/>
-                        <img src="/LOGOTOU.png" alt="" width={'30px'}/>
-                        <img src="/LOGOTOU.png" alt="" width={'30px'}/>
-                        <img src="/LOGOTOU.png" alt="" width={'30px'}/>
+                        <img src="/Star1.png" alt="" width={'30px'}/>
+                        <img src="/Website2.png" alt="" width={'30px'}/>
+                        <img src="/TwitterX.png" alt="" width={'30px'}/>
+                        <img src="/Telegram2.png" alt="" width={'30px'}/>
+                        <img src="/Ellipse15.png" alt="" width={'30px'}/>
+                        <img src="/etherscan.png" alt="" width={'30px'}/>
                     </div>
                     <p style={{
                         backgroundColor: 'rgb(188,158,45)',
@@ -223,7 +219,7 @@ function Details(props) {
                             backgroundColor: 'rgb(188,158,45)',
                             borderRadius: '10px',
                             width: '70%',
-                            border:'none'
+                            border:'none',
                         }}>
                             <Segmented className={'detailSegmented'} onChange={changeColumns} options={['Trade History', 'Holders']}/>
                             <Table className={'hotTable'} pagination={false} columns={columnsBol?columns:column} dataSource={tableParams}/>

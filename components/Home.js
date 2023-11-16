@@ -38,7 +38,7 @@ import {
 import Bott from "./Bottom";
 
 const client = new ApolloClient({
-    uri: 'http://174.138.25.199:8000/subgraphs/name/levi/uniswapv2', cache: new InMemoryCache(),
+    uri: 'http://192.168.232.18:8000/subgraphs/name/levi/uniswapv2', cache: new InMemoryCache(),
 });
 
 export default function Home() {
@@ -140,45 +140,45 @@ query NewPair {
                 color: 'white',
                 lineHeight: '30px',
                 textAlign: 'center',
-                borderRadius: '50%'
+                borderRadius: '50%', margin: '0 auto'
             }}>{record?.baseToken?.symbol?.slice(0, 1)}</p>
         }
     }, {
-        title: 'PAIR',align: 'center',  render: (text, record) => {
-            return <div style={{display: 'flex', alignItems: 'center'}}>
+        title: 'PAIR', align: 'center', render: (text, record) => {
+            return <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
                 <span>{record.baseToken?.symbol}/{record.quoteToken?.symbol}</span>
             </div>
         }
     },
         {
-            title: 'PRICE',align: 'center',  render: (text, record) => {
+            title: 'PRICE', align: 'center', render: (text, record) => {
                 return <div>{record?.priceUsd ? formatDecimal(record?.priceUsd, 3) : ''}</div>
             }
         },
         {
-            title: 'Create Time',align: 'center',  render: (text, record) => {
+            title: 'Create Time', align: 'center', render: (text, record) => {
                 const data = record.pairCreatedAt.toString().length > 10 ? Number(record.pairCreatedAt.toString().slice(0, 10)) : record.pairCreatedAt
                 return <p>{record?.pairCreatedAt ? getRelativeTimeDifference(formatDateTime(data)) : ''}</p>
             }
         },
         {
-            title: <span>{'% ' + time}</span>,align: 'center',  render: (text, record) => {
+            title: <span>{'% ' + time}</span>, align: 'center', render: (text, record) => {
                 return <p
                     style={{color: record?.priceChange[time] > 0 ? 'green' : 'red'}}>{record?.priceChange[time] ? record.priceChange[time] : 0}</p>
             }
         },
         {
-            title: 'TXNS',align: 'center',  render: (text, record) => {
+            title: 'TXNS', align: 'center', render: (text, record) => {
                 return <p>{(record?.txns[time]?.buys + record?.txns[time]?.sells) ? autoConvert(record?.txns[time]?.buys + record?.txns[time]?.sells) : 0}</p>
             }
         },
         {
-            title: 'VOLUME',align: 'center',  render: (text, record) => {
+            title: 'VOLUME', align: 'center', render: (text, record) => {
                 return <p>{record?.volume[time] ? autoConvert(record?.volume[time]) : 0}</p>
             }
         },
         {
-            title: 'LIQUIDITY',align: 'center',  render: (text, record) => {
+            title: 'LIQUIDITY', align: 'center', render: (text, record) => {
                 return <p> {record?.liquidity?.usd ? autoConvert(record.liquidity.usd) : ''}</p>
             }
         },
@@ -252,9 +252,9 @@ query NewPair {
             var day = Math.floor((name / (24 * 3600)))
             var hour = Math.floor((name - (24 * 3600 * day)) / (3600))
             var min = Math.floor((name - (24 * 3600 * day) - (hour * 3600)) / (60))
-            var s=Math.floor(name-(24*3600*day)-(hour*3600)-(min*60))
+            // var s=Math.floor(name-(24*3600*day)-(hour*3600)-(min*60))
             const m = min.toString().length === 1 ? '0' + min : min
-            return day + ':' + hour + ':' + m+':'+s
+            return day + ':' + hour + ':' + m
         } else {
             return '00:00:00'
         }
@@ -337,7 +337,7 @@ query NewPair {
                         </Card>
                     </div>
                     {/*右边*/}
-                    <div style={{width: '46%'}} className={'cardParams'}>
+                    <div style={{width: '46%',backgroundColor:'rgb(253,213,62)'}} className={'cardParams'}>
                         <Card style={{
                             minWidth: 300,
                             backgroundColor: 'rgb(253, 213, 62)',
@@ -346,7 +346,7 @@ query NewPair {
                         }}>
                             <ul className={styles['rightUl']}>
                                 <li>
-                                    <p style={{fontSize: '20px', fontWeight: 'bold'}}>LAUNCH AND PRESALE</p>
+                                    <p style={{fontSize: '20px', fontWeight: 'bold'}}>Launch and Presale</p>
                                     <p style={{fontSize: '20px', color: '#2394D4', cursor: 'pointer'}}
                                        onClick={() => pushRouter('coming')}>more></p>
                                 </li>
@@ -455,18 +455,9 @@ query NewPair {
                     </div>
                 </div>
                 {/*下面*/}
-                <div style={{
-                    width: '100%',
-                    position: 'relative',
-                    backgroundColor: 'rgb(253,213,62)',
-                    marginTop: '35px',
-                    padding: '10px 0',
-                    borderRadius: '12px'
-                }}>
-                    {/*<img src={` /new.png`}*/}
-                    {/*     style={{position: 'absolute', top: '-29px', left: '-33px', width: '67px'}} alt=""/>*/}
+                <div className={'homeTable'}>
                     <div className={styles['dis']} style={{width: '100%', marginBottom: '10px', padding: '0 24px'}}>
-                        <p style={{fontSize: '20px', fontWeight: 'bold'}}>FEATURE</p>
+                        <p style={{fontSize: '20px', fontWeight: 'bold'}}>Featured</p>
                         {/*style={{width: '37%'}}*/}
                         <div className={styles['dis']}>
                             {/*时间选择*/}
@@ -488,7 +479,7 @@ query NewPair {
                         };
                     }}
                            dataSource={featured.length > 5 ? featured.slice(0, 5) : featured}
-                           pagination={false}/>
+                           pagination={false} bordered={false}/>
                     <div style={{
                         display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-end', marginTop: '10px'
                     }}>
@@ -558,7 +549,6 @@ query NewPair {
                         </ul>
                     </li>
                 </ul>
-                {/*</div>*/}
             </div>
         </div>
         <Bott/>

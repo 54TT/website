@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import styled from "styled-components";
 import InfoBox from "../components/HelperComponents/InfoBox";
 import Sidebar from "../components/Sidebar";
@@ -7,96 +7,103 @@ import baseUrl from "../utils/baseUrl";
 import LikeNotification from "../components/Notification/LikeNotification";
 import CommentNotification from "../components/Notification/CommentNotification";
 import FollowNotification from "../components/Notification/FollowNotification";
-import cookie from "js-cookie";
-import { ExclamationCircleIcon } from "@heroicons/react/outline";
 import {useSession} from "next-auth/react";
 import {notification} from "antd";
 
 function Notifications() {
-  const [notifications,setNotifications] =useState([])
-  const [userPar,setUserPar] =useState(null)
-  const [userFollowStats,setLoggedUserFollowStats] =useState(null)
-  const {data: session, status} = useSession()
-  useEffect(() => {
-    if(session&&session.user){
-      setUserPar(session.user)
+    const [notifications, setNotifications] = useState([])
+    const [userPar, setUserPar] = useState(null)
+    const [followStatsBol, setFollowStatsBol] = useState(false)
+
+    const [userFollowStats, setLoggedUserFollowStats] = useState(null)
+    const {data: session, status} = useSession()
+    const chang = () => {
+        setFollowStatsBol(!followStatsBol)
     }
-    if(session&&session.userFollowStats){
-      setLoggedUserFollowStats(session.userFollowStats)
-    }
-  }, [session,session?.user,session?.userFollowStats]);
-
-
-
-  const notificationRead = async () => {
-      try {
-        const data =   await axios.get(
-            `${baseUrl}/api/notifications`,{params:{userId:userPar.id}}
-        );
-        if(data.status===200&&data.data){
-          setNotifications(data.data)
+    useEffect(() => {
+        if (session && session.user) {
+            setUserPar(session.user)
         }
-      } catch (error) {
-        notification.error({
-          message: `Please note`, description: 'Error reported', placement: 'topLeft',
+    }, [session, session?.user, session?.userFollowStats]);
+    const notificationRead = async () => {
+        try {
+            const data = await axios.get(
+                `${baseUrl}/api/notifications`, {params: {userId: userPar.id}}
+            );
+            if (data.status === 200 && data.data) {
+                setNotifications(data.data)
+            }
+        } catch (error) {
+            notification.error({
+                message: `Please note`, description: 'Error reported', placement: 'topLeft',
+            });
+        }
+    };
+    const getUser = async () => {
+        const res = await axios.get(`${baseUrl}/api/user/userFollowStats`, {
+            params: {userId:userPar.id},
         });
-      }
-  };
-
-  useEffect(() => {
-    if(userPar&&userPar.id) {
-      notificationRead();
+        if (res?.status === 200) {
+            setLoggedUserFollowStats(res.data.userFollowStats)
+        }
     }
-  }, [userPar]);
+    useEffect(() => {
+        if (userPar && userPar.id) {
+            notificationRead();
+            getUser()
+        }
+    }, [userPar, followStatsBol]);
+    return (
+        <div style={{backgroundColor:'rgb(188,238,125)',marginRight:"20px",borderRadius:'10px'}}>
+            <main
+                className="flex"
+                style={{height: "calc(100vh - 4.5rem)"}}
+            >
+                <Sidebar user={userPar}/>
+                <div
+                    className="flex-grow mx-auto max-w-md md:max-w-lg lg:max-w-2xl p-4 shadow-lg rounded-lg overflow-y-auto" style={{backgroundColor:'rgb(178,219,126)'}}>
+                    <div className="flex items-center ml-2">
+                        <Title>Notifications ·</Title>
+                        <NotificationCount className="text-gray-500 ml-2">
+                            {notifications?.length}
+                        </NotificationCount>
+                    </div>
 
+                    {notifications.length > 0 ? (
+                        <div style={{borderTop: "1px solid #efefef"}}>
+                            {notifications?.map((notification) =>{
 
-  return (
-    <div className="bg-gray-100">
-      <main
-        className="flex"
-        style={{ height: "calc(100vh - 4.5rem)", overflowY: "auto" }}
-      >
-        <Sidebar user={userPar} />
-        <div className="flex-grow mx-auto max-w-md md:max-w-lg lg:max-w-2xl bg-white p-4 shadow-lg rounded-lg overflow-y-auto">
-          <div className="flex items-center ml-2">
-            <Title>Notifications ·</Title>
-            <NotificationCount className="text-gray-500 ml-2">
-              {notifications?.length}
-            </NotificationCount>
-          </div>
-
-          {notifications.length > 0 ? (
-            <div style={{ borderTop: "1px solid #efefef" }}>
-              {notifications?.map((notification) => (
-                <div key={notification.id}>
-                  {notification.type === "newLike" &&
-                    notification.post !== null && (
-                      <LikeNotification notification={notification} />
-                    )}
-                  {notification.type === "newComment" &&
-                    notification.post !== null && (
-                      <CommentNotification notification={notification} />
-                    )}
-                  {notification.type === "newFollower" &&
-                    notification.post !== null && (
-                      <FollowNotification
-                        notification={notification}
-                        userFollowStats={userFollowStats}
-                      />
+                                 return   <div key={notification.id}>
+                                        {notification.type === "newLike" &&
+                                            notification.post !== null && (
+                                                <LikeNotification notification={notification}/>
+                                            )}
+                                        {notification.type === "newComment" &&
+                                            notification.post !== null && (
+                                                <CommentNotification notification={notification}/>
+                                            )}
+                                        {notification.type === "newFollower" &&
+                                            notification.post !== null && (
+                                                <FollowNotification
+                                                    notification={notification}
+                                                    chang={chang}
+                                                    userFollowStats={userFollowStats}
+                                                    userPar={userPar}
+                                                />
+                                            )}
+                                    </div>
+                            })}
+                        </div>
+                    ) : (
+                        <p className="text-md text-gray-500">
+                            {`You don't have any notifications, ${userPar?.name}.`}
+                        </p>
                     )}
                 </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-md text-gray-500">
-              {`You don't have any notifications, ${userPar?.name}.`}
-            </p>
-          )}
+                <div className="bg-transparent flex-grow max-w-[290px]"></div>
+            </main>
         </div>
-        <div className="bg-transparent flex-grow max-w-[290px]"></div>
-      </main>
-    </div>
-  );
+    );
 }
 
 export default Notifications;

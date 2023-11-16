@@ -32,9 +32,7 @@ export const deletePost = async (postId, setPosts, notify,change,userId) => {
            notify();
            change()
        }
-        // setPosts((prev) => prev.filter((post) => post.id !== postId)); //filters out and returns a new array of posts without the one we wanted
     } catch (error) {
-        alert(catchErrors(error));
     }
 };
 
@@ -48,7 +46,6 @@ export const likePost = async (postId, userId,  like,change) => {
             change()
         }
     } catch (error) {
-        alert(catchErrors(error));
     }
 };
 
@@ -64,7 +61,6 @@ export const postComment = async (postId, user, text, setComments, setText) => {
         };
         setComments((prev) => [newComment, ...prev]);
     } catch (error) {
-        alert(catchErrors(error));
     }
 };
 
@@ -84,6 +80,5 @@ export const deleteComment = async (
             change()
         }
     } catch (error) {
-        alert(catchErrors(error));
     }
 };
