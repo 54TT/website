@@ -5,7 +5,8 @@ import { useRouter } from "next/router";
 import { MinusCircleIcon, TrashIcon } from "@heroicons/react/outline";
 import ReusableDialog from "./ReusableDialog";
 import { deleteComment } from "../utils/postActions";
-import {notification} from "antd";
+import {notification,} from "antd";
+import Link from  'next/link'
 const notifyCommentDelete = () =>{
   notification.success({
     message: `Comment deleted successfully!`, placement: 'topLeft',
@@ -42,8 +43,8 @@ function CommentComponent({ comment, postId,change, user, setComments }) {
 
   return (
     <div className="flex items-start pl-5 pr-3 mt-3">
-      <img  alt={''}  style={{width:'50px',borderRadius:'50%',marginTop:'10px'}}
-        src={comment?.user?.profilePicUrl}
+      <img  alt={''}   style={{borderRadius:'50%',marginTop:'10px'}} height={50} width={50}
+        src={comment?.user?.profilePicUrl?comment.user.profilePicUrl:'error'}
         className="mr-2"
       />
       {/* extra div for flex of comment text div and the three dots  */}
@@ -57,9 +58,11 @@ function CommentComponent({ comment, postId,change, user, setComments }) {
           className={`bg-gray-100 rounded-3xl items-center`}
         >
           <div className="flex space-x-1">
-            <UserPTag onClick={() => router.push(`/${comment.user.username}`)}>
-              {comment.user.name} ·{"  "}
+            <Link href={`/${comment?.user?.username?comment.user.username:''}`}>
+            <UserPTag>
+              {comment?.user?.name} ·{"  "}
             </UserPTag>
+            </Link>
             <span
               className="text-gray-500 font-light text-sm"
               style={{ textDecoration: "none" }}

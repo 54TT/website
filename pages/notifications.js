@@ -72,7 +72,6 @@ function Notifications() {
                     {notifications.length > 0 ? (
                         <div style={{borderTop: "1px solid #efefef"}}>
                             {notifications?.map((notification) =>{
-
                                  return   <div key={notification.id}>
                                         {notification.type === "newLike" &&
                                             notification.post !== null && (
@@ -110,15 +109,13 @@ export default Notifications;
 
 const Title = styled.p`
   user-select: none;
-  font-size: 1.65rem;
-  font-weight: 600;
+  font-size: 20px;
+  font-weight: bold;
   font-family: Inter;
 `;
 
 const NotificationCount = styled.p`
   font-family: Inter;
   user-select: none;
-  font-size: 1.25rem;
-  font-weight: 400;
-  margin-top: -1.5rem;
+  font-size: 20px;
 `;

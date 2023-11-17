@@ -3,9 +3,8 @@ import axios from 'axios';
 import { formatDecimal, sendGetRequestWithSensitiveData, sendPostRequestWithSensitiveData, getPairByTokenAddress } from './Utils';
 import { useRouter } from 'next/router';
 import { presalePlatforms, launchPlatforms } from "./Constant"
-import {notification} from "antd";
+import {notification,} from "antd";
 import  baseUrl from '/utils/baseUrl'
-
 
 export default function CoinForm() {
   const router = useRouter();
@@ -228,9 +227,9 @@ export default function CoinForm() {
                   <p className="text-gray-700">{selectedFile.name}</p>
                   <h3 className="text-lg font-semibold mt-2">preview:</h3>
                   <img
-                    src={previewUrl}
-                    alt="preview"
-                    className="mt-2 rounded-xl shadow w-40 h-40"
+                    src={previewUrl||'error'}
+                    alt="preview" height={50} width={50}
+                    className="mt-2 rounded-xl shadow"
                   />
                 </div>
               )}

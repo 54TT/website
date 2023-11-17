@@ -7,16 +7,18 @@ import DrawerPage from './Drawer'
 import {InjectedConnector} from 'wagmi/connectors/injected'
 import axios from 'axios';
 import {Dropdown, Drawer, Form, Select, Input, DatePicker, Button, notification,} from 'antd'
-import {CaretDownFilled, CaretRightFilled} from '@ant-design/icons';
+import {CaretDownFilled, CaretRightFilled, LoadingOutlined} from '@ant-design/icons';
 import getConfig from "next/config";
 import styles from './css/header.module.css'
 
 const {Option} = Select;
+import Link from 'next/link'
 import {get, post, del} from '/utils/axios'
 import _ from 'lodash'
 import cookie from 'js-cookie'
 import {useRouter} from 'next/router'
 import ChatSearch from "../Chat/ChatSearch";
+import {MetaMaskSDK} from '@metamask/sdk'
 
 const Header = () => {
     const [form] = Form.useForm();
@@ -198,9 +200,15 @@ const Header = () => {
             setTime(data)
         }
     };
+    const [bol, setBol] = useState(false)
+    const setB = () => {
+        setBol(!bol)
+    }
     const handleLogin = async () => {
         const cook = cookie.get('name')
-        if (!session && !cook) {
+        console.log(cook)
+        if (!cook || !address) {
+            console.log(cook)
             try {
                 const message = new SiweMessage({
                     domain: window.location.host,
@@ -214,13 +222,16 @@ const Header = () => {
                 const signature = await signMessageAsync({
                     message: message.prepareMessage(),
                 })
-                await signIn("credentials", {
+                const data = await signIn("credentials", {
                     message: JSON.stringify(message),
                     redirect: false,
                     signature,
                     callbackUrl: '/',
                 })
-                cookie.set('name', address, {expires: 3})
+                if (data && data.status === 200 && data.ok) {
+                    setB()
+                    cookie.set('name', address)
+                }
             } catch (error) {
             }
         }
@@ -231,10 +242,10 @@ const Header = () => {
         }
     }, [session]);
     useEffect(() => {
-        if (!session) {
+        if (!address || !cookie.get('name')) {
             handleLogin()
         }
-    }, [session, isConnected])
+    }, [address, isConnected, bol])
 
     const set = () => {
         cookie.remove('name');
@@ -244,22 +255,29 @@ const Header = () => {
             signOut()
         }
     }
-    const push = () => {
-        if (userPar && userPar.address) {
-            router.push(`/${userPar.address}`)
-        }
-        const cook = cookie.get('name') || ''
-        if (cook) {
-            router.push(`/${cook}`)
+    const getMoney = () => {
+        if (typeof window.ethereum === 'undefined') {
+            notification.warning({
+                message: `warning`, description: 'Please install MetaMask!', placement: 'topLeft',
+                duration: 2
+            });
+        } else {
+            if (!isConnected) {
+                connect()
+            } else {
+                handleLogin()
+            }
         }
     }
     const items = [
         {
             key: '1',
             label: (
-                <span onClick={push}>
+                <Link href={`/${userPar && userPar.address ? userPar.address : ''}`}>
+                       <span>
       Personal
     </span>
+                </Link>
             ),
         },
         {
@@ -296,38 +314,29 @@ const Header = () => {
                                 style={{marginRight: '20px', backgroundColor: 'rgb(254,239,146)'}} onClick={showDrawer}>Add
                             Coin</Button>
                         {
-                            !session ?
-                                <Button type={'primary'} className={styles['but']}
-                                        style={{backgroundColor: 'rgb(254,239,146)'}} onClick={(e) => {
-                                    e.preventDefault()
-                                    if (!isConnected) {
-                                        connect()
-                                    } else {
-                                        handleLogin()
-                                    }
-                                }}>Login</Button> :
-                                <div style={{display: 'flex', alignItems: 'center'}}>
-                                    <img style={{
-                                        marginRight: '10px',
-                                        width: '30px',
-                                        borderRadius: '50%',
-                                        height: '30px'
-                                    }} src={userPar?.profilePicUrl ? userPar.profilePicUrl : ''} alt=""/>
-                                    <Dropdown
-                                        menu={{
-                                            items,
-                                        }}
-                                        placement="bottomLeft"
-                                        arrow
-                                    >
-                                        <Button type={'primary'} className={styles['but']}
-                                                style={{
-                                                    color: 'black',
-                                                    backgroundColor: 'rgb(254,239,146)'
-                                                    // typeof window!=='undefined'&& window?.localStorage?.getItem('name')?window.localStorage.getItem('name').slice(0, 5) + '...':
-                                                }}>{userPar && userPar.username ? userPar.username.slice(0, 5) + '...' : cookie.get('name') ? cookie.get('name').slice(0, 5) + '...' : ''}</Button>
-                                    </Dropdown>
-                                </div>
+                            address && cookie.get('name') ? <div style={{display: 'flex', alignItems: 'center'}}>
+                                <img style={{
+                                    marginRight: '10px',
+                                    borderRadius: '50%',
+                                }} height={30} width={30} src={userPar?.profilePicUrl ? userPar.profilePicUrl : ''}
+                                     alt=""/>
+                                <Dropdown
+                                    menu={{
+                                        items,
+                                    }}
+                                    placement="bottomLeft"
+                                    arrow
+                                >
+                                    <Button type={'primary'} className={styles['but']}
+                                            style={{
+                                                color: 'black',
+                                                backgroundColor: 'rgb(254,239,146)'
+                                                // typeof window!=='undefined'&& window?.localStorage?.getItem('name')?window.localStorage.getItem('name').slice(0, 5) + '...':
+                                            }}>{address ? address.slice(0, 5) + '...' : ''}</Button>
+                                </Dropdown>
+                            </div> : <Button type={'primary'} className={styles['but']}
+                                             style={{backgroundColor: 'rgb(254,239,146)'}}
+                                             onClick={getMoney}>Login</Button>
                         }
                     </div>
                 </div>
@@ -393,8 +402,9 @@ const Header = () => {
                                         presalePlatform.length > 0 ? presalePlatform.map((i, index) => {
                                             return <Option value={i.id} key={index}>
                                                 <div style={{display: 'flex', alignItems: 'center'}}>
-                                                    <img src={baseUrl + `${i.logo}`} alt=""
-                                                         width={'20px'}/> <span>{i.name}</span>
+                                                    <img src={`${i.logo ? baseUrl + '/' + i.logo : 'error'}`} alt=""
+                                                           width={20} height={20}/>
+                                                    <span>{i.name}</span>
                                                 </div>
                                             </Option>
                                         }) : null
@@ -451,8 +461,9 @@ const Header = () => {
                                         launchPlatform.length > 0 ? launchPlatform.map((i, index) => {
                                             return <Option value={i.id} key={index}>
                                                 <div style={{display: 'flex', alignItems: 'center'}}>
-                                                    <img src={baseUrl + `${i.logo}`} alt=""
-                                                         width={'20px'}/> <span>{i.name}</span>
+                                                    <img src={`${i.logo ? baseUrl + '/' + i.logo : 'error'}`} alt=""
+                                                           width={20} height={20}/>
+                                                    <span>{i.name}</span>
                                                 </div>
                                             </Option>
                                         }) : null

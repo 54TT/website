@@ -10,8 +10,8 @@ function FollowNotification({notification, userFollowStats, userPar, chang, }) {
         notification.type === "newFollower" && (
             <NotificationDiv>
                 <div style={{display: 'flex', alignItems: 'center'}}>
-                    <img style={{width: '50px', borderRadius: '50%', marginRight: '15px'}}
-                         src={notification?.user?.profilePicUrl ? notification.user.profilePicUrl : '/avatar.png'}
+                    <img   height={50} width={50} style={{ borderRadius: '50%', marginRight: '15px'}}
+                         src={notification?.user?.profilePicUrl ? notification.user.profilePicUrl : 'error'}
                          alt="userimg"/>
                     <div style={{marginLeft: '10px'}}>
                         <p className="select-none">

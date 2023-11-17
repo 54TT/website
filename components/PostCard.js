@@ -2,7 +2,8 @@ import React, {useEffect, useRef, useState} from "react";
 import styled from "styled-components";
 import calculateTime from "../utils/calculateTime";
 import {ThumbUpIcon} from "@heroicons/react/solid";
-import copy from 'copy-to-clipboard'
+import Link from 'next/link'
+
 import {
     ChatAltIcon,
     MinusCircleIcon,
@@ -79,15 +80,13 @@ function PostCard({post, user, postById, change, liked}) {
         >
             <div className="p-4">
                 <div className="flex space-x-3 items-center ml-2 relative">
-                    <img  style={{width:'50px',borderRadius:'50%'}} src={post && post?.user?.profilePicUrl ? post.user.profilePicUrl : ''} alt="userimg"/>
+                    <img height={50} width={50} style={{borderRadius:'50%'}}   src={post && post?.user?.profilePicUrl ? post.user.profilePicUrl : 'error'} alt="userimg"/>
                     <div>
-                        <UserPTag
-                            onClick={() => {
-                                router.push(`/${post?.user?.address}`);
-                            }}
-                        >
+                        <Link href={`/${post?.user?.address?post.user.address:''}`}>
+                        <UserPTag>
                             {post?.user?.username?post?.user?.username.length>10 ? post.user.username.slice(0,8):post.user.username : ''}
                         </UserPTag>
+                        </Link>
                         <p
                             style={{
                                 fontSize: ".91rem",
@@ -123,7 +122,7 @@ function PostCard({post, user, postById, change, liked}) {
                 <p className="ml-2 mt-5">{post.text}</p>
             </div>
 
-            {post && post.picUrl ? <img src={post.picUrl} alt={''} style={{width: '100%',}}/> : ''}
+            {post && post.picUrl ? <img src={post.picUrl||''} alt={''} style={{width: '100%',}}  /> : ''}
             <div style={{marginTop: "0.65rem"}} className="ml-5 mr-5">
                 <div className="flex justify-between w-full">
                     <div className="flex items-center space-x-0.5 cursor-pointer hover:underline">
@@ -193,8 +192,8 @@ function PostCard({post, user, postById, change, liked}) {
                         <form className="w-full">
                             {/* div which contains the profilepic and the input div */}
                             <div className="flex space-x-2 items-center">
-                                <img  style={{width:'50px',borderRadius:'50%'}}
-                                    src={user?.profilePicUrl}
+                                <img width={50} height={50}  style={{borderRadius:'50%'}}
+                                    src={user?.profilePicUrl||'error'}
                                     alt="profile pic"
                                 />
                                 <div

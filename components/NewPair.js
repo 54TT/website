@@ -1,8 +1,4 @@
 import React, {useEffect, useState} from "react";
-import axios from 'axios';
-import Link from "next/link";
-import  baseUrl from '/utils/baseUrl'
-import Image from 'next/image';
 import {Table, Pagination, notification,Card} from 'antd'
 import {formatDecimal, sendGetRequestWithSensitiveData} from './utils';
 import _ from 'lodash'
@@ -10,8 +6,9 @@ import {ApolloClient, InMemoryCache, useQuery} from "@apollo/client";
 import {gql} from "graphql-tag";
 import {useRouter} from "next/router";
 import dayjs from "dayjs";
+
 const client = new ApolloClient({
-    uri: 'http://192.168.232.18:8000/subgraphs/name/levi/uniswapv2', cache: new InMemoryCache(),
+    uri: 'http://192.168.8.39:8000/subgraphs/name/levi/uniswapv2', cache: new InMemoryCache(),
 });
 export default function NewPair() {
     const [pairs, setPairs] = useState([]);
@@ -149,7 +146,7 @@ const chang=(e,a)=>{
             key: 'action',align: 'center',
             width:50,
             render:(text,record)=>{
-                return <img src={`${record.img?"/StarHave.png":"/StarNone.png"}`} alt="" width={'20px'} style={{cursor:'pointer'}} onClick={()=>changeImg(record)}/>
+                return <img src={`${record.img?"/StarHave.png":"/StarNone.png"}`} alt="" height={20} width={20}  style={{cursor:'pointer'}} onClick={()=>changeImg(record)}/>
             }
         },
     ];
@@ -167,19 +164,12 @@ const chang=(e,a)=>{
                     justifyContent: 'space-between'
                 }}>
                     <div style={{display: 'flex', alignItems: 'center'}}>
-                        <img src="/wallet.png" alt="" width={'70px'}/>
+                        <img src="/gpsReceiving.png" alt="" height={70} width={70} />
                         <span style={{fontWeight: 'bold', fontSize: '26px'}}>COMING SOON</span>
                     </div>
                     <Pagination defaultCurrent={1} current={currentPage} onChange={chang} total={tableTotal} pageSize={rowsPerPage}/>
                 </div>
-                <Table rowKey={(i)=> i.id+i?.token0?.id+i?.token1?.id+i?.token0?.name}    onRow={(record) => {
-                    return {
-                        onClick: (event) => {
-                            // const data  = record.pairAddress
-                            // router.push(`/details?pairAddress=${data}`)
-                        },
-                    };
-                }} className={'hotTable'} loading={loadingBool} columns={columns} bordered={false} dataSource={tableParams} pagination={false}/>
+                <Table rowKey={(i)=> i.id+i?.token0?.id+i?.token1?.id+i?.token0?.name}    className={'hotTable'} loading={loadingBool} columns={columns} bordered={false} dataSource={tableParams} pagination={false}/>
             </Card>
             <p style={{marginTop:'80px',textAlign:'center',lineHeight:'1',fontSize:'20px',color:'rgb(98,98,98)'}}>©DEXPert.io</p>
         </div>

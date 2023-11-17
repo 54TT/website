@@ -4,7 +4,6 @@ import {notification, Pagination, Table, Card} from "antd";
 import _ from "lodash";
 import {get} from "../utils/axios";
 import {GlobalOutlined, SendOutlined, TwitterOutlined} from "@ant-design/icons";
-
 export default function Presale() {
     const [launchPageSize, setLaunchPageSize] = useState(10);
     const [launchCurrent, setLaunchCurrent] = useState(1);
@@ -126,7 +125,7 @@ export default function Presale() {
             render: (text, record) => {
                 if (text) {
                     return <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}><img
-                        src="/Time.png" alt="" width={'30px'}/>
+                        src="/Time.png" alt="" width={30} height={30}/>
                         <span>{dao(dayjs(text).isAfter(dayjs()) ? dayjs(text).diff(dayjs(), 'seconds') : '')}</span>
                     </div>
                 } else {
@@ -147,7 +146,7 @@ export default function Presale() {
             render: (text) => {
                 if (text) {
                     return <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}><img
-                        src="/Time.png" alt="" width={'30px'}/>
+                        src="/Time.png" alt="" width={30} height={30}/>
                         <span>{dao(dayjs(text).isAfter(dayjs()) ? dayjs(text).diff(dayjs(), 'seconds') : '')}</span>
                     </div>
                 } else {
@@ -160,7 +159,7 @@ export default function Presale() {
             dataIndex: 'launch_time',align: 'center',
             width: 50,
             render: (text, record) => {
-                return <img src={`${record.img ? "/StarHave.png" : "/StarNone.png"}`} alt="" width={'20px'}
+                return <img src={`${record.img ? "/StarHave.png" : "/StarNone.png"}`} alt="" width={20} height={20}
                             style={{cursor: 'pointer'}}/>
                 // onClick={() => changeImg(record)}
             }
@@ -184,7 +183,7 @@ export default function Presale() {
                     justifyContent: 'space-between'
                 }}>
                     <div style={{display: 'flex', alignItems: 'center'}}>
-                        <img src="/Group.png" alt="" width={'70px'}/>
+                        <img src="/Group.png" alt="" width={70} height={70}/>
                         <span style={{fontWeight: 'bold', fontSize: '26px'}}>PRESALE & LAUNCH</span>
                     </div>
                 </div>

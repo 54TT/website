@@ -2,10 +2,9 @@ import React,{useState,useEffect} from 'react';
 import {useRouter} from 'next/router';
 import style from '../styles/details.module.css'
 import {Table, Card, Segmented,Progress } from 'antd'
-import axios from 'axios'
-function Details(props) {
+import axios from 'axios';
+function Details() {
     const router = useRouter();
-    // const { chain } = useNetwork();
     const data = router.query
     const [columnsBol,setColumnsBol] = useState(false)
     const [featured, setFeatured] = useState({});
@@ -82,7 +81,7 @@ function Details(props) {
         {
             title: 'Actions',
             render:()=>{
-                return <img src="/LOGOTOU.png" width={'30px'} alt=""/>
+                return <img src="/LOGOTOU.png" width={30}   height={30} alt=""/>
             }
         },
     ];
@@ -163,12 +162,12 @@ function Details(props) {
                             style={{color: 'rgb(32,134,192)'}}>{featured?.pairAddress?featured.pairAddress.slice(0,3)+'...'+featured.pairAddress.slice(-4):''}</span></p>
                     </div>
                     <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '20%'}}>
-                        <img src="/Star1.png" alt="" width={'30px'}/>
-                        <img src="/Website2.png" alt="" width={'30px'}/>
-                        <img src="/TwitterX.png" alt="" width={'30px'}/>
-                        <img src="/Telegram2.png" alt="" width={'30px'}/>
-                        <img src="/Ellipse15.png" alt="" width={'30px'}/>
-                        <img src="/etherscan.png" alt="" width={'30px'}/>
+                        <img src="/Star1.png" alt="" width={30}   height={30}/>
+                        <img src="/Website2.png" alt="" width={30}   height={30}/>
+                        <img src="/TwitterX.png" alt="" width={30}   height={30}/>
+                        <img src="/Telegram2.png" alt="" width={30}   height={30}/>
+                        <img src="/Ellipse15.png" alt="" width={30}   height={30}/>
+                        <img src="/etherscan.png" alt="" width={30}   height={30}/>
                     </div>
                     <p style={{
                         backgroundColor: 'rgb(188,158,45)',
@@ -205,7 +204,7 @@ function Details(props) {
                             </div>
                             <div className={style['bot']}>
                                 <p style={{fontSize: '18px'}}>SWAP</p>
-                                <img src="/LOGOTOU.png" alt="" width={'40px'}/>
+                                <img src="/LOGOTOU.png" alt="" width={40} height={40}  />
                             </div>
                         </div>
                         <div style={{width:'80%'}}>

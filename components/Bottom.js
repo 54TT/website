@@ -1,12 +1,11 @@
 import React from 'react';
 import styles from "../styles/home.module.css";
-
 function Bottom(props) {
     return (
         <div>
             <div className={styles['boxBott']}>
                 <div style={{width: '20%'}}>
-                    <img src="/video.png" alt="" width={'50%'} style={{margin: '0 auto'}}/>
+                    <img src="/video.png" alt=""  style={{margin: '0 auto',width:'50%'}}/>
                     <p style={{fontSize: '20px', fontWeight: 'bold', textAlign: 'center'}}>Instructional video</p>
                 </div>
                 <p style={{width: '78%', color: 'rgb(98,98,98)', fontSize: '18px', fontWeight: 'bold', lineHeight: 1,}}>All
@@ -26,10 +25,10 @@ function Bottom(props) {
                     alignItems: 'center',
                     justifyContent: 'space-between', width: '20%'
                 }}>
-                    <img src="/TwitterX.png" alt="" width={'45px'}/>
-                    <img src="/TelegramApp.png" alt="" width={'45px'}/>
-                    <img src="/Discord.png" alt="" width={'45px'}/>
-                    <img src="/Medium.png" alt="" width={'45px'}/>
+                    <img src="/TwitterX1.png"  alt="" width={45}/>
+                    <img src="/TelegramApp.png" alt="" width={45} height={45}/>
+                    <img src="/Discord.png" alt="" width={45}  height={45}/>
+                    <img src="/Medium.png" alt="" width={45}  height={45}/>
                 </div>
             </div>
             <div style={{color:'rgb(55,55,55,)',margin:'20px 0',display:'flex',alignItems:'center',justifyContent:'center'}}>©DEXPert.io</div>

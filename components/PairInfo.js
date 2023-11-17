@@ -2,10 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from 'axios';
 import  baseUrl from '/utils/baseUrl'
 import { useRouter } from 'next/router';
-import Image from 'next/image';
 import { formatDecimal } from './Utils';
-import Link from "next/link";
-// import { useAccount, useNetwork } from "wagmi";
 
 export default function PairInfo() {
   const router = useRouter();
@@ -90,7 +87,7 @@ export default function PairInfo() {
             <div className="grid grid-flow-row grid-cols-2 px-3 mt-3">
               <div className="grid grid-flow-row grid-cols-2 m-9 w-32">
                 <div className="w-9">
-                  <Image src={`${ baseUrl}/${pairBaseData.logo}`} alt="logo" width={40} height={40} className="inline rounded-full" />
+                  <img src={`${pairBaseData?.logo?baseUrl+'/'+pairBaseData.logo:'error'}`} alt="logo" width={40} height={40} className="inline rounded-full" />
                 </div>
                 <div className="w-32">
                   <div>

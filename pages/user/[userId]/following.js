@@ -3,6 +3,7 @@ import axios from "axios";
 import {useRouter} from "next/router";
 import baseUrl from "../../../utils/baseUrl";
 import InfoBox from "../../../components/HelperComponents/InfoBox";
+import Link from 'next/link'
 import {
     CheckCircleIcon,
     ExclamationCircleIcon,
@@ -12,7 +13,6 @@ import styled from "styled-components";
 import {followUser, unfollowUser} from "../../../utils/profileActions";
 import Sidebar from "../../../components/Sidebar";
 import {useSession} from "next-auth/react";
-
 function FollowingPage() {
     const router = useRouter();
     const [user, setUser] = useState(null)
@@ -127,14 +127,13 @@ function FollowingPage() {
                                     key={fol?.user?.id}
                                 >
                                     <div className="flex items-center ">
-                                        <img style={{  width: '40px',
-                                            borderRadius: '50%'}} src={fol?.user?.profilePicUrl} alt="userimg"/>
-                                        <Name
-                                            className="ml-3"
-                                            onClick={() => router.push(`/${fol?.user?.username}`)}
-                                        >
-                                            {fol?.user?.name.length > 9 ? fol?.user?.name.slice(0, 4) + '...' + fol?.user?.name.slice(-3) : fol?.user?.name}
-                                        </Name>
+                                        <Image    width={40} height={40} style={{
+                                            borderRadius: '50%'}} src={fol?.user?.profilePicUrl||'error'} alt="userimg"/>
+                                        <Link href={`/${fol?.user?.username}`}>
+                                            <Name className="ml-3">
+                                                {fol?.user?.name.length > 9 ? fol?.user?.name.slice(0, 4) + '...' + fol?.user?.name.slice(-3) : fol?.user?.name}
+                                            </Name>
+                                        </Link>
                                     </div>
                                     {fol?.user?.id !== user?.id ? (
                                         <>
@@ -213,15 +212,13 @@ const Name = styled.p`
 
 const Title = styled.p`
   user-select: none;
-  font-size: 1.65rem;
-  font-weight: 600;
+  font-size: 20px;
+  font-weight: bold;
   font-family: Inter;
 `;
 
 const FollowingNumber = styled.p`
   font-family: Inter;
   user-select: none;
-  font-size: 1.25rem;
-  font-weight: 400;
-  margin-top: -1.65rem;
+  font-size: 20px;
 `;

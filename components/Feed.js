@@ -70,7 +70,7 @@ function Feed({user, postsData, errorLoading,change, increaseSizeAnim}) {
                                 // }
                                 // dataLength={posts.length}
                             >
-                                {posts && posts?.length > 0 ? posts.map((post) => {
+                                {posts && posts?.length > 0 ? posts.map((post,index) => {
                                     const isLiked =
                                         post.likes && post.likes.length > 0 &&
                                         post.likes.filter((like) => like?.user?.id === user?.id).length > 0;

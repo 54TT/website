@@ -28,7 +28,7 @@ function Statement(props) {
                     justifyContent: 'space-between',
                     width: '26%',
                     margin: '0 auto'
-                }}><img src={'/logo1.png'} alt="logo" width={'80px'}/><span
+                }}><img src={'/logo1.png'} alt="logo" width={80} height={80}  /><span
                     style={{fontSize: '45px', fontWeight: 'bold', color: 'rgb(55,55,55,)'}}>DEXPERT</span></p>
                 <p style={{marginTop: '10px', fontSize: '18px'}}>DEXpert.io </p>
                 {

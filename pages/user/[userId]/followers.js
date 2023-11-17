@@ -10,7 +10,7 @@ import styled from "styled-components";
 import {followUser, unfollowUser} from "../../../utils/profileActions";
 import Sidebar from "../../../components/Sidebar";
 import {useSession} from "next-auth/react";
-
+import Link from 'next/link';
 function FollowersPage() {
     const router = useRouter();
     const {data: session, status} = useSession()
@@ -38,7 +38,6 @@ function FollowersPage() {
         }
 
     }
-
     const getUser = async () => {
         const res = await axios.get(`${baseUrl}/api/user/userFollowStats`, {
             params: {userId: userPar.id},
@@ -103,14 +102,14 @@ function FollowersPage() {
                                         key={fol?.user?.id}
                                     >
                                         <div className="flex items-center  ">
-                                            <img src={fol?.user?.profilePicUrl} alt="userimg"
-                                                 style={{width: '40px', borderRadius: '50%'}}/>
-                                            <Name
-                                                className="ml-2"
-                                                onClick={() => router.push(`/${fol?.user?.username}`)}
-                                            >
-                                                {fol?.user?.username.length > 10 ? fol.user.username.slice(0, 4) + '...' + fol.user.username.slice(-3) : fol?.user?.username}
-                                            </Name>
+                                            <Image src={fol?.user?.profilePicUrl|'error'} alt="userimg"   width={40} height={40}
+                                                 style={{ borderRadius: '50%'}}/>
+                                            <Link href={`/${fol?.user?.username}`}>
+                                                <Name className="ml-2">
+                                                    {fol?.user?.username.length > 10 ? fol.user.username.slice(0, 4) + '...' + fol.user.username.slice(-3) : fol?.user?.username}
+                                                </Name>
+                                            </Link>
+
                                         </div>
                                         {fol?.user?.id !== userPar?.id ? (<>
                                                 {isLoggedInUserFollowing ? (<FollowButton
@@ -176,7 +175,7 @@ const Name = styled.p`
 
 const Title = styled.p`
   user-select: none;
-  font-size: 1.65rem;
+  font-size: 20px;
   font-weight: 600;
   font-family: Inter;
 `;
@@ -184,7 +183,6 @@ const Title = styled.p`
 const FollowersNumber = styled.p`
   font-family: Inter;
   user-select: none;
-  font-size: 1.25rem;
+  font-size: 20px;
   font-weight: 400;
-  margin-top: -1.65rem;
 `;

@@ -10,8 +10,9 @@ import styled from "styled-components";
 import calculateTime from "../utils/calculateTime";
 import Chat from "../components/Chat/Chat";
 import {Facebook} from "react-content-loader";
-import {AppleOutlined, LoadingOutlined} from '@ant-design/icons'
+import {AppleOutlined,} from '@ant-design/icons'
 import {useSession} from "next-auth/react";
+import Link from 'next/link';
 
 function ChatsPage() {
     const [chats, setChats] = useState([]);
@@ -263,17 +264,12 @@ function ChatsPage() {
                             <>
                                 {chats && chats.length > 0 ? (
                                     chats.map((chat) => (
-                                        <ChatDiv
-                                            key={chat.textsWith}
-                                            onClick={() =>
-                                                router.push(`/chats?chat=${chat.textsWith}`)
-                                            }
-                                        >
+                                        <Link href={`/chats?chat=${chat?.textsWith}`} key={chat.textsWith}>
+                                        <ChatDiv >
                                             <div className="relative">
-                                                <img style={{
-                                                    width: '80px',
+                                                <Image   width={80} height={80} style={{
                                                     borderRadius: '50%'
-                                                }} src={chat?.profilePicUrl} alt="userimg"/>
+                                                }} src={chat?.profilePicUrl||'error'} alt="userimg"/>
                                                 {connectedUsers?.length > 0 &&
                                                 connectedUsers.filter(
                                                     (user) => user.userId === chat?.textsWith
@@ -303,6 +299,7 @@ function ChatsPage() {
                                                 <Date>{calculateTime(chat.created_at, true)}</Date>
                                             )}
                                         </ChatDiv>
+                                        </Link>
                                     ))
                                 ) : (
                                     <>
@@ -327,10 +324,9 @@ function ChatsPage() {
                             {/*右边聊天*/}
                             {chatUserData && chatUserData.profilePicUrl ? (
                                 <ChatHeaderDiv>
-                                    <img style={{
-                                        width: '80px',
+                                    <Image   width={80} height={80} style={{
                                         borderRadius: '50%'
-                                    }} src={chatUserData?.profilePicUrl} alt="userimg"/>
+                                    }} src={chatUserData?.profilePicUrl||'error'} alt="userimg"/>
                                     <div>
                                         <ChatName>{chatUserData?.name.length > 7 ? chatUserData.name.slice(0, 3) + '...' + chatUserData.name.slice(-3) : chatUserData.name}</ChatName>
                                         {connectedUsers.length > 0 &&

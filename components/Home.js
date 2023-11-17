@@ -4,6 +4,7 @@ import axios from 'axios';
 import {formatDecimal, sendGetRequestWithSensitiveData, getRelativeTimeDifference, formatDateTime} from './Utils';
 import {useRouter} from 'next/router';
 import {get, post, del} from '/utils/axios'
+import Link from 'next/link'
 import {
     Tooltip,
     Table,
@@ -17,11 +18,10 @@ import {
     Skeleton,
     Space,
     Switch,
-    Drawer
+    Drawer,
 } from 'antd'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
-
 dayjs.extend(duration)
 import {useQuery, ApolloClient, InMemoryCache} from '@apollo/client';
 import {gql} from 'graphql-tag';
@@ -38,7 +38,7 @@ import {
 import Bott from "./Bottom";
 
 const client = new ApolloClient({
-    uri: 'http://192.168.232.18:8000/subgraphs/name/levi/uniswapv2', cache: new InMemoryCache(),
+    uri: 'http://192.168.8.39:8000/subgraphs/name/levi/uniswapv2', cache: new InMemoryCache(),
 });
 
 export default function Home() {
@@ -219,15 +219,6 @@ query NewPair {
                 break;
         }
     }
-    const pushRouter = (name) => {
-        if (name === 'live') {
-            router.push('/newPair')
-        } else if (name === 'swap') {
-            router.push('/featured')
-        } else {
-            router.push('/presale')
-        }
-    }
     const changSeg = (e) => {
         if (e === '5m') {
             setTime('m5')
@@ -267,7 +258,7 @@ query NewPair {
                 {/*上面*/}
                 <div style={{display: 'flex', justifyContent: 'space-between',}}>
                     {/*左边*/}
-                    <div style={{width: '46%', position: 'relative'}} className={'cardParams'}>
+                    <div style={{width: '46%', position: 'relative',backgroundColor: 'rgb(253, 213, 62)'}} className={'cardParams'}>
                         <Card style={{
                             minWidth: 300,
                             backgroundColor: 'rgb(253, 213, 62)',
@@ -277,8 +268,9 @@ query NewPair {
                             <ul className={styles['ul']}>
                                 <li>
                                     <p style={{fontSize: '20px', fontWeight: 'bold'}}>New Pair</p>
-                                    <p style={{fontSize: '20px', color: '#2394D4', cursor: 'pointer'}}
-                                       onClick={() => pushRouter('live')}>more></p>
+                                    <Link href={'/newPair'}>
+                                    <p style={{fontSize: '20px', color: '#2394D4', cursor: 'pointer'}}>more></p>
+                                    </Link>
                                 </li>
                                 {featuredBol ? newPair.length > 0 ? newPair.map((i, v) => {
                                     if (v > 4) {
@@ -318,7 +310,7 @@ query NewPair {
                                                     alignItems: 'center',
                                                     justifyContent: 'center'
                                                 }}>
-                                                    <img src={` /Group.png`} width={'22%'} alt=""/>
+                                                    <img src={` /Group.png`} style={{width:'22%'}} alt=""/>
                                                     <span>{i.createdAtTimestamp ? getRelativeTimeDifference(formatDateTime(i.createdAtTimestamp)) : ''}</span>
                                                 </div>
                                             </div>
@@ -347,8 +339,9 @@ query NewPair {
                             <ul className={styles['rightUl']}>
                                 <li>
                                     <p style={{fontSize: '20px', fontWeight: 'bold'}}>Launch and Presale</p>
-                                    <p style={{fontSize: '20px', color: '#2394D4', cursor: 'pointer'}}
-                                       onClick={() => pushRouter('coming')}>more></p>
+                                    <Link href={'/presale'}>
+                                        <p style={{fontSize: '20px', color: '#2394D4', cursor: 'pointer'}}>more></p>
+                                    </Link>
                                 </li>
                                 {
                                     launchBol ? launch.length > 0 ? launch.map((i, index) => {
@@ -385,8 +378,6 @@ query NewPair {
                                                     <div className={styles['dis']} style={{
                                                         padding: '3px'
                                                     }}>
-                                                        {/*<img src={` /Website.png`} alt={`${i.website}`}*/}
-                                                        {/*     width={'25%'}/>*/}
                                                         <GlobalOutlined style={{cursor: 'pointer', fontSize: '20px'}}
                                                                         onClick={() => push(i, 'one')}/>
                                                         <TwitterOutlined style={{cursor: 'pointer', fontSize: '20px'}}
@@ -408,7 +399,7 @@ query NewPair {
                                                                 alignItems: 'center',
                                                                 lineHeight: 1
                                                             }}>
-                                                                <img src={`/Time.png`} alt="" width={'22px'}/>
+                                                                <img src={`/Time.png`} alt=""  width={22} height={22}/>
                                                                 <span
                                                                     style={{
                                                                         letterSpacing: '2px',
@@ -424,7 +415,7 @@ query NewPair {
                                                         textAlign: 'center'
                                                     }}>launch time</p>
                                                     <div style={{display: 'flex', alignItems: 'center', lineHeight: 1}}>
-                                                        <img src={` /Time.png`} alt="" width={'22px'}/>
+                                                        <img src={`/Time.png`} alt="" width={22}  height={22}/>
                                                         <span
                                                             style={{
                                                                 letterSpacing: '2px',
@@ -462,8 +453,9 @@ query NewPair {
                         <div className={styles['dis']}>
                             {/*时间选择*/}
                             <Segmented options={['5m', '1h', '6h', '24h']} onChange={changSeg} defaultValue={'24h'}/>
-                            <p style={{color: '#2394D4', cursor: 'pointer', fontSize: '20px', marginLeft: '10px'}}
-                               onClick={() => pushRouter('swap')}>more></p>
+                            <Link href={'/featured'}>
+                                <p style={{fontSize: '20px', color: '#2394D4', cursor: 'pointer'}}>more></p>
+                            </Link>
                         </div>
                     </div>
                     {/*表格*/}
@@ -487,7 +479,7 @@ query NewPair {
                 </div>
             </div>
             {/*右边*/}
-            <div style={{width: '34%', backgroundColor: '#BCEE7D', borderRadius: '12px', padding: '10px 8px'}}>
+            <div className={'cardParams'} style={{width: '34%', backgroundColor: '#BCEE7D', borderRadius: '12px', padding: '10px 8px'}}>
                 {/*<div style={{*/}
                 {/*    backgroundColor: 'rgb(248,229,161)', padding: '16px', borderRadius: '12px', marginTop: '13px'*/}
                 {/*}}>*/}
@@ -496,7 +488,7 @@ query NewPair {
                         <div style={{
                             display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '38%'
                         }}>
-                            <img src={` /Ellipse.png`} alt="" width={'35px'}/>
+                            <img src={`/Ellipse.png`} height={35} alt="" width={35} />
                             <div style={{width: '65%'}}>
                                 <div style={{
                                     display: 'flex',
@@ -517,7 +509,7 @@ query NewPair {
                             </div>
                         </div>
                         <p style={{fontSize: '14px', margin: '10px 0 7px 0'}}>发的文案啦</p>
-                        <img src={` /Rectangle.png`} alt="" width={'100%'}/>
+                        <img src={` /Rectangle.png`} alt="" style={{width:'100%'}}/>
                         <ul style={{
                             display: 'flex',
                             alignItems: 'center',

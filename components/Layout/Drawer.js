@@ -7,6 +7,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import {useRouter} from "next/router";
+import Link from 'next/link'
 const Drawer = () => {
     const router = useRouter();
     const drawerWidth = 300;
@@ -74,7 +75,8 @@ const Drawer = () => {
         <div className={'aaaa'}>
             <Drawer variant="permanent" open={openDrawer} onMouseEnter={handleDrawerOpen}
                     onMouseLeave={handleDrawerClose}>
-                <div onClick={() => push('/statement')} style={{cursor:'pointer'}}>
+                <Link href={'/statement'}>
+                <div style={{cursor:'pointer'}}>
                     <DrawerHeader sx={{
                         minHeight: 48,
                         justifyContent: openDrawer ? 'center' : 'center',
@@ -89,12 +91,13 @@ const Drawer = () => {
                             <img src={'/LOGO.png'} alt="logo" width={45} height={45}/>
                         </ListItemIcon>
                         {/*Vector*/}
-                        <ListItemText primary={<img width={'60%'} src="/Vector.png" alt=""/>} sx={{opacity: openDrawer ? 1 : 0}}/>
+                        <ListItemText primary={<img width={'50%'}   src="/Vector.png"  alt=""/>} sx={{opacity: openDrawer ? 1 : 0}}/>
                     </DrawerHeader>
                 </div>
+                </Link>
                 <List>
                     <ListItem key="Dex Pboard" disablePadding sx={{display: 'block',}} className="drawerItem">
-                        <div onClick={() => push('/')}>
+                        <Link href={'/'}>
                             <ListItemButton
                                 sx={{
                                     minHeight: 48,
@@ -109,14 +112,14 @@ const Drawer = () => {
                                     }}
                                 >
 
-                                    <img src={`/Home.png`} alt="logo" width={32}/>
+                                    <img src={`/Home.png`} alt="logo" width={32} height={32} />
                                 </ListItemIcon>
                                 <ListItemText primary="Dex Pboard" sx={{opacity: openDrawer ? 1 : 0}}/>
                             </ListItemButton>
-                        </div>
+                        </Link>
                     </ListItem>
                     <ListItem key="Featured" disablePadding sx={{display: 'block'}} className="drawerItem">
-                        <div onClick={() => push('/featured')}>
+                        <Link href={'/featured'}>
                             <ListItemButton
                                 sx={{
                                     minHeight: 48,
@@ -131,14 +134,14 @@ const Drawer = () => {
                                     }}
                                 >
 
-                                    <img src={` /Exchange.png`} alt="logo" width={32}/>
+                                    <img src={`/Exchange.png`} alt="logo" height={32} width={32} />
                                 </ListItemIcon>
                                 <ListItemText primary="Featured" sx={{opacity: openDrawer ? 1 : 0}}/>
                             </ListItemButton>
-                        </div>
+                        </Link>
                     </ListItem>
                     <ListItem key="Presale & Launch" disablePadding sx={{display: 'block'}} className="drawerItem">
-                        <div onClick={() => push('/presale')}>
+                        <Link href={'/presale'}>
                             <ListItemButton
                                 sx={{
                                     minHeight: 48,
@@ -152,14 +155,14 @@ const Drawer = () => {
                                         justifyContent: 'center',
                                     }}
                                 >
-                                    <img src={` /pre-sale.png`} alt="logo" width={32}/>
+                                    <img src={`/pre-sale.png`} alt="logo" height={32} width={32} />
                                 </ListItemIcon>
                                 <ListItemText primary="Presale & Launch" sx={{opacity: openDrawer ? 1 : 0}}/>
                             </ListItemButton>
-                        </div>
+                        </Link>
                     </ListItem>
                     <ListItem key="Live New Pairs" disablePadding sx={{display: 'block'}} className="drawerItem">
-                        <div onClick={() => push('/newPair')}>
+                        <Link href={'/newPair'}>
                             <ListItemButton
                                 sx={{
                                     minHeight: 48,
@@ -174,11 +177,11 @@ const Drawer = () => {
                                     }}
                                 >
 
-                                    <img src={` /newPairs.png`} alt="logo" width={32}/>
+                                    <img src={`/newPairs.png`} alt="logo" height={32} width={32} />
                                 </ListItemIcon>
                                 <ListItemText primary="Live New Pairs" sx={{opacity: openDrawer ? 1 : 0}}/>
                             </ListItemButton>
-                        </div>
+                        </Link>
                     </ListItem>
                     <ListItem key="Information" disablePadding sx={{display: 'block'}} className="drawerItem">
                         <div>
@@ -195,14 +198,14 @@ const Drawer = () => {
                                         justifyContent: 'center',
                                     }}
                                 >
-                                    <img src={` /News.png`} alt="logo" width={32}/>
+                                    <img src={`/News.png`} alt="logo" width={32} height={32} />
                                 </ListItemIcon>
                                 <ListItemText primary="Information" sx={{opacity: openDrawer ? 1 : 0}}/>
                             </ListItemButton>
                         </div>
                     </ListItem>
                     <ListItem key="Comminicate" disablePadding sx={{display: 'block'}} className="drawerItem">
-                        <div onClick={() => push('/social')}>
+                        <Link href={'/social'}>
                             <ListItemButton
                                 sx={{
                                     minHeight: 48,
@@ -216,11 +219,11 @@ const Drawer = () => {
                                         justifyContent: 'center',
                                     }}
                                 >
-                                    <img src={`/Users.png`} alt="logo" width={32}/>
+                                    <img src={`/Users.png`} height={32} alt="logo" width={32} />
                                 </ListItemIcon>
                                 <ListItemText primary="Comminicate" sx={{opacity: openDrawer ? 1 : 0}}/>
                             </ListItemButton>
-                        </div>
+                        </Link>
                     </ListItem>
                 </List>
             </Drawer>

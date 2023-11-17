@@ -1,7 +1,6 @@
 import React, {useEffect, useRef, useState} from "react";
 import axios from 'axios';
 import Link from "next/link";
-import Image from 'next/image';
 import baseUrl from '/utils/baseUrl'
 import {formatDecimal, sendGetRequestWithSensitiveData, getRelativeTimeDifference, formatDateTime} from './utils';
 import {useAccount, useNetwork} from "wagmi";
@@ -218,7 +217,7 @@ export default function Featured() {
                     justifyContent: 'space-between'
                 }}>
                     <div style={{display: 'flex', alignItems: 'center'}}>
-                        <img src="/gpsReceiving.png" alt="" width={'70px'}/>
+                        <img src="/wallet.png" alt="" width={70}  height={70}/>
                         <span style={{fontWeight: 'bold', fontSize: '26px'}}>FEATURED</span>
                     </div>
                     <Segmented options={['5m', '1h', '6h', '24h']} onChange={changSeg} defaultValue={'24h'}/>

@@ -20,7 +20,7 @@ import {
     CloseOutlined,
     CheckOutlined
 } from '@ant-design/icons'
-import {Avatar, Image, Input, notification} from 'antd'
+import {Avatar, Input, notification} from 'antd'
 import axios from "axios";
 import ProfileFields from "../components/ProfileComponents/ProfileFields";
 import FollowingUsers from "../components/ProfileComponents/FollowingUsers";

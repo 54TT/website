@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react";
-import axios from 'axios';
 import Link from "next/link";
 import  baseUrl from '/utils/baseUrl'
 import { formatDecimal, sendGetRequestWithSensitiveData, sendPostRequestWithSensitiveData } from './Utils';
 import { useRouter } from 'next/router';
-import {notification} from "antd";
-// import { useAccount, chain} from "wagmi";
+import {notification,} from "antd";
 
 export default function CoinForm() {
   const router = useRouter();
@@ -151,9 +149,11 @@ export default function CoinForm() {
                   <p className="text-gray-700">{selectedFile.name}</p>
                   <h3 className="text-lg font-semibold mt-2">preview:</h3>
                   <img
-                    src={previewUrl}
+                    src={previewUrl?previewUrl:'error'}
                     alt="preview"
-                    className="mt-2 rounded-xl shadow w-40 h-40"
+                    height={40}
+                    width={40}
+                    className="mt-2 rounded-xl shadow "
                   />
                 </div>
               )}

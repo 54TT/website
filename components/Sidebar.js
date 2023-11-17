@@ -10,6 +10,7 @@ import {
 import SidebarRow from "./HelperComponents/SidebarRow";
 
 function Sidebar({user, topDist, maxWidth}) {
+    console.log(user)
     return (
         <div
             className={

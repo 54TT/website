@@ -7,10 +7,10 @@ function LikeNotification({ notification }) {
   return (
     notification.type === "newLike" && (
       <NotificationDiv>
-        <img style={{width:'60px',borderRadius:'50%'}} src={notification?.user?.profilePicUrl||''} alt="userimg" />
+        <img   width={60} height={60} style={{borderRadius:'50%'}} src={notification?.user?.profilePicUrl||'error'} alt="userimg" />
         <div className="select-none"  style={{marginLeft:'10px'}}>
           <p>
-            <Link href={`/${notification.user.username}`} passHref>
+            <Link href={`/${notification?.user?.username?notification.user.username:''}`} passHref>
               {notification?.user?.name?notification?.user?.name?.length>10?notification.user.name.slice(0,3)+'...'+notification.user.name.slice(-4):notification.user.name:''}
             </Link>
             liked your

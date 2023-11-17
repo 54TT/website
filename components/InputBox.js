@@ -9,7 +9,6 @@ import uploadPic from "../utils/uploadPic";
 import {submitNewPost} from "../utils/postActions";
 import {ExclamationCircleIcon} from "@heroicons/react/outline";
 import InfoBox from "./HelperComponents/InfoBox";
-// import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import {LoadingOutlined} from '@ant-design/icons'
 
 function InputBox({user, setPosts, increaseSizeAnim}) {
@@ -50,17 +49,17 @@ function InputBox({user, setPosts, increaseSizeAnim}) {
                 return setError("Error uploading image");
             }
         }
-     const data =    await submitNewPost(
-            user?.id,            newPost.postText,
+        const data = await submitNewPost(
+            user?.id, newPost.postText,
             newPost.location,
             picUrl,
             setPosts,
             setNewPost,
             setError,
         );
-            setImage(null);
-            setImagePreview(null);
-            setLoading(false);
+        setImage(null);
+        setImagePreview(null);
+        setLoading(false);
     };
 
     const FormBottomHalf = ({}) => {
@@ -122,11 +121,12 @@ function InputBox({user, setPosts, increaseSizeAnim}) {
     };
 
     return (
-        <div>
+        <>
             <div
                 style={{
                     boxShadow:
                         "rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px",
+                    borderRadius:'10px'
                 }}
                 className="bg-white mt-3 mb-10"
             >
@@ -134,7 +134,8 @@ function InputBox({user, setPosts, increaseSizeAnim}) {
                     <>
                         <div className="pt-6 pl-6 pr-6">
                             <div className="flex space-x-4 items-center">
-                                <img src={user&&user.profilePicUrl ? user.profilePicUrl : '/Ellipse5.png'} alt="" style={{width:'50px',height:'50px',borderRadius:'50%'}}/>
+                                <img src={user && user.profilePicUrl ? user.profilePicUrl : 'error'} alt=""
+                                       style={{borderRadius: '50%'}} height={50} width={50}/>
                                 <div>
                                     <p style={{marginBottom: 0, fontWeight: "600"}}>
                                         {user.username}
@@ -180,14 +181,16 @@ function InputBox({user, setPosts, increaseSizeAnim}) {
                                             >
                                                 <XIcon className="h-6 text-gray-700"/>
                                             </ImagePreviewDiv>
-                                            <img  style={{ height: '300px',
+                                            <img style={{
+                                                height: '300px',
                                                 width: '90%',
                                                 marginLeft: 'auto',
                                                 marginRight: 'auto',
                                                 marginBottom: '20px',
-                                                transition: 'all 0.22s ease-out'}}
-                                                src={imagePreview}
-                                                alt="imagePreview"
+                                                transition: 'all 0.22s ease-out'
+                                            }}
+                                                 src={imagePreview}
+                                                 alt="imagePreview"
                                             ></img>
                                         </ImageContainerDiv>
                                     </>
@@ -199,11 +202,12 @@ function InputBox({user, setPosts, increaseSizeAnim}) {
                 ) : (
                     <>
                         <div className="flex items-center pt-6 pl-6 pr-6">
-                            <form style={{width:'100%'}}>
+                            <form style={{width: '100%'}}>
                                 <div className="flex  space-x-4 items-center">
-                                    <img src={user&&user.profilePicUrl ? user.profilePicUrl : '/Ellipse5.png'} style={{width:'50px',borderRadius:"50%"}} alt="profile pic"/>
-                                    <div   style={{width:'100%'}}
-                                        className={`flex p-3.5 bg-gray-100 rounded-full items-center ${increaseSizeAnim.sizeIncUp}`}
+                                    <img src={user && user.profilePicUrl ? user.profilePicUrl : 'error'} height={50}
+                                           width={50} style={{borderRadius: "50%"}} alt="profile pic"/>
+                                    <div style={{width: '100%'}}
+                                         className={`flex p-3.5 bg-gray-100 rounded-full items-center ${increaseSizeAnim.sizeIncUp}`}
                                     >
                                         <input
                                             name="postText"
@@ -235,14 +239,16 @@ function InputBox({user, setPosts, increaseSizeAnim}) {
                                             >
                                                 <XIcon className="h-6 text-gray-700"/>
                                             </ImagePreviewDiv>
-                                            <img style={{ height: '300px',
+                                            <img style={{
+                                                height: '300px',
                                                 width: '90%',
                                                 marginLeft: 'auto',
                                                 marginRight: 'auto',
                                                 marginBottom: '20px',
-                                                transition: 'all 0.22s ease-out'}}
-                                                src={imagePreview}
-                                                alt="imagePreview"
+                                                transition: 'all 0.22s ease-out'
+                                            }}
+                                                 src={imagePreview}
+                                                 alt="imagePreview"
                                             ></img>
                                         </ImageContainerDiv>
                                     </>
@@ -261,7 +267,7 @@ function InputBox({user, setPosts, increaseSizeAnim}) {
                     setError={setError}
                 />
             )}
-        </div>
+        </>
     );
 }
 

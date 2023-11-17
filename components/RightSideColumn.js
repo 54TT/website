@@ -12,9 +12,7 @@ import {Facebook} from "react-content-loader";
 import axios from "axios";
 import {followUser, unfollowUser} from "../utils/profileActions";
 import {useRouter} from "next/router";
-import {notification} from "antd";
-import {LoadingOutlined} from '@ant-design/icons'
-
+import {notification,} from "antd";
 function RightSideColumn({user, chatsData, userFollowStats,change}) {
     const [bol, setBol] = useState(false)
     const chang = () => {
@@ -72,15 +70,15 @@ function RightSideColumn({user, chatsData, userFollowStats,change}) {
                                     className="flex justify-between items-center p-4 rounded-lg"
                                 >
                                     <div className="flex items-center">
-                                        <img src={fol?.profilePicUrl ? fol.profilePicUrl : '/Ellipse5.png'}
-                                             style={{width: '40px', borderRadius: '50%'}} alt="userimg"/>
+                                        <img src={fol?.profilePicUrl ? fol.profilePicUrl : 'error'} width={40} height={40}
+                                             style={{ borderRadius: '50%'}}   alt="userimg"/>
                                         <div>
+                                            <Link href={`/${fol?.username}`}>
                                             <p
-                                                className="ml-3 cursor-pointer hover:underline"
-                                                onClick={() => router.push(`/${fol?.username}`)}
-                                            >
+                                                className="ml-3 cursor-pointer hover:underline">
                                                 {fol?.username.length > 7 ? fol.username.slice(0, 3) + '...' + fol.username.slice('-3') : fol.name}
                                             </p>
+                                            </Link>
                                             {
                                                 <p style={{color: 'grey',}}
                                                    className="ml-3">{fol?.followers ? fol?.followers.length : 0} followers</p>}
@@ -138,14 +136,14 @@ function RightSideColumn({user, chatsData, userFollowStats,change}) {
             <ChatContainerParent>
                 {chatsData && Array.isArray(chatsData) ? (
                     chatsData.map((chat) => (
+                        <Link href={`/chats?chat=${chat.textsWith}`} key={chat?.textsWith}>
                         <ChatDiv
                             className="hover:bg-gray-200"
-                            key={chat.textsWith}
-                            onClick={() => router.push(`/chats?chat=${chat.textsWith}`)}
+
                         >
                             <div className="relative">
-                                <img src={chat?.profilePicUrl ? chat.profilePicUrl : '/Ellipse5.png'}
-                                     style={{width: '40px', borderRadius: '50%'}} alt="userimg"/>
+                                <img src={chat?.profilePicUrl ? chat.profilePicUrl : 'error'}
+                                    width={40}  height={40} style={{ borderRadius: '50%'}} alt="userimg"/>
                             </div>
                             <div className="ml-1">
                                 <Name>{chat.name}</Name>
@@ -161,6 +159,7 @@ function RightSideColumn({user, chatsData, userFollowStats,change}) {
                                 </Date>
                             )}
                         </ChatDiv>
+                        </Link>
                     ))
                 ) : (
                     <p>
