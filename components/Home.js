@@ -38,7 +38,7 @@ import {
 import Bott from "./Bottom";
 
 const client = new ApolloClient({
-    uri: 'http://188.166.191.246:8000/subgraphs/name/dsb/uniswapv2', cache: new InMemoryCache(),
+    uri: 'http://188.166.191.246:8000/subgraphs/name/dsb/uniswap', cache: new InMemoryCache(),
 });
 
 export default function Home() {
@@ -86,6 +86,7 @@ query NewPair {
     const [featuredBol, setFeaturedBol] = useState(false);
     const [featured, setFeatured] = useState([]);
     const {loading, error, data} = useQuery(GET_DATA, {client});
+    console.log(data)
     useEffect(() => {
         if (!loading) {
             if (data && data?.pairs.length > 0) {
