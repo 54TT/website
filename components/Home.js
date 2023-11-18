@@ -86,7 +86,6 @@ query NewPair {
     const [featuredBol, setFeaturedBol] = useState(false);
     const [featured, setFeatured] = useState([]);
     const {loading, error, data} = useQuery(GET_DATA, {client});
-    console.log(data)
     useEffect(() => {
         if (!loading) {
             if (data && data?.pairs.length > 0) {

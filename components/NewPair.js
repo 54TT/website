@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from "react";
 import {Table, Pagination, notification,Card} from 'antd'
-import {formatDecimal, sendGetRequestWithSensitiveData} from './utils';
 import _ from 'lodash'
 import {ApolloClient, InMemoryCache, useQuery} from "@apollo/client";
 import {gql} from "graphql-tag";
@@ -11,12 +10,10 @@ const client = new ApolloClient({
     uri: 'http://188.166.191.246:8000/subgraphs/name/dsb/uniswap', cache: new InMemoryCache(),
 });
 export default function NewPair() {
-    const [pairs, setPairs] = useState([]);
     const [chainId, setChainId] = useState("ethereum");
     const [timeFilter, setTimeFilter] = useState("24h");
     const [currentPage, setCurrentPage] = useState(1);
     const [rowsPerPage, setRowsPerPage] = useState(10);
-    const [pairCount, setPairCount] = useState(0);
     const GET_DATA = gql`
 query liveNewPair {
   pairs(first: ${rowsPerPage}, skip: ${(currentPage-1)*10}, orderBy: createdAtTimestamp, orderDirection: desc) {

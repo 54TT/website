@@ -1,9 +1,6 @@
 import React, {useEffect, useRef, useState} from "react";
 import axios from 'axios';
-import Link from "next/link";
-import baseUrl from '/utils/baseUrl'
-import {formatDecimal, sendGetRequestWithSensitiveData, getRelativeTimeDifference, formatDateTime} from './utils';
-import {useAccount, useNetwork} from "wagmi";
+import {formatDecimal, sendGetRequestWithSensitiveData, getRelativeTimeDifference, formatDateTime} from './Utils';
 import dayjs from 'dayjs';
 import {notification, Pagination, Table, Card, Segmented} from "antd";
 import _ from "lodash";
