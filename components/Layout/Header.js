@@ -265,7 +265,7 @@ const Header = () => {
     const getMoney = () => {
         if (typeof window.ethereum === 'undefined') {
             notification.warning({
-                message: `warning`, description: 'Please install MetaMask!', placement: 'topLeft',
+                message: `warning`, description: 'Please install MetaMask! And refresh', placement: 'topLeft',
                 duration: 2
             });
         } else {

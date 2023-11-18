@@ -38,7 +38,7 @@ import {
 import Bott from "./Bottom";
 
 const client = new ApolloClient({
-    uri: 'http://188.166.191.246:8000/subgraphs/name/levi/uniswapv2', cache: new InMemoryCache(),
+    uri: 'http://188.166.191.246:8000/subgraphs/name/dsb/uniswapv2', cache: new InMemoryCache(),
 });
 
 export default function Home() {
