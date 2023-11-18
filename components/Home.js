@@ -38,7 +38,7 @@ import {
 import Bott from "./Bottom";
 
 const client = new ApolloClient({
-    uri: 'http://192.168.8.39:8000/subgraphs/name/levi/uniswapv2', cache: new InMemoryCache(),
+    uri: 'http://188.166.191.246:8000/subgraphs/name/levi/uniswapv2', cache: new InMemoryCache(),
 });
 
 export default function Home() {
@@ -83,8 +83,6 @@ query NewPair {
     const [loveChanges, setLoveChange] = useState(false);
     const [launch, setLaunch] = useState([]);
     const [launchBol, setLaunchBol] = useState(false);
-    const da = "2023-11-30T09:16:29.000Z"
-    const dd = "2023-12-09T09:16:24.000Z"
     const [featuredBol, setFeaturedBol] = useState(false);
     const [featured, setFeatured] = useState([]);
     const {loading, error, data} = useQuery(GET_DATA, {client});
@@ -128,6 +126,14 @@ query NewPair {
                 }
             }
         }).catch(err => {
+            if (name === 'launch') {
+                setLaunchBol(true)
+                setLaunch([])
+            }
+            if (name === 'featured') {
+                setFeaturedBol(false)
+                setFeatured([])
+            }
             hint()
         })
     }
@@ -348,8 +354,6 @@ query NewPair {
                                         if (index > 2) {
                                             return ''
                                         } else {
-                                            // var second = dayjs(i.presale_time).isAfter(dayjs())?dayjs(i.presale_time).diff(dayjs(), 'seconds'):''
-                                            // setDiffTime(second)
                                             return <li
                                                 className={`${styles.li} ${dayjs(i.presale_time).isAfter(dayjs()) ? styles.be : styles.de}`}
                                                 style={dayjs(i.presale_time).isAfter(dayjs()) ? {backgroundColor: ' rgb(188, 238, 125)'} : !dayjs(i.launch_time).isAfter(dayjs()) ? {backgroundColor: 'rgb(209,209,209)'} : {}}

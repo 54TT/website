@@ -2,7 +2,6 @@ import React, {useEffect, useRef, useState} from "react";
 import styled from "styled-components";
 import baseUrl from '/utils/baseUrl'
 import {
-    CameraIcon,
     CheckCircleIcon,
     UserAddIcon,
 } from "@heroicons/react/solid";
@@ -14,7 +13,6 @@ import {
 } from "../utils/profileActions";
 import {
     LoadingOutlined,
-    UserOutlined,
     CameraOutlined,
     FormOutlined,
     CloseOutlined,

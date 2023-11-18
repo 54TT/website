@@ -51,9 +51,12 @@ const Header = () => {
                 setTokenForm(res.data)
                 setTokenFormBol(false)
             } else {
-                setTokenFormBol(true)
+                setTokenForm([])
+                setTokenFormBol(false)
             }
         }).catch(err => {
+            setTokenForm([])
+            setTokenFormBol(false)
         })
     }, 1500)
     const onClose = () => {
@@ -69,6 +72,7 @@ const Header = () => {
                 setPresalePlatform([])
             }
         }).catch(err => {
+            setPresalePlatform([])
         })
         get('/selectLaunchPlatform', '').then(res => {
             if (res && res.status === 200) {
@@ -77,6 +81,7 @@ const Header = () => {
                 setLaunchPlatform([])
             }
         }).catch(err => {
+            setLaunchPlatform([])
         })
 
     };
@@ -156,6 +161,10 @@ const Header = () => {
                         });
                     }
                 }).catch(err => {
+                    notification.warning({
+                        message: `warning`, description: 'add failed,Please try again', placement: 'topLeft',
+                        duration: 2
+                    });
                 })
             }
         }
@@ -206,9 +215,7 @@ const Header = () => {
     }
     const handleLogin = async () => {
         const cook = cookie.get('name')
-        console.log(cook)
         if (!cook || !address) {
-            console.log(cook)
             try {
                 const message = new SiweMessage({
                     domain: window.location.host,

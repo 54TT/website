@@ -43,6 +43,10 @@ export default function CoinForm() {
         }
       })
       .catch(error => {
+        setTokenInfo({
+          tokenAddress: '',
+          logo: '',
+        })
         notification.error({
           message: `Please note`, description: 'Error reported', placement: 'topLeft',
           duration:2
@@ -62,8 +66,6 @@ export default function CoinForm() {
   const [tokenInfo, setTokenInfo] = useState({
     tokenAddress: '',
     logo: '',
-    // chain: '',
-
   });
 
   const [presale, setPresale] = useState({
@@ -174,14 +176,6 @@ export default function CoinForm() {
         });
     }
   };
-
-  // useEffect(() => {
-  //   if (chain) {
-  //     const chainName = chain.name;
-  //     setTokenInfo({ ...tokenInfo, chain: chainName })
-  //   }
-  // }, [chain]);
-
   return (
     <div className="mx-auto mt-20 ml-20 mr-5 text-white-500">
         <form onSubmit={handleSubmit}>

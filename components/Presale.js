@@ -26,6 +26,9 @@ export default function Presale() {
                 setLaunchBol(false)
             }
         }).catch(err => {
+            setLaunch( [])
+            setLaunchAll( 0)
+            setLaunchBol(false)
             hint()
         })
     }

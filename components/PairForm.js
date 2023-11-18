@@ -33,6 +33,10 @@ export default function CoinForm() {
         }
       })
       .catch(error => {
+        setTokenInfo({
+          tokenAddress: '',
+          logo: '',
+        })
         notification.error({
           message: `Please note`, description: 'Error reported', placement: 'topLeft',
           duration:2
@@ -52,7 +56,6 @@ export default function CoinForm() {
   const [tokenInfo, setTokenInfo] = useState({
     tokenAddress: '',
     logo: '',
-    // chain: '',
   });
 
   const [pairInfo, setPairInfo] = useState({

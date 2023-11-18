@@ -189,6 +189,8 @@ export default function Featured() {
                 }
             }
         }).catch(err => {
+            setFeaturedBol(false)
+            setTableParams([])
             hint()
         })
     }
