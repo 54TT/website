@@ -1,3 +1,4 @@
+'use client'
 import "../styles/tailwind.css";
 import "../styles/slick.css";
 import {SessionProvider} from "next-auth/react"

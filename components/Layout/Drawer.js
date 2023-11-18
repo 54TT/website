@@ -8,8 +8,12 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import {useRouter} from "next/router";
 import Link from 'next/link'
+import cookie from "js-cookie";
+import {useAccount} from "wagmi";
+import {notification} from "antd";
 const Drawer = () => {
     const router = useRouter();
+    const {address, isConnected} = useAccount()
     const drawerWidth = 300;
     const openedMixin = (theme) => ({
         width: drawerWidth,
@@ -68,8 +72,15 @@ const Drawer = () => {
     const handleDrawerClose = () => {
         setOpenDrawer(false);
     };
-    const push = (name) => {
-        router.push(name)
+    const push = () => {
+        if ( address && cookie.get('name')) {
+            router.push('/social')
+        }else {
+            notification.warning({
+                message: `warning`, description: 'Please login in first!', placement: 'topLeft',
+                duration: 2
+            });
+        }
     }
     return (
         <div className={'aaaa'}>
@@ -205,7 +216,7 @@ const Drawer = () => {
                         </div>
                     </ListItem>
                     <ListItem key="Comminicate" disablePadding sx={{display: 'block'}} className="drawerItem">
-                        <Link href={'/social'}>
+                        <div onClick={push}>
                             <ListItemButton
                                 sx={{
                                     minHeight: 48,
@@ -223,7 +234,7 @@ const Drawer = () => {
                                 </ListItemIcon>
                                 <ListItemText primary="Comminicate" sx={{opacity: openDrawer ? 1 : 0}}/>
                             </ListItemButton>
-                        </Link>
+                        </div>
                     </ListItem>
                 </List>
             </Drawer>

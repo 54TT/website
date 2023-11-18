@@ -18,7 +18,7 @@ import {
     CloseOutlined,
     CheckOutlined
 } from '@ant-design/icons'
-import {Avatar, Input, notification} from 'antd'
+import {Avatar, Input, notification,Image} from 'antd'
 import axios from "axios";
 import ProfileFields from "../components/ProfileComponents/ProfileFields";
 import FollowingUsers from "../components/ProfileComponents/FollowingUsers";
@@ -236,7 +236,7 @@ function ProfilePage() {
                         style={{display: "none"}}
                     ></input>
                     {/*背景图*/}
-                    <Image src={coverPicPreview ? coverPicPreview : profile?.cover_pic_url} alt="cover pic"
+                    <Image src={coverPicPreview ? coverPicPreview : profile?.cover_pic_url||'error'} alt="cover pic"
                            width={'100%'} height={'100%'}/>
                     <input
                         type="file"

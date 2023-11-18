@@ -10,7 +10,6 @@ import {
 import SidebarRow from "./HelperComponents/SidebarRow";
 
 function Sidebar({user, topDist, maxWidth}) {
-    console.log(user)
     return (
         <div
             className={
@@ -32,13 +31,12 @@ function Sidebar({user, topDist, maxWidth}) {
             <SidebarRow
                 Icon={UsersIcon}
                 title="Following"
-                route={user&&user.id ? `/user/${user.id}/following` : ''}
+                route={user&&user.id ? `/user/${user.id}/following` : `/user/1/following`}
             />
-
             <SidebarRow
                 Icon={UserGroupIcon}
                 title="Followers"
-                route={user&&user.id ? `/user/${user.id}/followers` : ''}
+                route={user&&user.id ? `/user/${user.id}/followers` : `/user/1/followers`}
             />
             <SidebarRow
                 Icon={BellIcon}

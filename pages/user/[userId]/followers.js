@@ -80,7 +80,7 @@ function FollowersPage() {
                     <div className="flex items-center ml-2">
                         <Title>Followers ·</Title>
                         <FollowersNumber className="text-gray-500 ml-2">
-                            {followers?.length}
+                            {followers?.length||0}
                         </FollowersNumber>
                     </div>
                     {followers.length > 0 ? (<div>

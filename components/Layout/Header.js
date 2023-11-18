@@ -18,12 +18,9 @@ import _ from 'lodash'
 import cookie from 'js-cookie'
 import {useRouter} from 'next/router'
 import ChatSearch from "../Chat/ChatSearch";
-import {MetaMaskSDK} from '@metamask/sdk'
-
 const Header = () => {
     const [form] = Form.useForm();
     const {chain} = useNetwork()
-    const router = useRouter()
     const inputRef = useRef(null);
     const {address, isConnected} = useAccount()
     const {data: session, status} = useSession()
@@ -33,7 +30,6 @@ const Header = () => {
         connector: new InjectedConnector(),
     });
     const {publicRuntimeConfig} = getConfig();
-    const assetPrefix = publicRuntimeConfig.assetPrefix || '';
     const [open, setOpen] = useState(false);
     const [openPresale, setOpenPresale] = useState(false);
     const [openLaunch, setOpenLaunch] = useState(false);
@@ -64,26 +60,32 @@ const Header = () => {
         form.resetFields()
     };
     const showDrawer = () => {
-        setOpen(true);
-        get('/selectPresalePlatform', '').then(res => {
-            if (res && res.status === 200) {
-                setPresalePlatform(res.data ? res.data : [])
-            } else {
+        if ( address && cookie.get('name')) {
+            setOpen(true);
+            get('/selectPresalePlatform', '').then(res => {
+                if (res && res.status === 200) {
+                    setPresalePlatform(res.data ? res.data : [])
+                } else {
+                    setPresalePlatform([])
+                }
+            }).catch(err => {
                 setPresalePlatform([])
-            }
-        }).catch(err => {
-            setPresalePlatform([])
-        })
-        get('/selectLaunchPlatform', '').then(res => {
-            if (res && res.status === 200) {
-                setLaunchPlatform(res.data ? res.data : [])
-            } else {
+            })
+            get('/selectLaunchPlatform', '').then(res => {
+                if (res && res.status === 200) {
+                    setLaunchPlatform(res.data ? res.data : [])
+                } else {
+                    setLaunchPlatform([])
+                }
+            }).catch(err => {
                 setLaunchPlatform([])
-            }
-        }).catch(err => {
-            setLaunchPlatform([])
-        })
-
+            })
+        } else {
+            notification.warning({
+                message: `warning`, description: 'Please login in first!', placement: 'topLeft',
+                duration: 2
+            });
+        }
     };
     const onFinishFailed = (a) => {
         notification.warning({
@@ -303,7 +305,6 @@ const Header = () => {
                     "top-0 w-full  z-30 transition-all headerClass"}>
                 <div className={styles['aaa']}>
                     <div></div>
-
                     <div style={{position: 'relative', width: '30%'}}>
                         <p className={styles['search']} onClick={() => setShowChatSearch(true)}>Search pair by
                             symbol,name,contract or token</p>
@@ -410,7 +411,7 @@ const Header = () => {
                                             return <Option value={i.id} key={index}>
                                                 <div style={{display: 'flex', alignItems: 'center'}}>
                                                     <img src={`${i.logo ? baseUrl + '/' + i.logo : 'error'}`} alt=""
-                                                           width={20} height={20}/>
+                                                         width={20} height={20}/>
                                                     <span>{i.name}</span>
                                                 </div>
                                             </Option>
@@ -469,7 +470,7 @@ const Header = () => {
                                             return <Option value={i.id} key={index}>
                                                 <div style={{display: 'flex', alignItems: 'center'}}>
                                                     <img src={`${i.logo ? baseUrl + '/' + i.logo : 'error'}`} alt=""
-                                                           width={20} height={20}/>
+                                                         width={20} height={20}/>
                                                     <span>{i.name}</span>
                                                 </div>
                                             </Option>

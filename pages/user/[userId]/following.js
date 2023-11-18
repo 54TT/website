@@ -94,7 +94,7 @@ function FollowingPage() {
                     <div className="flex items-center ml-2">
                         <Title>Following ·</Title>
                         <FollowingNumber className="text-gray-500 ml-2">
-                            {followingArrayState?.length}
+                            {followingArrayState?.length||0}
                         </FollowingNumber>
                     </div>
                     <div style={{
@@ -176,7 +176,10 @@ function FollowingPage() {
                                     )}
                                 </div>
                             );
-                        }) : ''}
+                        }) :  router?.query?.userId === user?.id ? (<p className="text-md text-gray-500">
+                            {`You don't have any followers ☹️. The trick is to follow someone and then
+          wait for them to follow you back.`}
+                        </p>) : (<p className="text-md text-gray-500">{`This user doesn't have any followers.`}</p>)}
                     </div>
                 </div>
                 <div className="w-10"></div>
