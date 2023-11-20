@@ -1,4 +1,4 @@
-import React from "react";
+import React,{lazy} from "react";
 import MuiDrawer from '@mui/material/Drawer';
 import {styled, useTheme} from '@mui/material/styles';
 import List from '@mui/material/List';
@@ -11,9 +11,12 @@ import Link from 'next/link'
 import cookie from "js-cookie";
 import {useAccount} from "wagmi";
 import {notification} from "antd";
+import {useSession} from "next-auth/react";
+
 const Drawer = () => {
     const router = useRouter();
     const {address, isConnected} = useAccount()
+    const {data: session, status} = useSession()
     const drawerWidth = 300;
     const openedMixin = (theme) => ({
         width: drawerWidth,
@@ -23,7 +26,6 @@ const Drawer = () => {
         }),
         overflowX: 'hidden',
     });
-
     const closedMixin = (theme) => ({
         transition: theme.transitions.create('width', {
             easing: theme.transitions.easing.sharp,
@@ -35,7 +37,6 @@ const Drawer = () => {
             width: `calc(${theme.spacing(8)} + 1px)`,
         },
     });
-
     const DrawerHeader = styled('div')(({theme}) => ({
         display: 'flex',
         alignItems: 'center',
@@ -44,8 +45,6 @@ const Drawer = () => {
         // necessary for content to be below app bar
         ...theme.mixins.toolbar,
     }));
-
-
     const Drawer = styled(MuiDrawer, {shouldForwardProp: (prop) => prop !== 'open'})(
         ({theme, open}) => ({
             width: drawerWidth,
@@ -72,8 +71,18 @@ const Drawer = () => {
     const handleDrawerClose = () => {
         setOpenDrawer(false);
     };
+    const pushPer=()=>{
+        if(session&&session.user && session.user.address){
+            router.push(`/${session?.user?.address}`)
+        }else {
+            notification.warning({
+                message: `warning`, description: 'Please login in first!', placement: 'topLeft',
+                duration: 2
+            });
+        }
+    }
     const push = () => {
-        if ( address && cookie.get('name')) {
+        if ( address && cookie.get('name')&&session) {
             router.push('/social')
         }else {
             notification.warning({
@@ -195,7 +204,7 @@ const Drawer = () => {
                         </Link>
                     </ListItem>
                     <ListItem key="Information" disablePadding sx={{display: 'block'}} className="drawerItem">
-                        <div>
+                        <div  onClick={push}>
                             <ListItemButton
                                 sx={{
                                     minHeight: 48,
@@ -216,7 +225,7 @@ const Drawer = () => {
                         </div>
                     </ListItem>
                     <ListItem key="Comminicate" disablePadding sx={{display: 'block'}} className="drawerItem">
-                        <div onClick={push}>
+                        <div onClick={pushPer} >
                             <ListItemButton
                                 sx={{
                                     minHeight: 48,
@@ -241,5 +250,4 @@ const Drawer = () => {
         </div>
     );
 };
-
 export default Drawer;

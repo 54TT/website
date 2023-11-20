@@ -204,7 +204,7 @@ function InputBox({user, setPosts, increaseSizeAnim}) {
                         <div className="flex items-center pt-6 pl-6 pr-6">
                             <form style={{width: '100%'}}>
                                 <div className="flex  space-x-4 items-center">
-                                    <img src={user && user.profilePicUrl ? user.profilePicUrl : 'error'} height={50}
+                                    <img src={user && user.profilePicUrl ? user.profilePicUrl : '/Ellipse1.png'} height={50}
                                            width={50} style={{borderRadius: "50%"}} alt="profile pic"/>
                                     <div style={{width: '100%'}}
                                          className={`flex p-3.5 bg-gray-100 rounded-full items-center ${increaseSizeAnim.sizeIncUp}`}

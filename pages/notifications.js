@@ -2,13 +2,21 @@ import axios from "axios";
 import React, {useEffect, useState} from "react";
 import styled from "styled-components";
 import InfoBox from "../components/HelperComponents/InfoBox";
-import Sidebar from "../components/Sidebar";
+// import Sidebar from "../components/Sidebar";
 import baseUrl from "../utils/baseUrl";
-import LikeNotification from "../components/Notification/LikeNotification";
-import CommentNotification from "../components/Notification/CommentNotification";
-import FollowNotification from "../components/Notification/FollowNotification";
+// import LikeNotification from "../components/Notification/LikeNotification";
+// import CommentNotification from "../components/Notification/CommentNotification";
+// import FollowNotification from "../components/Notification/FollowNotification";
 import {useSession} from "next-auth/react";
 import {notification} from "antd";
+import dynamic from 'next/dynamic'
+const Sidebar = dynamic(() => import('../components/Sidebar'));
+const LikeNotification = dynamic(() => import('../components/Notification/LikeNotification'));
+const CommentNotification = dynamic(() => import('../components/Notification/CommentNotification'));
+const FollowNotification = dynamic(() => import('../components/Notification/FollowNotification'));
+
+
+
 
 function Notifications() {
     const [notifications, setNotifications] = useState([])

@@ -221,7 +221,7 @@ function Details() {
                             border:'none',
                         }}>
                             <Segmented className={'detailSegmented'} onChange={changeColumns} options={['Trade History', 'Holders']}/>
-                            <Table className={'hotTable'} pagination={false} columns={columnsBol?columns:column} dataSource={tableParams}/>
+                            <Table className={'hotTable anyTable'} pagination={false} columns={columnsBol?columns:column} dataSource={tableParams}/>
                           </Card>
                     </div>
                 </div>

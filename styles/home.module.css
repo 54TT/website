@@ -44,11 +44,16 @@
 
 .boxPar {
     display: flex;
+    height: 100vh;
     justify-content: space-between;
 }
 
 .boxPar > .left {
+    height: auto;
     padding: 0 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     width: 64%;
 }
 

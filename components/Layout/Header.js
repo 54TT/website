@@ -1,16 +1,15 @@
-import React, {useState, useEffect, useRef} from "react";
+import React, {useState, useEffect, useRef, lazy,Suspense,startTransition } from "react";
 import {getCsrfToken, signIn, useSession, signOut} from "next-auth/react"
 import {SiweMessage} from "siwe"
 import baseUrl from '/utils/baseUrl'
 import {useAccount, useConnect, useNetwork, useSignMessage, useDisconnect,} from "wagmi"
-import DrawerPage from './Drawer'
 import {InjectedConnector} from 'wagmi/connectors/injected'
 import axios from 'axios';
 import {Dropdown, Drawer, Form, Select, Input, DatePicker, Button, notification,} from 'antd'
 import {CaretDownFilled, CaretRightFilled, LoadingOutlined} from '@ant-design/icons';
 import getConfig from "next/config";
 import styles from './css/header.module.css'
-
+// import DrawerPage from './Drawer'
 const {Option} = Select;
 import Link from 'next/link'
 import {get, post, del} from '/utils/axios'
@@ -18,7 +17,9 @@ import _ from 'lodash'
 import cookie from 'js-cookie'
 import {useRouter} from 'next/router'
 import ChatSearch from "../Chat/ChatSearch";
+const DrawerPage =lazy(()=>import('./Drawer'))
 const Header = () => {
+    const router = useRouter()
     const [form] = Form.useForm();
     const {chain} = useNetwork()
     const inputRef = useRef(null);
@@ -29,7 +30,6 @@ const Header = () => {
     const {connect} = useConnect({
         connector: new InjectedConnector(),
     });
-    const {publicRuntimeConfig} = getConfig();
     const [open, setOpen] = useState(false);
     const [openPresale, setOpenPresale] = useState(false);
     const [openLaunch, setOpenLaunch] = useState(false);
@@ -60,7 +60,7 @@ const Header = () => {
         form.resetFields()
     };
     const showDrawer = () => {
-        if ( address && cookie.get('name')) {
+        if (cookie.get('name')&&session) {
             setOpen(true);
             get('/selectPresalePlatform', '').then(res => {
                 if (res && res.status === 200) {
@@ -182,7 +182,7 @@ const Header = () => {
     }
     const [showChatSearch, setShowChatSearch] = useState(false);
     const [chats, setChats] = useState([]);
-    const [userPar, setUserPar] = useState({});
+    const [userPar, setUserPar] = useState(null);
     const da = () => {
         setShowChatSearch(!showChatSearch)
     }
@@ -217,7 +217,7 @@ const Header = () => {
     }
     const handleLogin = async () => {
         const cook = cookie.get('name')
-        if (!cook || !address) {
+        if (!cook&&!session) {
             try {
                 const message = new SiweMessage({
                     domain: window.location.host,
@@ -249,19 +249,22 @@ const Header = () => {
         if (session && session.user) {
             setUserPar(session.user)
         }
+        if(!session&&!address&&!cookie.get('name')){
+            router.push('/')
+        }
     }, [session]);
     useEffect(() => {
         if (!address || !cookie.get('name')) {
             handleLogin()
         }
     }, [address, isConnected, bol])
-
     const set = () => {
         cookie.remove('name');
         const a = cookie.get('name') || ''
         if (!a) {
             disconnect()
             signOut()
+            router.push('/')
         }
     }
     const getMoney = () => {
@@ -278,6 +281,14 @@ const Header = () => {
             }
         }
     }
+    const [no, setNo] = useState(false)
+    useEffect(() => {
+        if (cookie.get('name')) {
+            setNo(true)
+        } else {
+            setNo(false)
+        }
+    }, [cookie.get('name')])
     const items = [
         {
             key: '1',
@@ -298,270 +309,280 @@ const Header = () => {
             ),
         },
     ];
+    const [draw,setDraw]=useState(false)
+    useEffect(()=>{
+        if(!draw){
+            startTransition(() => {
+                setDraw(true);
+            });
+        }
+    },[draw])
     return (
-        <>
-            <header
-                className={
-                    "top-0 w-full  z-30 transition-all headerClass"}>
-                <div className={styles['aaa']}>
-                    <div></div>
-                    <div style={{position: 'relative', width: '30%'}}>
-                        <p className={styles['search']} onClick={() => setShowChatSearch(true)}>Search pair by
-                            symbol,name,contract or token</p>
-                        {showChatSearch && (
-                            <ChatSearch
-                                setShowChatSearch={da}
-                                chats={chats}
-                                setChats={setChats}
-                                user={userPar}
-                            />
-                        )}
+        <div
+            className={
+                "top-0 w-full  z-30 transition-all headerClass"}>
+            {
+                draw? <Suspense fallback={<div>Loading...</div>}>
+                    <div className={styles['aaa']}>
+                        <div></div>
+                        <div style={{position: 'relative', width: '30%'}}>
+                            <p className={styles['search']} onClick={() => setShowChatSearch(true)}>Search pair by
+                                symbol,name,contract or token</p>
+                            {showChatSearch && (
+                                <ChatSearch
+                                    setShowChatSearch={da}
+                                    chats={chats}
+                                    setChats={setChats}
+                                    user={userPar}
+                                />
+                            )}
+                        </div>
+                        <div style={{display: 'flex', alignItems: 'center'}}>
+                            <Button type={'primary'} className={styles['but']}
+                                    style={{marginRight: '20px', backgroundColor: 'rgb(254,239,146)'}} onClick={showDrawer}>Add
+                                Coin</Button>
+                            {
+                                no&&userPar ? <div style={{display: 'flex', alignItems: 'center'}}>
+                                    <Link href={`/${userPar && userPar.address ? userPar.address : ''}`}>
+                                        <img style={{
+                                            marginRight: '10px',
+                                            borderRadius: '50%', cursor: 'pointer'
+                                        }} width={35} src={userPar?.profilePicUrl ? userPar.profilePicUrl : '/Ellipse1.png'}
+                                             alt=""/>
+                                    </Link>
+                                    <Dropdown
+                                        menu={{
+                                            items,
+                                        }}
+                                        placement="bottomLeft"
+                                        arrow
+                                    >
+                                        <Button type={'primary'} className={styles['but']}
+                                                style={{
+                                                    color: 'black',
+                                                    backgroundColor: 'rgb(254,239,146)'
+                                                }}>{address ? address.slice(0, 5) + '...' : ''}</Button>
+                                    </Dropdown>
+                                </div> : <Button type={'primary'} className={styles['but']}
+                                                 style={{backgroundColor: 'rgb(254,239,146)'}}
+                                                 onClick={getMoney}>Login</Button>
+                            }
+                        </div>
                     </div>
-                    <div style={{display: 'flex', alignItems: 'center'}}>
-                        <Button type={'primary'} className={styles['but']}
-                                style={{marginRight: '20px', backgroundColor: 'rgb(254,239,146)'}} onClick={showDrawer}>Add
-                            Coin</Button>
+                    <DrawerPage/>
+                </Suspense>:''
+            }
+            <Drawer title="Basic Drawer" destroyOnClose={true} placement="right" onClose={onClose} open={open}>
+                <Form
+                    name="basic"
+                    form={form}
+                    onFinish={onFinish}
+                    onFinishFailed={onFinishFailed}
+                    autoComplete="off"
+                >
+                    <Form.Item
+                        label="Token"
+                        name="token"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Please input your token!',
+                            },
+                        ]}
+                        labelCol={{
+                            span: 6,
+                        }}>
+                        <Input onChange={changeToken} ref={inputRef}
+                               style={tokenFormBol ? {borderColor: 'red'} : {}}/>
+                    </Form.Item>
+                    <div style={{display: 'flex', alignItems: 'center', marginBottom: '10px'}}>
                         {
-                            address && cookie.get('name') ? <div style={{display: 'flex', alignItems: 'center'}}>
-                                <img style={{
-                                    marginRight: '10px',
-                                    borderRadius: '50%',
-                                }} height={30} width={30} src={userPar?.profilePicUrl ? userPar.profilePicUrl : ''}
-                                     alt=""/>
-                                <Dropdown
-                                    menu={{
-                                        items,
-                                    }}
-                                    placement="bottomLeft"
-                                    arrow
-                                >
-                                    <Button type={'primary'} className={styles['but']}
-                                            style={{
-                                                color: 'black',
-                                                backgroundColor: 'rgb(254,239,146)'
-                                                // typeof window!=='undefined'&& window?.localStorage?.getItem('name')?window.localStorage.getItem('name').slice(0, 5) + '...':
-                                            }}>{address ? address.slice(0, 5) + '...' : ''}</Button>
-                                </Dropdown>
-                            </div> : <Button type={'primary'} className={styles['but']}
-                                             style={{backgroundColor: 'rgb(254,239,146)'}}
-                                             onClick={getMoney}>Login</Button>
+                            !openPresale ? <CaretRightFilled style={{cursor: 'pointer', fontSize: '20px',}}
+                                                             onClick={hidePresale}/> :
+                                <CaretDownFilled onClick={hidePresale}
+                                                 style={{cursor: 'pointer', fontSize: '20px', marginTop: '5px'}}/>
                         }
+                        <p style={{lineHeight: 1, cursor: 'pointer'}} onClick={hidePresale}>presale</p>
+                        <p style={{width: '100%', height: '1px', backgroundColor: 'gray'}}></p>
                     </div>
-                </div>
-                <DrawerPage/>
-                <Drawer title="Basic Drawer" destroyOnClose={true} placement="right" onClose={onClose} open={open}>
-                    <Form
-                        name="basic"
-                        form={form}
-                        onFinish={onFinish}
-                        onFinishFailed={onFinishFailed}
-                        autoComplete="off"
-                    >
+                    <div style={!openPresale ? {display: 'none'} : {}}>
                         <Form.Item
-                            label="Token"
-                            name="token"
+                            label="Time"
+                            name="presaleTime"
+                            labelCol={{
+                                span: 6,
+                            }}
+                        >
+                            <DatePicker showTime onChange={(e, a) => onChangeDate('presale', e, a)}
+                                        style={{width: '100%'}}/>
+                        </Form.Item>
+                        <Form.Item
+                            label="Platform"
+                            name="presalePlatformId"
+                            labelCol={{
+                                span: 8,
+                            }}
+                        >
+                            <Select
+                                placeholder="Select a option and change input text above"
+                                allowClear
+                                style={{width: '100%'}}
+                            >
+                                {
+                                    presalePlatform.length > 0 ? presalePlatform.map((i, index) => {
+                                        return <Option value={i.id} key={index}>
+                                            <div style={{display: 'flex', alignItems: 'center'}}>
+                                                <img src={`${i.logo ? baseUrl + '/' + i.logo : '/Ellipse1.png'}`} alt=""
+                                                     width={20} height={20}/>
+                                                <span>{i.name}</span>
+                                            </div>
+                                        </Option>
+                                    }) : null
+                                }
+                            </Select>
+                        </Form.Item>
+                        <Form.Item
+                            label="Link"
+                            name="presaleLink"
+                            labelCol={{
+                                span: 6,
+                            }}
+                        >
+                            <Input/>
+                        </Form.Item>
+                    </div>
+                    {/*launch*/}
+                    <div style={{display: 'flex', alignItems: 'center', marginBottom: '10px'}}>
+                        {
+                            !openLaunch ? <CaretRightFilled style={{cursor: 'pointer', fontSize: '20px',}}
+                                                            onClick={hideLaunch}/> :
+                                <CaretDownFilled onClick={hideLaunch}
+                                                 style={{cursor: 'pointer', fontSize: '20px', marginTop: '5px'}}/>
+                        }
+                        <p style={{lineHeight: 1, cursor: 'pointer'}} onClick={hideLaunch}>launch</p>
+                        <p style={{width: '100%', height: '1px', backgroundColor: 'gray'}}></p>
+                    </div>
+                    <div style={!openLaunch ? {display: 'none'} : {}}>
+                        <Form.Item
+                            label="Time"
+                            name="launchTime"
+                            className={'bbb'}
+                            labelCol={{
+                                span: 6,
+                            }}
+                        >
+                            <DatePicker showTime onChange={(e, a) => onChangeDate('launch', e, a)}
+                                        style={{width: '100%'}}/>
+                        </Form.Item>
+                        <Form.Item
+                            label="Platform"
+                            name="launchPlatformId"
+                            className={'bbb'}
+                            labelCol={{
+                                span: 8,
+                            }}
+                        >
+                            <Select
+                                placeholder="Select a option and change input text above"
+                                allowClear
+                                style={{width: '100%'}}
+                            >
+                                {
+                                    launchPlatform.length > 0 ? launchPlatform.map((i, index) => {
+                                        return <Option value={i.id} key={index}>
+                                            <div style={{display: 'flex', alignItems: 'center'}}>
+                                                <img src={`${i.logo ? baseUrl + '/' + i.logo : '/Ellipse1.png'}`} alt=""
+                                                     width={20} height={20}/>
+                                                <span>{i.name}</span>
+                                            </div>
+                                        </Option>
+                                    }) : null
+                                }
+                            </Select>
+                        </Form.Item>
+                        <Form.Item
+                            label="Link"
+                            name="launchLink"
+                            className={'bbb'}
+                            labelCol={{
+                                span: 6,
+                            }}
+                        >
+                            <Input/>
+                        </Form.Item>
+                    </div>
+                    {/*link*/}
+                    <div style={{display: 'flex', alignItems: 'center', marginBottom: '10px'}}>
+                        {
+                            openLink ? <CaretRightFilled style={{cursor: 'pointer', fontSize: '20px',}}
+                                                         onClick={hideLink}/> : <CaretDownFilled onClick={hideLink}
+                                                                                                 style={{
+                                                                                                     cursor: 'pointer',
+                                                                                                     fontSize: '20px',
+                                                                                                     marginTop: '5px'
+                                                                                                 }}/>
+                        }
+                        <p style={{lineHeight: 1, cursor: 'pointer'}} onClick={hideLink}>Link</p>
+                        <p style={{width: '100%', height: '1px', backgroundColor: 'gray'}}></p>
+                    </div>
+                    <div style={openLink ? {display: 'none'} : {}}>
+                        <Form.Item
+                            label="Twitter"
+                            name="twitter"
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Please input your token!',
+                                    message: 'Please input your twitter!',
                                 },
-                            ]}
-                            labelCol={{
-                                span: 6,
-                            }}>
-                            <Input onChange={changeToken} ref={inputRef}
-                                   style={tokenFormBol ? {borderColor: 'red'} : {}}/>
+                            ]} labelCol={{
+                            span: 8,
+                        }}
+                        >
+                            <Input/>
                         </Form.Item>
-                        {/*presale*/}
-                        <div style={{display: 'flex', alignItems: 'center', marginBottom: '10px'}}>
-                            {
-                                !openPresale ? <CaretRightFilled style={{cursor: 'pointer', fontSize: '20px',}}
-                                                                 onClick={hidePresale}/> :
-                                    <CaretDownFilled onClick={hidePresale}
-                                                     style={{cursor: 'pointer', fontSize: '20px', marginTop: '5px'}}/>
-                            }
-                            <p style={{lineHeight: 1, cursor: 'pointer'}} onClick={hidePresale}>presale</p>
-                            <p style={{width: '100%', height: '1px', backgroundColor: 'gray'}}></p>
-                        </div>
-                        <div style={!openPresale ? {display: 'none'} : {}}>
-                            <Form.Item
-                                label="Time"
-                                name="presaleTime"
-                                labelCol={{
-                                    span: 6,
-                                }}
-                            >
-                                <DatePicker showTime onChange={(e, a) => onChangeDate('presale', e, a)}
-                                            style={{width: '100%'}}/>
-                            </Form.Item>
-                            <Form.Item
-                                label="Platform"
-                                name="presalePlatformId"
-                                labelCol={{
-                                    span: 8,
-                                }}
-                            >
-                                <Select
-                                    placeholder="Select a option and change input text above"
-                                    allowClear
-                                    style={{width: '100%'}}
-                                >
-                                    {
-                                        presalePlatform.length > 0 ? presalePlatform.map((i, index) => {
-                                            return <Option value={i.id} key={index}>
-                                                <div style={{display: 'flex', alignItems: 'center'}}>
-                                                    <img src={`${i.logo ? baseUrl + '/' + i.logo : 'error'}`} alt=""
-                                                         width={20} height={20}/>
-                                                    <span>{i.name}</span>
-                                                </div>
-                                            </Option>
-                                        }) : null
-                                    }
-                                </Select>
-                            </Form.Item>
-                            <Form.Item
-                                label="Link"
-                                name="presaleLink"
-                                labelCol={{
-                                    span: 6,
-                                }}
-                            >
-                                <Input/>
-                            </Form.Item>
-                        </div>
-                        {/*launch*/}
-                        <div style={{display: 'flex', alignItems: 'center', marginBottom: '10px'}}>
-                            {
-                                !openLaunch ? <CaretRightFilled style={{cursor: 'pointer', fontSize: '20px',}}
-                                                                onClick={hideLaunch}/> :
-                                    <CaretDownFilled onClick={hideLaunch}
-                                                     style={{cursor: 'pointer', fontSize: '20px', marginTop: '5px'}}/>
-                            }
-                            <p style={{lineHeight: 1, cursor: 'pointer'}} onClick={hideLaunch}>launch</p>
-                            <p style={{width: '100%', height: '1px', backgroundColor: 'gray'}}></p>
-                        </div>
-                        <div style={!openLaunch ? {display: 'none'} : {}}>
-                            <Form.Item
-                                label="Time"
-                                name="launchTime"
-                                className={'bbb'}
-                                labelCol={{
-                                    span: 6,
-                                }}
-                            >
-                                <DatePicker showTime onChange={(e, a) => onChangeDate('launch', e, a)}
-                                            style={{width: '100%'}}/>
-                            </Form.Item>
-                            <Form.Item
-                                label="Platform"
-                                name="launchPlatformId"
-                                className={'bbb'}
-                                labelCol={{
-                                    span: 8,
-                                }}
-                            >
-                                <Select
-                                    placeholder="Select a option and change input text above"
-                                    allowClear
-                                    style={{width: '100%'}}
-                                >
-                                    {
-                                        launchPlatform.length > 0 ? launchPlatform.map((i, index) => {
-                                            return <Option value={i.id} key={index}>
-                                                <div style={{display: 'flex', alignItems: 'center'}}>
-                                                    <img src={`${i.logo ? baseUrl + '/' + i.logo : 'error'}`} alt=""
-                                                         width={20} height={20}/>
-                                                    <span>{i.name}</span>
-                                                </div>
-                                            </Option>
-                                        }) : null
-                                    }
-                                </Select>
-                            </Form.Item>
-                            <Form.Item
-                                label="Link"
-                                name="launchLink"
-                                className={'bbb'}
-                                labelCol={{
-                                    span: 6,
-                                }}
-                            >
-                                <Input/>
-                            </Form.Item>
-                        </div>
-                        {/*link*/}
-                        <div style={{display: 'flex', alignItems: 'center', marginBottom: '10px'}}>
-                            {
-                                openLink ? <CaretRightFilled style={{cursor: 'pointer', fontSize: '20px',}}
-                                                             onClick={hideLink}/> : <CaretDownFilled onClick={hideLink}
-                                                                                                     style={{
-                                                                                                         cursor: 'pointer',
-                                                                                                         fontSize: '20px',
-                                                                                                         marginTop: '5px'
-                                                                                                     }}/>
-                            }
-                            <p style={{lineHeight: 1, cursor: 'pointer'}} onClick={hideLink}>Link</p>
-                            <p style={{width: '100%', height: '1px', backgroundColor: 'gray'}}></p>
-                        </div>
-                        <div style={openLink ? {display: 'none'} : {}}>
-                            <Form.Item
-                                label="Twitter"
-                                name="twitter"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Please input your twitter!',
-                                    },
-                                ]} labelCol={{
-                                span: 8,
-                            }}
-                            >
-                                <Input/>
-                            </Form.Item>
-                            <Form.Item
-                                label="Telegram"
-                                name="telegram"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Please input your telegram!',
-                                    },
-                                ]} labelCol={{
-                                span: 9,
-                            }}
-                            >
-                                <Input/>
-                            </Form.Item>
-                            <Form.Item
-                                label="Website"
-                                name="website"
-                                className={'bbb'}
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Please input your website!',
-                                    },
-                                ]} labelCol={{
-                                span: 8,
-                            }}
-                            >
-                                <Input/>
-                            </Form.Item>
-                        </div>
-                        <Form.Item wrapperCol={{
-                            offset: 8,
-                            span: 16,
-                        }}>
-                            <Button type={'primary'} htmlType="submit">
-                                Submit
-                            </Button>
+                        <Form.Item
+                            label="Telegram"
+                            name="telegram"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Please input your telegram!',
+                                },
+                            ]} labelCol={{
+                            span: 9,
+                        }}
+                        >
+                            <Input/>
                         </Form.Item>
-                    </Form>
+                        <Form.Item
+                            label="Website"
+                            name="website"
+                            className={'bbb'}
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Please input your website!',
+                                },
+                            ]} labelCol={{
+                            span: 8,
+                        }}
+                        >
+                            <Input/>
+                        </Form.Item>
+                    </div>
+                    <Form.Item wrapperCol={{
+                        offset: 8,
+                        span: 16,
+                    }}>
+                        <Button type={'primary'} htmlType="submit">
+                            Submit
+                        </Button>
+                    </Form.Item>
+                </Form>
 
 
-                </Drawer>
-            </header>
-        </>
+            </Drawer>
+        </div>
     );
 };
 

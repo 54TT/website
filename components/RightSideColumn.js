@@ -70,7 +70,7 @@ function RightSideColumn({user, chatsData, userFollowStats,change}) {
                                     className="flex justify-between items-center p-4 rounded-lg"
                                 >
                                     <div className="flex items-center">
-                                        <img src={fol?.profilePicUrl ? fol.profilePicUrl : 'error'} width={40} height={40}
+                                        <img src={fol?.profilePicUrl ? fol.profilePicUrl : '/Ellipse1.png'} width={40} height={40}
                                              style={{ borderRadius: '50%'}}   alt="userimg"/>
                                         <div>
                                             <Link href={`/${fol?.username}`}>
@@ -142,7 +142,7 @@ function RightSideColumn({user, chatsData, userFollowStats,change}) {
 
                         >
                             <div className="relative">
-                                <img src={chat?.profilePicUrl ? chat.profilePicUrl : 'error'}
+                                <img src={chat?.profilePicUrl ? chat.profilePicUrl : '/Ellipse1.png'}
                                     width={40}  height={40} style={{ borderRadius: '50%'}} alt="userimg"/>
                             </div>
                             <div className="ml-1">

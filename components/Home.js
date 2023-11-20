@@ -9,16 +9,10 @@ import {
     Tooltip,
     Table,
     Card,
-    Pagination,
     notification,
-    Divider,
     Segmented,
-    Form,
-    Radio,
     Skeleton,
-    Space,
-    Switch,
-    Drawer,
+     Spin
 } from 'antd'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
@@ -26,23 +20,33 @@ dayjs.extend(duration)
 import {useQuery, ApolloClient, InMemoryCache} from '@apollo/client';
 import {gql} from 'graphql-tag';
 import {
-    HeartFilled,
-    HeartOutlined,
-    RetweetOutlined,
-    MessageOutlined,
     TwitterOutlined,
     SendOutlined,
-    ShareAltOutlined,
     GlobalOutlined
 } from '@ant-design/icons'
 import Bott from "./Bottom";
-
+import baseUrl from "../utils/baseUrl";
+import {useSession} from "next-auth/react";
+import _ from "lodash";
+import InfiniteScroll from 'react-infinite-scroll-component';
+import PostCard from "./PostCard";
+import cook from 'js-cookie'
 const client = new ApolloClient({
     uri: 'http://188.166.191.246:8000/subgraphs/name/dsb/uniswap', cache: new InMemoryCache(),
 });
 
 export default function Home() {
     const router = useRouter();
+    const {data: session, status} = useSession()
+    const [cookBol, setCook] = useState(false);
+    useEffect(()=>{
+        if(cook.get('name')){
+            setCook(true)
+        }else {
+            setCook(false)
+        }
+
+    },[cook.get('name')])
     const ref = useRef(null)
     const GET_DATA = gql`
 query NewPair {
@@ -63,6 +67,12 @@ query NewPair {
   }
 }
 `;
+    const [userPa, setUserPa] = useState(null);
+    useEffect(() => {
+        if (session && session.user) {
+            setUserPa(session.user)
+        }
+    }, [session])
     const hint = () => {
         notification.error({
             message: `Please note`, description: 'Error reported', placement: 'topLeft',
@@ -154,8 +164,7 @@ query NewPair {
             return <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
                 <span>{record.baseToken?.symbol}/{record.quoteToken?.symbol}</span>
             </div>
-        }
-    },
+        }},
         {
             title: 'PRICE', align: 'center', render: (text, record) => {
                 return <div>{record?.priceUsd ? formatDecimal(record?.priceUsd, 3) : ''}</div>
@@ -200,14 +209,11 @@ query NewPair {
         }, 'launch')
     }, []);
     useEffect(() => {
-        ref.current = setInterval(() => getParams('/queryFeatured', '', 'featured'), 8000)
+        ref.current = setInterval(() => getParams('/queryFeatured', '', 'featured'), 5000)
         return () => {
             clearInterval(ref.current)
         }
     }, [featured]);
-    const loveChange = () => {
-        setLoveChange(!loveChanges)
-    }
     const push = (i, name) => {
         switch (name) {
             case 'one':
@@ -251,12 +257,51 @@ query NewPair {
             var min = Math.floor((name - (24 * 3600 * day) - (hour * 3600)) / (60))
             // var s=Math.floor(name-(24*3600*day)-(hour*3600)-(min*60))
             const m = min.toString().length === 1 ? '0' + min : min
-            return day + ':' + hour + ':' + m
+            const d = day.toString().length === 1 ? '0' + day : day
+            const h = hour.toString().length === 1 ? '0' + hour : hour
+            return d + ':' + h + ':' + m
         } else {
             return '00:00:00'
         }
     }
-
+    const [postsData, setPostsData] = useState([])
+    const [postsDataAdd, setPostsDataAdd] = useState([])
+    const [pageNumber, setPageNumber] = useState(1)
+    const [postsDataBol, setPostsDataBol] = useState(false)
+    const [postsDataCh, setPostsDataCh] = useState(false)
+    const change = () => {
+        setPostsDataCh(!postsDataCh)
+    }
+    useEffect(() => {
+        if (postsData) {
+            const data = postsDataAdd.concat(postsData)
+            const aa = _.uniqBy(data, 'id')
+            setPostsDataAdd(aa)
+        } else {
+            setPostsDataAdd(postsDataAdd)
+        }
+    }, [postsDataBol])
+    const getPost = async () => {
+        const res = await axios.get(`${baseUrl}/api/posts`, {
+            params: {pageNumber, userId: userPa?.id},
+        });
+        if (res.status === 200) {
+            setPostsDataBol(!postsDataBol)
+            setPostsData(res.data)
+        } else {
+            setPostsDataBol(!postsDataBol)
+            setPostsData([])
+        }
+    }
+    const changePage = () => {
+        setPageNumber(pageNumber + 1)
+        change()
+    }
+    useEffect(() => {
+        if (userPa && userPa.id) {
+            getPost()
+        }
+    }, [postsDataCh, userPa]);
     return (<div className={styles['box']}>
         <div className={styles['boxPar']}>
             {/*左边*/}
@@ -264,7 +309,8 @@ query NewPair {
                 {/*上面*/}
                 <div style={{display: 'flex', justifyContent: 'space-between',}}>
                     {/*左边*/}
-                    <div style={{width: '46%', position: 'relative',backgroundColor: 'rgb(253, 213, 62)'}} className={'cardParams'}>
+                    <div style={{width: '46%', position: 'relative', backgroundColor: 'rgb(253, 213, 62)'}}
+                         className={'cardParams'}>
                         <Card style={{
                             minWidth: 300,
                             backgroundColor: 'rgb(253, 213, 62)',
@@ -275,7 +321,7 @@ query NewPair {
                                 <li>
                                     <p style={{fontSize: '20px', fontWeight: 'bold'}}>New Pair</p>
                                     <Link href={'/newPair'}>
-                                    <p style={{fontSize: '20px', color: '#2394D4', cursor: 'pointer'}}>more></p>
+                                        <p style={{fontSize: '20px', color: '#2394D4', cursor: 'pointer'}}>more></p>
                                     </Link>
                                 </li>
                                 {featuredBol ? newPair.length > 0 ? newPair.map((i, v) => {
@@ -316,7 +362,7 @@ query NewPair {
                                                     alignItems: 'center',
                                                     justifyContent: 'center'
                                                 }}>
-                                                    <img src={` /Group.png`} style={{width:'22%'}} alt=""/>
+                                                    <img src={` /Group.png`} style={{width: '22%'}} alt=""/>
                                                     <span>{i.createdAtTimestamp ? getRelativeTimeDifference(formatDateTime(i.createdAtTimestamp)) : ''}</span>
                                                 </div>
                                             </div>
@@ -335,7 +381,7 @@ query NewPair {
                         </Card>
                     </div>
                     {/*右边*/}
-                    <div style={{width: '46%',backgroundColor:'rgb(253,213,62)'}} className={'cardParams'}>
+                    <div style={{width: '46%', backgroundColor: 'rgb(253,213,62)'}} className={'cardParams'}>
                         <Card style={{
                             minWidth: 300,
                             backgroundColor: 'rgb(253, 213, 62)',
@@ -403,7 +449,7 @@ query NewPair {
                                                                 alignItems: 'center',
                                                                 lineHeight: 1
                                                             }}>
-                                                                <img src={`/Time.png`} alt=""  width={22} height={22}/>
+                                                                <img src={`/Time.png`} alt="" width={22} height={22}/>
                                                                 <span
                                                                     style={{
                                                                         letterSpacing: '2px',
@@ -419,7 +465,7 @@ query NewPair {
                                                         textAlign: 'center'
                                                     }}>launch time</p>
                                                     <div style={{display: 'flex', alignItems: 'center', lineHeight: 1}}>
-                                                        <img src={`/Time.png`} alt="" width={22}  height={22}/>
+                                                        <img src={`/Time.png`} alt="" width={22} height={22}/>
                                                         <span
                                                             style={{
                                                                 letterSpacing: '2px',
@@ -458,7 +504,12 @@ query NewPair {
                             {/*时间选择*/}
                             <Segmented options={['5m', '1h', '6h', '24h']} onChange={changSeg} defaultValue={'24h'}/>
                             <Link href={'/featured'}>
-                                <p style={{fontSize: '20px', color: '#2394D4', cursor: 'pointer'}}>more></p>
+                                <p style={{
+                                    fontSize: '20px',
+                                    color: '#2394D4',
+                                    cursor: 'pointer',
+                                    marginLeft: '10px'
+                                }}>more></p>
                             </Link>
                         </div>
                     </div>
@@ -466,7 +517,7 @@ query NewPair {
                     <Table columns={columns}
                            rowKey={(record) => record?.baseToken?.address + record?.quoteToken?.address}
                            loading={loadingBool}
-                           className={'tablesss'} onRow={(record) => {
+                           className={'tablesss anyTable'} onRow={(record) => {
                         return {
                             onClick: (event) => {
                                 const data = record.pairAddress
@@ -483,68 +534,36 @@ query NewPair {
                 </div>
             </div>
             {/*右边*/}
-            <div className={'cardParams'} style={{width: '34%', backgroundColor: '#BCEE7D', borderRadius: '12px', padding: '10px 8px'}}>
-                {/*<div style={{*/}
-                {/*    backgroundColor: 'rgb(248,229,161)', padding: '16px', borderRadius: '12px', marginTop: '13px'*/}
-                {/*}}>*/}
-                <ul>
-                    <li style={{backgroundColor: 'white', padding: '20px', margin: '20px', borderRadius: '12px'}}>
-                        <div style={{
-                            display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '38%'
-                        }}>
-                            <img src={`/Ellipse.png`} height={35} alt="" width={35} />
-                            <div style={{width: '65%'}}>
-                                <div style={{
-                                    display: 'flex',
-                                    lineHeight: '1',
-                                    alignItems: 'center',
-                                    justifyContent: 'space-between',
-                                }}><span>name</span>
-                                    <span style={{color: '#F8E5A1', fontSize: '14px'}}>时间</span></div>
-                                <div style={{
-                                    display: 'flex',
-                                    lineHeight: '1',
-                                    marginTop: '3px',
-                                    color: '#666666',
-                                    alignItems: 'center',
-                                }}>name to<span style={{color: '#2294D4', marginLeft: '5px'}}> 时间</span>
-                                    {/*<span style={{color: '#F8E5A1', fontSize: '14px'}}></span>*/}
-                                </div>
-                            </div>
-                        </div>
-                        <p style={{fontSize: '14px', margin: '10px 0 7px 0'}}>发的文案啦</p>
-                        <img src={` /Rectangle.png`} alt="" style={{width:'100%'}}/>
-                        <ul style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                            padding: '0 5px'
-                        }}>
-                            <li style={{color: 'rgb(83,100 ,113)'}}>
-                                {/*  信息*/}
-                                <MessageOutlined style={{cursor: 'pointer'}}/>
-                                <span style={{marginLeft: '10px'}}>21</span>
-                            </li>
-                            <li>
-                                {/*旋转*/}
-                                <RetweetOutlined style={{cursor: 'pointer'}}/>
-                                <span style={{marginLeft: '10px'}}>21</span>
-                            </li>
-                            <li>
-                                {/*爱心*/}
-                                {!loveChanges ?
-                                    <HeartOutlined style={{cursor: 'pointer'}} onClick={loveChange}/> :
-                                    <HeartFilled style={{cursor: 'pointer', color: 'red'}}
-                                                 onClick={loveChange}/>}
-                                <span style={{marginLeft: '10px'}}>21</span>
-                            </li>
-                            <li>
-                                {/*  分享*/}
-                                <ShareAltOutlined style={{cursor: 'pointer'}}/>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
+            <div className={'cardParams'}>
+                {
+                    cookBol? session ? <InfiniteScroll
+                        hasMore={postsDataAdd.length === 8}
+                        next={changePage}
+                        endMessage={
+                            <p style={{textAlign: 'center'}}>
+                                <b>Yay! You have seen it all</b>
+                            </p>
+                        }
+                        loader={<h4>Loading...</h4>}
+                        dataLength={postsDataAdd.length}
+                    >
+                        {postsDataAdd && postsDataAdd?.length > 0 ? postsDataAdd.map((post, index) => {
+                            const isLiked =
+                                post.likes && post.likes.length > 0 &&
+                                post.likes.filter((like) => like?.user?.id === userPa?.id).length > 0;
+                            return <PostCard
+                                change={change}
+                                liked={isLiked}
+                                key={post.id}
+                                post={post}
+                                user={userPa}
+                            />
+                        }) : ''}
+                    </InfiniteScroll> : <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+                        <Spin/>
+                    </div>:<div style={{textAlign:'center'}}>Please sign in</div>
+                }
+
             </div>
         </div>
         <Bott/>

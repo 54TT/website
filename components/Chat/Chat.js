@@ -2,7 +2,6 @@ import React from "react";
 import styled from "styled-components";
 
 function Chat({ user, text}) {
-  // const isTextFromLoggedInUser = text.sender_id === user.id;
   return (
     <>
       {text?.sender_id === user?.id ||text?.senderId === user?.id ? (

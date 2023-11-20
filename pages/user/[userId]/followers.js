@@ -2,15 +2,21 @@ import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {useRouter} from "next/router";
 import baseUrl from "../../../utils/baseUrl";
-import InfoBox from "../../../components/HelperComponents/InfoBox";
+// import InfoBox from "../../../components/HelperComponents/InfoBox";
 import {
     CheckCircleIcon, ExclamationCircleIcon, UserAddIcon,
 } from "@heroicons/react/solid";
 import styled from "styled-components";
 import {followUser, unfollowUser} from "../../../utils/profileActions";
-import Sidebar from "../../../components/Sidebar";
+// import Sidebar from "../../../components/Sidebar";
 import {useSession} from "next-auth/react";
 import Link from 'next/link';
+import dynamic from 'next/dynamic'
+const InfoBox = dynamic(() => import('../../../components/HelperComponents/InfoBox'));
+const Sidebar = dynamic(() => import('../../../components/Sidebar'));
+
+
+
 function FollowersPage() {
     const router = useRouter();
     const {data: session, status} = useSession()
@@ -102,7 +108,7 @@ function FollowersPage() {
                                         key={fol?.user?.id}
                                     >
                                         <div className="flex items-center  ">
-                                            <Image src={fol?.user?.profilePicUrl|'error'} alt="userimg"   width={40} height={40}
+                                            <img src={fol?.user?.profilePicUrl||'/Ellipse1.png'} alt="userimg"   width={40} height={40}
                                                  style={{ borderRadius: '50%'}}/>
                                             <Link href={`/${fol?.user?.username}`}>
                                                 <Name className="ml-2">

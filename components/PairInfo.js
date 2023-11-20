@@ -87,7 +87,7 @@ export default function PairInfo() {
             <div className="grid grid-flow-row grid-cols-2 px-3 mt-3">
               <div className="grid grid-flow-row grid-cols-2 m-9 w-32">
                 <div className="w-9">
-                  <img src={`${pairBaseData?.logo?baseUrl+'/'+pairBaseData.logo:'error'}`} alt="logo" width={40} height={40} className="inline rounded-full" />
+                  <img src={`${pairBaseData?.logo?baseUrl+'/'+pairBaseData.logo:'/Ellipse1.png'}`} alt="logo" width={40} height={40} className="inline rounded-full" />
                 </div>
                 <div className="w-32">
                   <div>

@@ -44,7 +44,7 @@ function CommentComponent({ comment, postId,change, user, setComments }) {
   return (
     <div className="flex items-start pl-5 pr-3 mt-3">
       <img  alt={''}   style={{borderRadius:'50%',marginTop:'10px'}} height={50} width={50}
-        src={comment?.user?.profilePicUrl?comment.user.profilePicUrl:'error'}
+        src={comment?.user?.profilePicUrl?comment.user.profilePicUrl:'/Ellipse1.png'}
         className="mr-2"
       />
       {/* extra div for flex of comment text div and the three dots  */}

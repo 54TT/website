@@ -60,11 +60,8 @@ function ChatSearch({ setShowChatSearch, setChats, chats,user, }) {
       }}
     >
       <div className="flex items-center">
-        {/*<ArrowDiv onClick={clickBack}>*/}
-        {/*  <ArrowLeftIcon className="h-5" />*/}
-        {/*</ArrowDiv>*/}
+
         <div className="flex mr-2 ml-1 items-center rounded-full bg-gray-100 p-1 h-12 flex-grow">
-          {/* <SearchIcon className="h-5 text-gray-600" /> */}
           <input
             autoFocus={true}
             className="ml-1 bg-transparent outline-none placeholder-gray-500 w-full font-thin"
@@ -100,20 +97,17 @@ function ChatSearch({ setShowChatSearch, setChats, chats,user, }) {
                     profilePicUrl: resultUser.profilePicUrl,
                     lastText: "",
                   };
-
                   if (!isUserInChats) {
                     if (!chats) {
                       setChats([newChat]);
                     } else {
                       setChats((prev) => [newChat, ...prev]);
                     }
-
-                    return;
                   }
                 }}
                 className="flex items-center space-x-3 mt-2 cursor-pointer hover:bg-gray-100 rounded-lg p-2"
               >
-                <img style={{borderRadius:'50%'}}  height={50} width={50} src={resultUser?.profilePicUrl?resultUser.profilePicUrl:'error'} alt="userimg" />
+                <img style={{borderRadius:'50%'}} width={50} src={resultUser?.profilePicUrl?resultUser.profilePicUrl:'/Ellipse1.png'} alt="userimg" />
                 <Name>{resultUser?.name?resultUser.name.length>10?resultUser.name.slice(0,5)+'...'+resultUser.name.slice(-5):resultUser.name:''}</Name>
               </div>
             </Link>
@@ -135,17 +129,6 @@ function ChatSearch({ setShowChatSearch, setChats, chats,user, }) {
 
 // export default onClickOutside(SearchDropdown, clickOutsideConfig);
 export default ChatSearch;
-
-const ArrowDiv = styled.div`
-  cursor: pointer;
-  background-color: white;
-  border-radius: 50%;
-  padding: 0.75rem;
-  :hover {
-    background-color: #eee;
-  }
-`;
-
 const Name = styled.p`
   user-select: none;
   font-family: Inter;

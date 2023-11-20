@@ -47,7 +47,9 @@ export default function Presale() {
             var min = Math.floor((name - (24 * 3600 * day) - (hour * 3600)) / (60))
             // var s=Math.floor(name-(24*3600*day)-(hour*3600)-(min*60))
             const m = min.toString().length === 1 ? '0' + min : min
-            return day + ':' + hour + ':' + m
+            const h = hour.toString().length === 1 ? '0' + hour : hour
+            const d = day.toString().length === 1 ? '0' + day : day
+            return d + ':' + h + ':' + m
         } else {
             return '00:00:00'
         }
@@ -196,7 +198,7 @@ export default function Presale() {
                                 total={launchAll} pageSize={launchPageSize}/>
                 </div>
 
-                <Table className={`presale`} bordered={false} columns={columns} loading={launchBol}
+                <Table className={`presale anyTable`} bordered={false} columns={columns} loading={launchBol}
                        dataSource={launch} rowKey={(record) => record.symbol + record.address}
                        pagination={false} rowClassName={(record) => {
                     if (dayjs(record.presale_time).isAfter(dayjs()) && dayjs(record.launch_time).isAfter(dayjs())) {

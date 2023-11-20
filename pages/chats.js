@@ -3,16 +3,22 @@ import {useRouter} from "next/router";
 import React, {useState, useEffect, useRef} from "react";
 import baseUrl from "../utils/baseUrl";
 import io from "socket.io-client";
-import Sidebar from "../components/Sidebar";
-import ChatSearch from "../components/Chat/ChatSearch";
+// import Sidebar from "../components/Sidebar";
+// import ChatSearch from "../components/Chat/ChatSearch";
 import {SearchIcon} from "@heroicons/react/outline";
 import styled from "styled-components";
 import calculateTime from "../utils/calculateTime";
-import Chat from "../components/Chat/Chat";
+// import Chat from "../components/Chat/Chat";
 import {Facebook} from "react-content-loader";
 import {AppleOutlined,} from '@ant-design/icons'
 import {useSession} from "next-auth/react";
 import Link from 'next/link';
+import dynamic from 'next/dynamic'
+const Sidebar = dynamic(() => import('../components/Sidebar'));
+const ChatSearch = dynamic(() => import('../components/Chat/ChatSearch'));
+const Chat = dynamic(() => import('../components/Chat/Chat'));
+
+
 
 function ChatsPage() {
     const [chats, setChats] = useState([]);
@@ -44,16 +50,16 @@ function ChatsPage() {
             }
         }
     }
+    const [takeOver,setTakeOver] = useState(false)
     useEffect(() => {
         getParams()
-    }, [userPar])
+    }, [userPar,takeOver])
     const openChatId = useRef("");
     const [showChatSearch, setShowChatSearch] = useState(false);
     const da = () => {
         setShowChatSearch(!showChatSearch)
     }
 
-    //SOCKET.io useEffect (used for connection)
     useEffect(() => {
         if (!socket.current) {
             socket.current = io(baseUrl); //establishing connection with server;
@@ -79,7 +85,6 @@ function ChatsPage() {
             postPar();
         }
     }, [userPar]);
-    //LOAD TEXTS useEffect. Runs whenever router.query.chat changes, so basically whenever the user clicks on a different user
     useEffect(() => {
         if (userPar && userPar.id && router.query.chat) {
             const loadTexts = () => {
@@ -107,7 +112,7 @@ function ChatsPage() {
                 });
             };
             if (socket?.current && router.query?.chat) {
-                loadTexts(); //this should be in a useEffect that's below the useEffect that's creating the connection
+                loadTexts();
             }
         }
     }, [router.query.chat, userPar]);
@@ -149,6 +154,7 @@ function ChatsPage() {
                 }
             });
             socket.current.on("newTextReceived", async ({newText, userDetails}) => {
+                setTakeOver(!takeOver)
                 if (newText?.senderId === openChatId?.current) {
                     setTexts((prev) => [...prev, newText]);
                     setChats((prev) => {
@@ -267,9 +273,9 @@ function ChatsPage() {
                                         <Link href={`/chats?chat=${chat?.textsWith}`} key={chat.textsWith}>
                                         <ChatDiv >
                                             <div className="relative">
-                                                <Image   width={80} height={80} style={{
+                                                <img   width={80} height={80} style={{
                                                     borderRadius: '50%'
-                                                }} src={chat?.profilePicUrl||'error'} alt="userimg"/>
+                                                }} src={chat?.profilePicUrl||'/Ellipse1.png'} alt="userimg"/>
                                                 {connectedUsers?.length > 0 &&
                                                 connectedUsers.filter(
                                                     (user) => user.userId === chat?.textsWith
@@ -288,7 +294,7 @@ function ChatsPage() {
                                                 )}
                                             </div>
                                             <div className="ml-1">
-                                                <Name>{chat.username}</Name>
+                                                <Name>{chat?.username?.length>10?chat.username.slice(0,5)+'...'+chat.username.slice(-5):chat.username}</Name>
                                                 <TextPreview>
                                                     {chat.lastText && chat.lastText.length > 30
                                                         ? `${chat.lastText.substring(0, 30)}...`
@@ -324,9 +330,9 @@ function ChatsPage() {
                             {/*右边聊天*/}
                             {chatUserData && chatUserData.profilePicUrl ? (
                                 <ChatHeaderDiv>
-                                    <Image   width={80} height={80} style={{
+                                    <img   width={80} height={80} style={{
                                         borderRadius: '50%'
-                                    }} src={chatUserData?.profilePicUrl||'error'} alt="userimg"/>
+                                    }} src={chatUserData?.profilePicUrl||'/Ellipse1.png'} alt="userimg"/>
                                     <div>
                                         <ChatName>{chatUserData?.name.length > 7 ? chatUserData.name.slice(0, 3) + '...' + chatUserData.name.slice(-3) : chatUserData.name}</ChatName>
                                         {connectedUsers.length > 0 &&

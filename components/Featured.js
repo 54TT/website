@@ -84,13 +84,25 @@ export default function Featured() {
         {
             title: 'PRICE',align: 'center',  render: (text, record) => {
                 return <div>{record?.priceUsd ? formatDecimal(record?.priceUsd, 3) : ''}</div>
-            }
+            },
+            sorter: {
+                compare: (a, b) => {
+                    return Number(a.priceUsd) -Number(b.priceUsd)
+                }
+            },
         },
         {
             title: 'Create Time',align: 'center',  render: (text, record) => {
                 const data =  record.pairCreatedAt.toString().length>10?Number(record.pairCreatedAt.toString().slice(0,10)):record.pairCreatedAt
                 return <p>{record?.pairCreatedAt ? getRelativeTimeDifference(formatDateTime(data)) : ''}</p>
-            }
+            },
+            sorter: {
+                compare: (a, b) => {
+                    const data = a.pairCreatedAt ? dayjs(a.pairCreatedAt).format('YYYY-MM-DD HH:mm:ss') : 0
+                    const pa = b.pairCreatedAt ? dayjs(b.pairCreatedAt).format('YYYY-MM-DD HH:mm:ss') : 0
+                    return dayjs(pa).isBefore(data)
+                }
+            },
         },
         {
             title: <span>{'% '+time}</span> ,align: 'center',  render: (text, record) => {
@@ -222,7 +234,7 @@ export default function Featured() {
                     <Segmented options={['5m', '1h', '6h', '24h']} onChange={changSeg} defaultValue={'24h'}/>
 
                 </div>
-                <Table className={'hotTable'} columns={columns} rowKey={(record)=>record?.baseToken?.address+record?.quoteToken?.address} onRow={(record) => {
+                <Table className={'hotTable anyTable'} columns={columns} rowKey={(record)=>record?.baseToken?.address+record?.quoteToken?.address} onRow={(record) => {
                     return {
                         onClick: (event) => {
                             const data = record.pairAddress

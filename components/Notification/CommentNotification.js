@@ -7,7 +7,7 @@ function CommentNotification({ notification }) {
   return (
     notification.type === "newComment" && (
       <NotificationDiv>
-        <img   height={60} width={60}  style={{borderRadius:'50%'}} src={notification?.user?.profilePicUrl||'error'} alt="userimg" />
+        <img   height={60} width={60}  style={{borderRadius:'50%'}} src={notification?.user?.profilePicUrl||'/Ellipse1.png'} alt="userimg" />
         <div className="select-none" style={{marginLeft:'10px'}}>
           <p>
             <Link href={`/${notification.user.username}`} passHref>

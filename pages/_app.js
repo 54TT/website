@@ -38,10 +38,14 @@ const client = createClient({
     provider,
 })
 import Layout from '/components/Layout/Layout'
-
+import Head from 'next/head';
 
 function DexPert({Component, pageProps}) {
-    return (
+    return (<>
+        <Head>
+            <link rel="shortcut icon" href="/avatar.png" />
+            <title>My new cool app</title>
+        </Head>
         <WagmiConfig client={client}>
             <SessionProvider session={pageProps.session} refetchInterval={0}>
                 <Layout>
@@ -50,6 +54,7 @@ function DexPert({Component, pageProps}) {
                 {/*</RainbowKitProvider>*/}
             </SessionProvider>
         </WagmiConfig>
+        </>
     );
 }
 

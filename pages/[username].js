@@ -20,14 +20,24 @@ import {
 } from '@ant-design/icons'
 import {Avatar, Input, notification,Image} from 'antd'
 import axios from "axios";
-import ProfileFields from "../components/ProfileComponents/ProfileFields";
-import FollowingUsers from "../components/ProfileComponents/FollowingUsers";
-import FollowerUsers from "../components/ProfileComponents/FollowerUsers";
+// import ProfileFields from "../components/ProfileComponents/ProfileFields";
+// import FollowingUsers from "../components/ProfileComponents/FollowingUsers";
+// import FollowerUsers from "../components/ProfileComponents/FollowerUsers";
 import {useRouter} from "next/router";
-import PostCard from "../components/PostCard";
+// import PostCard from "../components/PostCard";
 import InfoBox from "../components/HelperComponents/InfoBox";
 import {EmojiSadIcon} from "@heroicons/react/outline";
 import {useSession} from "next-auth/react";
+import dynamic from 'next/dynamic'
+const PostCard = dynamic(() => import('../components/PostCard'));
+const InfoBox = dynamic(() => import('../components/HelperComponents/InfoBox'));
+const ProfileFields = dynamic(() => import('../components/ProfileComponents/ProfileFields'));
+const FollowingUsers = dynamic(() => import('../components/ProfileComponents/FollowingUsers'));
+const FollowerUsers = dynamic(() => import('../components/ProfileComponents/FollowerUsers'));
+
+
+
+
 function ProfilePage() {
     const {data: session, status} = useSession()
     const coverImageRef = useRef(null);

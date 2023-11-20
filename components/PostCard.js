@@ -80,7 +80,7 @@ function PostCard({post, user, postById, change, liked}) {
         >
             <div className="p-4">
                 <div className="flex space-x-3 items-center ml-2 relative">
-                    <img height={50} width={50} style={{borderRadius:'50%'}}   src={post && post?.user?.profilePicUrl ? post.user.profilePicUrl : 'error'} alt="userimg"/>
+                    <img height={50} width={50} style={{borderRadius:'50%'}}   src={post && post?.user?.profilePicUrl ? post.user.profilePicUrl : '/Ellipse1.png'} alt="userimg"/>
                     <div>
                         <Link href={`/${post?.user?.address?post.user.address:''}`}>
                         <UserPTag>
@@ -193,7 +193,7 @@ function PostCard({post, user, postById, change, liked}) {
                             {/* div which contains the profilepic and the input div */}
                             <div className="flex space-x-2 items-center">
                                 <img width={50} height={50}  style={{borderRadius:'50%'}}
-                                    src={user?.profilePicUrl||'error'}
+                                    src={user?.profilePicUrl||'/Ellipse1.png'}
                                     alt="profile pic"
                                 />
                                 <div
