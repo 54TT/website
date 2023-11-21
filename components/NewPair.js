@@ -90,8 +90,8 @@ query liveNewPair {
                 }}>{record?.token0?.symbol?.slice(0, 1)}</p>
                 <div style={{marginLeft: '15px'}}>
                     <p style={{display: 'flex', alignItems: 'flex-end', lineHeight: '1'}}><span
-                        style={{fontSize: '18px'}}>{record?.token0?.symbol ? record.token0.symbol + '/' : ''}</span><span
-                        style={{color: 'rgb(98,98,98)'}}>{record?.token1?.symbol ? record.token1.symbol : ''}</span></p>
+                        style={{fontSize: '18px'}}>{record?.token0?.symbol.length>7 ? record.token0.symbol.slice(0,4) + '/' : ''}</span><span
+                        style={{color: 'rgb(98,98,98)'}}>{record?.token1?.symbol.length>7 ? record.token1.symbol.slice(0,4) : ''}</span></p>
                     <p style={{
                         lineHeight: '1',
                         marginTop: '3px',

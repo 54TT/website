@@ -98,7 +98,7 @@ export default function Presale() {
             }
         },
         {
-            title: 'Pair',
+            title: 'Token',
             dataIndex: 'name',align: 'center',
             render: (text) => {
                 return <p style={{fontWeight: 'bold', fontSize: '20px', textAlign: 'center'}}>{text}</p>

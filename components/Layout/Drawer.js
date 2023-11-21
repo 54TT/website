@@ -11,12 +11,10 @@ import Link from 'next/link'
 import cookie from "js-cookie";
 import {useAccount} from "wagmi";
 import {notification} from "antd";
-import {useSession} from "next-auth/react";
 
 const Drawer = () => {
     const router = useRouter();
     const {address, isConnected} = useAccount()
-    const {data: session, status} = useSession()
     const drawerWidth = 300;
     const openedMixin = (theme) => ({
         width: drawerWidth,
@@ -72,8 +70,8 @@ const Drawer = () => {
         setOpenDrawer(false);
     };
     const pushPer=()=>{
-        if(session&&session.user && session.user.address){
-            router.push(`/${session?.user?.address}`)
+        if(address && cookie.get('name')){
+            router.push(`/${address}`)
         }else {
             notification.warning({
                 message: `warning`, description: 'Please login in first!', placement: 'topLeft',
@@ -82,7 +80,7 @@ const Drawer = () => {
         }
     }
     const push = () => {
-        if ( address && cookie.get('name')&&session) {
+        if ( address && cookie.get('name')) {
             router.push('/social')
         }else {
             notification.warning({

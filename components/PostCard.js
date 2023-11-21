@@ -15,7 +15,6 @@ import {deletePost, likePost, postComment} from "../utils/postActions";
 import CommentComponent from "./CommentComponent";
 import {useRouter} from "next/router";
 import ReusableDialog from "./ReusableDialog";
-
 const {TextArea} = Input
 const notify = () => {
     notification.success({
@@ -24,8 +23,7 @@ const notify = () => {
     });
 }
 
-function PostCard({post, user, postById, change, liked}) {
-    const router = useRouter();
+function PostCard({post, user, change, liked}) {
     const [comments, setComments] = useState([]);
     useEffect(() => {
         if (post && post.comments && post.comments.length > 0) {
@@ -36,7 +34,6 @@ function PostCard({post, user, postById, change, liked}) {
     }, [post])
     const [commentText, setCommentText] = useState("");
     const [showComments, setShowComments] = useState(false);
-    const [loading, setLoading] = useState(false);
     const buttonRef = useRef(null);
     const [open, setOpen] = useState(false);
     const createComment = async (e) => {

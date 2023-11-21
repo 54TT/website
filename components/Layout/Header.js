@@ -1,8 +1,9 @@
-import React, {useState, useEffect, useRef, lazy,Suspense,startTransition } from "react";
+import React, {useState, useEffect, useRef, lazy, Suspense, startTransition} from "react";
 import {getCsrfToken, signIn, useSession, signOut} from "next-auth/react"
 import {SiweMessage} from "siwe"
 import baseUrl from '/utils/baseUrl'
 import {useAccount, useConnect, useNetwork, useSignMessage, useDisconnect,} from "wagmi"
+// import { InjectedConnector } from '@web3-react/injected-connector'
 import {InjectedConnector} from 'wagmi/connectors/injected'
 import axios from 'axios';
 import {Dropdown, Drawer, Form, Select, Input, DatePicker, Button, notification,} from 'antd'
@@ -12,12 +13,15 @@ import styles from './css/header.module.css'
 // import DrawerPage from './Drawer'
 const {Option} = Select;
 import Link from 'next/link'
-import {get, post, del} from '/utils/axios'
 import _ from 'lodash'
 import cookie from 'js-cookie'
 import {useRouter} from 'next/router'
 import ChatSearch from "../Chat/ChatSearch";
-const DrawerPage =lazy(()=>import('./Drawer'))
+
+const DrawerPage = lazy(() => import('./Drawer'))
+import {get, post, del, getUser} from '/utils/axios'
+import {ethers} from 'ethers'
+
 const Header = () => {
     const router = useRouter()
     const [form] = Form.useForm();
@@ -30,6 +34,10 @@ const Header = () => {
     const {connect} = useConnect({
         connector: new InjectedConnector(),
     });
+
+
+
+
     const [open, setOpen] = useState(false);
     const [openPresale, setOpenPresale] = useState(false);
     const [openLaunch, setOpenLaunch] = useState(false);
@@ -60,7 +68,7 @@ const Header = () => {
         form.resetFields()
     };
     const showDrawer = () => {
-        if (cookie.get('name')&&session) {
+        if (cookie.get('name') && address) {
             setOpen(true);
             get('/selectPresalePlatform', '').then(res => {
                 if (res && res.status === 200) {
@@ -212,59 +220,83 @@ const Header = () => {
         }
     };
     const [bol, setBol] = useState(false)
+    const [bolLogin, setBolLogin] = useState(false)
     const setB = () => {
         setBol(!bol)
     }
-    const handleLogin = async () => {
-        const cook = cookie.get('name')
-        if (!cook&&!session) {
-            try {
-                const message = new SiweMessage({
-                    domain: window.location.host,
-                    address: address,
-                    statement: "Sign in with Ethereum to the app.",
-                    uri: window.location.origin,
-                    version: "1",
-                    chainId: chain?.id,
-                    nonce: await getCsrfToken(),
-                })
-                const signature = await signMessageAsync({
-                    message: message.prepareMessage(),
-                })
-                const data = await signIn("credentials", {
-                    message: JSON.stringify(message),
-                    redirect: false,
-                    signature,
-                    callbackUrl: '/',
-                })
-                if (data && data.status === 200 && data.ok) {
-                    setB()
-                    cookie.set('name', address)
-                }
-            } catch (error) {
-            }
+    const getUs = async () => {
+        const {data: {user}, status} = await getUser(address)
+        if (user && status === 200) {
+            setUserPar(user)
+        } else {
+            setUserPar('')
         }
+        cookie.set('name', address, {expires: 1})
+        setBolLogin(false)
     }
     useEffect(() => {
-        if (session && session.user) {
-            setUserPar(session.user)
+        if (bol) {
+            getUs()
         }
-        if(!session&&!address&&!cookie.get('name')){
-            router.push('/')
-        }
-    }, [session]);
+    }, [bol])
+    const handleLogin = async () => {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        var signer = await provider.getSigner();
+        const message = `请签名证明你是钱包账户的拥有者\n\nNonce:\n${Date.now()}\ndomain:\n ${window.location.host}`
+        const signature = await signer.signMessage(message)
+        const recoveredAddress = ethers.utils.verifyMessage(message, signature);
+        console.log(address===recoveredAddress)
+        console.log("signer", signer);
+        console.log("signature", signature);
+        const accounts = await window.ethereum.request({method: 'eth_requestAccounts'})
+        // console.log(accounts)
+        // console.log(provider)
+        // const cook = cookie.get('name')
+        // if (!cook) {
+        //     setBolLogin(true)
+        //     try {
+        //         const message = new SiweMessage({
+        //             domain: window.location.host,
+        //             address: address,
+        //             statement: "Sign in with Ethereum to the app.",
+        //             uri: window.location.origin,
+        //             version: "1",
+        //             chainId: chain?.id,
+        //             nonce: await getCsrfToken(),
+        //         })
+        //         const signature = await signMessageAsync({
+        //             message: message.prepareMessage(),
+        //         })
+        //         const data = await signIn("credentials", {
+        //             message: JSON.stringify(message),
+        //             redirect: false,
+        //             signature,
+        //             callbackUrl: '/',
+        //         })
+        //         if (data && data.status === 200 && data.ok) {
+        //             setB()
+        //         }
+        //     } catch (error) {
+        //     }
+        // }
+    }
     useEffect(() => {
-        if (!address || !cookie.get('name')) {
-            handleLogin()
-        }
-    }, [address, isConnected, bol])
+        // if(!session&&!address&&!cookie.get('name')){
+        //     router.push('/')
+        // }
+    }, [session]);
+    // useEffect(() => {
+    //     if (!cookie.get('name')) {
+    //         handleLogin()
+    //     }
+    // }, [address, isConnected])
     const set = () => {
         cookie.remove('name');
         const a = cookie.get('name') || ''
         if (!a) {
+            // router.push('/')
             disconnect()
             signOut()
-            router.push('/')
         }
     }
     const getMoney = () => {
@@ -287,6 +319,7 @@ const Header = () => {
             setNo(true)
         } else {
             setNo(false)
+            router.push('/')
         }
     }, [cookie.get('name')])
     const items = [
@@ -309,20 +342,20 @@ const Header = () => {
             ),
         },
     ];
-    const [draw,setDraw]=useState(false)
-    useEffect(()=>{
-        if(!draw){
+    const [draw, setDraw] = useState(false)
+    useEffect(() => {
+        if (!draw) {
             startTransition(() => {
                 setDraw(true);
             });
         }
-    },[draw])
+    }, [draw])
     return (
         <div
             className={
                 "top-0 w-full  z-30 transition-all headerClass"}>
             {
-                draw? <Suspense fallback={<div>Loading...</div>}>
+                draw ? <Suspense fallback={<div>Loading...</div>}>
                     <div className={styles['aaa']}>
                         <div></div>
                         <div style={{position: 'relative', width: '30%'}}>
@@ -339,15 +372,17 @@ const Header = () => {
                         </div>
                         <div style={{display: 'flex', alignItems: 'center'}}>
                             <Button type={'primary'} className={styles['but']}
-                                    style={{marginRight: '20px', backgroundColor: 'rgb(254,239,146)'}} onClick={showDrawer}>Add
+                                    style={{marginRight: '20px', backgroundColor: 'rgb(254,239,146)'}}
+                                    onClick={showDrawer}>Add
                                 Coin</Button>
                             {
-                                no&&userPar ? <div style={{display: 'flex', alignItems: 'center'}}>
+                                no && address ? <div style={{display: 'flex', alignItems: 'center'}}>
                                     <Link href={`/${userPar && userPar.address ? userPar.address : ''}`}>
                                         <img style={{
                                             marginRight: '10px',
                                             borderRadius: '50%', cursor: 'pointer'
-                                        }} width={35} src={userPar?.profilePicUrl ? userPar.profilePicUrl : '/Ellipse1.png'}
+                                        }} width={35}
+                                             src={userPar?.profilePicUrl ? userPar.profilePicUrl : '/Ellipse1.png'}
                                              alt=""/>
                                     </Link>
                                     <Dropdown
@@ -365,12 +400,12 @@ const Header = () => {
                                     </Dropdown>
                                 </div> : <Button type={'primary'} className={styles['but']}
                                                  style={{backgroundColor: 'rgb(254,239,146)'}}
-                                                 onClick={getMoney}>Login</Button>
+                                                 onClick={getMoney}>{bolLogin ? <LoadingOutlined/> : 'Login'}</Button>
                             }
                         </div>
                     </div>
                     <DrawerPage/>
-                </Suspense>:''
+                </Suspense> : ''
             }
             <Drawer title="Basic Drawer" destroyOnClose={true} placement="right" onClose={onClose} open={open}>
                 <Form

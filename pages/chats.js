@@ -3,7 +3,7 @@ import {useRouter} from "next/router";
 import React, {useState, useEffect, useRef} from "react";
 import baseUrl from "../utils/baseUrl";
 import io from "socket.io-client";
-// import Sidebar from "../components/Sidebar";
+import Sidebar from "../components/Sidebar";
 // import ChatSearch from "../components/Chat/ChatSearch";
 import {SearchIcon} from "@heroicons/react/outline";
 import styled from "styled-components";
@@ -11,24 +11,33 @@ import calculateTime from "../utils/calculateTime";
 // import Chat from "../components/Chat/Chat";
 import {Facebook} from "react-content-loader";
 import {AppleOutlined,} from '@ant-design/icons'
-import {useSession} from "next-auth/react";
 import Link from 'next/link';
 import dynamic from 'next/dynamic'
-const Sidebar = dynamic(() => import('../components/Sidebar'));
+import {getUser} from "../utils/axios";
+import cook from "js-cookie";
+import {useAccount} from "wagmi";
+// const Sidebar = dynamic(() => import('../components/Sidebar'));
 const ChatSearch = dynamic(() => import('../components/Chat/ChatSearch'));
 const Chat = dynamic(() => import('../components/Chat/Chat'));
 
-
-
 function ChatsPage() {
     const [chats, setChats] = useState([]);
+    console.log(chats)
     const [userPar, setUserPar] = useState({});
-    const {data: session, status} = useSession()
-    useEffect(() => {
-        if (session && session.user) {
-            setUserPar(session.user)
+    const {address} = useAccount()
+    const getUs=async ()=>{
+        const {data:{user},status} =   await getUser(address)
+        if(status===200&&user){
+            setUserPar(user)
+        }else {
+            setUserPar('')
         }
-    }, [session, session?.user, session?.userFollowStats]);
+    }
+    useEffect(() => {
+        if(address&&cook.get('name')){
+            getUs()
+        }
+    }, [address]);
     const router = useRouter();
     const socket = useRef();
     const [texts, setTexts] = useState([]);
@@ -41,7 +50,7 @@ function ChatsPage() {
     const getParams = async () => {
         if (userPar && userPar.id) {
             const res = await axios.get(`${baseUrl}/api/chats`, {
-                params: {userId: userPar.id}
+                params: {userId: userPar?.id}
             });
             if (res.status === 200) {
                 setChats(res.data)
@@ -154,7 +163,8 @@ function ChatsPage() {
                 }
             });
             socket.current.on("newTextReceived", async ({newText, userDetails}) => {
-                setTakeOver(!takeOver)
+                console.log(newText)
+                console.log(userDetails)
                 if (newText?.senderId === openChatId?.current) {
                     setTexts((prev) => [...prev, newText]);
                     setChats((prev) => {
@@ -175,6 +185,7 @@ function ChatsPage() {
                     const ifPreviouslyTexted =
                         chats.filter((chat) => chat.textsWith === newText.senderId).length > 0;
                     if (ifPreviouslyTexted) {
+                        console.log(chats)
                         setChats((prev) => {
                             let previousChat = prev.find(
                                 (chat) => chat.textsWith === newText.senderId
@@ -190,15 +201,15 @@ function ChatsPage() {
                             return [...prev];
                         });
                     } else {
-                        //if sender and receiver have never messaged before
-                        const newChat = {
-                            textsWith: newText.senderId,
-                            name: userDetails.name,
-                            profilePicUrl: userDetails.profilePicUrl,
-                            lastText: newText.text,
-                            created_at: newText.created_at,
-                        };
-                        setChats((prev) => [newChat, ...prev]);
+                        setTakeOver(!takeOver)
+                        // const newChat = {
+                        //     textsWith: newText.senderId,
+                        //     name: userDetails.name,
+                        //     profilePicUrl: userDetails.profilePicUrl,
+                        //     lastText: newText.text,
+                        //     created_at: newText.created_at,
+                        // };
+                        // setChats((prev) => [newChat, ...prev]);
                     }
                 }
             });
@@ -209,7 +220,7 @@ function ChatsPage() {
                 socket.current.off("newTextReceived");
             }
         };
-    }, [newText, socket, session]);
+    }, [newText, socket,]);
     const endOfMessagesRef = useRef(null);
     const scrollToBottom = () => {
         endOfMessagesRef.current.scrollIntoView({

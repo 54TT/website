@@ -11,31 +11,40 @@ import {
 } from "@heroicons/react/solid";
 import styled from "styled-components";
 import {followUser, unfollowUser} from "../../../utils/profileActions";
-// import Sidebar from "../../../components/Sidebar";
-import {useSession} from "next-auth/react";
+import Sidebar from "../../../components/Sidebar";
 import dynamic from 'next/dynamic'
+import {getUser} from "../../../utils/axios";
+import cook from "js-cookie";
+import {useAccount} from "wagmi";
 const InfoBox = dynamic(() => import('../../../components/HelperComponents/InfoBox'));
-const Sidebar = dynamic(() => import('../../../components/Sidebar'))
+// const Sidebar = dynamic(() => import('../../../components/Sidebar'))
 function FollowingPage() {
     const router = useRouter();
     const [user, setUser] = useState(null)
     const [followingArrayState, setFollowingArrayState] = useState(null);
     const [userFollowStats, setUserFollowStats] = useState(null);
     const [userFollowBol, setUserFollowBol] = useState(false);
-    const {data: session, status} = useSession()
+    const {address} = useAccount()
+    const getUs=async ()=>{
+        const {data:{user},status} =   await getUser(address)
+        if(user&&status===200){
+            setUser(user)
+        }else {
+            setUser(null)
+        }
+
+    }
+    useEffect(() => {
+        if(address&&cook.get('name')){
+            getUs()
+        }
+    }, [address]);
     const chang = () => {
         setUserFollowBol(!userFollowBol)
     }
-
-    useEffect(() => {
-        if (session) {
-            setUser(session?.user ? session.user : {})
-        }
-    }, [session]);
-
-    const getUser = async () => {
+    const getUsers = async () => {
         const res = await axios.get(`${baseUrl}/api/user/userFollowStats`, {
-            params: {userId: user.id},
+            params: {userId: user?.id},
         });
         if (res?.status === 200) {
             setUserFollowStats(res.data.userFollowStats)
@@ -44,7 +53,7 @@ function FollowingPage() {
     const getParams = async () => {
         try {
             const res = await axios.get(
-                `${baseUrl}/api/profile/following/${user.id}`,);
+                `${baseUrl}/api/profile/following/${user?.id}`,);
             if (res && res.data) {
                 setFollowingArrayState(res.data)
             } else {
@@ -58,20 +67,9 @@ function FollowingPage() {
     useEffect(() => {
         if (user && user.id) {
             getParams()
-            getUser()
+            getUsers()
         }
     }, [user, userFollowBol])
-
-    // if (loading) {
-    //   return (
-    //     <InfoBox
-    //       Icon={ExclamationCircleIcon}
-    //       message={"Oops, an error occured"}
-    //       content={`There was an error while fetching the users this user has followed`}
-    //     />
-    //   );
-    // }
-
     return (
         <div className=" h-screen"  style={{backgroundColor:'#BCEE7D',marginRight:'20px',borderRadius:'10px'}}>
             <main
@@ -92,7 +90,6 @@ function FollowingPage() {
                         padding: '20px',
                         backgroundColor:'#B2DB7E'
                     }}
-                    // className="mx-auto flex-1 max-w-md md:max-w-xl lg:max-w-[61.5rem] xl:max-w-[67rem] bg-white p-4 shadow-lg rounded-lg overflow-y-auto"
                 >
                     <div className="flex items-center ml-2">
                         <Title>Following ·</Title>

@@ -1,5 +1,6 @@
 import axios from 'axios'
-import  baseUrl from '/utils/baseUrl'
+import baseUrl from '/utils/baseUrl'
+
 var request = axios.create({
     baseURL: baseUrl,
     headers:{
@@ -22,3 +23,13 @@ export  function put(url,params) {
 export  function del(url,params) {
     return request({method:'DELETE',data:params,url})
 }
+
+
+export  const getUser=async (params)=>{
+    return await axios.get(baseUrl + "/api/user", {
+        params: {
+            address: params
+        }
+    })
+}
+

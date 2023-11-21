@@ -18,6 +18,7 @@
     "@mui/icons-material": "^5.14.8",
     "@mui/material": "^5.14.8",
     "@nextui-org/react": "^2.1.12",
+    "@web3-react/injected-connector": "^6.0.7",
     "antd": "^5.10.3",
     "autoprefixer": "^10.4.12",
     "copy-to-clipboard": "^3.3.3",

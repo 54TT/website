@@ -3,7 +3,7 @@ import styles from "../styles/home.module.css";
 import axios from 'axios';
 import {formatDecimal, sendGetRequestWithSensitiveData, getRelativeTimeDifference, formatDateTime} from './Utils';
 import {useRouter} from 'next/router';
-import {get, post, del} from '/utils/axios'
+import {get, post, del, getUser} from '/utils/axios'
 import Link from 'next/link'
 import {
     Tooltip,
@@ -31,12 +31,14 @@ import _ from "lodash";
 import InfiniteScroll from 'react-infinite-scroll-component';
 import PostCard from "./PostCard";
 import cook from 'js-cookie'
+import {useAccount} from "wagmi";
 const client = new ApolloClient({
     uri: 'http://188.166.191.246:8000/subgraphs/name/dsb/uniswap', cache: new InMemoryCache(),
 });
 
 export default function Home() {
     const router = useRouter();
+    const {address} = useAccount()
     const {data: session, status} = useSession()
     const [cookBol, setCook] = useState(false);
     useEffect(()=>{
@@ -48,6 +50,7 @@ export default function Home() {
 
     },[cook.get('name')])
     const ref = useRef(null)
+    const refHeight = useRef(null)
     const GET_DATA = gql`
 query NewPair {
   pairs(orderBy: createdAtTimestamp, orderDirection: desc, first: 10) {
@@ -67,11 +70,24 @@ query NewPair {
   }
 }
 `;
+    const getUs=async ()=>{
+        const {data:{user},status} =   await getUser(address)
+        if(user&&status===200){
+            setUserPa(user)
+        }else {
+            setUserPa('')
+        }
+    }
+    useEffect(() => {
+        if(address&&cook.get('name')){
+            getUs()
+        }
+    }, [address]);
     const [userPa, setUserPa] = useState(null);
     useEffect(() => {
-        if (session && session.user) {
-            setUserPa(session.user)
-        }
+        // if (address&&session && session.user) {
+        //     setUserPa(session.user)
+        // }
     }, [session])
     const hint = () => {
         notification.error({
@@ -90,7 +106,6 @@ query NewPair {
     };
     const [loadingBool, setLoadingBool] = useState(true);
     const [newPair, setNewPair] = useState([])
-    const [loveChanges, setLoveChange] = useState(false);
     const [launch, setLaunch] = useState([]);
     const [launchBol, setLaunchBol] = useState(false);
     const [featuredBol, setFeaturedBol] = useState(false);
@@ -274,7 +289,7 @@ query NewPair {
     }
     useEffect(() => {
         if (postsData) {
-            const data = postsDataAdd.concat(postsData)
+            const data = postsData.concat(postsDataAdd)
             const aa = _.uniqBy(data, 'id')
             setPostsDataAdd(aa)
         } else {
@@ -298,14 +313,14 @@ query NewPair {
         change()
     }
     useEffect(() => {
-        if (userPa && userPa.id) {
+        if (address&&cook.get('name')&&userPa?.id) {
             getPost()
         }
     }, [postsDataCh, userPa]);
     return (<div className={styles['box']}>
         <div className={styles['boxPar']}>
             {/*左边*/}
-            <div className={styles['left']}>
+            <div ref={refHeight} className={styles['left']}>
                 {/*上面*/}
                 <div style={{display: 'flex', justifyContent: 'space-between',}}>
                     {/*左边*/}
@@ -400,10 +415,9 @@ query NewPair {
                                         if (index > 2) {
                                             return ''
                                         } else {
-                                            return <li
-                                                className={`${styles.li} ${dayjs(i.presale_time).isAfter(dayjs()) ? styles.be : styles.de}`}
-                                                style={dayjs(i.presale_time).isAfter(dayjs()) ? {backgroundColor: ' rgb(188, 238, 125)'} : !dayjs(i.launch_time).isAfter(dayjs()) ? {backgroundColor: 'rgb(209,209,209)'} : {}}
-                                                key={index}>
+                                            return <Link href={'/presale'} key={index}>
+                                            <li className={`${styles.li} ${dayjs(i?.presale_time).isAfter(dayjs()) ? styles.be : styles.de}`}
+                                                style={dayjs(i?.presale_time).isAfter(dayjs()) ? {backgroundColor: ' rgb(188, 238, 125)'} : !dayjs(i?.launch_time).isAfter(dayjs()) ? {backgroundColor: 'rgb(209,209,209)'} : {}}>
                                                 <p style={{
                                                     textAlign: 'center',
                                                     width: '40px',
@@ -474,6 +488,7 @@ query NewPair {
                                                     </div>
                                                 </div>
                                             </li>
+                                            </Link>
                                         }
                                     }) : [] : [1, 2, 3,].map((i, index) => {
                                         return <li key={index}>
@@ -508,7 +523,7 @@ query NewPair {
                                     fontSize: '20px',
                                     color: '#2394D4',
                                     cursor: 'pointer',
-                                    marginLeft: '10px'
+                                    marginLeft: '30px'
                                 }}>more></p>
                             </Link>
                         </div>
@@ -534,9 +549,9 @@ query NewPair {
                 </div>
             </div>
             {/*右边*/}
-            <div className={'cardParams'}>
+            <div className={'cardParams'} style={{height:`${refHeight.current?.offsetHeight}px`}}>
                 {
-                    cookBol? session ? <InfiniteScroll
+                    cookBol&&address?  postsDataAdd?.length > 0 ?<InfiniteScroll
                         hasMore={postsDataAdd.length === 8}
                         next={changePage}
                         endMessage={
@@ -559,11 +574,8 @@ query NewPair {
                                 user={userPa}
                             />
                         }) : ''}
-                    </InfiniteScroll> : <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-                        <Spin/>
-                    </div>:<div style={{textAlign:'center'}}>Please sign in</div>
+                    </InfiniteScroll> : <div style={{textAlign:'center'}}>No data yet</div>:<div style={{textAlign:'center'}}>Please sign in</div>
                 }
-
             </div>
         </div>
         <Bott/>

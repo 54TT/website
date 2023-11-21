@@ -8,24 +8,34 @@ import {
 } from "@heroicons/react/solid";
 import styled from "styled-components";
 import {followUser, unfollowUser} from "../../../utils/profileActions";
-// import Sidebar from "../../../components/Sidebar";
-import {useSession} from "next-auth/react";
+import Sidebar from "../../../components/Sidebar";
 import Link from 'next/link';
 import dynamic from 'next/dynamic'
-const InfoBox = dynamic(() => import('../../../components/HelperComponents/InfoBox'));
-const Sidebar = dynamic(() => import('../../../components/Sidebar'));
+import {getUser} from "../../../utils/axios";
+import cook from "js-cookie";
+import {useAccount} from "wagmi";
 
+const InfoBox = dynamic(() => import('../../../components/HelperComponents/InfoBox'));
+// const Sidebar = dynamic(() => import('../../../components/Sidebar'));
 
 
 function FollowersPage() {
     const router = useRouter();
-    const {data: session, status} = useSession()
-    useEffect(() => {
-        if (session && session.user) {
-            setUserPar(session.user)
+    const {address} = useAccount()
+    const getUs = async () => {
+        const {data:{user},status} = await getUser(address)
+        //
+        if(status===200&&user){
+            setUserPar(user)
+        }else {
+            setUserPar('')
         }
-    }, [session, session?.user]);
-
+    }
+    useEffect(() => {
+        if (address && cook.get('name')) {
+            getUs()
+        }
+    }, [address]);
     const [loggedUserFollowStats, setLoggedUserFollowStats] = useState({});
     const [userPar, setUserPar] = useState(null);
     const [errorLoading, setErrorLoading] = useState(false);
@@ -35,7 +45,7 @@ function FollowersPage() {
         setFollowersBol(!followersBol)
     }
     const getParams = async () => {
-        const res = await axios.get(`${baseUrl}/api/profile/followers/${userPar.id}`,);
+        const res = await axios.get(`${baseUrl}/api/profile/followers/${userPar?.id}`,);
         if (res.status === 200) {
             setFollowers(res.data)
         } else {
@@ -44,9 +54,9 @@ function FollowersPage() {
         }
 
     }
-    const getUser = async () => {
+    const getUsers = async () => {
         const res = await axios.get(`${baseUrl}/api/user/userFollowStats`, {
-            params: {userId: userPar.id},
+            params: {userId: userPar?.id},
         });
         if (res?.status === 200) {
             setLoggedUserFollowStats(res.data.userFollowStats)
@@ -55,101 +65,102 @@ function FollowersPage() {
     useEffect(() => {
         if (userPar && userPar.id) {
             getParams()
-            getUser()
+            getUsers()
         }
     }, [userPar, followersBol])
     if (errorLoading) {
         return (<InfoBox
-                Icon={ExclamationCircleIcon}
-                message={"Oops, an error occured"}
-                content={`There was an error while fetching the users this user has followed`}
-            />);
+            Icon={ExclamationCircleIcon}
+            message={"Oops, an error occured"}
+            content={`There was an error while fetching the users this user has followed`}
+        />);
     }
 
     return (<div className="h-screen" style={{backgroundColor: '#BCEE7D', marginRight: '20px', borderRadius: '10px'}}>
-            <main
+        <main
+            style={{
+                height: "calc(100vh - 4.5rem)", overflowY: "auto", display: "flex",
+            }}
+        >
+            <Sidebar user={userPar} topDist={"0"} maxWidth={"250px"}/>
+            <div
                 style={{
-                    height: "calc(100vh - 4.5rem)", overflowY: "auto", display: "flex",
-                }}
-            >
-                <Sidebar user={userPar} topDist={"0"} maxWidth={"250px"}/>
-                <div
-                    style={{
-                        fontFamily: "Inter",
-                        width: '50%',
-                        margin: '20px auto 0',
-                        overflowY: 'auto',
-                        borderRadius: '10px',
-                        padding: '20px',
-                        backgroundColor: '#B2DB7E'
-                    }}>
-                    <div className="flex items-center ml-2">
-                        <Title>Followers ·</Title>
-                        <FollowersNumber className="text-gray-500 ml-2">
-                            {followers?.length||0}
-                        </FollowersNumber>
-                    </div>
-                    {followers.length > 0 ? (<div>
-                            {followers.map((fol) => {
-                                const isLoggedInUserFollowing = loggedUserFollowStats?.following?.length > 0 && loggedUserFollowStats?.following?.filter((loggedInUserFollowing) => loggedInUserFollowing?.user.id === fol?.user?.id).length > 0;
-                                return (<div
-                                        style={{
-                                            marginBottom: '10px',
-                                            border: "1px solid gray",
-                                            width: '30%',
-                                            padding: '10px',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'space-between',
-                                            borderRadius: '10px',
-                                            backgroundColor: '#BCEE7D',
-                                            flexWrap: 'wrap'
-                                        }}
-                                        key={fol?.user?.id}
-                                    >
-                                        <div className="flex items-center  ">
-                                            <img src={fol?.user?.profilePicUrl||'/Ellipse1.png'} alt="userimg"   width={40} height={40}
-                                                 style={{ borderRadius: '50%'}}/>
-                                            <Link href={`/${fol?.user?.username}`}>
-                                                <Name className="ml-2">
-                                                    {fol?.user?.username.length > 10 ? fol.user.username.slice(0, 4) + '...' + fol.user.username.slice(-3) : fol?.user?.username}
-                                                </Name>
-                                            </Link>
-
-                                        </div>
-                                        {fol?.user?.id !== userPar?.id ? (<>
-                                                {isLoggedInUserFollowing ? (<FollowButton
-                                                        onClick={async () => {
-                                                            const data = await unfollowUser(fol?.user?.id, setLoggedUserFollowStats, userPar?.id);
-                                                            if (data && data.status === 200) {
-                                                                change()
-                                                            }
-                                                        }}
-                                                    >
-                                                        <CheckCircleIcon className="h-6"/>
-                                                        {/*<p className="ml-1.5">Following</p>*/}
-                                                    </FollowButton>) : (<FollowButton
-                                                        onClick={async () => {
-                                                            const data = await followUser(fol?.user?.id, setLoggedUserFollowStats, userPar?.id);
-                                                            if (data && data.status === 200) {
-                                                                change()
-                                                            }
-                                                        }}
-                                                    >
-                                                        <UserAddIcon className="h-6"/>
-                                                        {/*<p className="ml-1.5">Follow</p>*/}
-                                                    </FollowButton>)}
-                                            </>) : (<></>)}
-                                    </div>);
-                            })}
-                        </div>) : router?.query?.userId === userPar?.id ? (<p className="text-md text-gray-500">
-                            {`You don't have any followers ☹️. The trick is to follow someone and then
-          wait for them to follow you back.`}
-                        </p>) : (<p className="text-md text-gray-500">{`This user doesn't have any followers.`}</p>)}
+                    fontFamily: "Inter",
+                    width: '50%',
+                    margin: '20px auto 0',
+                    overflowY: 'auto',
+                    borderRadius: '10px',
+                    padding: '20px',
+                    backgroundColor: '#B2DB7E'
+                }}>
+                <div className="flex items-center ml-2">
+                    <Title>Followers ·</Title>
+                    <FollowersNumber className="text-gray-500 ml-2">
+                        {followers?.length || 0}
+                    </FollowersNumber>
                 </div>
-                <div className="w-10"></div>
-            </main>
-        </div>);
+                {followers.length > 0 ? (<div>
+                    {followers.map((fol) => {
+                        const isLoggedInUserFollowing = loggedUserFollowStats?.following?.length > 0 && loggedUserFollowStats?.following?.filter((loggedInUserFollowing) => loggedInUserFollowing?.user.id === fol?.user?.id).length > 0;
+                        return (<div
+                            style={{
+                                marginBottom: '10px',
+                                border: "1px solid gray",
+                                width: '30%',
+                                padding: '10px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                borderRadius: '10px',
+                                backgroundColor: '#BCEE7D',
+                                flexWrap: 'wrap'
+                            }}
+                            key={fol?.user?.id}
+                        >
+                            <div className="flex items-center  ">
+                                <img src={fol?.user?.profilePicUrl || '/Ellipse1.png'} alt="userimg" width={40}
+                                     height={40}
+                                     style={{borderRadius: '50%'}}/>
+                                <Link href={`/${fol?.user?.username}`}>
+                                    <Name className="ml-2">
+                                        {fol?.user?.username.length > 10 ? fol.user.username.slice(0, 4) + '...' + fol.user.username.slice(-3) : fol?.user?.username}
+                                    </Name>
+                                </Link>
+
+                            </div>
+                            {fol?.user?.id !== userPar?.id ? (<>
+                                {isLoggedInUserFollowing ? (<FollowButton
+                                    onClick={async () => {
+                                        const data = await unfollowUser(fol?.user?.id, setLoggedUserFollowStats, userPar?.id);
+                                        if (data && data.status === 200) {
+                                            change()
+                                        }
+                                    }}
+                                >
+                                    <CheckCircleIcon className="h-6"/>
+                                    {/*<p className="ml-1.5">Following</p>*/}
+                                </FollowButton>) : (<FollowButton
+                                    onClick={async () => {
+                                        const data = await followUser(fol?.user?.id, setLoggedUserFollowStats, userPar?.id);
+                                        if (data && data.status === 200) {
+                                            change()
+                                        }
+                                    }}
+                                >
+                                    <UserAddIcon className="h-6"/>
+                                    {/*<p className="ml-1.5">Follow</p>*/}
+                                </FollowButton>)}
+                            </>) : (<></>)}
+                        </div>);
+                    })}
+                </div>) : router?.query?.userId === userPar?.id ? (<p className="text-md text-gray-500">
+                    {`You don't have any followers ☹️. The trick is to follow someone and then
+          wait for them to follow you back.`}
+                </p>) : (<p className="text-md text-gray-500">{`This user doesn't have any followers.`}</p>)}
+            </div>
+            <div className="w-10"></div>
+        </main>
+    </div>);
 }
 
 export default FollowersPage;

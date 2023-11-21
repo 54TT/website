@@ -1,21 +1,20 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
-// import Sidebar from "../components/Sidebar";
+import Sidebar from "../components/Sidebar";
 import baseUrl from '/utils/baseUrl'
 // import Feed from "../components/Feed";
 import styles from "../styles/social.module.css";
 // import RightSideColumn from "../components/RightSideColumn";
-import {getCsrfToken, signIn, useSession} from "next-auth/react";
 import _ from 'lodash'
 import dynamic from 'next/dynamic'
-const Sidebar = dynamic(() => import('../components/Sidebar'));
+import {getUser} from "../utils/axios";
+import cook from "js-cookie";
+import {useAccount} from "wagmi";
+// const Sidebar = dynamic(() => import('../components/Sidebar'));
 const Feed = dynamic(() => import('../components/Feed'));
 const RightSideColumn = dynamic(() => import('../components/RightSideColumn'));
 
-
-
 function Index() {
-    const {data: session, status} = useSession()
     const [postsData, setPostsData] = useState([])
     const [postsDataAdd, setPostsDataAdd] = useState([])
     const [postsDataBol, setPostsDataBol] = useState(false)
@@ -24,6 +23,8 @@ function Index() {
     const [chatsData, setChatsData] = useState([])
     const [changeBol, setChangeBol] = useState(true)
     const [pageNumber, setPageNumber] = useState(1)
+    const [userPar, setUserPar] = useState(null)
+    const {address} = useAccount()
     useEffect(() => {
         if (postsData) {
             const data = postsDataAdd.concat(postsData)
@@ -33,6 +34,22 @@ function Index() {
             setPostsDataAdd(postsDataAdd)
         }
     }, [postsDataBol])
+    const getUs=async ()=>{
+        const {data:{user},status} =   await getUser(address)
+        if(status===200&&user){
+            setUserPar(user)
+        }else {
+            setUserPar('')
+        }
+    }
+    useEffect(() => {
+        if(address&&cook.get('name')){
+            getUs()
+        }
+    }, [address]);
+
+
+
     const change = () => {
         setChangeBol(!changeBol)
     }
@@ -42,7 +59,7 @@ function Index() {
     }
     const getParams = async () => {
         const res = await axios.get(`${baseUrl}/api/posts`, {
-            params: {pageNumber, userId: session?.user.id},
+            params: {pageNumber, userId: userPar?.id},
         });
         if (res.status === 200) {
             setPostsDataBol(!postsDataBol)
@@ -52,33 +69,33 @@ function Index() {
             setPostsData([])
         }
         const chatRes = await axios.get(`${baseUrl}/api/chats`, {
-            params: {userId: session?.user?.id},
+            params: {userId: userPar?.id},
         });
         setChatsData(chatRes && chatRes?.data.length > 0 ? chatRes.data : [])
     }
-    const getUser = async () => {
+    const getUsers = async () => {
         const res = await axios.get(`${baseUrl}/api/user/userFollowStats`, {
-            params: {userId: session?.user.id},
+            params: {userId: userPar?.id},
         });
         if (res?.status === 200) {
             setPostSession(res.data.userFollowStats)
         }
     }
     useEffect(() => {
-        if (session && session.user && session?.user.id) {
+        if (userPar&&userPar.id) {
             getParams()
-            getUser()
+            getUsers()
         }
-    }, [session, changeBol])
+    }, [userPar, changeBol])
 
     return (
         <>
             <div className="min-h-screen"
                  style={{backgroundColor: '#BCEE7D', marginRight: '20px', borderRadius: '10px'}}>
-                <main className="flex">
-                    <Sidebar user={session && session.user ? session.user : ''}/>
+                <main style={{display:'flex'}}>
+                    <Sidebar user={userPar?userPar : ''}/>
                     <Feed
-                        user={session && session.user ? session.user : ''}
+                        user={userPar?userPar: ''}
                         postsData={postsDataAdd}
                         errorLoading={errorLoading}
                         change={change}
@@ -92,7 +109,7 @@ function Index() {
                         chatsData={chatsData}
                         userFollowStats={postSession}
                         change={change}
-                        user={session && session.user ? session.user : {}}
+                        user={userPar?userPar : {}}
                     />
                 </main>
             </div>

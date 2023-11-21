@@ -74,7 +74,7 @@ function FollowerUsers({profile, userFollowStats, user}) {
                         <Link href={`/${fol?.user?.address}`} key={fol?.user?.id}>
                             <div
                                 className="mb-5 cursor-pointer"
-                                style={{width: '30%'}}
+                                style={{width: '100%'}}
                             >
                                 <img src={fol?.user?.profilePicUrl||'/Ellipse1.png'} alt="userprof"   width={50}
                                        height={50}/>

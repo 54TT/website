@@ -39,16 +39,11 @@ function Details() {
             title: 'Date',
             dataIndex: 'name',
             key: 'name',
-            sorter: {
-                compare: (a, b) => a.chinese - b.chinese,
-            },
         },
         {
             title: 'Type',
             dataIndex: 'age',
-            key: 'age',  sorter: {
-                compare: (a, b) => a.chinese - b.chinese,
-            },
+            key: 'age',
         },
         {
             title: 'PriceUSD',
@@ -60,23 +55,17 @@ function Details() {
         {
             title: 'Total',
             key: 'tags',
-            dataIndex: 'tags',  sorter: {
-                compare: (a, b) => a.chinese - b.chinese,
-            },
+            dataIndex: 'tags',
         },
         {
             title: 'Amount PLUR',
             key: 'tags',
-            dataIndex: 'tags',  sorter: {
-                compare: (a, b) => a.chinese - b.chinese,
-            },
+            dataIndex: 'tags',
         },
         {
             title: 'Maker',
             key: 'tags',
-            dataIndex: 'tags',  sorter: {
-                compare: (a, b) => a.chinese - b.chinese,
-            },
+            dataIndex: 'tags',
         },
         {
             title: 'Actions',
@@ -119,23 +108,104 @@ function Details() {
             key: '1',
             name: 'John Brown',
             age: 32,
-            address: 'New York No. 1 Lake Park',
-            tags: ['nice', 'developer'],
+            address: 'New York',
         },
         {
             key: '2',
             name: 'Jim Green',
             age: 42,
-            address: 'London No. 1 Lake Park',
-            tags: ['loser'],
+            address: 'London',
         },
         {
-            key: '3',
+            key: '31',
             name: 'Joe Black',
             age: 32,
-            address: 'Sydney No. 1 Lake Park',
-            tags: ['cool', 'teacher'],
-        }
+            address: 'Sydney',
+        },
+        {
+            key: '32',
+            name: 'Joe Black',
+            age: 32,
+            address: 'Sydney',
+        },
+        {
+            key: '33',
+            name: 'Joe Black',
+            age: 32,
+            address: 'Sydney',
+        },
+        {
+            key: '34',
+            name: 'Joe Black',
+            age: 32,
+            address: 'Sydney',
+        },
+        {
+            key: '35',
+            name: 'Joe Black',
+            age: 32,
+            address: 'Sydney',
+        },
+        {
+            key: '36',
+            name: 'Joe Black',
+            age: 32,
+            address: 'Sydney',
+        },
+        {
+            key: '37',
+            name: 'Joe Black',
+            age: 32,
+            address: 'Sydney',
+        },
+        {
+            key: '38',
+            name: 'Joe Black',
+            age: 32,
+            address: 'Sydney',
+        },
+        {
+            key: '39',
+            name: 'Joe Black',
+            age: 32,
+            address: 'Sydney',
+        },
+        {
+            key: '3a',
+            name: 'Joe Black',
+            age: 32,
+            address: 'Sydney',
+        },
+        {
+            key: '3s',
+            name: 'Joe Black',
+            age: 32,
+            address: 'Sydney',
+        },
+        {
+            key: '3ss',
+            name: 'Joe Black',
+            age: 32,
+            address: 'Sydney',
+        },
+        {
+            key: '3d',
+            name: 'Joe Black',
+            age: 32,
+            address: 'Sydney',
+        },
+        {
+            key: '3da',
+            name: 'Joe Black',
+            age: 32,
+            address: 'Sydney',
+        },
+        {
+            key: '3dada',
+            name: 'Joe Black',
+            age: 32,
+            address: 'Sydney',
+        },
     ];
     const changeColumns=(e)=>{
         if(e==='Holders'){
@@ -221,7 +291,9 @@ function Details() {
                             border:'none',
                         }}>
                             <Segmented className={'detailSegmented'} onChange={changeColumns} options={['Trade History', 'Holders']}/>
-                            <Table className={'hotTable anyTable'} pagination={false} columns={columnsBol?columns:column} dataSource={tableParams}/>
+                            <Table className={'hotTable anyTable'} pagination={false} columns={columnsBol?columns:column} dataSource={tableParams}  scroll={{
+                                y: 200,
+                            }} size="small"/>
                           </Card>
                     </div>
                 </div>

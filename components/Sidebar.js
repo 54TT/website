@@ -14,12 +14,11 @@ function Sidebar({user, topDist, maxWidth}) {
         <div
             className={
                 maxWidth
-                    ? `p-2 max-w-[400px] xl:min-w-[230px]  sticky xl:ml-6`
-                    : `p-2 max-w-[600px] xl:min-w-[300px] sticky xl:ml-6`
+                    ? `p-2 max-w-[400px] xl:min-w-[230px]   xl:ml-6`
+                    : `p-2 max-w-[600px] xl:min-w-[300px]  xl:ml-6`
             }
             style={{
                 alignSelf: "flex-start",
-                top: topDist ? `${topDist}` : "4.5rem",
                 fontFamily: "Inter",
             }}
         >

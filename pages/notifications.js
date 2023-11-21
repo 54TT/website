@@ -2,15 +2,17 @@ import axios from "axios";
 import React, {useEffect, useState} from "react";
 import styled from "styled-components";
 import InfoBox from "../components/HelperComponents/InfoBox";
-// import Sidebar from "../components/Sidebar";
+import Sidebar from "../components/Sidebar";
 import baseUrl from "../utils/baseUrl";
 // import LikeNotification from "../components/Notification/LikeNotification";
 // import CommentNotification from "../components/Notification/CommentNotification";
 // import FollowNotification from "../components/Notification/FollowNotification";
-import {useSession} from "next-auth/react";
 import {notification} from "antd";
 import dynamic from 'next/dynamic'
-const Sidebar = dynamic(() => import('../components/Sidebar'));
+import {getUser} from "/utils/axios";
+import cook from "js-cookie";
+import {useAccount} from "wagmi";
+// const Sidebar = dynamic(() => import('../components/Sidebar'));
 const LikeNotification = dynamic(() => import('../components/Notification/LikeNotification'));
 const CommentNotification = dynamic(() => import('../components/Notification/CommentNotification'));
 const FollowNotification = dynamic(() => import('../components/Notification/FollowNotification'));
@@ -21,22 +23,29 @@ const FollowNotification = dynamic(() => import('../components/Notification/Foll
 function Notifications() {
     const [notifications, setNotifications] = useState([])
     const [userPar, setUserPar] = useState(null)
+    const {address} = useAccount()
     const [followStatsBol, setFollowStatsBol] = useState(false)
-
     const [userFollowStats, setLoggedUserFollowStats] = useState(null)
-    const {data: session, status} = useSession()
     const chang = () => {
         setFollowStatsBol(!followStatsBol)
     }
-    useEffect(() => {
-        if (session && session.user) {
-            setUserPar(session.user)
+    const getUs=async ()=>{
+        const {data:{user},status} =   await getUser(address)
+        if(status===200&&user){
+            setUserPar(user)
+        }else {
+            setUserPar('')
         }
-    }, [session, session?.user, session?.userFollowStats]);
+    }
+    useEffect(() => {
+        if(address&&cook.get('name')){
+            getUs()
+        }
+    }, [address]);
     const notificationRead = async () => {
         try {
             const data = await axios.get(
-                `${baseUrl}/api/notifications`, {params: {userId: userPar.id}}
+                `${baseUrl}/api/notifications`, {params: {userId: userPar?.id}}
             );
             if (data.status === 200 && data.data) {
                 setNotifications(data.data)
@@ -47,9 +56,9 @@ function Notifications() {
             });
         }
     };
-    const getUser = async () => {
+    const getUsers = async () => {
         const res = await axios.get(`${baseUrl}/api/user/userFollowStats`, {
-            params: {userId:userPar.id},
+            params: {userId:userPar?.id},
         });
         if (res?.status === 200) {
             setLoggedUserFollowStats(res.data.userFollowStats)
@@ -58,7 +67,7 @@ function Notifications() {
     useEffect(() => {
         if (userPar && userPar.id) {
             notificationRead();
-            getUser()
+            getUsers()
         }
     }, [userPar, followStatsBol]);
     return (
@@ -69,7 +78,15 @@ function Notifications() {
             >
                 <Sidebar user={userPar}/>
                 <div
-                    className="flex-grow mx-auto max-w-md md:max-w-lg lg:max-w-2xl p-4 shadow-lg rounded-lg overflow-y-auto" style={{backgroundColor:'rgb(178,219,126)'}}>
+                    style={{
+                        fontFamily: "Inter",
+                        width: '50%',
+                        margin: '20px auto 0',
+                        overflowY: 'auto',
+                        borderRadius: '10px',
+                        padding: '20px',
+                        backgroundColor:'#B2DB7E'
+                    }}>
                     <div className="flex items-center ml-2">
                         <Title>Notifications ·</Title>
                         <NotificationCount className="text-gray-500 ml-2">
@@ -107,7 +124,7 @@ function Notifications() {
                         </p>
                     )}
                 </div>
-                <div className="bg-transparent flex-grow max-w-[290px]"></div>
+                <div className="w-10"></div>
             </main>
         </div>
     );

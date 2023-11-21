@@ -25,21 +25,21 @@ import axios from "axios";
 // import FollowerUsers from "../components/ProfileComponents/FollowerUsers";
 import {useRouter} from "next/router";
 // import PostCard from "../components/PostCard";
-import InfoBox from "../components/HelperComponents/InfoBox";
+// import InfoBox from "../components/HelperComponents/InfoBox";
 import {EmojiSadIcon} from "@heroicons/react/outline";
-import {useSession} from "next-auth/react";
 import dynamic from 'next/dynamic'
+import cook from "js-cookie";
+import {useAccount} from "wagmi";
 const PostCard = dynamic(() => import('../components/PostCard'));
 const InfoBox = dynamic(() => import('../components/HelperComponents/InfoBox'));
 const ProfileFields = dynamic(() => import('../components/ProfileComponents/ProfileFields'));
 const FollowingUsers = dynamic(() => import('../components/ProfileComponents/FollowingUsers'));
 const FollowerUsers = dynamic(() => import('../components/ProfileComponents/FollowerUsers'));
-
-
+import {getUser} from "/utils/axios";
 
 
 function ProfilePage() {
-    const {data: session, status} = useSession()
+    const {address} = useAccount()
     const coverImageRef = useRef(null);
     const profilePicRef = useRef(null);
     const [user, setUser] = useState(null)
@@ -57,6 +57,16 @@ function ProfilePage() {
     const [editProfile, setEditProfile] = useState(false);
     const [editInput, setEditInput] = useState('');
     const [editInputBol, setEditInputBol] = useState(false);
+    const getUs=async ()=>{
+        const {data:{user,userFollowStats}} =   await getUser(address)
+        setUser(user)
+        setUserFollowStats(userFollowStats)
+    }
+    useEffect(() => {
+        if(address&&cook.get('name')){
+            getUs()
+        }
+    }, [address]);
     const changeImg = () => {
         setLoadingBol(!loadingBol)
     }
@@ -179,12 +189,6 @@ function ProfilePage() {
             getPosts();
         }
     }, [changeBol]);
-    useEffect(() => {
-        if (session) {
-            setUser(session?.user ? session.user : {})
-            setUserFollowStats(session?.userFollowStats ? session.userFollowStats : {})
-        }
-    }, [session]);
     const change = () => {
         setChangeBol(!changeBol)
     }

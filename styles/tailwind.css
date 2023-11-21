@@ -232,12 +232,13 @@ li.check:before {
     margin-left: 10px;
 }
 
-.hotTable .ant-table .ant-table-content .ant-table-thead .ant-table-cell {
-    background-color: rgb(188, 238, 125);
+
+.hotTable .ant-table .ant-table-container  .ant-table-thead tr th {
+    background-color: rgb(188, 238, 125)!important;
     border: none;
 }
 
-.hotTable .ant-table .ant-table-content .ant-table-thead .ant-table-cell:before {
+.hotTable .ant-table .ant-table-container .ant-table-thead .ant-table-cell:before {
     display: none;
 }
 
@@ -262,10 +263,12 @@ li.check:before {
     background-color: rgb(209, 209, 209) !important;
 }
 
-.hotTable .ant-table .ant-table-content .ant-table-tbody .ant-table-row .ant-table-cell {
-    background-color: rgb(253, 213, 62);
+.hotTable .ant-table .ant-table-container.ant-table-tbody .ant-table-row .ant-table-cell {
+    background-color: rgb(253, 213, 62)!important;
     border-bottom-color: #626262;
 }
+
+
 
 .presale .ant-table .ant-table-content .ant-table-tbody .ant-table-row:hover .ant-table-cell {
     background-color: rgb(254, 239, 146) !important;
@@ -280,11 +283,11 @@ li.check:before {
 }
 
 
-.hotTable .ant-table .ant-table-content .ant-table-tbody .ant-table-row:hover .ant-table-cell {
+.hotTable .ant-table .ant-table-container .ant-table-tbody .ant-table-row:hover .ant-table-cell {
     background-color: rgb(254, 239, 146) !important;
 }
 
-.hotTable .ant-table .ant-table-content .ant-table-tbody .ant-table-row:hover {
+ .ant-table .ant-table-container .ant-table-tbody .ant-table-row:hover {
     cursor: pointer;
 }
 
@@ -292,15 +295,12 @@ li.check:before {
     background-color: rgb(253, 213, 62);
     margin-bottom: 20px;
 }
-
 .detailSegmented .ant-segmented-item-selected {
     background-color: #FEEF92 !important;
 }
-
 .cardParams .ant-card .ant-card-body {
     padding: 0 !important;
 }
-
 .cardParams {
     width: 34%;
     background-color: #BCEE7D;
