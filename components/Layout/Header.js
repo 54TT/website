@@ -19,7 +19,6 @@ const ChatSearch = dynamic(() => import('../Chat/ChatSearch'), {suspense: false}
 const DrawerPage = dynamic(() => import('./Drawer'), {suspense: false})
 import {get, post, del, getUser} from '/utils/axios'
 import {ethers} from 'ethers'
-import requestIp from 'request-ip'
 import { CountContext } from '/components/Layout/Layout';
 const Header = () => {
     const router = useRouter()
@@ -30,7 +29,7 @@ const Header = () => {
     const {connect} = useConnect({
         connector: new InjectedConnector(),
     });
-    const { bolName } = useContext(CountContext);
+    const { bolName ,changeBolLogin,} = useContext(CountContext);
     const [open, setOpen] = useState(false);
     const [openPresale, setOpenPresale] = useState(false);
     const [openLaunch, setOpenLaunch] = useState(false);
@@ -56,7 +55,26 @@ const Header = () => {
             setTokenFormBol(false)
         })
     }, 1500)
-
+    // const purgecss = [
+    //     "@fullhuman/postcss-purgecss",
+    //     {
+    //         content: [
+    //             "./pages/*.js",
+    //             "./pages/**/*.js",
+    //             "./components/*.js",
+    //             "./components/**/*.js",
+    //         ],
+    //         whitelistPatterns: [/^slick-/],
+    //         defaultExtractor: (content) => content.match(/[\w-/:]+(?<!:)/g) || [],
+    //     }
+    // ];
+    // module.exports = {
+    //     plugins: [
+    //         "postcss-import",
+    //         "tailwindcss",
+    //         "autoprefixer",
+    //     ],
+    // };
     useEffect(()=>{
         if(cookie.get('user')){
             getUs()
@@ -66,8 +84,15 @@ const Header = () => {
         setOpen(false);
         form.resetFields()
     };
+    useEffect(()=>{
+        if(cookie.get('name')&&cookie.get('name')!==address){
+            router.push('/')
+            changeBolLogin()
+            getUs()
+        }
+    },[address])
     const showDrawer = () => {
-        if (cookie.get('name') && address) {
+        if (cookie.get('name')) {
             setOpen(true);
             get('/selectPresalePlatform', '').then(res => {
                 if (res && res.status === 200) {
@@ -183,7 +208,6 @@ const Header = () => {
     const [showChatSearch, setShowChatSearch] = useState(false);
     const [chats, setChats] = useState([]);
     const [userPar, setUserPar] = useState(null);
-    console.log(userPar)
     const da = () => {
         setShowChatSearch(!showChatSearch)
     }
@@ -237,12 +261,6 @@ const Header = () => {
                 cookie.set('name', address, {expires: 1})
             }
         }
-        // if (user && status === 200) {
-        //     setUserPar(user)
-        // } else {
-        //     setUserPar('')
-        // }
-        // cookie.set('name', address, {expires: 1})
     }
     useEffect(() => {
         if (bol) {
@@ -333,6 +351,7 @@ const Header = () => {
             setNo(true)
             setUserPar(data)
         } else {
+            router.push('/')
             setNo(false)
             setUserPar('')
         }

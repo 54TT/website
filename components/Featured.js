@@ -49,7 +49,7 @@ export default function Featured() {
                 }}>{record?.baseToken?.symbol?.slice(0, 1)}</p>
                 <div style={{lineHeight:'1'}}>
                     <p>{record?.baseToken?.symbol.length>7?record.baseToken.symbol.slice(0,4):record.baseToken.symbol}/<span style={{color:'#626262'}}>{record?.quoteToken?.symbol.length>7?record.quoteToken.symbol.slice(0,4):record.quoteToken.symbol}</span></p>
-                    <p>{record?.pairAddress?record.pairAddress.length>10?record.pairAddress.slice(0,5)+':'+record.pairAddress.slice(-5):record.pairAddress:''}</p>
+                    {/*<p>{record?.pairAddress?record.pairAddress.length>10?record.pairAddress.slice(0,5)+':'+record.pairAddress.slice(-5):record.pairAddress:''}</p>*/}
                 </div>
             </div>
         }
@@ -96,6 +96,11 @@ export default function Featured() {
         {
             title: 'LIQUIDITY',align: 'center',  render: (text, record) => {
                 return <p> {record?.liquidity?.usd ? autoConvert(record.liquidity.usd) : ''}</p>
+            }
+        },
+        {
+            title: 'DEX', align: 'center', render: (text, record) => {
+                return <img src="/dex-uniswap.png" alt="" width={'30px'} style={{borderRadius:'50%',display:'block',margin:'0 auto'}}/>
             }
         },
     ]

@@ -15,11 +15,14 @@ import {deletePost, likePost, postComment} from "../utils/postActions";
 import CommentComponent from "./CommentComponent";
 import {useRouter} from "next/router";
 import ReusableDialog from "./ReusableDialog";
+
 const {TextArea} = Input
+import dayjs from 'dayjs'
+
 const notify = () => {
     notification.success({
         message: `Post deleted successfully!`, placement: 'topLeft',
-        duration:2
+        duration: 2
     });
 }
 
@@ -50,7 +53,10 @@ function PostCard({post, user, change, liked}) {
     };
 
     const handleLike = async () => {
-        await likePost(post?.id, user?.id, !liked, change)
+      const data =   await likePost(post?.id, user?.id, !liked, change)
+        if(data&&data.status===200){
+            change()
+        }
     };
 
     const handleClickOpen = () => {
@@ -77,13 +83,17 @@ function PostCard({post, user, change, liked}) {
         >
             <div className="p-4">
                 <div className="flex space-x-3 items-center ml-2 relative">
-                    <img height={50} width={50} style={{borderRadius:'50%'}}   src={post && post?.user?.profilePicUrl ? post.user.profilePicUrl : '/Ellipse1.png'} alt="userimg"/>
+                    <img height={50} width={50} style={{borderRadius: '50%'}}
+                         src={post && post?.user?.profilePicUrl ? post.user.profilePicUrl : '/Ellipse1.png'}
+                         alt="userimg"/>
                     <div>
-                        <Link href={`/${post?.user?.address?post.user.address:''}`}>
-                        <div style={{ cursor: 'pointer',
-                            fontSize:'20px'}}>
-                            {post?.user?.username?post?.user?.username.length>10 ? post.user.username.slice(0,8):post.user.username : ''}
-                        </div>
+                        <Link href={`/${post?.user?.address ? post.user.address : ''}`}>
+                            <div style={{
+                                cursor: 'pointer',
+                                fontSize: '20px'
+                            }}>
+                                {post?.user?.username ? post?.user?.username.length > 10 ? post.user.username.slice(0, 8) : post.user.username : ''}
+                            </div>
                         </Link>
                         <p
                             style={{
@@ -91,7 +101,7 @@ function PostCard({post, user, change, liked}) {
                             }}
                             className="text-gray-500 font-light"
                         >
-                            {calculateTime(post?.created_at)}
+                            {post && post.created_at ? dayjs(post?.created_at).format('YYYY-MM-DD HH:mm:ss') : ''}
                         </p>
                     </div>
                     <ReusableDialog
@@ -104,12 +114,14 @@ function PostCard({post, user, change, liked}) {
                         handleDisagree={handleDisagree}
                     />
                     {post?.user_id === user?.id && (
-                        <div style={{ borderRadius: '50%',
-                            cursor: 'pointer'}}
-                            onClick={() => {
-                                handleClickOpen();
-                            }}
-                            className="flex justify-center items-center absolute top-0 right-2"
+                        <div style={{
+                            borderRadius: '50%',
+                            cursor: 'pointer'
+                        }}
+                             onClick={() => {
+                                 handleClickOpen();
+                             }}
+                             className="flex justify-center items-center absolute top-0 right-2"
                         >
                             <MinusCircleIcon
                                 style={{height: "1.2rem", width: "1.2rem"}}
@@ -119,14 +131,14 @@ function PostCard({post, user, change, liked}) {
                     )}
                 </div>
             </div>
-
-            {post && post.picUrl ? <img src={post.picUrl||''} alt={''} style={{width: '100%',}}  /> : ''}
+            <div style={{marginLeft:'20px'}}>{post?.text || ''}</div>
+            {post && post.picUrl ? <img src={post.picUrl || ''} alt={''} style={{width: '100%',}}/> : ''}
             <div style={{marginTop: "0.65rem"}} className="ml-5 mr-5">
                 <div className="flex justify-between w-full">
                     <div className="flex items-center space-x-0.5 cursor-pointer hover:underline">
                         <ThumbUpIcon
-                            className="h-4 text-gray-400
-            "
+                            className="h-4 text-gray-40"
+                            style={{fill: `${liked ? "black" : "gray"}`}}
                         />
                         <p className="text-md text-gray-500 font-light select-none">
                             {post && post?.likes ? post?.likes.length : 0}
@@ -190,9 +202,9 @@ function PostCard({post, user, change, liked}) {
                         <form className="w-full">
                             {/* div which contains the profilepic and the input div */}
                             <div className="flex space-x-2 items-center">
-                                <img width={50} height={50}  style={{borderRadius:'50%'}}
-                                    src={user?.profilePicUrl||'/Ellipse1.png'}
-                                    alt="profile pic"
+                                <img width={50} height={50} style={{borderRadius: '50%'}}
+                                     src={user?.profilePicUrl || '/Ellipse1.png'}
+                                     alt="profile pic"
                                 />
                                 <div
                                     style={{padding: ".85rem"}}

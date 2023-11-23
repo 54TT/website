@@ -9,10 +9,8 @@ import ListItemText from '@mui/material/ListItemText';
 import {useRouter} from "next/router";
 import Link from 'next/link'
 import cookie from "js-cookie";
-import {useAccount} from "wagmi";
 const Drawer = ({getMoney}) => {
     const router = useRouter();
-    const {address, isConnected} = useAccount()
     const drawerWidth = 300;
     const openedMixin = (theme) => ({
         width: drawerWidth,
@@ -68,14 +66,15 @@ const Drawer = ({getMoney}) => {
         setOpenDrawer(false);
     };
     const pushPer=()=>{
-        if(address && cookie.get('name')){
-            router.push(`/${address}`)
+        if(cookie.get('name')){
+            const data = cookie.get('name')
+            router.push(`/${data}`)
         }else {
             getMoney()
         }
     }
     const push = () => {
-        if ( address && cookie.get('name')) {
+        if (cookie.get('name')) {
             router.push('/social')
         }else {
             getMoney()

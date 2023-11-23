@@ -19,7 +19,9 @@ export const submitNewPost = async (
         const res = await Axios.post("/", {userId, text, location, picUrl}); //on the backend, we destructure text, location and picUrl from req.body
         setPosts((prev) => [res.data, ...prev]); //adding the new post at the top of the array so that it shows up first in feed
         setNewPost({postText: "", location: ""});
+        return res
     } catch (error) {
+        return error
         const errorMsg = catchErrors(error);
         setError(errorMsg);
     }
@@ -39,11 +41,13 @@ export const deletePost = async (postId, setPosts, notify,change,userId) => {
 export const likePost = async (postId, userId,  like,change) => {
     try {
         if (like) {
-            await Axios.post(`/like/${postId}`,{userId});
+          const data =   await Axios.post(`/like/${postId}`,{userId});
             change()
+            return data
         } else {
-            await Axios.put(`/unlike/${postId}`,{userId});
+            const data=  await Axios.put(`/unlike/${postId}`,{userId});
             change()
+            return data
         }
     } catch (error) {
     }

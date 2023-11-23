@@ -9,10 +9,9 @@ import _ from 'lodash'
 import dynamic from 'next/dynamic'
 import {getUser} from "../utils/axios";
 import cook from "js-cookie";
-import {useAccount} from "wagmi";
 // const Sidebar = dynamic(() => import('../components/Sidebar'));
-const Feed = dynamic(() => import('../components/Feed'));
-const RightSideColumn = dynamic(() => import('../components/RightSideColumn'));
+const Feed = dynamic(() => import('../components/Feed'),{suspense: false});
+const RightSideColumn = dynamic(() => import('../components/RightSideColumn'),{suspense: false});
 
 function Index() {
     const [postsData, setPostsData] = useState([])
@@ -24,18 +23,29 @@ function Index() {
     const [changeBol, setChangeBol] = useState(true)
     const [pageNumber, setPageNumber] = useState(1)
     const [userPar, setUserPar] = useState(null)
-    const {address} = useAccount()
+   const arrayUnique=(arr, name)=> {
+        var hash = {}
+        return arr.reduce(function(acc, cru, index) {
+            if (!hash[cru[name]]) {
+                hash[cru[name]] = { index: index }
+                acc.push(cru)
+            } else {
+                acc.splice(hash[cru[name]]['index'], 1, cru)
+            }
+            return acc
+        }, [])
+    }
     useEffect(() => {
         if (postsData) {
             const data = postsDataAdd.concat(postsData)
-            const aa = _.uniqBy(data,'id')
+            const aa = arrayUnique(data, 'id')
             setPostsDataAdd(aa)
         } else {
             setPostsDataAdd(postsDataAdd)
         }
     }, [postsDataBol])
     const getUs=async ()=>{
-        const {data:{user},status} =   await getUser(address)
+        const {data:{user},status} =   await getUser(cook.get('name'))
         if(status===200&&user){
             setUserPar(user)
         }else {
@@ -43,10 +53,10 @@ function Index() {
         }
     }
     useEffect(() => {
-        if(address&&cook.get('name')){
+        if(cook.get('name')){
             getUs()
         }
-    }, [address]);
+    }, [cook.get('name')]);
 
 
 

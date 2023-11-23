@@ -4,14 +4,16 @@ import _ from 'lodash'
 import {ApolloClient, InMemoryCache, useQuery} from "@apollo/client";
 import {gql} from "graphql-tag";
 import dayjs from "dayjs";
-import {autoConvertNew, } from '/utils/set'
+import {autoConvertNew,} from '/utils/set'
+import {formatDecimal, sendGetRequestWithSensitiveData, getRelativeTimeDifference, formatDateTime} from './Utils';
+
 const client = new ApolloClient({
     uri: 'http://188.166.191.246:8000/subgraphs/name/dsb/uniswap', cache: new InMemoryCache(),
 });
 export default function NewPair() {
     const [currentPage, setCurrentPage] = useState(1);
     const [rowsPerPage, setRowsPerPage] = useState(10);
-    const GET_DATA=gql`query LiveNewPair {
+    const GET_DATA = gql`query LiveNewPair {
   uniswapFactories {
     id
     pairCount
@@ -74,20 +76,31 @@ export default function NewPair() {
         })
         setTableParams(data)
     }
+    const setMany=(text)=>{
+        let data = null
+        if (text&&Number(text) < 1 && text.toString().includes('0000')) {
+            data = formatDecimal(text.toString(),3)
+        } else if (text&&Number(text)) {
+            data = autoConvertNew(Number(text))
+        }else{
+            data =0
+        }
+        return data
+    }
 
     const columns = [
         {
-            title:'',align: 'right',width: 40,
-            render:(text, record)=>{
-                return   <p style={{
+            title: '', align: 'right', width: 30,
+            render: (text, record) => {
+                return <p style={{
                     borderRadius: '50%',
                     fontSize: '20px',
-                    width: '40px',
-                    lineHeight: '40px',
+                    width: '30px',
+                    lineHeight: '30px',
                     textAlign: "center",
                     backgroundColor: 'black',
                     color: 'white'
-                }}>{record?.token0?.symbol?.slice(0, 1)||''}</p>
+                }}>{record?.token0?.symbol?.slice(0, 1) || ''}</p>
             }
         },
         {
@@ -98,51 +111,47 @@ export default function NewPair() {
                 alignItems: 'start',
                 justifyContent: 'start',
             }}>
-                <div style={{marginLeft: '15px'}}>
-                    <p style={{display: 'flex', alignItems: 'flex-end', lineHeight: '1'}}><span
-                        style={{fontSize: '18px'}}>{record?.token0?.symbol?record?.token0?.symbol.length>7?record?.token0?.symbol.slice(0,5):record?.token0?.symbol+'/':''}</span><span
-                        style={{color: 'rgb(98,98,98)'}}>{record?.token1?.symbol?record?.token1?.symbol.length>7?record?.token1?.symbol.slice(0,5):record?.token1?.symbol :''}</span></p>
-                    <p style={{
-                        lineHeight: '1',
-                        marginTop: '3px',
-                    }}>{record?.id?.slice(0, 4)}...{record?.id?.slice(-4)}</p>
-                </div>
+                <p style={{display: 'flex', alignItems: 'flex-end', lineHeight: '1', marginLeft: '15px'}}><span
+                    style={{fontSize: '18px'}}>{record?.token0?.symbol ? record?.token0?.symbol.length > 7 ? record?.token0?.symbol.slice(0, 5) : record?.token0?.symbol + '/' : ''}</span><span
+                    style={{color: 'rgb(98,98,98)'}}>{record?.token1?.symbol ? record?.token1?.symbol.length > 7 ? record?.token1?.symbol.slice(0, 5) : record?.token1?.symbol : ''}</span>
+                </p>
             </div>,
         },
         {
             title: 'Price($)',
             dataIndex: 'age', align: 'center',
-            render: (text,record) => {
-                const data = record?.liquidityPositionSnapshots[0]?.token0PriceUSD||0
-                return <p>{data?autoConvertNew(Number(data)):0}</p>
+            render: (text, record) => {
+                const data = record?.liquidityPositionSnapshots[0]?.token0PriceUSD || 0
+                return <p>{data ? autoConvertNew(Number(data)) : 0}</p>
             }
         },
         {
             title: 'Created', align: 'center',
             dataIndex: 'tags',
             render: (_, record) => {
-                return <span>{record?.createdAtTimestamp ? dayjs.unix(Number(record.createdAtTimestamp)).format('YYYY-MM-DD HH:mm:ss') : ''}</span>
+                const data =  record?.createdAtTimestamp.toString().length>10?Number(record.createdAtTimestamp.toString().slice(0,10)):record.createdAtTimestamp
+                return <span>{record?.createdAtTimestamp ? getRelativeTimeDifference(formatDateTime(data)): ''}</span>
             }
         },
         {
             title: 'Volume($)', align: 'center',
             dataIndex: 'volumeUSD',
             render: (text) => {
-                return <span>{text?text.length>10?text.toString().slice(0,7):text:0}</span>
+                return <span>{text}</span>
             }
         },
         {
             title: 'ReserveETH', align: 'center',
             dataIndex: 'reserveETH',
             render: (text) => {
-                return <span>{text?text.length>10?text.toString().slice(0,7):text:0}</span>
+                return <span>{setMany(text)}</span>
             }
         },
         {
             title: 'TrackedReserveETH', align: 'center',
             dataIndex: 'trackedReserveETH',
             render: (text) => {
-                return <span>{text?text.length>10?text.toString().slice(0,7):text:0}</span>
+                return <span>{setMany(text)}</span>
             }
         },
         {
@@ -153,12 +162,9 @@ export default function NewPair() {
             }
         },
         {
-            title: 'Actions',
-            key: 'action', align: 'center',
-            width: 50,
-            render: (text, record) => {
-                return <img src={`${record.img ? "/StarHave.png" : "/StarNone.png"}`} alt="" height={20} width={20}
-                            style={{cursor: 'pointer'}} onClick={() => changeImg(record)}/>
+            title: 'DEX', align: 'center', render: (text, record) => {
+                return <img src="/dex-uniswap.png" alt="" width={'30px'}
+                            style={{borderRadius: '50%', display: 'block', margin: '0 auto'}}/>
             }
         },
     ];
@@ -182,7 +188,8 @@ export default function NewPair() {
                     <Pagination defaultCurrent={1} current={currentPage} onChange={chang} total={tableTotal}
                                 pageSize={rowsPerPage}/>
                 </div>
-                <Table rowKey={(i) => i.id + i?.token0?.id + i?.token1?.id + i?.token0?.name} className={'hotTable anyTable'}
+                <Table rowKey={(i) => i.id + i?.token0?.id + i?.token1?.id + i?.token0?.name}
+                       className={'hotTable anyTable'}
                        loading={loading} columns={columns} bordered={false} dataSource={tableParams}
                        pagination={false}/>
             </Card>

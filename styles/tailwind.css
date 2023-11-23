@@ -266,7 +266,7 @@ li.check:before {
 .hotTable .ant-table  .ant-table-container  .ant-table-tbody .ant-table-row .ant-table-cell {
     background-color: rgb(253, 213, 62)!important;
     border-bottom-color: #626262;
-    padding: 5px!important;
+    /*padding: 5px!important;*/
 }
 
 

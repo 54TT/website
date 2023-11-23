@@ -13,14 +13,13 @@ import Link from 'next/link';
 import dynamic from 'next/dynamic'
 import {getUser} from "../../../utils/axios";
 import cook from "js-cookie";
-import {useAccount} from "wagmi";
-const InfoBox = dynamic(() => import('../../../components/HelperComponents/InfoBox'));
+const InfoBox = dynamic(() => import('../../../components/HelperComponents/InfoBox'),{suspense: false});
 // const Sidebar = dynamic(() => import('../../../components/Sidebar'));
 function FollowersPage() {
     const router = useRouter();
-    const {address} = useAccount()
     const getUs = async () => {
-        const {data:{user},status} = await getUser(address)
+        const a =cook.get('name')
+        const {data:{user},status} = await getUser(a)
         if(status===200&&user){
             setUserPar(user)
         }else {
@@ -28,10 +27,10 @@ function FollowersPage() {
         }
     }
     useEffect(() => {
-        if (address && cook.get('name')) {
+        if (cook.get('name')) {
             getUs()
         }
-    }, [address]);
+    }, [cook.get('name')]);
     const [loggedUserFollowStats, setLoggedUserFollowStats] = useState({});
     const [userPar, setUserPar] = useState(null);
     const [errorLoading, setErrorLoading] = useState(false);

@@ -10,11 +10,10 @@ import baseUrl from "../utils/baseUrl";
 import dynamic from 'next/dynamic'
 import {getUser} from "/utils/axios";
 import cook from "js-cookie";
-import {useAccount} from "wagmi";
 // const Sidebar = dynamic(() => import('../components/Sidebar'));
-const LikeNotification = dynamic(() => import('../components/Notification/LikeNotification'));
-const CommentNotification = dynamic(() => import('../components/Notification/CommentNotification'));
-const FollowNotification = dynamic(() => import('../components/Notification/FollowNotification'));
+const LikeNotification = dynamic(() => import('../components/Notification/LikeNotification'),{suspense: false});
+const CommentNotification = dynamic(() => import('../components/Notification/CommentNotification'),{suspense: false});
+const FollowNotification = dynamic(() => import('../components/Notification/FollowNotification'),{suspense: false});
 
 
 
@@ -22,14 +21,14 @@ const FollowNotification = dynamic(() => import('../components/Notification/Foll
 function Notifications() {
     const [notifications, setNotifications] = useState([])
     const [userPar, setUserPar] = useState(null)
-    const {address} = useAccount()
     const [followStatsBol, setFollowStatsBol] = useState(false)
     const [userFollowStats, setLoggedUserFollowStats] = useState(null)
     const chang = () => {
         setFollowStatsBol(!followStatsBol)
     }
     const getUs=async ()=>{
-        const {data:{user},status} =   await getUser(address)
+        const a =cook.get('name')
+        const {data:{user},status} =   await getUser(a)
         if(status===200&&user){
             setUserPar(user)
         }else {
@@ -37,10 +36,10 @@ function Notifications() {
         }
     }
     useEffect(() => {
-        if(address&&cook.get('name')){
+        if(cook.get('name')){
             getUs()
         }
-    }, [address]);
+    }, [cook.get('name')]);
     const notificationRead = async () => {
         try {
             const data = await axios.get(

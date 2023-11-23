@@ -61,30 +61,30 @@ export default function Presale() {
         {
             title: '',
             dataIndex: 'address',align: 'center',
-            width: 100,
+            width: 30,
             render: (_, record) => {
                 return <p style={{
-                    width: '40px',
+                    width: '30px',
                     borderRadius: '50%',
                     backgroundColor: 'black',
                     color: 'white',
                     textAlign: 'center',
-                    lineHeight: '40px'
+                    lineHeight: '30px'
                 }}>{record?.symbol?.slice(0, 1)}</p>
             }
         },
         {
             title: 'Token name',
-            dataIndex: 'name',align: 'center',
+            dataIndex: 'name',align: 'center',width: '25%',
             render: (text) => {
-                return <p style={{fontWeight: 'bold', fontSize: '20px', textAlign: 'center'}}>{text}</p>
+                return <p style={{fontWeight: 'bold', fontSize: '18px', textAlign: 'center'}}>{text}</p>
             }
         },
         {
             title: 'Token symbol',
             dataIndex: 'symbol',align: 'center',
             render: (text) => {
-                return <p style={{fontWeight: 'bold', fontSize: '20px', textAlign: 'center'}}>{text}</p>
+                return <p style={{fontWeight: 'bold', fontSize: '18px', textAlign: 'center'}}>{text}</p>
             }
         },
         {
@@ -112,10 +112,7 @@ export default function Presale() {
             },
             render: (text, record) => {
                 if (text) {
-                    return <div style={{display: 'flex', alignItems: 'center', justifyContent: 'start',margin:'0 auto',width:'50%'}}><img
-                        src="/Time.png" alt="" width={30} height={30}/>
-                        <span>{dao(dayjs(text).isAfter(dayjs()) ? dayjs(text).diff(dayjs(), 'seconds') : '')}</span>
-                    </div>
+                    return <span style={{fontSize:'18px'}}>{dao(dayjs(text).isAfter(dayjs()) ? dayjs(text).diff(dayjs(), 'seconds') : '')}</span>
                 } else {
                     return <p style={{textAlign: 'center'}}>0</p>
                 }
@@ -126,6 +123,11 @@ export default function Presale() {
             dataIndex: 'presale_platform_logo',align: 'center',
             render: (text) => {
                 return <img src={baseUrl+text} alt="" width={'30px'} style={{display:'block',borderRadius:'50%',margin:'0 auto'}}/>
+            }
+        },
+        {
+            title: 'DEX', align: 'center', render: (text, record) => {
+                return <img src="/dex-uniswap.png" alt="" width={'30px'} style={{borderRadius:'50%',display:'block',margin:'0 auto'}}/>
             }
         },
     ];

@@ -68,9 +68,8 @@ function Details() {
             dataIndex: 'tags',
         },
         {
-            title: 'Actions',
-            render:()=>{
-                return <img src="/LOGOTOU.png" width={30}   height={30} alt=""/>
+            title: 'DEX', align: 'center', render: () => {
+                return <img src="/dex-uniswap.png" alt="" width={'30px'} style={{borderRadius:'50%',display:'block',margin:'0 auto'}}/>
             }
         },
     ];

@@ -10,6 +10,7 @@ import {
 import axios from "axios";
 import {followUser, unfollowUser} from "../utils/profileActions";
 import {useRouter} from "next/router";
+import dayjs from "dayjs";
 function RightSideColumn({user, chatsData, userFollowStats,change}) {
     const [bol, setBol] = useState(false)
     const chang = () => {
@@ -152,7 +153,6 @@ function RightSideColumn({user, chatsData, userFollowStats,change}) {
                             alignItems: 'flex-start'}}
                             className="hover:bg-gray-200"
                         >
-                            <span>11111</span>
                             <div className="relative">
                                 <img src={chat?.profilePicUrl ? chat.profilePicUrl : '/Ellipse1.png'}
                                     width={40}  height={40} style={{ borderRadius: '50%'}} alt="userimg"/>
@@ -167,7 +167,7 @@ function RightSideColumn({user, chatsData, userFollowStats,change}) {
                             </div>
                             {chat.created_at && (
                                 <div style={{marginLeft:'auto'}} className="hidden xl:flex">
-                                    {calculateTime(chat.created_at, true)}
+                                    {chat.created_at?dayjs(chat.created_at).format('YYYY-MM-DD HH:mm:ss'):''}
                                 </div>
                             )}
                         </div>

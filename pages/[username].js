@@ -29,17 +29,15 @@ import {useRouter} from "next/router";
 import {EmojiSadIcon} from "@heroicons/react/outline";
 import dynamic from 'next/dynamic'
 import cook from "js-cookie";
-import {useAccount} from "wagmi";
-const PostCard = dynamic(() => import('../components/PostCard'));
-const InfoBox = dynamic(() => import('../components/HelperComponents/InfoBox'));
-const ProfileFields = dynamic(() => import('../components/ProfileComponents/ProfileFields'));
-const FollowingUsers = dynamic(() => import('../components/ProfileComponents/FollowingUsers'));
-const FollowerUsers = dynamic(() => import('../components/ProfileComponents/FollowerUsers'));
+const PostCard = dynamic(() => import('../components/PostCard'),{suspense: false});
+const InfoBox = dynamic(() => import('../components/HelperComponents/InfoBox'),{suspense: false});
+const ProfileFields = dynamic(() => import('../components/ProfileComponents/ProfileFields'),{suspense: false});
+const FollowingUsers = dynamic(() => import('../components/ProfileComponents/FollowingUsers'),{suspense: false});
+const FollowerUsers = dynamic(() => import('../components/ProfileComponents/FollowerUsers'),{suspense: false});
 import {getUser} from "/utils/axios";
 import {CountContext} from "../components/Layout/Layout";
 function ProfilePage() {
     const { changeBolName } = useContext(CountContext);
-    const {address} = useAccount()
     const coverImageRef = useRef(null);
     const profilePicRef = useRef(null);
     const [user, setUser] = useState(null)
@@ -58,15 +56,16 @@ function ProfilePage() {
     const [editInput, setEditInput] = useState('');
     const [editInputBol, setEditInputBol] = useState(false);
     const getUs=async ()=>{
-        const {data:{user,userFollowStats}} =   await getUser(address)
+        const a =cook.get('name')
+        const {data:{user,userFollowStats}} =   await getUser(a)
         setUser(user)
         setUserFollowStats(userFollowStats)
     }
     useEffect(() => {
-        if(address&&cook.get('name')){
+        if(cook.get('name')){
             getUs()
         }
-    }, [address]);
+    }, [cook.get('name')]);
     const changeImg = () => {
         setLoadingBol(!loadingBol)
     }

@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from "react";
+import React, {useEffect, useState, useRef, useContext} from "react";
 import styles from "../styles/home.module.css";
 import axios from 'axios';
 import {formatDecimal, sendGetRequestWithSensitiveData, getRelativeTimeDifference, formatDateTime} from './Utils';
@@ -29,13 +29,13 @@ import _ from "lodash";
 import InfiniteScroll from 'react-infinite-scroll-component';
 // import PostCard from "./PostCard";
 import cook from 'js-cookie'
-import {useAccount} from "wagmi";
 import dynamic from "next/dynamic";
+import {CountContext} from "./Layout/Layout";
 const PostCard = dynamic(() => import('./PostCard'), {suspense: false})
 const Bott = dynamic(() => import('./Bottom'), {suspense: false})
 export default function Home() {
     const router = useRouter();
-    const {address} = useAccount()
+    const { bolLogin,changeBolLogin} = useContext(CountContext);
     const [cookBol, setCook] = useState(false);
     useEffect(() => {
         if (cook.get('name')) {
@@ -46,7 +46,8 @@ export default function Home() {
     }, [cook.get('name')])
     const refHeight = useRef(null)
     const getUs = async () => {
-        const {data: {user}, status} = await getUser(address)
+        const a =cook.get('name')
+        const {data: {user}, status} = await getUser(a)
         if (user && status === 200) {
             setUserPa(user)
         } else {
@@ -54,18 +55,15 @@ export default function Home() {
         }
     }
     useEffect(() => {
-        if (address && cook.get('name')) {
+        if (cook.get('name')) {
             getUs()
         }
-    }, [address]);
+    }, [cook.get('name')]);
     const [userPa, setUserPa] = useState(null);
     const [launch, setLaunch] = useState([]);
     const [launchBol, setLaunchBol] = useState(false);
-
     const [presale, setPresale] = useState([]);
     const [presaleBol, setPresaleBol] = useState(false);
-
-
     const [featuredBol, setFeaturedBol] = useState(true);
     const [featured, setFeatured] = useState([]);
     const getParams = (url, params, name) => {
@@ -232,12 +230,22 @@ export default function Home() {
         setPostsDataCh(!postsDataCh)
     }
     useEffect(() => {
-        if (postsData) {
-            const data = postsData.concat(postsDataAdd)
-            const aa = _.uniqBy(data, 'id')
-            setPostsDataAdd(aa)
+        if (postsData&&postsData.length>0) {
+            if(bolLogin){
+                changeBolLogin()
+                setPostsDataAdd(postsData)
+            }else {
+                const data = postsData.concat(postsDataAdd)
+                const aa = _.uniqBy(data, 'id')
+                setPostsDataAdd(aa)
+            }
         } else {
-            setPostsDataAdd(postsDataAdd)
+            if(bolLogin){
+                changeBolLogin()
+                setPostsDataAdd([])
+            }else {
+                setPostsDataAdd(postsDataAdd)
+            }
         }
     }, [postsDataBol])
     const getPost = async () => {
@@ -257,7 +265,7 @@ export default function Home() {
         change()
     }
     useEffect(() => {
-        if (address && cook.get('name') && userPa?.id) {
+        if( cook.get('name') && userPa?.id) {
             getPost()
         }
     }, [postsDataCh, userPa]);
@@ -280,81 +288,6 @@ export default function Home() {
             <div ref={refHeight} className={styles['left']}>
                 {/*上面*/}
                 <div style={{display: 'flex', justifyContent: 'space-between',}}>
-                    {/*左边*/}
-                    {/*<div style={{width: '46%', position: 'relative', backgroundColor: 'rgb(253, 213, 62)'}}*/}
-                    {/*     className={'cardParams'}>*/}
-                    {/*    <Card style={{*/}
-                    {/*        minWidth: 300,*/}
-                    {/*        backgroundColor: 'rgb(253, 213, 62)',*/}
-                    {/*        width: '100%',*/}
-                    {/*        border: 'none'*/}
-                    {/*    }}>*/}
-                    {/*        <ul className={styles['ul']}>*/}
-                    {/*            <li>*/}
-                    {/*                <p style={{fontSize: '20px', fontWeight: 'bold'}}>Presale</p>*/}
-                    {/*                <Link href={'/presale'}>*/}
-                    {/*                    <p style={{fontSize: '20px', color: '#2394D4', cursor: 'pointer'}}>more></p>*/}
-                    {/*                </Link>*/}
-                    {/*            </li>*/}
-                    {/*            {!loading ? newPair.length > 0 ? newPair.map((i, v) => {*/}
-                    {/*                if (v > 4) {*/}
-                    {/*                    return ''*/}
-                    {/*                } else {*/}
-                    {/*                    return <li key={v}>*/}
-                    {/*                        <span style={{width: '3%'}}>{v + 1}</span>*/}
-                    {/*                        <div style={{*/}
-                    {/*                            display: 'flex', alignItems: 'center', width: '50%', overflow: 'hidden'*/}
-                    {/*                        }}>*/}
-                    {/*                            <p style={{*/}
-                    {/*                                width: '30px',*/}
-                    {/*                                borderRadius: '50%',*/}
-                    {/*                                backgroundColor: 'black',*/}
-                    {/*                                textAlign: 'center',*/}
-                    {/*                                color: 'white',*/}
-                    {/*                                lineHeight: '30px'*/}
-                    {/*                            }}>{i.token0?.symbol?.slice(0, 1)}</p>*/}
-                    {/*                            <div style={{width: '81%'}}>*/}
-                    {/*                                <div style={{*/}
-                    {/*                                    width: '100%', display: 'flex',*/}
-                    {/*                                    alignItems: 'center',*/}
-                    {/*                                    justifyContent: 'center'*/}
-                    {/*                                }}>*/}
-                    {/*                                    <span>{i.token0?.symbol ? i.token0?.symbol.length > 7 ? i.token0?.symbol.slice(0, 5) + '/' : i.token0?.symbol + '/' : ''}</span>*/}
-                    {/*                                    <span*/}
-                    {/*                                        style={{color: 'rgb(98,98,98)'}}>{i.token1?.symbol ? i.token1?.symbol.length > 7 ? i.token1?.symbol.slice(0, 5) : i.token1?.symbol : ''}</span>*/}
-                    {/*                                </div>*/}
-
-                    {/*                            </div>*/}
-                    {/*                        </div>*/}
-                    {/*                        /!*时间*!/*/}
-                    {/*                        <div style={{width: '35%'}}>*/}
-                    {/*                            <p style={{*/}
-                    {/*                                textAlign: 'center',*/}
-                    {/*                                lineHeight: '1.3'*/}
-                    {/*                            }}>${i?.liquidityPositionSnapshots[0]?.token0PriceUSD ? autoConvert(Number(i?.liquidityPositionSnapshots[0]?.token0PriceUSD)) : 0}</p>*/}
-                    {/*                            <div style={{*/}
-                    {/*                                display: 'flex',*/}
-                    {/*                                alignItems: 'center',*/}
-                    {/*                                justifyContent: 'center'*/}
-                    {/*                            }}>*/}
-                    {/*                                <img src={`/Group.png`} style={{width: '25px'}} alt=""/>*/}
-                    {/*                                <span>{i.createdAtTimestamp ? getRelativeTimeDifference(formatDateTime(i?.createdAtTimestamp)) : ''}</span>*/}
-                    {/*                            </div>*/}
-                    {/*                        </div>*/}
-                    {/*                    </li>*/}
-                    {/*                }*/}
-                    {/*            }) : [] : [1, 2, 3, 4, 5].map((i, index) => {*/}
-                    {/*                return <li key={index}>*/}
-                    {/*                    <div style={{display: 'flex', alignItems: 'center', width: '100%'}}>*/}
-                    {/*                        <Skeleton.Avatar active={true} size={'default'} shape={'circle'}*/}
-                    {/*                                         style={{marginRight: '15px'}}/>*/}
-                    {/*                        <Skeleton.Input active={true} size={'default'} block={true}/>*/}
-                    {/*                    </div>*/}
-                    {/*                </li>*/}
-                    {/*            })}*/}
-                    {/*        </ul>*/}
-                    {/*    </Card>*/}
-                    {/*</div>*/}
                     {/*右边*/}
                     <div style={{width: '46%', backgroundColor: 'rgb(253,213,62)', padding: '0'}}
                          className={'cardParams'}>
@@ -387,9 +320,9 @@ export default function Home() {
                                                             fontSize: '16px',
                                                             backgroundColor: 'black',
                                                             color: 'white',
-                                                            marginRight:'5px'
+                                                            marginRight:'10px'
                                                         }}>{i.symbol.slice(0, 1)}</p>
-                                                        <div>
+                                                        <div style={{width:'78%'}}>
                                                             <Tooltip title={i.symbol}>
                                                                 <p style={{
                                                                     textAlign: 'center',
@@ -420,9 +353,8 @@ export default function Home() {
                                                         display: 'flex',
                                                         alignItems: 'center',
                                                         justifyContent:'start',
-                                                        lineHeight: 1,width:'42%'
+                                                        lineHeight: 1,width:'30%'
                                                     }}>
-                                                        <img src={`/Time.png`} alt="" width={25}/>
                                                         <span
                                                             style={{
                                                                 fontSize: '22px'
@@ -483,9 +415,9 @@ export default function Home() {
                                                             fontSize: '16px',
                                                             backgroundColor: 'black',
                                                             color: 'white',
-                                                            marginRight:'5px'
+                                                            marginRight:'10px'
                                                         }}>{i.symbol.slice(0, 1)}</p>
-                                                        <div>
+                                                        <div style={{width:'78%'}}>
                                                             <Tooltip title={i.symbol}>
                                                                 <p style={{
                                                                     textAlign: 'center',
@@ -516,9 +448,8 @@ export default function Home() {
                                                             display: 'flex',
                                                             alignItems: 'center',
                                                             justifyContent:'start',
-                                                            lineHeight: 1,width:'42%'
+                                                            lineHeight: 1,width:'30%'
                                                         }}>
-                                                            <img src={`/Time.png`} alt="" width={25}/>
                                                             <span
                                                                 style={{
                                                                     fontSize: '22px'
@@ -596,7 +527,7 @@ export default function Home() {
                     </Link>
                 </div>
                 {
-                    cookBol && address ? postsDataAdd?.length > 0 ? <InfiniteScroll
+                    cookBol  ? postsDataAdd?.length > 0 ? <InfiniteScroll
                             hasMore={postsDataAdd.length === 8}
                             next={changePage}
                             endMessage={

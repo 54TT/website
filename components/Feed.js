@@ -5,9 +5,9 @@ import {EmojiSadIcon} from "@heroicons/react/outline";
 // import PostCard from "./PostCard";
 import {LoadingOutlined} from '@ant-design/icons'
 import dynamic from 'next/dynamic'
-const InputBox = dynamic(() => import('./InputBox'),{suspense:true})
-const InfoBox = dynamic(() => import('./HelperComponents/InfoBox'),{suspense:true})
-const PostCard = dynamic(() => import('./PostCard'),{suspense:true})
+const InputBox = dynamic(() => import('./InputBox'),{suspense:false})
+const InfoBox = dynamic(() => import('./HelperComponents/InfoBox'),{suspense:false})
+const PostCard = dynamic(() => import('./PostCard'),{suspense:false})
 
 
 import InfiniteScroll from 'react-infinite-scroll-component';

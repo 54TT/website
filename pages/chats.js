@@ -15,17 +15,15 @@ import Link from 'next/link';
 import dynamic from 'next/dynamic'
 import {getUser} from "../utils/axios";
 import cook from "js-cookie";
-import {useAccount} from "wagmi";
-import _ from 'lodash'
 // const Sidebar = dynamic(() => import('../components/Sidebar'));
-const ChatSearch = dynamic(() => import('../components/Chat/ChatSearch'));
-const Chat = dynamic(() => import('../components/Chat/Chat'));
+const ChatSearch = dynamic(() => import('../components/Chat/ChatSearch'),{suspense: false});
+const Chat = dynamic(() => import('../components/Chat/Chat'),{suspense: false});
 function ChatsPage() {
     const [chats, setChats] = useState([]);
     const [userPar, setUserPar] = useState({});
-    const {address} = useAccount()
     const getUs = async () => {
-        const {data: {user}, status} = await getUser(address)
+        const a = cook.get('name')
+        const {data: {user}, status} = await getUser(a)
         if (status === 200 && user) {
             setUserPar(user)
         } else {
@@ -33,10 +31,10 @@ function ChatsPage() {
         }
     }
     useEffect(() => {
-        if (address && cook.get('name')) {
+        if (cook.get('name')) {
             getUs()
         }
-    }, [address]);
+    }, [cook.get('name')]);
     const router = useRouter();
     const socket = useRef();
     const [texts, setTexts] = useState([]);
@@ -87,7 +85,6 @@ function ChatsPage() {
             router.push(`/chats?chat=${chats[0].textsWith}`, undefined, {
                 shallow: true,
             });
-            //shallow is used to push a page on the router stack without refreshing
         }
         if (userPar && userPar.id) {
             postPar();

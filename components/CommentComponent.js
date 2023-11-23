@@ -7,7 +7,7 @@ import { MinusCircleIcon, TrashIcon } from "@heroicons/react/outline";
 import { deleteComment } from "../utils/postActions";
 import {notification,} from "antd";
 import dynamic from "next/dynamic";
-const ReusableDialog = dynamic(() => import('./ReusableDialog'),{suspense:true})
+const ReusableDialog = dynamic(() => import('./ReusableDialog'),{suspense:false})
 import Link from  'next/link'
 const notifyCommentDelete = () =>{
   notification.success({

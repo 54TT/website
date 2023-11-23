@@ -15,8 +15,7 @@ import Sidebar from "../../../components/Sidebar";
 import dynamic from 'next/dynamic'
 import {getUser} from "../../../utils/axios";
 import cook from "js-cookie";
-import {useAccount} from "wagmi";
-const InfoBox = dynamic(() => import('../../../components/HelperComponents/InfoBox'));
+const InfoBox = dynamic(() => import('../../../components/HelperComponents/InfoBox'),{suspense: false});
 // const Sidebar = dynamic(() => import('../../../components/Sidebar'))
 function FollowingPage() {
     const router = useRouter();
@@ -24,9 +23,9 @@ function FollowingPage() {
     const [followingArrayState, setFollowingArrayState] = useState(null);
     const [userFollowStats, setUserFollowStats] = useState(null);
     const [userFollowBol, setUserFollowBol] = useState(false);
-    const {address} = useAccount()
     const getUs=async ()=>{
-        const {data:{user},status} =   await getUser(address)
+        const a =cook.get('name')
+        const {data:{user},status} =   await getUser(a)
         if(user&&status===200){
             setUser(user)
         }else {
@@ -35,10 +34,10 @@ function FollowingPage() {
 
     }
     useEffect(() => {
-        if(address&&cook.get('name')){
+        if(cook.get('name')){
             getUs()
         }
-    }, [address]);
+    }, [cook.get('name')]);
     const chang = () => {
         setUserFollowBol(!userFollowBol)
     }

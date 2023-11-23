@@ -58,36 +58,36 @@ export default function Presale() {
     const columns = [
         {
             title: '',
-            dataIndex: 'address', align: 'center',
-            width: 100,
+            dataIndex: 'address',align: 'center',
+            width: 30,
             render: (_, record) => {
                 return <p style={{
-                    width: '40px',
+                    width: '30px',
                     borderRadius: '50%',
                     backgroundColor: 'black',
                     color: 'white',
                     textAlign: 'center',
-                    lineHeight: '40px'
+                    lineHeight: '30px'
                 }}>{record?.symbol?.slice(0, 1)}</p>
             }
         },
         {
             title: 'Token name',
-            dataIndex: 'name', align: 'center',
+            dataIndex: 'name',align: 'center',width: '25%',
             render: (text) => {
-                return <p style={{fontWeight: 'bold', fontSize: '20px', textAlign: 'center'}}>{text}</p>
+                return <p style={{fontWeight: 'bold', fontSize: '18px', textAlign: 'center'}}>{text}</p>
             }
         },
         {
             title: 'Token symbol',
-            dataIndex: 'symbol', align: 'center',
+            dataIndex: 'symbol',align: 'center',
             render: (text) => {
-                return <p style={{fontWeight: 'bold', fontSize: '20px', textAlign: 'center'}}>{text}</p>
+                return <p style={{fontWeight: 'bold', fontSize: '18px', textAlign: 'center'}}>{text}</p>
             }
         },
         {
             title: 'Social Info',
-            dataIndex: 'address', align: 'center',
+            dataIndex: 'address',align: 'center',
             width: 200,
             render: (text, record) => {
                 return <div
@@ -100,7 +100,7 @@ export default function Presale() {
         },
         {
             title: 'Launch time',
-            dataIndex: 'launch_time', align: 'center',
+            dataIndex: 'launch_time',align: 'center',
             sorter: {
                 compare: (a, b) => {
                     const data = a.launch_time ? dayjs(a.launch_time).format('YYYY-MM-DD HH:mm:ss') : 0
@@ -110,10 +110,7 @@ export default function Presale() {
             },
             render: (text, record) => {
                 if (text) {
-                    return <div style={{display: 'flex', alignItems: 'center', justifyContent: 'start',width:'50%',margin:'0 auto'}}><img
-                        src="/Time.png" alt="" width={30} height={30}/>
-                        <span>{dao(dayjs(text).isAfter(dayjs()) ? dayjs(text).diff(dayjs(), 'seconds') : '')}</span>
-                    </div>
+                    return <span style={{fontSize:'18px'}}>{dao(dayjs(text).isAfter(dayjs()) ? dayjs(text).diff(dayjs(), 'seconds') : '')}</span>
                 } else {
                     return <p style={{textAlign: 'center'}}>0</p>
                 }
@@ -121,9 +118,14 @@ export default function Presale() {
         },
         {
             title: 'Platform',
-            dataIndex: 'launch_platform_logo', align: 'center',
+            dataIndex: 'launch_platform_logo',align: 'center',
             render: (text) => {
-                return <img src={baseUrl + text} alt="" width={'30px'} style={{display:'block',margin: '0 auto',borderRadius:'50%'}}/>
+                return <img src={baseUrl+text} alt="" width={'30px'} style={{display:'block',borderRadius:'50%',margin:'0 auto'}}/>
+            }
+        },
+        {
+            title: 'DEX', align: 'center', render: (text, record) => {
+                return <img src="/dex-uniswap.png" alt="" width={'30px'} style={{borderRadius:'50%',display:'block',margin:'0 auto'}}/>
             }
         },
     ];

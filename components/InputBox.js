@@ -11,7 +11,8 @@ import {ExclamationCircleIcon} from "@heroicons/react/outline";
 // import InfoBox from "./HelperComponents/InfoBox";
 import {LoadingOutlined} from '@ant-design/icons'
 import dynamic from "next/dynamic";
-const InfoBox = dynamic(() => import('./HelperComponents/InfoBox'),{suspense:true})
+import {notification} from "antd";
+const InfoBox = dynamic(() => import('./HelperComponents/InfoBox'),{suspense:false})
 
 function InputBox({user, setPosts, increaseSizeAnim}) {
     const inputRef = useRef(null);
@@ -51,17 +52,30 @@ function InputBox({user, setPosts, increaseSizeAnim}) {
                 return setError("Error uploading image");
             }
         }
-        const data = await submitNewPost(
-            user?.id, newPost.postText,
-            newPost.location,
-            picUrl,
-            setPosts,
-            setNewPost,
-            setError,
-        );
-        setImage(null);
-        setImagePreview(null);
-        setLoading(false);
+        if(newPost.postText){
+            const data =   await submitNewPost(
+                user?.id, newPost.postText,
+                newPost.location,
+                picUrl,
+                setPosts,
+                setNewPost,
+                setError,
+            );
+            if(data&&data.status===200){
+                setImage(null);
+                setImagePreview(null);
+                setLoading(false);
+            }else {
+                setImage(null);
+                setImagePreview(null);
+                setLoading(false);
+            }
+        }else{
+            notification.warning({
+                message: `Please note`, description: 'Text required', placement: 'topLeft',
+                duration: 2
+            })
+        }
     };
 
     const FormBottomHalf = ({}) => {
