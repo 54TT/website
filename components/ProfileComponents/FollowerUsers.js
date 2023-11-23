@@ -4,7 +4,6 @@ import cookie from "js-cookie";
 import styled from "styled-components";
 import {useRouter} from "next/router";
 import baseUrl from '/utils/baseUrl'
-import {notification} from "antd";
 import Link from 'next/link'
 
 function FollowerUsers({profile, userFollowStats, user}) {
@@ -18,18 +17,11 @@ function FollowerUsers({profile, userFollowStats, user}) {
                     headers: {Authorization: cookie.get("token")},
                 }
             );
-
             setFollowers(res.data);
         } catch (error) {
-            hint()
+            setFollowers([])
         }
     };
-    const hint = () => {
-        notification.error({
-            message: `Please note`, description: 'Error reported', placement: 'topLeft',
-            duration: 2
-        });
-    }
     useEffect(() => {
         if (profile && profile.user_id) {
             getFollowers();

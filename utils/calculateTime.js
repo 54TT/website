@@ -1,5 +1,4 @@
 import dayjs from "dayjs";
-
 const calculateTime = (createdAt, isComment) => {
   const today = dayjs(Date.now());
   const postDate = dayjs(createdAt);
@@ -8,7 +7,6 @@ const calculateTime = (createdAt, isComment) => {
   const diffInHours = today.diff(postDate, "hours");
   const diffInMinutes = today.diff(postDate, "minutes");
   const diffInSeconds = today.diff(postDate, "seconds");
-
   if (diffInMinutes < 1) {
     return `${diffInSeconds} s`;
   }
@@ -30,29 +28,20 @@ const calculateTime = (createdAt, isComment) => {
       return `${diffInDays} d`;
     }
     return (
-      <>
-        Yesterday, <dayjs format="HH:mm">{createdAt}</dayjs>
-      </>
+        dayjs(createdAt).format('HH:mm')
     );
   } else if (diffInHours >= 36 && diffInHours < 168) {
     if (isComment) {
       return `${diffInDays} d`;
     }
-    return (
-      <>
-        {/* date/month/year along with time */}
-        <dayjs format="DD MMM YYYY, HH:mm">{createdAt}</dayjs>
-      </>
+    return ( dayjs(createdAt).format('YYYY-MM-DD HH:mm')
     );
   } else if (diffInHours >= 168) {
     if (isComment) {
       return `${diffInWeeks} w`;
     }
     return (
-      <>
-        {/* date/month/year along with time */}
-        <dayjs format="DD MMM YYYY, HH:mm">{createdAt}</dayjs>
-      </>
+        dayjs(createdAt).format('YYYY-MM-DD HH:mm')
     );
   }
 };

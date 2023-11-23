@@ -3,9 +3,11 @@ import styled from "styled-components";
 import calculateTime from "../utils/calculateTime";
 import { useRouter } from "next/router";
 import { MinusCircleIcon, TrashIcon } from "@heroicons/react/outline";
-import ReusableDialog from "./ReusableDialog";
+// import ReusableDialog from "./ReusableDialog";
 import { deleteComment } from "../utils/postActions";
 import {notification,} from "antd";
+import dynamic from "next/dynamic";
+const ReusableDialog = dynamic(() => import('./ReusableDialog'),{suspense:true})
 import Link from  'next/link'
 const notifyCommentDelete = () =>{
   notification.success({

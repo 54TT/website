@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useContext, useEffect, useRef, useState} from "react";
 import styled from "styled-components";
 import baseUrl from '/utils/baseUrl'
 import {
@@ -36,9 +36,9 @@ const ProfileFields = dynamic(() => import('../components/ProfileComponents/Prof
 const FollowingUsers = dynamic(() => import('../components/ProfileComponents/FollowingUsers'));
 const FollowerUsers = dynamic(() => import('../components/ProfileComponents/FollowerUsers'));
 import {getUser} from "/utils/axios";
-
-
+import {CountContext} from "../components/Layout/Layout";
 function ProfilePage() {
+    const { changeBolName } = useContext(CountContext);
     const {address} = useAccount()
     const coverImageRef = useRef(null);
     const profilePicRef = useRef(null);
@@ -111,6 +111,8 @@ function ProfilePage() {
                 setLoadingProfilePic,
                 setError, user?.id
             );
+            changeBolName()
+          await  getPosts()
             setLoadingProfilePic(false);
         }
     }
@@ -132,11 +134,6 @@ function ProfilePage() {
             setLoadingCoverPic(false);
         }
     }
-    const hint = () => {
-        notification.error({
-            message: `Please note`, description: 'Error reported', placement: 'topLeft',
-        });
-    }
     useEffect(() => {
         if (user && user.id) {
             if (profilePic) {
@@ -146,7 +143,6 @@ function ProfilePage() {
                 updateCoverPic();
             }
         }
-
     }, [loadingBol]);
     const getPosts = async () => {
         try {
@@ -159,10 +155,9 @@ function ProfilePage() {
                 setPosts([]);
             }
         } catch (error) {
-            hint()
+            setPosts([]);
         }
     };
-
     const getProfile = async () => {
         try {
             const {username} = params;
@@ -200,6 +195,8 @@ function ProfilePage() {
                         userId: profile.user_id
                 })
                 if(data.status===200&&data?.data?.updateUserNameResult?.changedRows){
+                    changeBolName()
+                   await getPosts()
                     setEditInput(editInput)
                     setEditProfile(false)
                 }
@@ -215,10 +212,13 @@ function ProfilePage() {
     }
     const changeIn = async (e) => {
         setEditInput(e.target.value)
-        const data = await axios.get(baseUrl + '/api/user/isUpdateUserName', {params: {userName: e.target.value}})
-        if (data.status === 200) {
-            setEditInputBol(data?.data?.flag)
+        if(e.target.value){
+            const data = await axios.get(baseUrl + '/api/user/isUpdateUserName', {params: {userName: e.target.value}})
+            if (data.status === 200) {
+                setEditInputBol(data?.data?.flag)
+            }
         }
+
     }
     return (
         <>
@@ -267,6 +267,7 @@ function ProfilePage() {
                         left: '50%',
                         translate: '-50% -50%'
                     }}/>
+                    {/*修改name*/}
                     <div style={{
                         position: 'absolute',
                         left: '50%',
@@ -363,8 +364,8 @@ function ProfilePage() {
                 </div>
                 {/*下面*/}
                 <div
-                    className="bg-gray-100 w-full"
-                    style={{marginTop: ".18rem", minHeight: "calc(100vh - 26rem)", paddingTop: '60px'}}
+                    className=" w-full"
+                    style={{marginTop: "20px", minHeight: "calc(100vh - 26rem)", paddingTop: '60px',backgroundColor:'rgb(138,238,125)'}}
                 >
                     <div
                         className=" md:flex space-x-4 mx-auto max-w-[30rem] sm:max-w-xl md:max-w-3xl lg:max-w-[1000px]">

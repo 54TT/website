@@ -7,7 +7,6 @@ import baseUrl from "../utils/baseUrl";
 // import LikeNotification from "../components/Notification/LikeNotification";
 // import CommentNotification from "../components/Notification/CommentNotification";
 // import FollowNotification from "../components/Notification/FollowNotification";
-import {notification} from "antd";
 import dynamic from 'next/dynamic'
 import {getUser} from "/utils/axios";
 import cook from "js-cookie";
@@ -51,9 +50,7 @@ function Notifications() {
                 setNotifications(data.data)
             }
         } catch (error) {
-            notification.error({
-                message: `Please note`, description: 'Error reported', placement: 'topLeft',
-            });
+            setNotifications([])
         }
     };
     const getUsers = async () => {

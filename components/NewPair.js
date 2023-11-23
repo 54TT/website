@@ -1,56 +1,62 @@
 import React, {useEffect, useState} from "react";
-import {Table, Pagination, notification, Card} from 'antd'
+import {Table, Pagination, Card} from 'antd'
 import _ from 'lodash'
 import {ApolloClient, InMemoryCache, useQuery} from "@apollo/client";
 import {gql} from "graphql-tag";
-import {useRouter} from "next/router";
 import dayjs from "dayjs";
-
+import {autoConvertNew, } from '/utils/set'
 const client = new ApolloClient({
     uri: 'http://188.166.191.246:8000/subgraphs/name/dsb/uniswap', cache: new InMemoryCache(),
 });
 export default function NewPair() {
     const [currentPage, setCurrentPage] = useState(1);
     const [rowsPerPage, setRowsPerPage] = useState(10);
-    const GET_DATA = gql`
-query liveNewPair {
-  pairs(first: ${rowsPerPage}, skip: ${(currentPage - 1) * 10}, orderBy: createdAtTimestamp, orderDirection: desc) {
-    createdAtTimestamp
+    const GET_DATA=gql`query LiveNewPair {
+  uniswapFactories {
     id
-    txCount
-    token0 {
-      name
-      symbol
-      id
-    }
-    token1 {
-      name
-      symbol
-      id
-    }
-  }
-   uniswapFactories {
     pairCount
   }
-}
-`;
+  bundles {
+    id
+    ethPrice
+  }
+  pairs(first: ${rowsPerPage}, skip: ${(currentPage - 1) * 10}, orderBy: createdAtTimestamp, orderDirection: desc) {
+    id
+    reserveETH  
+    liquidityPositionSnapshots(orderDirection: desc, first: 1) {
+      token0PriceUSD
+      token1PriceUSD
+    }
+    volumeUSD
+    trackedReserveETH
+    token0 {
+      id
+      name
+      symbol
+    }
+    token1 {
+      id
+      name
+      symbol
+    }
+    txCount
+    createdAtTimestamp
+    createdAtBlockNumber
+  }
+}`
     const [tableParams, setTableParams] = useState([]);
     const [tableTotal, setTableTotal] = useState(0);
-    const [loadingBool, setLoadingBool] = useState(true);
     const {loading, error, data} = useQuery(GET_DATA, {client});
     useEffect(() => {
         if (!loading) {
             if (data && data?.pairs.length > 0) {
                 setTableParams(data?.pairs)
                 setTableTotal(data?.uniswapFactories[0]?.pairCount)
-                setLoadingBool(false)
             } else {
                 setTableParams([])
-                setLoadingBool(false)
             }
         } else {
             setTableParams([])
-            setLoadingBool(false)
         }
     }, [loading, data]);
     const chang = (e, a) => {
@@ -68,18 +74,12 @@ query liveNewPair {
         })
         setTableParams(data)
     }
+
     const columns = [
         {
-            title: 'Pair',
-            dataIndex: 'name', align: 'center',
-            render: (text, record) => <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                width: '60%',
-                margin: '0 auto'
-            }}>
-                <p style={{
+            title:'',align: 'right',width: 40,
+            render:(text, record)=>{
+                return   <p style={{
                     borderRadius: '50%',
                     fontSize: '20px',
                     width: '40px',
@@ -87,11 +87,21 @@ query liveNewPair {
                     textAlign: "center",
                     backgroundColor: 'black',
                     color: 'white'
-                }}>{record?.token0?.symbol?.slice(0, 1)}</p>
+                }}>{record?.token0?.symbol?.slice(0, 1)||''}</p>
+            }
+        },
+        {
+            title: 'Pair',
+            dataIndex: 'name',
+            render: (text, record) => <div style={{
+                display: 'flex',
+                alignItems: 'start',
+                justifyContent: 'start',
+            }}>
                 <div style={{marginLeft: '15px'}}>
                     <p style={{display: 'flex', alignItems: 'flex-end', lineHeight: '1'}}><span
-                        style={{fontSize: '18px'}}>{record?.token0?.symbol.length>7 ? record.token0.symbol.slice(0,4) + '/' : ''}</span><span
-                        style={{color: 'rgb(98,98,98)'}}>{record?.token1?.symbol.length>7 ? record.token1.symbol.slice(0,4) : ''}</span></p>
+                        style={{fontSize: '18px'}}>{record?.token0?.symbol?record?.token0?.symbol.length>7?record?.token0?.symbol.slice(0,5):record?.token0?.symbol+'/':''}</span><span
+                        style={{color: 'rgb(98,98,98)'}}>{record?.token1?.symbol?record?.token1?.symbol.length>7?record?.token1?.symbol.slice(0,5):record?.token1?.symbol :''}</span></p>
                     <p style={{
                         lineHeight: '1',
                         marginTop: '3px',
@@ -100,41 +110,39 @@ query liveNewPair {
             </div>,
         },
         {
-            title: 'Price',
+            title: 'Price($)',
             dataIndex: 'age', align: 'center',
-            render: () => {
-                return <p>-</p>
-            }
-        },
-        {
-            title: '%24',
-            dataIndex: 'address', align: 'center',
-            render: () => {
-                return <p style={{
-                    lineHeight: 1,
-                    width: '84%',
-                    backgroundColor: 'rgb(188,238,125)',
-                    textAlign: 'center',
-                    padding: '5px 0',
-                    borderRadius: '5px'
-                }}>-</p>
+            render: (text,record) => {
+                const data = record?.liquidityPositionSnapshots[0]?.token0PriceUSD||0
+                return <p>{data?autoConvertNew(Number(data)):0}</p>
             }
         },
         {
             title: 'Created', align: 'center',
             dataIndex: 'tags',
-            // sorter: {
-            //     compare: (a, b) => a.chinese - b.chinese,
-            // },
             render: (_, record) => {
                 return <span>{record?.createdAtTimestamp ? dayjs.unix(Number(record.createdAtTimestamp)).format('YYYY-MM-DD HH:mm:ss') : ''}</span>
             }
         },
         {
-            title: 'Volume', align: 'center',
-            dataIndex: 'tags',
-            render: () => {
-                return <span>-</span>
+            title: 'Volume($)', align: 'center',
+            dataIndex: 'volumeUSD',
+            render: (text) => {
+                return <span>{text?text.length>10?text.toString().slice(0,7):text:0}</span>
+            }
+        },
+        {
+            title: 'ReserveETH', align: 'center',
+            dataIndex: 'reserveETH',
+            render: (text) => {
+                return <span>{text?text.length>10?text.toString().slice(0,7):text:0}</span>
+            }
+        },
+        {
+            title: 'TrackedReserveETH', align: 'center',
+            dataIndex: 'trackedReserveETH',
+            render: (text) => {
+                return <span>{text?text.length>10?text.toString().slice(0,7):text:0}</span>
             }
         },
         {
@@ -142,20 +150,6 @@ query liveNewPair {
             dataIndex: 'txCount',
             render: (text) => {
                 return <span>{text ? text : ''}</span>
-            }
-        },
-        {
-            title: 'Liquidity',
-            dataIndex: 'liquidity', align: 'center',
-            render: () => {
-                return <span>-</span>
-            }
-        },
-        {
-            title: 'T.M.Cap', align: 'center',
-            key: 'action',
-            render: () => {
-                return <span>-</span>
             }
         },
         {
@@ -189,7 +183,7 @@ query liveNewPair {
                                 pageSize={rowsPerPage}/>
                 </div>
                 <Table rowKey={(i) => i.id + i?.token0?.id + i?.token1?.id + i?.token0?.name} className={'hotTable anyTable'}
-                       loading={loadingBool} columns={columns} bordered={false} dataSource={tableParams}
+                       loading={loading} columns={columns} bordered={false} dataSource={tableParams}
                        pagination={false}/>
             </Card>
             <p style={{

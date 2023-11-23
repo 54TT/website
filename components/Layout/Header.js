@@ -1,43 +1,36 @@
-import React, {useState, useEffect, useRef, lazy, Suspense, startTransition} from "react";
+import React, {useState, useEffect, useRef, Suspense,useContext , startTransition} from "react";
 import {getCsrfToken, signIn, useSession, signOut} from "next-auth/react"
-import {SiweMessage} from "siwe"
 import baseUrl from '/utils/baseUrl'
 import {useAccount, useConnect, useNetwork, useSignMessage, useDisconnect,} from "wagmi"
-// import { InjectedConnector } from '@web3-react/injected-connector'
 import {InjectedConnector} from 'wagmi/connectors/injected'
 import axios from 'axios';
 import {Dropdown, Drawer, Form, Select, Input, DatePicker, Button, notification,} from 'antd'
 import {CaretDownFilled, CaretRightFilled, LoadingOutlined} from '@ant-design/icons';
-import getConfig from "next/config";
 import styles from './css/header.module.css'
 // import DrawerPage from './Drawer'
 const {Option} = Select;
+import dynamic from "next/dynamic";
 import Link from 'next/link'
 import _ from 'lodash'
 import cookie from 'js-cookie'
 import {useRouter} from 'next/router'
-import ChatSearch from "../Chat/ChatSearch";
-
-const DrawerPage = lazy(() => import('./Drawer'))
+// import ChatSearch from "../Chat/ChatSearch";
+const ChatSearch = dynamic(() => import('../Chat/ChatSearch'), {suspense: false})
+const DrawerPage = dynamic(() => import('./Drawer'), {suspense: false})
 import {get, post, del, getUser} from '/utils/axios'
 import {ethers} from 'ethers'
-
+import requestIp from 'request-ip'
+import { CountContext } from '/components/Layout/Layout';
 const Header = () => {
     const router = useRouter()
     const [form] = Form.useForm();
-    const {chain} = useNetwork()
     const inputRef = useRef(null);
     const {address, isConnected} = useAccount()
-    const {data: session, status} = useSession()
-    const {signMessageAsync} = useSignMessage()
     const {disconnect} = useDisconnect()
     const {connect} = useConnect({
         connector: new InjectedConnector(),
     });
-
-
-
-
+    const { bolName } = useContext(CountContext);
     const [open, setOpen] = useState(false);
     const [openPresale, setOpenPresale] = useState(false);
     const [openLaunch, setOpenLaunch] = useState(false);
@@ -63,6 +56,12 @@ const Header = () => {
             setTokenFormBol(false)
         })
     }, 1500)
+
+    useEffect(()=>{
+        if(cookie.get('user')){
+            getUs()
+        }
+    },[bolName])
     const onClose = () => {
         setOpen(false);
         form.resetFields()
@@ -89,10 +88,7 @@ const Header = () => {
                 setLaunchPlatform([])
             })
         } else {
-            notification.warning({
-                message: `warning`, description: 'Please login in first!', placement: 'topLeft',
-                duration: 2
-            });
+            setLaunchPlatform([])
         }
     };
     const onFinishFailed = (a) => {
@@ -160,10 +156,6 @@ const Header = () => {
                         setTokenForm({})
                         setTime({})
                         setOpen(false);
-                        notification.success({
-                            message: `Success`, description: 'Added successfully', placement: 'topLeft',
-                            duration: 2
-                        });
                     } else {
                         notification.warning({
                             message: `warning`, description: 'add failed,Please try again', placement: 'topLeft',
@@ -191,12 +183,13 @@ const Header = () => {
     const [showChatSearch, setShowChatSearch] = useState(false);
     const [chats, setChats] = useState([]);
     const [userPar, setUserPar] = useState(null);
+    console.log(userPar)
     const da = () => {
         setShowChatSearch(!showChatSearch)
     }
     const getParams = async () => {
         const res = await axios.get(`${baseUrl}/api/chats`, {
-            params: {userId: userPar.id}
+            params: {userId: userPar?.id}
         });
         if (res.status === 200) {
             setChats(res.data)
@@ -220,19 +213,36 @@ const Header = () => {
         }
     };
     const [bol, setBol] = useState(false)
-    const [bolLogin, setBolLogin] = useState(false)
     const setB = () => {
         setBol(!bol)
     }
+
     const getUs = async () => {
-        const {data: {user}, status} = await getUser(address)
-        if (user && status === 200) {
-            setUserPar(user)
+        const data = await axios.get(baseUrl + "/api/user", {
+            params: {
+                address
+            }
+        })
+        if (data?.data && data?.data?.user) {
+            setUserPar(data?.data?.user)
+            cookie.set('name', address, {expires: 1})
+            cookie.set('user', JSON.stringify(data?.data?.user), {expires: 1})
         } else {
-            setUserPar('')
+            const ip = await axios.post(baseUrl + "/api/user", {
+                address, ipV4Address: '192.168.8.44', ipV6Address: 'fe80::c866:13ad:29e5:a2f7%4'
+            })
+            if (ip?.data && ip?.data?.user) {
+                setUserPar(ip?.data?.user)
+                cookie.set('user', JSON.stringify(ip?.data?.user), {expires: 1})
+                cookie.set('name', address, {expires: 1})
+            }
         }
-        cookie.set('name', address, {expires: 1})
-        setBolLogin(false)
+        // if (user && status === 200) {
+        //     setUserPar(user)
+        // } else {
+        //     setUserPar('')
+        // }
+        // cookie.set('name', address, {expires: 1})
     }
     useEffect(() => {
         if (bol) {
@@ -241,16 +251,32 @@ const Header = () => {
     }, [bol])
     const handleLogin = async () => {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
+        let account = await provider.send("eth_requestAccounts", []);
         var signer = await provider.getSigner();
-        const message = `请签名证明你是钱包账户的拥有者\n\nNonce:\n${Date.now()}\ndomain:\n ${window.location.host}`
-        const signature = await signer.signMessage(message)
-        const recoveredAddress = ethers.utils.verifyMessage(message, signature);
-        console.log(address===recoveredAddress)
-        console.log("signer", signer);
-        console.log("signature", signature);
-        const accounts = await window.ethereum.request({method: 'eth_requestAccounts'})
-        // console.log(accounts)
-        // console.log(provider)
+        // 连接的网络和链信息。
+        var chain = await provider.getNetwork()
+        // 判断是否有账号
+        if (account.length > 0) {
+            // 判断是否是eth
+            if (chain && chain.name !== 'unknow' && chain.chainId) {
+                try {
+                    const message = `请签名证明你是钱包账户的拥有者\nstatement:${window.location.host}\nNonce:\n${await getCsrfToken()}\ndomain:\n ${window.location.host}\naddress: ${address}\nchainId:${chain.chainId}\nuri: ${window.location.origin}\n`
+                    // 签名
+                    const signature = await signer.signMessage(message)
+                    // 验证签名
+                    const recoveredAddress = ethers.utils.verifyMessage(message, signature);
+                    if (recoveredAddress) {
+                        setB()
+                    }
+                } catch (err) {
+                    return null
+                }
+            } else {
+
+            }
+        } else {
+
+        }
         // const cook = cookie.get('name')
         // if (!cook) {
         //     setBolLogin(true)
@@ -280,24 +306,11 @@ const Header = () => {
         //     }
         // }
     }
-    useEffect(() => {
-        // if(!session&&!address&&!cookie.get('name')){
-        //     router.push('/')
-        // }
-    }, [session]);
-    // useEffect(() => {
-    //     if (!cookie.get('name')) {
-    //         handleLogin()
-    //     }
-    // }, [address, isConnected])
     const set = () => {
         cookie.remove('name');
-        const a = cookie.get('name') || ''
-        if (!a) {
-            // router.push('/')
-            disconnect()
-            signOut()
-        }
+        cookie.remove('user');
+        router.push('/')
+        disconnect()
     }
     const getMoney = () => {
         if (typeof window.ethereum === 'undefined') {
@@ -315,13 +328,15 @@ const Header = () => {
     }
     const [no, setNo] = useState(false)
     useEffect(() => {
-        if (cookie.get('name')) {
+        if (cookie.get('user')) {
+            const data = JSON.parse(cookie.get('user'))
             setNo(true)
+            setUserPar(data)
         } else {
             setNo(false)
-            router.push('/')
+            setUserPar('')
         }
-    }, [cookie.get('name')])
+    }, [cookie.get('name'), cookie.get('user')])
     const items = [
         {
             key: '1',
@@ -342,20 +357,12 @@ const Header = () => {
             ),
         },
     ];
-    const [draw, setDraw] = useState(false)
-    useEffect(() => {
-        if (!draw) {
-            startTransition(() => {
-                setDraw(true);
-            });
-        }
-    }, [draw])
     return (
         <div
             className={
                 "top-0 w-full  z-30 transition-all headerClass"}>
             {
-                draw ? <Suspense fallback={<div>Loading...</div>}>
+                <Suspense fallback={<div>Loading...</div>}>
                     <div className={styles['aaa']}>
                         <div></div>
                         <div style={{position: 'relative', width: '30%'}}>
@@ -363,7 +370,7 @@ const Header = () => {
                                 symbol,name,contract or token</p>
                             {showChatSearch && (
                                 <ChatSearch
-                                    setShowChatSearch={da}
+                                    setShowChatSearch={setShowChatSearch}
                                     chats={chats}
                                     setChats={setChats}
                                     user={userPar}
@@ -382,7 +389,7 @@ const Header = () => {
                                             marginRight: '10px',
                                             borderRadius: '50%', cursor: 'pointer'
                                         }} width={35}
-                                             src={userPar?.profilePicUrl ? userPar.profilePicUrl : '/Ellipse1.png'}
+                                             src={userPar&&userPar.profilePicUrl ? userPar.profilePicUrl : '/Ellipse1.png'}
                                              alt=""/>
                                     </Link>
                                     <Dropdown
@@ -396,16 +403,16 @@ const Header = () => {
                                                 style={{
                                                     color: 'black',
                                                     backgroundColor: 'rgb(254,239,146)'
-                                                }}>{address ? address.slice(0, 5) + '...' : ''}</Button>
+                                                }}>{userPar&&userPar.username ?userPar.username.length>5? userPar.username.slice(0, 5) + '...' :userPar.username: ''}</Button>
                                     </Dropdown>
                                 </div> : <Button type={'primary'} className={styles['but']}
                                                  style={{backgroundColor: 'rgb(254,239,146)'}}
-                                                 onClick={getMoney}>{bolLogin ? <LoadingOutlined/> : 'Login'}</Button>
+                                                 onClick={getMoney}>Login</Button>
                             }
                         </div>
                     </div>
-                    <DrawerPage/>
-                </Suspense> : ''
+                    <DrawerPage getMoney={getMoney}/>
+                </Suspense>
             }
             <Drawer title="Basic Drawer" destroyOnClose={true} placement="right" onClose={onClose} open={open}>
                 <Form
@@ -467,7 +474,7 @@ const Header = () => {
                                     presalePlatform.length > 0 ? presalePlatform.map((i, index) => {
                                         return <Option value={i.id} key={index}>
                                             <div style={{display: 'flex', alignItems: 'center'}}>
-                                                <img src={`${i.logo ? baseUrl + '/' + i.logo : '/Ellipse1.png'}`} alt=""
+                                                <img src={`${i.logo ? baseUrl + i.logo : '/Ellipse1.png'}`} alt=""
                                                      width={20} height={20}/>
                                                 <span>{i.name}</span>
                                             </div>
@@ -526,7 +533,7 @@ const Header = () => {
                                     launchPlatform.length > 0 ? launchPlatform.map((i, index) => {
                                         return <Option value={i.id} key={index}>
                                             <div style={{display: 'flex', alignItems: 'center'}}>
-                                                <img src={`${i.logo ? baseUrl + '/' + i.logo : '/Ellipse1.png'}`} alt=""
+                                                <img src={`${i.logo ? baseUrl + i.logo : '/Ellipse1.png'}`} alt=""
                                                      width={20} height={20}/>
                                                 <span>{i.name}</span>
                                             </div>

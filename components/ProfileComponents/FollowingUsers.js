@@ -4,7 +4,7 @@ import cookie from "js-cookie";
 import baseUrl from '/utils/baseUrl'
 import styled from "styled-components";
 import {useRouter} from "next/router";
-import {Facebook} from "react-content-loader";
+import {LoadingOutlined} from '@ant-design/icons'
 import Link from 'next/link'
 
 function FollowingUsers({profile, userFollowStats, user}) {
@@ -65,7 +65,7 @@ function FollowingUsers({profile, userFollowStats, user}) {
                 )}
             </div>
             {loading ? (
-                <Facebook/>
+                <LoadingOutlined />
             ) : (
                 <>
                     {following && following.length > 0 ? (

@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from "react";
-import styled from "styled-components";
 import Link from "next/link";
 import baseUrl from '/utils/baseUrl'
 import calculateTime from "../utils/calculateTime";
@@ -8,11 +7,9 @@ import {
     ExclamationCircleIcon,
     UserAddIcon,
 } from "@heroicons/react/solid";
-import {Facebook} from "react-content-loader";
 import axios from "axios";
 import {followUser, unfollowUser} from "../utils/profileActions";
 import {useRouter} from "next/router";
-import {notification,} from "antd";
 function RightSideColumn({user, chatsData, userFollowStats,change}) {
     const [bol, setBol] = useState(false)
     const chang = () => {
@@ -41,19 +38,18 @@ function RightSideColumn({user, chatsData, userFollowStats,change}) {
                 setUsersToFollow([]);
             }
         } catch (error) {
-            notification.error({
-                message: `Please note`, description: 'Error reported', placement: 'topLeft',
-                duration:2
-            });
+            setUsersToFollow([]);
         }
     };
 
     return (
-        <ContainerDiv
+        <div
             className="hidden  p-2 lg:block max-w-[300px] lg:min-w-[290px] xl:min-w-[300px] sticky xl:mr-8"
             style={{alignSelf: "flex-start", top: "5.45rem"}}
         >
-            <Title>Who to follow</Title>
+            <p style={{ fontSize: '18px',
+                marginLeft: '6px',
+                marginTop: '24px'}}>Who to follow</p>
             {usersToFollow && usersToFollow.length > 0 && Array.isArray(usersToFollow) ? (
                 usersToFollow.map((fol) => {
                     const isLoggedInUserFollowing =
@@ -88,7 +84,12 @@ function RightSideColumn({user, chatsData, userFollowStats,change}) {
                                         <>
                                             {/*关注*/}
                                             {isLoggedInUserFollowing ? (
-                                                <FollowButton
+                                                <div style={{padding: '7px',
+                                                    display: 'flex',
+                                                    cursor: 'pointer',
+                                                    borderRadius: '10px',
+                                                    backgroundColor: 'rgba(139, 92, 246)',
+                                                    color: 'white'}}
                                                     onClick={async () => {
                                                         const data = await unfollowUser(
                                                             fol.id,
@@ -102,9 +103,14 @@ function RightSideColumn({user, chatsData, userFollowStats,change}) {
                                                     }}
                                                 >
                                                     <CheckCircleIcon className="h-6"/>
-                                                </FollowButton>
+                                                </div>
                                             ) : (
-                                                <FollowButton
+                                                <div  style={{padding: '7px',
+                                                    display: 'flex',
+                                                    cursor: 'pointer',
+                                                    borderRadius: '10px',
+                                                    backgroundColor: 'rgba(139, 92, 246)',
+                                                    color: 'white'}}
                                                     onClick={async () => {
                                                         const data = await followUser(
                                                             fol.id,
@@ -118,7 +124,7 @@ function RightSideColumn({user, chatsData, userFollowStats,change}) {
                                                     }}
                                                 >
                                                     <UserAddIcon className="h-6 w-6"/>
-                                                </FollowButton>
+                                                </div>
                                             )}
                                         </>
                                     ) : (
@@ -129,24 +135,30 @@ function RightSideColumn({user, chatsData, userFollowStats,change}) {
                         </div>
                     );
                 })
-            ) : (
-                <Facebook/>
-            )}
-            <Title>Recent chats</Title>
-            <ChatContainerParent>
+            ) : ''}
+            <p style={{ fontSize: '18px',
+                marginLeft: '6px',
+                marginTop: '24px'}}>Recent chats</p>
+            <div style={{borderTop:'1px solid lightgray'}}>
                 {chatsData && Array.isArray(chatsData) ? (
                     chatsData.map((chat) => (
                         <Link href={`/chats?chat=${chat.textsWith}`} key={chat?.textsWith}>
-                        <ChatDiv
+                        <div style={{ overflowY: 'auto',
+                            display: 'flex',
+                            cursor: 'pointer',
+                            borderRadius: '5px',
+                            borderBottom: '0.5px solid lightgray',
+                            padding: '10px',
+                            alignItems: 'flex-start'}}
                             className="hover:bg-gray-200"
-
                         >
+                            <span>11111</span>
                             <div className="relative">
                                 <img src={chat?.profilePicUrl ? chat.profilePicUrl : '/Ellipse1.png'}
                                     width={40}  height={40} style={{ borderRadius: '50%'}} alt="userimg"/>
                             </div>
                             <div className="ml-1">
-                                <Name>{chat.name}</Name>
+                                <p style={{fontSize:'18px',userSelect:'none'}}>{chat.name}</p>
                                 <p style={{color: 'grey',}}>
                                     {chat.texts && chat.texts.length > 30
                                         ? `${chat.texts.substring(0, 30)}...`
@@ -154,11 +166,11 @@ function RightSideColumn({user, chatsData, userFollowStats,change}) {
                                 </p>
                             </div>
                             {chat.created_at && (
-                                <Date className="hidden xl:flex">
+                                <div style={{marginLeft:'auto'}} className="hidden xl:flex">
                                     {calculateTime(chat.created_at, true)}
-                                </Date>
+                                </div>
                             )}
-                        </ChatDiv>
+                        </div>
                         </Link>
                     ))
                 ) : (
@@ -170,77 +182,9 @@ function RightSideColumn({user, chatsData, userFollowStats,change}) {
                         with someone!
                     </p>
                 )}
-            </ChatContainerParent>
-        </ContainerDiv>
+            </div>
+        </div>
     );
 }
 
 export default RightSideColumn;
-
-const Title = styled.p`
-  font-size: 1.1rem;
-  font-family: inherit;
-  font-weight: 500;
-  margin-left: 0.4rem;
-  margin-top: 1.5rem;
-`;
-
-const ContainerDiv = styled.div`
-  font-family: "Inter";
-  height: fit-content;
-`;
-
-const ChatContainerParent = styled.div`
-  border-top: 0.5px solid lightgray;
-`;
-
-const ChatDiv = styled.div`
-  overflow-y: auto;
-  display: flex;
-  cursor: pointer;
-  border-radius: 0.2rem;
-  border-bottom: 0.5px solid lightgray;
-  font-family: Inter;
-  padding: 0.9rem 0.8rem;
-  align-items: flex-start;
-  column-gap: 0.6rem;
-
-  :hover {
-  }
-`;
-
-const Name = styled.p`
-  user-select: none;
-  font-size: 1.05rem;
-  font-family: Inter;
-`;
-
-const TextPreview = styled.p`
-  font-family: Inter;
-  margin-top: -0.95rem;
-  color: grey;
-  font-size: 0.9rem;
-`;
-
-const Date = styled.p`
-  font-family: Inter;
-  margin-left: auto;
-`;
-
-const FollowButton = styled.div`
-  height: fit-content;
-  width: fit-content;
-  padding: 0.38rem;
-  display: flex;
-  cursor: pointer;
-  border-radius: 0.5rem;
-  background-color: rgba(139, 92, 246);
-  color: white;
-  font-size: 1.1rem;
-  font-family: "Inter";
-  font-weight: 400;
-
-  :hover {
-    background-color: rgba(109, 40, 217);
-  }
-`;

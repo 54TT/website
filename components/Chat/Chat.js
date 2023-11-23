@@ -27,7 +27,6 @@ const TextDiv = styled.div`
   margin-right: ${(props) => props.direction === "right" && "auto"};
   width: fit-content;
   max-width: 18rem;
-
   color: "black";
   background-color: rgba(243, 244, 246);
 `;

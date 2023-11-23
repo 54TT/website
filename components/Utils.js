@@ -60,7 +60,6 @@ const formatDecimal = (number, count) => {
 async function sendGetRequestWithSensitiveData(url, sensitiveData, params = {}, options = {}) {
   // 创建 Axios 实例
   const instance = axios.create();
-
   // 请求拦截器：在发送请求之前隐藏敏感信息
   instance.interceptors.request.use(config => {
     // 删除或替换敏感信息

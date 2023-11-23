@@ -1,11 +1,11 @@
 import React, {useEffect, useRef, useState} from "react";
 import axios from 'axios';
-import {formatDecimal, sendGetRequestWithSensitiveData, getRelativeTimeDifference, formatDateTime} from './Utils';
+import {formatDecimal, getRelativeTimeDifference, formatDateTime} from './Utils';
 import dayjs from 'dayjs';
 import {notification, Pagination, Table, Card, Segmented} from "antd";
-import _ from "lodash";
 import {get} from "../utils/axios";
 import {useRouter} from 'next/router'
+import {autoConvert} from '/utils/set'
 
 export default function Featured() {
     const router = useRouter()
@@ -14,33 +14,17 @@ export default function Featured() {
     const [featuredCurrent, setFeaturedCurrent] = useState(1);
     const [featuredAll, setFeaturedAll] = useState(null);
     const [featuredBol, setFeaturedBol] = useState(true);
-    const [refreshedTime, setRefreshedTime] = useState(dayjs());
     const [time, setTime] = useState('h24')
     const [tableParams, setTableParams] = useState([]);
     useEffect(() => {
         ref.current = setInterval(() => getParams('/queryFeatured', {
             pageIndex: featuredCurrent - 1,
             pageSize: featuredPageSize
-        }), 8000)
+        }), 5000)
         return () => {
             clearInterval(ref.current)
         }
     }, [tableParams]);
-    const autoConvert = (number) => {
-        if (Math.abs(number) >= 1000000) {
-            return `${(number / 1000000).toFixed(2).replace(/\.?0*$/, '')}M`;
-        } else if (Math.abs(number) >= 1000) {
-            return `${(number / 1000).toFixed(2).replace(/\.?0*$/, '')}K`;
-        } else {
-            return number.toFixed(2).replace(/\.?0*$/, '');
-        }
-    };
-    const hint = () => {
-        notification.error({
-            message: `Please note`, description: 'Error reported', placement: 'topLeft',
-            duration:2
-        });
-    }
     const changSeg = (e) => {
         if (e === '5m') {
             setTime('m5')
@@ -51,17 +35,6 @@ export default function Featured() {
         } else if (e === '24h') {
             setTime('h24')
         }
-    }
-    const changeImg = (record) => {
-        const data = _.cloneDeep(tableParams)
-        data.map((i) => {
-            if (i.key === record.key) {
-                i.img = !i.img;
-            }
-            return i
-
-        })
-        setTableParams(data)
     }
     const columns = [{
         title: 'PAIR',align: 'center',  render: (text, record) => {
@@ -125,54 +98,7 @@ export default function Featured() {
                 return <p> {record?.liquidity?.usd ? autoConvert(record.liquidity.usd) : ''}</p>
             }
         },
-        // {
-        //     title: 'TxCount', dataIndex: 'address', // sorter: {
-        //     //     compare: (a, b) => a.chinese - b.chinese,
-        //     // },
-        //     render: (text, record) => {
-        //         return <p style={{letterSpacing: '2px'}}>{record?.txCount}</p>
-        //     }
-        // },
-        // {
-        //     title: 'ReserveETH', // sorter: {
-        //     //     compare: (a, b) => a.chinese - b.chinese,
-        //     // },
-        //     dataIndex: 'address', render: (text, record) => {
-        //         return <p style={{letterSpacing: '2px'}}>{record?.reserveETH}</p>
-        //     }
-        // },
-        // {
-        //     title: 'Volume',
-        //     dataIndex: 'address',
-        //     sorter: {
-        //         compare: (a, b) => a.chinese - b.chinese,
-        //     },width:150
-        // },
-        // {
-        //     title: 'Liquidity',
-        //     dataIndex: 'address',
-        //     sorter: {
-        //         compare: (a, b) => a.chinese - b.chinese,
-        //     },width:150
-        // },
-        // {
-        //     title: 'T.M.Cap',
-        //     dataIndex: 'address',
-        //     sorter: {
-        //         compare: (a, b) => a.chinese - b.chinese,
-        //     },width:150
-        // },
-        // {
-        //     title: '',
-        //     dataIndex: 'address',align:'right',
-        //     render:(text,record)=>{
-        //         return <span style={{cursor:'pointer'}}>...</span>
-        //     },
-        // },
     ]
-    const updateRefreshedTime = () => {
-        setRefreshedTime(dayjs());
-    };
     const getParams = (url, params) => {
         get(url, params).then(async (res) => {
             if (res.status === 200) {
@@ -200,7 +126,6 @@ export default function Featured() {
         }).catch(err => {
             setFeaturedBol(false)
             setTableParams([])
-            hint()
         })
     }
     useEffect(() => {

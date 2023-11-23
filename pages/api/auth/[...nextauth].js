@@ -48,7 +48,6 @@ export default async function auth(req, res) {
       },
     }),
   ]
-
   const isDefaultSigninPage =
     req.method === "GET" && req.query.nextauth.includes("signin")
 

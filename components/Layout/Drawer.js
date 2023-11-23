@@ -1,4 +1,4 @@
-import React,{lazy} from "react";
+import React from "react";
 import MuiDrawer from '@mui/material/Drawer';
 import {styled, useTheme} from '@mui/material/styles';
 import List from '@mui/material/List';
@@ -10,9 +10,7 @@ import {useRouter} from "next/router";
 import Link from 'next/link'
 import cookie from "js-cookie";
 import {useAccount} from "wagmi";
-import {notification} from "antd";
-
-const Drawer = () => {
+const Drawer = ({getMoney}) => {
     const router = useRouter();
     const {address, isConnected} = useAccount()
     const drawerWidth = 300;
@@ -73,20 +71,14 @@ const Drawer = () => {
         if(address && cookie.get('name')){
             router.push(`/${address}`)
         }else {
-            notification.warning({
-                message: `warning`, description: 'Please login in first!', placement: 'topLeft',
-                duration: 2
-            });
+            getMoney()
         }
     }
     const push = () => {
         if ( address && cookie.get('name')) {
             router.push('/social')
         }else {
-            notification.warning({
-                message: `warning`, description: 'Please login in first!', placement: 'topLeft',
-                duration: 2
-            });
+            getMoney()
         }
     }
     return (
@@ -158,7 +150,7 @@ const Drawer = () => {
                             </ListItemButton>
                         </Link>
                     </ListItem>
-                    <ListItem key="Presale & Launch" disablePadding sx={{display: 'block'}} className="drawerItem">
+                    <ListItem key="Presale" disablePadding sx={{display: 'block'}} className="drawerItem">
                         <Link href={'/presale'}>
                             <ListItemButton
                                 sx={{
@@ -175,7 +167,28 @@ const Drawer = () => {
                                 >
                                     <img src={`/pre-sale.png`} alt="logo" height={32} width={32} />
                                 </ListItemIcon>
-                                <ListItemText primary="Presale & Launch" sx={{opacity: openDrawer ? 1 : 0}}/>
+                                <ListItemText primary="Presale" sx={{opacity: openDrawer ? 1 : 0}}/>
+                            </ListItemButton>
+                        </Link>
+                    </ListItem>
+                    <ListItem key="Launch" disablePadding sx={{display: 'block'}} className="drawerItem">
+                        <Link href={'/launch'}>
+                            <ListItemButton
+                                sx={{
+                                    minHeight: 48,
+                                    justifyContent: openDrawer ? 'initial' : 'center',
+                                }}
+                            >
+                                <ListItemIcon
+                                    sx={{
+                                        minWidth: 0,
+                                        mr: openDrawer ? 3 : 0,
+                                        justifyContent: 'center',
+                                    }}
+                                >
+                                    <img src={`/pre-sale.png`} alt="logo" height={32} width={32} />
+                                </ListItemIcon>
+                                <ListItemText primary="Launch" sx={{opacity: openDrawer ? 1 : 0}}/>
                             </ListItemButton>
                         </Link>
                     </ListItem>

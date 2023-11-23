@@ -14,17 +14,13 @@ import dynamic from 'next/dynamic'
 import {getUser} from "../../../utils/axios";
 import cook from "js-cookie";
 import {useAccount} from "wagmi";
-
 const InfoBox = dynamic(() => import('../../../components/HelperComponents/InfoBox'));
 // const Sidebar = dynamic(() => import('../../../components/Sidebar'));
-
-
 function FollowersPage() {
     const router = useRouter();
     const {address} = useAccount()
     const getUs = async () => {
         const {data:{user},status} = await getUser(address)
-        //
         if(status===200&&user){
             setUserPar(user)
         }else {
@@ -156,7 +152,7 @@ function FollowersPage() {
                 </div>) : router?.query?.userId === userPar?.id ? (<p className="text-md text-gray-500">
                     {`You don't have any followers ☹️. The trick is to follow someone and then
           wait for them to follow you back.`}
-                </p>) : (<p className="text-md text-gray-500">{`This user doesn't have any followers.`}</p>)}
+                </p>) : (<p className="text-md text-gray-500">{`This user doesn't have any followings.`}</p>)}
             </div>
             <div className="w-10"></div>
         </main>

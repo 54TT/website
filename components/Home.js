@@ -5,126 +5,69 @@ import {formatDecimal, sendGetRequestWithSensitiveData, getRelativeTimeDifferenc
 import {useRouter} from 'next/router';
 import {get, post, del, getUser} from '/utils/axios'
 import Link from 'next/link'
+import {dao, autoConvert,} from '/utils/set'
 import {
     Tooltip,
     Table,
     Card,
-    notification,
     Segmented,
     Skeleton,
-     Spin
+    Spin
 } from 'antd'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
+
 dayjs.extend(duration)
-import {useQuery, ApolloClient, InMemoryCache} from '@apollo/client';
-import {gql} from 'graphql-tag';
 import {
     TwitterOutlined,
     SendOutlined,
     GlobalOutlined
 } from '@ant-design/icons'
-import Bott from "./Bottom";
+// import Bott from "./Bottom";
 import baseUrl from "../utils/baseUrl";
-import {useSession} from "next-auth/react";
 import _ from "lodash";
 import InfiniteScroll from 'react-infinite-scroll-component';
-import PostCard from "./PostCard";
+// import PostCard from "./PostCard";
 import cook from 'js-cookie'
 import {useAccount} from "wagmi";
-const client = new ApolloClient({
-    uri: 'http://188.166.191.246:8000/subgraphs/name/dsb/uniswap', cache: new InMemoryCache(),
-});
-
+import dynamic from "next/dynamic";
+const PostCard = dynamic(() => import('./PostCard'), {suspense: false})
+const Bott = dynamic(() => import('./Bottom'), {suspense: false})
 export default function Home() {
     const router = useRouter();
     const {address} = useAccount()
-    const {data: session, status} = useSession()
     const [cookBol, setCook] = useState(false);
-    useEffect(()=>{
-        if(cook.get('name')){
+    useEffect(() => {
+        if (cook.get('name')) {
             setCook(true)
-        }else {
+        } else {
             setCook(false)
         }
-
-    },[cook.get('name')])
-    const ref = useRef(null)
+    }, [cook.get('name')])
     const refHeight = useRef(null)
-    const GET_DATA = gql`
-query NewPair {
-  pairs(orderBy: createdAtTimestamp, orderDirection: desc, first: 10) {
-    reserveETH
-    createdAtTimestamp
-    txCount
-    token1 {
-      id
-      name
-      symbol
-    }
-    token0 {
-      id
-      symbol
-      name
-    }
-  }
-}
-`;
-    const getUs=async ()=>{
-        const {data:{user},status} =   await getUser(address)
-        if(user&&status===200){
+    const getUs = async () => {
+        const {data: {user}, status} = await getUser(address)
+        if (user && status === 200) {
             setUserPa(user)
-        }else {
+        } else {
             setUserPa('')
         }
     }
     useEffect(() => {
-        if(address&&cook.get('name')){
+        if (address && cook.get('name')) {
             getUs()
         }
     }, [address]);
     const [userPa, setUserPa] = useState(null);
-    useEffect(() => {
-        // if (address&&session && session.user) {
-        //     setUserPa(session.user)
-        // }
-    }, [session])
-    const hint = () => {
-        notification.error({
-            message: `Please note`, description: 'Error reported', placement: 'topLeft',
-            duration: 2
-        });
-    }
-    const autoConvert = (number) => {
-        if (Math.abs(number) >= 1000000) {
-            return `${(number / 1000000).toFixed(2).replace(/\.?0*$/, '')}M`;
-        } else if (Math.abs(number) >= 1000) {
-            return `${(number / 1000).toFixed(2).replace(/\.?0*$/, '')}K`;
-        } else {
-            return number.toFixed(2).replace(/\.?0*$/, '');
-        }
-    };
-    const [loadingBool, setLoadingBool] = useState(true);
-    const [newPair, setNewPair] = useState([])
     const [launch, setLaunch] = useState([]);
     const [launchBol, setLaunchBol] = useState(false);
-    const [featuredBol, setFeaturedBol] = useState(false);
+
+    const [presale, setPresale] = useState([]);
+    const [presaleBol, setPresaleBol] = useState(false);
+
+
+    const [featuredBol, setFeaturedBol] = useState(true);
     const [featured, setFeatured] = useState([]);
-    const {loading, error, data} = useQuery(GET_DATA, {client});
-    useEffect(() => {
-        if (!loading) {
-            if (data && data?.pairs.length > 0) {
-                setNewPair(data?.pairs)
-                setLoadingBool(false)
-            } else {
-                setNewPair([])
-                setLoadingBool(false)
-            }
-        } else {
-            setLoadingBool(false)
-            setNewPair([])
-        }
-    }, [data, loading])
     const getParams = (url, params, name) => {
         get(url, params).then(async (res) => {
             if (res.status === 200) {
@@ -134,7 +77,7 @@ query NewPair {
                         const pairArray = data.data.map(item => item.pairAddress).join(",");
                         const pairInfosResponse = await axios.get(`https://api.dexscreener.com/latest/dex/pairs/ethereum/${pairArray}`);
                         if (pairInfosResponse.status === 200) {
-                            setFeaturedBol(true)
+                            setFeaturedBol(false)
                             setFeatured(pairInfosResponse.data?.pairs.length > 0 ? pairInfosResponse.data?.pairs : [])
                         } else {
                             setFeaturedBol(false)
@@ -148,6 +91,10 @@ query NewPair {
                     setLaunchBol(true)
                     const {data: {data}} = res
                     setLaunch(data && data.length > 0 ? data : [])
+                } else if (name === 'presale') {
+                    setPresaleBol(true)
+                    const {data: {data}} = res
+                    setPresale(data && data.length > 0 ? data : [])
                 }
             }
         }).catch(err => {
@@ -155,11 +102,14 @@ query NewPair {
                 setLaunchBol(true)
                 setLaunch([])
             }
+            if (name === 'presale') {
+                setPresaleBol(true)
+                setPresale([])
+            }
             if (name === 'featured') {
                 setFeaturedBol(false)
                 setFeatured([])
             }
-            hint()
         })
     }
     const [time, setTime] = useState('h24')
@@ -179,7 +129,8 @@ query NewPair {
             return <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
                 <span>{record.baseToken?.symbol}/{record.quoteToken?.symbol}</span>
             </div>
-        }},
+        }
+    },
         {
             title: 'PRICE', align: 'center', render: (text, record) => {
                 return <div>{record?.priceUsd ? formatDecimal(record?.priceUsd, 3) : ''}</div>
@@ -209,26 +160,33 @@ query NewPair {
         },
         {
             title: 'LIQUIDITY', align: 'center', render: (text, record) => {
-                return <p> {record?.liquidity?.usd ? autoConvert(record.liquidity.usd) : ''}</p>
+                return <p> {record?.liquidity?.usd ? autoConvert(record.liquidity.usd) : 0}</p>
+            }
+        },
+        {
+            title: 'DEX', align: 'center', render: (text, record) => {
+                return <img src="/dex-uniswap.png" alt="" width={'30px'} style={{borderRadius:'50%',display:'block',margin:'0 auto'}}/>
             }
         },
     ]
     useEffect(() => {
+        gets()
+        getParams('/queryLaunch', {
+            pageIndex: 0,
+            pageSize: 10
+        }, 'launch')
+        getParams('/queryPresale', {
+            pageIndex: 0,
+            pageSize: 10
+        }, 'presale')
+
+    }, []);
+    const gets = () => {
         getParams('/queryFeatured', {
             pageIndex: 0,
             pageSize: 10
         }, 'featured')
-        getParams('/queryPresaleAndLaunch', {
-            pageIndex: 0,
-            pageSize: 10
-        }, 'launch')
-    }, []);
-    useEffect(() => {
-        ref.current = setInterval(() => getParams('/queryFeatured', '', 'featured'), 5000)
-        return () => {
-            clearInterval(ref.current)
-        }
-    }, [featured]);
+    }
     const push = (i, name) => {
         switch (name) {
             case 'one':
@@ -265,20 +223,6 @@ query NewPair {
             clearInterval(refSet.current)
         }
     }, [diffTime])
-    const dao = (name) => {
-        if (name) {
-            var day = Math.floor((name / (24 * 3600)))
-            var hour = Math.floor((name - (24 * 3600 * day)) / (3600))
-            var min = Math.floor((name - (24 * 3600 * day) - (hour * 3600)) / (60))
-            // var s=Math.floor(name-(24*3600*day)-(hour*3600)-(min*60))
-            const m = min.toString().length === 1 ? '0' + min : min
-            const d = day.toString().length === 1 ? '0' + day : day
-            const h = hour.toString().length === 1 ? '0' + hour : hour
-            return d + ':' + h + ':' + m
-        } else {
-            return '00:00:00'
-        }
-    }
     const [postsData, setPostsData] = useState([])
     const [postsDataAdd, setPostsDataAdd] = useState([])
     const [pageNumber, setPageNumber] = useState(1)
@@ -313,10 +257,23 @@ query NewPair {
         change()
     }
     useEffect(() => {
-        if (address&&cook.get('name')&&userPa?.id) {
+        if (address && cook.get('name') && userPa?.id) {
             getPost()
         }
     }, [postsDataCh, userPa]);
+
+    const pushLink = (name) => {
+        if (name.includes('http') || name.includes('https')) {
+            window.open(name)
+        } else {
+            window.open('http://' + name)
+        }
+    }
+    const pushSocial=()=>{
+        if(cook.get('name')){
+            router.push('/social')
+        }
+    }
     return (<div className={styles['box']}>
         <div className={styles['boxPar']}>
             {/*左边*/}
@@ -324,79 +281,83 @@ query NewPair {
                 {/*上面*/}
                 <div style={{display: 'flex', justifyContent: 'space-between',}}>
                     {/*左边*/}
-                    <div style={{width: '46%', position: 'relative', backgroundColor: 'rgb(253, 213, 62)'}}
-                         className={'cardParams'}>
-                        <Card style={{
-                            minWidth: 300,
-                            backgroundColor: 'rgb(253, 213, 62)',
-                            width: '100%',
-                            border: 'none'
-                        }}>
-                            <ul className={styles['ul']}>
-                                <li>
-                                    <p style={{fontSize: '20px', fontWeight: 'bold'}}>New Pair</p>
-                                    <Link href={'/newPair'}>
-                                        <p style={{fontSize: '20px', color: '#2394D4', cursor: 'pointer'}}>more></p>
-                                    </Link>
-                                </li>
-                                {featuredBol ? newPair.length > 0 ? newPair.map((i, v) => {
-                                    if (v > 4) {
-                                        return ''
-                                    } else {
-                                        return <li key={v}>
-                                            <span style={{width: '3%'}}>{v + 1}</span>
-                                            <div style={{
-                                                display: 'flex', alignItems: 'center', width: '50%', overflow: 'hidden'
-                                            }}>
-                                                <p style={{
-                                                    width: '30px',
-                                                    borderRadius: '50%',
-                                                    backgroundColor: 'black',
-                                                    textAlign: 'center',
-                                                    color: 'white',
-                                                    lineHeight: '30px'
-                                                }}>{i.token0?.symbol?.slice(0, 1)}</p>
-                                                <div style={{width: '81%'}}>
-                                                    <div style={{
-                                                        width: '100%', display: 'flex',
-                                                        alignItems: 'center',
-                                                        justifyContent: 'center'
-                                                    }}>
-                                                        <span>{i.token0?.symbol ? i.token0?.symbol + '/' : ''}</span>
-                                                        <span
-                                                            style={{color: 'rgb(98,98,98)'}}>{i.token1?.symbol ? i.token1?.symbol : ''}</span>
-                                                    </div>
+                    {/*<div style={{width: '46%', position: 'relative', backgroundColor: 'rgb(253, 213, 62)'}}*/}
+                    {/*     className={'cardParams'}>*/}
+                    {/*    <Card style={{*/}
+                    {/*        minWidth: 300,*/}
+                    {/*        backgroundColor: 'rgb(253, 213, 62)',*/}
+                    {/*        width: '100%',*/}
+                    {/*        border: 'none'*/}
+                    {/*    }}>*/}
+                    {/*        <ul className={styles['ul']}>*/}
+                    {/*            <li>*/}
+                    {/*                <p style={{fontSize: '20px', fontWeight: 'bold'}}>Presale</p>*/}
+                    {/*                <Link href={'/presale'}>*/}
+                    {/*                    <p style={{fontSize: '20px', color: '#2394D4', cursor: 'pointer'}}>more></p>*/}
+                    {/*                </Link>*/}
+                    {/*            </li>*/}
+                    {/*            {!loading ? newPair.length > 0 ? newPair.map((i, v) => {*/}
+                    {/*                if (v > 4) {*/}
+                    {/*                    return ''*/}
+                    {/*                } else {*/}
+                    {/*                    return <li key={v}>*/}
+                    {/*                        <span style={{width: '3%'}}>{v + 1}</span>*/}
+                    {/*                        <div style={{*/}
+                    {/*                            display: 'flex', alignItems: 'center', width: '50%', overflow: 'hidden'*/}
+                    {/*                        }}>*/}
+                    {/*                            <p style={{*/}
+                    {/*                                width: '30px',*/}
+                    {/*                                borderRadius: '50%',*/}
+                    {/*                                backgroundColor: 'black',*/}
+                    {/*                                textAlign: 'center',*/}
+                    {/*                                color: 'white',*/}
+                    {/*                                lineHeight: '30px'*/}
+                    {/*                            }}>{i.token0?.symbol?.slice(0, 1)}</p>*/}
+                    {/*                            <div style={{width: '81%'}}>*/}
+                    {/*                                <div style={{*/}
+                    {/*                                    width: '100%', display: 'flex',*/}
+                    {/*                                    alignItems: 'center',*/}
+                    {/*                                    justifyContent: 'center'*/}
+                    {/*                                }}>*/}
+                    {/*                                    <span>{i.token0?.symbol ? i.token0?.symbol.length > 7 ? i.token0?.symbol.slice(0, 5) + '/' : i.token0?.symbol + '/' : ''}</span>*/}
+                    {/*                                    <span*/}
+                    {/*                                        style={{color: 'rgb(98,98,98)'}}>{i.token1?.symbol ? i.token1?.symbol.length > 7 ? i.token1?.symbol.slice(0, 5) : i.token1?.symbol : ''}</span>*/}
+                    {/*                                </div>*/}
 
-                                                </div>
-                                            </div>
-                                            {/*时间*/}
-                                            <div style={{width: '35%'}}>
-                                                <p style={{textAlign: 'center', lineHeight: '1.3'}}>$0</p>
-                                                <div style={{
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'center'
-                                                }}>
-                                                    <img src={` /Group.png`} style={{width: '22%'}} alt=""/>
-                                                    <span>{i.createdAtTimestamp ? getRelativeTimeDifference(formatDateTime(i.createdAtTimestamp)) : ''}</span>
-                                                </div>
-                                            </div>
-                                        </li>
-                                    }
-                                }) : [] : [1, 2, 3, 4, 5].map((i, index) => {
-                                    return <li key={index}>
-                                        <div style={{display: 'flex', alignItems: 'center', width: '100%'}}>
-                                            <Skeleton.Avatar active={true} size={'default'} shape={'circle'}
-                                                             style={{marginRight: '15px'}}/>
-                                            <Skeleton.Input active={true} size={'default'} block={true}/>
-                                        </div>
-                                    </li>
-                                })}
-                            </ul>
-                        </Card>
-                    </div>
+                    {/*                            </div>*/}
+                    {/*                        </div>*/}
+                    {/*                        /!*时间*!/*/}
+                    {/*                        <div style={{width: '35%'}}>*/}
+                    {/*                            <p style={{*/}
+                    {/*                                textAlign: 'center',*/}
+                    {/*                                lineHeight: '1.3'*/}
+                    {/*                            }}>${i?.liquidityPositionSnapshots[0]?.token0PriceUSD ? autoConvert(Number(i?.liquidityPositionSnapshots[0]?.token0PriceUSD)) : 0}</p>*/}
+                    {/*                            <div style={{*/}
+                    {/*                                display: 'flex',*/}
+                    {/*                                alignItems: 'center',*/}
+                    {/*                                justifyContent: 'center'*/}
+                    {/*                            }}>*/}
+                    {/*                                <img src={`/Group.png`} style={{width: '25px'}} alt=""/>*/}
+                    {/*                                <span>{i.createdAtTimestamp ? getRelativeTimeDifference(formatDateTime(i?.createdAtTimestamp)) : ''}</span>*/}
+                    {/*                            </div>*/}
+                    {/*                        </div>*/}
+                    {/*                    </li>*/}
+                    {/*                }*/}
+                    {/*            }) : [] : [1, 2, 3, 4, 5].map((i, index) => {*/}
+                    {/*                return <li key={index}>*/}
+                    {/*                    <div style={{display: 'flex', alignItems: 'center', width: '100%'}}>*/}
+                    {/*                        <Skeleton.Avatar active={true} size={'default'} shape={'circle'}*/}
+                    {/*                                         style={{marginRight: '15px'}}/>*/}
+                    {/*                        <Skeleton.Input active={true} size={'default'} block={true}/>*/}
+                    {/*                    </div>*/}
+                    {/*                </li>*/}
+                    {/*            })}*/}
+                    {/*        </ul>*/}
+                    {/*    </Card>*/}
+                    {/*</div>*/}
                     {/*右边*/}
-                    <div style={{width: '46%', backgroundColor: 'rgb(253,213,62)'}} className={'cardParams'}>
+                    <div style={{width: '46%', backgroundColor: 'rgb(253,213,62)', padding: '0'}}
+                         className={'cardParams'}>
                         <Card style={{
                             minWidth: 300,
                             backgroundColor: 'rgb(253, 213, 62)',
@@ -405,8 +366,104 @@ query NewPair {
                         }}>
                             <ul className={styles['rightUl']}>
                                 <li>
-                                    <p style={{fontSize: '20px', fontWeight: 'bold'}}>Launch and Presale</p>
+                                    <p style={{fontSize: '20px', fontWeight: 'bold'}}>Presale</p>
                                     <Link href={'/presale'}>
+                                        <p style={{fontSize: '20px', color: '#2394D4', cursor: 'pointer'}}>more></p>
+                                    </Link>
+                                </li>
+                                {
+                                    presaleBol ? presale.length > 0 ? presale.map((i, index) => {
+                                        if (index > 2) {
+                                            return ''
+                                        } else {
+                                            return <li className={styles.li}  key={index}
+                                                >
+                                                    <div style={{display: 'flex', alignItems: 'center',width:'30%'}}>
+                                                        <p style={{
+                                                            textAlign: 'center',
+                                                            width: '30px',
+                                                            lineHeight: '30px',
+                                                            borderRadius: '50%',
+                                                            fontSize: '16px',
+                                                            backgroundColor: 'black',
+                                                            color: 'white',
+                                                            marginRight:'5px'
+                                                        }}>{i.symbol.slice(0, 1)}</p>
+                                                        <div>
+                                                            <Tooltip title={i.symbol}>
+                                                                <p style={{
+                                                                    textAlign: 'center',
+                                                                    fontSize: '20px',
+                                                                    overflow: 'hidden',
+                                                                    lineHeight: '1.3',
+                                                                    textOverflow: 'ellipsis',
+                                                                    whiteSpace: 'nowrap',
+                                                                    fontWeight: 'bold'
+                                                                }}>{i.symbol}</p>
+                                                            </Tooltip>
+                                                            <div className={styles['dis']} style={{
+                                                                padding: '3px'
+                                                            }}>
+                                                                <GlobalOutlined
+                                                                    style={{cursor: 'pointer', fontSize: '20px'}}
+                                                                    onClick={() => push(i, 'one')}/>
+                                                                <TwitterOutlined
+                                                                    style={{cursor: 'pointer', fontSize: '20px'}}
+                                                                    onClick={() => push(i, 'two')}/>
+                                                                <SendOutlined
+                                                                    style={{cursor: 'pointer', fontSize: '20px'}}
+                                                                    onClick={() => push(i, 'three')}/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div style={{
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent:'start',
+                                                        lineHeight: 1,width:'42%'
+                                                    }}>
+                                                        <img src={`/Time.png`} alt="" width={25}/>
+                                                        <span
+                                                            style={{
+                                                                fontSize: '22px'
+                                                            }}>{dao(dayjs(i.presale_time).isAfter(dayjs()) ? dayjs(i.presale_time).diff(dayjs(), 'seconds') : '')}</span>
+                                                    </div>
+                                                    <img src={baseUrl + i.presale_platform_logo}
+                                                         onClick={() => pushLink(i.presale_link)} alt=""
+                                                         width={'30px'} style={{borderRadius:'50%',marginRight:'10px'}}/>
+                                                </li>
+                                        }
+                                    }) : [] : [1, 2, 3,].map((i, index) => {
+                                        return <li key={index}>
+                                            <div style={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                width: '100%',
+                                                lineHeight: '50px'
+                                            }}>
+                                                <Skeleton.Avatar active={true} size={'default'} shape={'circle'}
+                                                                 style={{marginRight: '15px'}}/>
+                                                <Skeleton.Input active={true} size={'default'} block={true}/>
+                                            </div>
+                                        </li>
+                                    })
+                                }
+                                {}
+                            </ul>
+                        </Card>
+                    </div>
+                    <div style={{width: '46%', backgroundColor: 'rgb(253,213,62)', padding: '0'}}
+                         className={'cardParams'}>
+                        <Card style={{
+                            minWidth: 300,
+                            backgroundColor: 'rgb(253, 213, 62)',
+                            width: '100%',
+                            border: 'none'
+                        }}>
+                            <ul className={styles['rightUl']}>
+                                <li>
+                                    <p style={{fontSize: '20px', fontWeight: 'bold'}}>Launch</p>
+                                    <Link href={'/launch'}>
                                         <p style={{fontSize: '20px', color: '#2394D4', cursor: 'pointer'}}>more></p>
                                     </Link>
                                 </li>
@@ -415,80 +472,62 @@ query NewPair {
                                         if (index > 2) {
                                             return ''
                                         } else {
-                                            return <Link href={'/presale'} key={index}>
-                                            <li className={`${styles.li} ${dayjs(i?.presale_time).isAfter(dayjs()) ? styles.be : styles.de}`}
-                                                style={dayjs(i?.presale_time).isAfter(dayjs()) ? {backgroundColor: ' rgb(188, 238, 125)'} : !dayjs(i?.launch_time).isAfter(dayjs()) ? {backgroundColor: 'rgb(209,209,209)'} : {}}>
-                                                <p style={{
-                                                    textAlign: 'center',
-                                                    width: '40px',
-                                                    lineHeight: '40px',
-                                                    borderRadius: '50%',
-                                                    fontSize: '18px',
-                                                    backgroundColor: 'black',
-                                                    color: 'white'
-                                                }}>{i.symbol.slice(0, 1)}</p>
-                                                <div style={{width: '30%'}}>
-                                                    <Tooltip title={i.symbol}>
+                                            return<li className={styles.li} key={index}
+                                                >
+                                                    <div style={{display: 'flex', alignItems: 'center',width:'30%'}}>
                                                         <p style={{
                                                             textAlign: 'center',
-                                                            fontSize: '24px',
-                                                            overflow: 'hidden',
-                                                            lineHeight: '1.3',
-                                                            textOverflow: 'ellipsis',
-                                                            whiteSpace: 'nowrap',
-                                                            fontWeight: 'bold'
-                                                        }}>{i.symbol}</p>
-                                                    </Tooltip>
-                                                    <div className={styles['dis']} style={{
-                                                        padding: '3px'
-                                                    }}>
-                                                        <GlobalOutlined style={{cursor: 'pointer', fontSize: '20px'}}
-                                                                        onClick={() => push(i, 'one')}/>
-                                                        <TwitterOutlined style={{cursor: 'pointer', fontSize: '20px'}}
-                                                                         onClick={() => push(i, 'two')}/>
-                                                        <SendOutlined style={{cursor: 'pointer', fontSize: '20px'}}
-                                                                      onClick={() => push(i, 'three')}/>
-                                                    </div>
-                                                </div>
-                                                <div>
-                                                    {
-                                                        dayjs(i.presale_time).isAfter(dayjs()) ? <div>
-                                                            <p style={{
-                                                                lineHeight: 1,
-                                                                letterSpacing: '1px',
-                                                                textAlign: 'center'
-                                                            }}>Pre-sale ends</p>
-                                                            <div style={{
-                                                                display: 'flex',
-                                                                alignItems: 'center',
-                                                                lineHeight: 1
+                                                            width: '30px',
+                                                            lineHeight: '30px',
+                                                            borderRadius: '50%',
+                                                            fontSize: '16px',
+                                                            backgroundColor: 'black',
+                                                            color: 'white',
+                                                            marginRight:'5px'
+                                                        }}>{i.symbol.slice(0, 1)}</p>
+                                                        <div>
+                                                            <Tooltip title={i.symbol}>
+                                                                <p style={{
+                                                                    textAlign: 'center',
+                                                                    fontSize: '20px',
+                                                                    overflow: 'hidden',
+                                                                    lineHeight: '1.3',
+                                                                    textOverflow: 'ellipsis',
+                                                                    whiteSpace: 'nowrap',
+                                                                    fontWeight: 'bold'
+                                                                }}>{i.symbol}</p>
+                                                            </Tooltip>
+                                                            <div className={styles['dis']} style={{
+                                                                padding: '3px'
                                                             }}>
-                                                                <img src={`/Time.png`} alt="" width={22} height={22}/>
-                                                                <span
-                                                                    style={{
-                                                                        letterSpacing: '2px',
-                                                                        fontSize: '18px'
-                                                                    }}>{i.presale_time ? dao(dayjs(i.presale_time).isAfter(dayjs()) ? dayjs(i.presale_time).diff(dayjs(), 'seconds') : '') : ''}</span>
+                                                                <GlobalOutlined
+                                                                    style={{cursor: 'pointer', fontSize: '20px'}}
+                                                                    onClick={() => push(i, 'one')}/>
+                                                                <TwitterOutlined
+                                                                    style={{cursor: 'pointer', fontSize: '20px'}}
+                                                                    onClick={() => push(i, 'two')}/>
+                                                                <SendOutlined
+                                                                    style={{cursor: 'pointer', fontSize: '20px'}}
+                                                                    onClick={() => push(i, 'three')}/>
                                                             </div>
-                                                        </div> : ''
-                                                    }
-                                                    {/*时间*/}
-                                                    <p style={{
-                                                        lineHeight: 1,
-                                                        letterSpacing: '1px',
-                                                        textAlign: 'center'
-                                                    }}>launch time</p>
-                                                    <div style={{display: 'flex', alignItems: 'center', lineHeight: 1}}>
-                                                        <img src={`/Time.png`} alt="" width={22} height={22}/>
-                                                        <span
-                                                            style={{
-                                                                letterSpacing: '2px',
-                                                                fontSize: '18px'
-                                                            }}>{i?.launch_time ? dao(dayjs(i.launch_time).isAfter(dayjs()) ? dayjs(i.launch_time).diff(dayjs(), 'seconds') : '') : ''}</span>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </li>
-                                            </Link>
+                                                        <div style={{
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            justifyContent:'start',
+                                                            lineHeight: 1,width:'42%'
+                                                        }}>
+                                                            <img src={`/Time.png`} alt="" width={25}/>
+                                                            <span
+                                                                style={{
+                                                                    fontSize: '22px'
+                                                                }}>{dao(dayjs(i.launch_time).isAfter(dayjs()) ? dayjs(i.launch_time).diff(dayjs(), 'seconds') : '')}</span>
+                                                        </div>
+                                                    <img src={baseUrl + i.launch_platform_logo}
+                                                         onClick={() => pushLink(i.launch_link)} alt=""
+                                                         width={'30px'}  style={{borderRadius:'50%',marginRight:'10px'}}/>
+                                                </li>
                                         }
                                     }) : [] : [1, 2, 3,].map((i, index) => {
                                         return <li key={index}>
@@ -531,7 +570,7 @@ query NewPair {
                     {/*表格*/}
                     <Table columns={columns}
                            rowKey={(record) => record?.baseToken?.address + record?.quoteToken?.address}
-                           loading={loadingBool}
+                           loading={featuredBol}
                            className={'tablesss anyTable'} onRow={(record) => {
                         return {
                             onClick: (event) => {
@@ -549,32 +588,39 @@ query NewPair {
                 </div>
             </div>
             {/*右边*/}
-            <div className={'cardParams'} style={{height:`${refHeight.current?.offsetHeight}px`}}>
+            <div className={'cardParams'} style={{height: `${refHeight.current?.offsetHeight}px`}}>
+                <div style={{display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+                    <p style={{fontSize: '20px', fontWeight: 'bold'}}>Social</p>
+                    <Link href={'/social'}>
+                        <p onClick={pushSocial} style={{fontSize: '20px', color: '#2394D4', cursor: 'pointer'}}>more></p>
+                    </Link>
+                </div>
                 {
-                    cookBol&&address?  postsDataAdd?.length > 0 ?<InfiniteScroll
-                        hasMore={postsDataAdd.length === 8}
-                        next={changePage}
-                        endMessage={
-                            <p style={{textAlign: 'center'}}>
-                                <b>Yay! You have seen it all</b>
-                            </p>
-                        }
-                        loader={<h4>Loading...</h4>}
-                        dataLength={postsDataAdd.length}
-                    >
-                        {postsDataAdd && postsDataAdd?.length > 0 ? postsDataAdd.map((post, index) => {
-                            const isLiked =
-                                post.likes && post.likes.length > 0 &&
-                                post.likes.filter((like) => like?.user?.id === userPa?.id).length > 0;
-                            return <PostCard
-                                change={change}
-                                liked={isLiked}
-                                key={post.id}
-                                post={post}
-                                user={userPa}
-                            />
-                        }) : ''}
-                    </InfiniteScroll> : <div style={{textAlign:'center'}}>No data yet</div>:<div style={{textAlign:'center'}}>Please sign in</div>
+                    cookBol && address ? postsDataAdd?.length > 0 ? <InfiniteScroll
+                            hasMore={postsDataAdd.length === 8}
+                            next={changePage}
+                            endMessage={
+                                <p style={{textAlign: 'center'}}>
+                                    <b>Yay! You have seen it all</b>
+                                </p>
+                            }
+                            loader={<h4>Loading...</h4>}
+                            dataLength={postsDataAdd.length}
+                        >
+                            {postsDataAdd && postsDataAdd?.length > 0 ? postsDataAdd.map((post, index) => {
+                                const isLiked =
+                                    post.likes && post.likes.length > 0 &&
+                                    post.likes.filter((like) => like?.user?.id === userPa?.id).length > 0;
+                                return <PostCard
+                                    change={change}
+                                    liked={isLiked}
+                                    key={post.id}
+                                    post={post}
+                                    user={userPa}
+                                />
+                            }) : ''}
+                        </InfiniteScroll> : <div style={{textAlign: 'center',fontSize:'20px'}}>No data yet</div> :
+                        <div style={{textAlign: 'center',fontSize:'20px'}}>Please sign in</div>
                 }
             </div>
         </div>

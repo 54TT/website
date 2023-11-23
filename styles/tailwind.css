@@ -233,7 +233,7 @@ li.check:before {
 }
 
 
-.hotTable .ant-table .ant-table-container  .ant-table-thead tr th {
+.hotTable .ant-table .ant-table-container  .ant-table-thead .ant-table-cell {
     background-color: rgb(188, 238, 125)!important;
     border: none;
 }
@@ -263,15 +263,21 @@ li.check:before {
     background-color: rgb(209, 209, 209) !important;
 }
 
-.hotTable .ant-table .ant-table-container.ant-table-tbody .ant-table-row .ant-table-cell {
+.hotTable .ant-table  .ant-table-container  .ant-table-tbody .ant-table-row .ant-table-cell {
     background-color: rgb(253, 213, 62)!important;
     border-bottom-color: #626262;
+    padding: 5px!important;
 }
 
 
 
 .presale .ant-table .ant-table-content .ant-table-tbody .ant-table-row:hover .ant-table-cell {
     background-color: rgb(254, 239, 146) !important;
+}
+
+
+.presale .ant-table .ant-table-content .ant-table-tbody tr  td {
+    border-bottom:1px solid black !important;
 }
 
 .anyTable .ant-table .ant-table-content .ant-table-thead  .ant-table-cell .ant-table-column-sorters .ant-table-column-title {
@@ -303,7 +309,7 @@ li.check:before {
 }
 .cardParams {
     width: 34%;
-    background-color: #BCEE7D;
+    background-color: rgb(253,213,62);
     border-radius: 12px;
     padding: 10px 8px;
     overflow-y: auto;

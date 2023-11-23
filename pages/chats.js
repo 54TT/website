@@ -9,32 +9,31 @@ import {SearchIcon} from "@heroicons/react/outline";
 import styled from "styled-components";
 import calculateTime from "../utils/calculateTime";
 // import Chat from "../components/Chat/Chat";
-import {Facebook} from "react-content-loader";
+import {LoadingOutlined} from '@ant-design/icons'
 import {AppleOutlined,} from '@ant-design/icons'
 import Link from 'next/link';
 import dynamic from 'next/dynamic'
 import {getUser} from "../utils/axios";
 import cook from "js-cookie";
 import {useAccount} from "wagmi";
+import _ from 'lodash'
 // const Sidebar = dynamic(() => import('../components/Sidebar'));
 const ChatSearch = dynamic(() => import('../components/Chat/ChatSearch'));
 const Chat = dynamic(() => import('../components/Chat/Chat'));
-
 function ChatsPage() {
     const [chats, setChats] = useState([]);
-    console.log(chats)
     const [userPar, setUserPar] = useState({});
     const {address} = useAccount()
-    const getUs=async ()=>{
-        const {data:{user},status} =   await getUser(address)
-        if(status===200&&user){
+    const getUs = async () => {
+        const {data: {user}, status} = await getUser(address)
+        if (status === 200 && user) {
             setUserPar(user)
-        }else {
+        } else {
             setUserPar('')
         }
     }
     useEffect(() => {
-        if(address&&cook.get('name')){
+        if (address && cook.get('name')) {
             getUs()
         }
     }, [address]);
@@ -59,10 +58,10 @@ function ChatsPage() {
             }
         }
     }
-    const [takeOver,setTakeOver] = useState(false)
+    const [takeOver, setTakeOver] = useState(false)
     useEffect(() => {
         getParams()
-    }, [userPar,takeOver])
+    }, [userPar, takeOver])
     const openChatId = useRef("");
     const [showChatSearch, setShowChatSearch] = useState(false);
     const da = () => {
@@ -73,8 +72,8 @@ function ChatsPage() {
         if (!socket.current) {
             socket.current = io(baseUrl); //establishing connection with server;
         }
-        if (socket.current && userPar && userPar.id) {
-            socket.current.emit("join", {userId: userPar.id});
+        if (socket.current && userPar && userPar?.id) {
+            socket.current.emit("join", {userId: userPar?.id});
             socket.current.on("connectedUsers", ({users}) => {
                 setConnectedUsers(users);
             });
@@ -163,8 +162,6 @@ function ChatsPage() {
                 }
             });
             socket.current.on("newTextReceived", async ({newText, userDetails}) => {
-                console.log(newText)
-                console.log(userDetails)
                 if (newText?.senderId === openChatId?.current) {
                     setTexts((prev) => [...prev, newText]);
                     setChats((prev) => {
@@ -182,35 +179,25 @@ function ChatsPage() {
                         return [...prev];
                     });
                 } else {
-                    const ifPreviouslyTexted =
-                        chats.filter((chat) => chat.textsWith === newText.senderId).length > 0;
-                    if (ifPreviouslyTexted) {
-                        console.log(chats)
-                        setChats((prev) => {
-                            let previousChat = prev.find(
-                                (chat) => chat.textsWith === newText.senderId
-                            );
-                            if (!previousChat || !previousChat.lastText) {
-                                previousChat = {
-                                    lastText: '',
-                                    created_at: ''
-                                }
+                            const ifPreviouslyTexted =  chats.filter((chat) => chat.textsWith === newText.senderId).length > 0;
+                            if (ifPreviouslyTexted) {
+                                setChats((prev) => {
+                                    let previousChat = prev.find(
+                                        (chat) => chat.textsWith === newText.senderId
+                                    );
+                                    if (!previousChat || !previousChat.lastText) {
+                                        previousChat = {
+                                            lastText: '',
+                                            created_at: ''
+                                        }
+                                    }
+                                    previousChat.lastText = newText.text;
+                                    previousChat.created_at = newText.created_at;
+                                    return [...prev];
+                                });
+                            } else {
+                                setTakeOver(!takeOver)
                             }
-                            previousChat.lastText = newText.text;
-                            previousChat.created_at = newText.created_at;
-                            return [...prev];
-                        });
-                    } else {
-                        setTakeOver(!takeOver)
-                        // const newChat = {
-                        //     textsWith: newText.senderId,
-                        //     name: userDetails.name,
-                        //     profilePicUrl: userDetails.profilePicUrl,
-                        //     lastText: newText.text,
-                        //     created_at: newText.created_at,
-                        // };
-                        // setChats((prev) => [newChat, ...prev]);
-                    }
                 }
             });
         }
@@ -220,7 +207,7 @@ function ChatsPage() {
                 socket.current.off("newTextReceived");
             }
         };
-    }, [newText, socket,]);
+    }, [newText, socket,chats]);
     const endOfMessagesRef = useRef(null);
     const scrollToBottom = () => {
         endOfMessagesRef.current.scrollIntoView({
@@ -243,7 +230,7 @@ function ChatsPage() {
         }
     }
     return (
-        <div style={{backgroundColor:'rgb(188,238,125)',marginRight:'20px',borderRadius:'10px'}}>
+        <div style={{backgroundColor: 'rgb(188,238,125)', marginRight: '20px', borderRadius: '10px'}}>
             <main className="flex" style={{height: "calc(100vh - 4.5rem)"}}>
                 <Sidebar user={userPar} maxWidth={"250px"}/>
                 <div
@@ -254,7 +241,7 @@ function ChatsPage() {
                             borderRight: "1px solid lightgrey",
                             fontFamily: "Inter",
                             overflowY: 'auto',
-                            backgroundColor:'rgb(178,219,126)'
+                            backgroundColor: 'rgb(178,219,126)'
                         }}
                         className="lg:min-w-[27rem] pt-4"
                     >
@@ -282,40 +269,40 @@ function ChatsPage() {
                                 {chats && chats.length > 0 ? (
                                     chats.map((chat) => (
                                         <Link href={`/chats?chat=${chat?.textsWith}`} key={chat.textsWith}>
-                                        <ChatDiv >
-                                            <div className="relative">
-                                                <img   width={80} height={80} style={{
-                                                    borderRadius: '50%'
-                                                }} src={chat?.profilePicUrl||'/Ellipse1.png'} alt="userimg"/>
-                                                {connectedUsers?.length > 0 &&
-                                                connectedUsers.filter(
-                                                    (user) => user.userId === chat?.textsWith
-                                                ).length > 0 ? (
-                                                    <AppleOutlined
-                                                        style={{
-                                                            color: "#55d01d",
-                                                            fontSize: "1.85rem",
-                                                            position: "absolute",
-                                                            bottom: "-.5rem",
-                                                            right: "0rem",
-                                                        }}
-                                                    />
-                                                ) : (
-                                                    <></>
+                                            <ChatDiv>
+                                                <div className="relative">
+                                                    <img width={80} height={80} style={{
+                                                        borderRadius: '50%'
+                                                    }} src={chat?.profilePicUrl || '/Ellipse1.png'} alt="userimg"/>
+                                                    {connectedUsers?.length > 0 &&
+                                                    connectedUsers.filter(
+                                                        (user) => user.userId === chat?.textsWith
+                                                    ).length > 0 ? (
+                                                        <AppleOutlined
+                                                            style={{
+                                                                color: "#55d01d",
+                                                                fontSize: "1.85rem",
+                                                                position: "absolute",
+                                                                bottom: "-.5rem",
+                                                                right: "0rem",
+                                                            }}
+                                                        />
+                                                    ) : (
+                                                        <></>
+                                                    )}
+                                                </div>
+                                                <div className="ml-1">
+                                                    <Name>{chat?.username?.length > 10 ? chat.username.slice(0, 5) + '...' + chat.username.slice(-5) : chat.username}</Name>
+                                                    <TextPreview>
+                                                        {chat.lastText && chat.lastText.length > 30
+                                                            ? `${chat.lastText.substring(0, 30)}...`
+                                                            : chat.lastText}
+                                                    </TextPreview>
+                                                </div>
+                                                {chat.created_at && (
+                                                    <Date>{calculateTime(chat.created_at, true)}</Date>
                                                 )}
-                                            </div>
-                                            <div className="ml-1">
-                                                <Name>{chat?.username?.length>10?chat.username.slice(0,5)+'...'+chat.username.slice(-5):chat.username}</Name>
-                                                <TextPreview>
-                                                    {chat.lastText && chat.lastText.length > 30
-                                                        ? `${chat.lastText.substring(0, 30)}...`
-                                                        : chat.lastText}
-                                                </TextPreview>
-                                            </div>
-                                            {chat.created_at && (
-                                                <Date>{calculateTime(chat.created_at, true)}</Date>
-                                            )}
-                                        </ChatDiv>
+                                            </ChatDiv>
                                         </Link>
                                     ))
                                 ) : (
@@ -341,9 +328,9 @@ function ChatsPage() {
                             {/*右边聊天*/}
                             {chatUserData && chatUserData.profilePicUrl ? (
                                 <ChatHeaderDiv>
-                                    <img   width={80} height={80} style={{
+                                    <img width={80} height={80} style={{
                                         borderRadius: '50%'
-                                    }} src={chatUserData?.profilePicUrl||'/Ellipse1.png'} alt="userimg"/>
+                                    }} src={chatUserData?.profilePicUrl || '/Ellipse1.png'} alt="userimg"/>
                                     <div>
                                         <ChatName>{chatUserData?.name.length > 7 ? chatUserData.name.slice(0, 3) + '...' + chatUserData.name.slice(-3) : chatUserData.name}</ChatName>
                                         {connectedUsers.length > 0 &&
@@ -357,7 +344,7 @@ function ChatsPage() {
                                     className="max-w-[28rem]"
                                     style={{padding: "1rem 0.9rem"}}
                                 >
-                                    <Facebook/>
+                                    <LoadingOutlined/>
                                 </div>
                             )}
 

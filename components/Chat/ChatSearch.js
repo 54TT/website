@@ -9,7 +9,6 @@ import styled from "styled-components";
 import Link from "next/link";
 import { useClickAway } from "react-use";
 import baseUrl from "../../utils/baseUrl";
-import {notification} from "antd";
 function ChatSearch({ setShowChatSearch, setChats, chats,user, }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
@@ -31,17 +30,15 @@ function ChatSearch({ setShowChatSearch, setChats, chats,user, }) {
       }
       setSearchResults(res.data);
     } catch (error) {
-      notification.error({
-        message: `Please note`, description: 'Error reported', placement: 'topLeft',
-          duration:2
-      });
+        setSearchResults([]);
+         setLoading(false);
     }
 
     setLoading(false);
   };
   const ref = useRef(null);
   useClickAway(ref, () => {
-    setShowChatSearch();
+    setShowChatSearch(false);
   });
   return (
     <div
@@ -86,7 +83,7 @@ function ChatSearch({ setShowChatSearch, setChats, chats,user, }) {
             >
               <div
                 onClick={() => {
-                  setShowChatSearch(false);
+                    setShowChatSearch(false);
                   const isUserInChats =
                     chats &&
                     chats.length > 0 &&

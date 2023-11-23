@@ -8,8 +8,10 @@ import {GlobalOutlined} from '@ant-design/icons'
 import uploadPic from "../utils/uploadPic";
 import {submitNewPost} from "../utils/postActions";
 import {ExclamationCircleIcon} from "@heroicons/react/outline";
-import InfoBox from "./HelperComponents/InfoBox";
+// import InfoBox from "./HelperComponents/InfoBox";
 import {LoadingOutlined} from '@ant-design/icons'
+import dynamic from "next/dynamic";
+const InfoBox = dynamic(() => import('./HelperComponents/InfoBox'),{suspense:true})
 
 function InputBox({user, setPosts, increaseSizeAnim}) {
     const inputRef = useRef(null);

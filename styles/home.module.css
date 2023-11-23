@@ -21,8 +21,12 @@
     background-color: rgb(254, 239, 146);
 }
 
+.rightUl .li:hover{
+    background-color: rgb(254, 239, 139);
+}
+
 .ul > li:not(:first-child):not(:last-child) {
-    border-bottom: 1px solid rgb(128,128,128);
+    border-bottom: 1px solid rgb(128, 128, 128);
 }
 
 .ul > li span {
@@ -62,62 +66,70 @@
     transition: box-shadow 0.3s;
     margin: 25px 0;
 }
+
 .boxBott:hover {
     box-shadow: 15px 15px 0 rgb(188, 158, 54)
 }
-.boxLogo{
+
+.boxLogo {
     display: flex;
     justify-content: center;
     padding: 30px 0;
-    background-color: rgb(251,213,62);
+    background-color: rgb(251, 213, 62);
     margin-bottom: 20px;
     border-radius: 20px;
     transition: box-shadow 0.3s;
 }
-.abc{
-    background-color:rgb(253,213,62);padding:25px;border-radius:10px;
+
+.abc {
+    background-color: rgb(253, 213, 62);
+    padding: 25px;
+    border-radius: 10px;
     transition: box-shadow 0.3s;
 }
 
 .abc:hover {
     box-shadow: 15px 15px 0 rgb(188, 158, 54)
 }
+
 .boxLogo:hover {
     box-shadow: 15px 15px 0 rgb(188, 158, 54)
 }
+
 .rightUl {
     width: 100%;
 }
-
 .rightUl li {
     display: flex;
     align-items: center;
-    border-bottom: 1px solid rgb(128,128,128);
-    padding: 8px 20px;
+    border-bottom: 1px solid rgb(128, 128, 128);
+    padding: 5px 10px;
     justify-content: space-between;
 }
 
 .rightUl .li {
-    height: 92px;
     background-color: rgb(253, 213, 62);
 }
+
 .rightUl .be:hover {
     background-color: rgb(208, 255, 149);
 }
+
 .rightUl .de:hover {
     background-color: rgb(254, 239, 146);
 }
 
-.rightUl > li:last-child{
+.rightUl > li:last-child {
     margin-bottom: 0;
     border-radius: 0 0 8px 8px;
     border-bottom: none;
 }
-.rightUl li:first-child{
+
+.rightUl li:first-child {
     border-bottom: none;
 }
 
- .button {
+.button {
     border-radius: 12px;
     background: rgba(229, 171, 103, 0.20);
     box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25) inset

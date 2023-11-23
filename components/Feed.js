@@ -1,14 +1,16 @@
 import React, {useEffect, useState} from "react";
-import InputBox from "./InputBox";
-import baseUrl from '/utils/baseUrl'
+// import InputBox from "./InputBox";
 import {EmojiSadIcon} from "@heroicons/react/outline";
-import InfoBox from "./HelperComponents/InfoBox";
-import PostCard from "./PostCard";
-import axios from "axios";
-import {Facebook} from "react-content-loader";
-import {notification} from "antd";
-import InfiniteScroll from 'react-infinite-scroll-component';
+// import InfoBox from "./HelperComponents/InfoBox";
+// import PostCard from "./PostCard";
+import {LoadingOutlined} from '@ant-design/icons'
+import dynamic from 'next/dynamic'
+const InputBox = dynamic(() => import('./InputBox'),{suspense:true})
+const InfoBox = dynamic(() => import('./HelperComponents/InfoBox'),{suspense:true})
+const PostCard = dynamic(() => import('./PostCard'),{suspense:true})
 
+
+import InfiniteScroll from 'react-infinite-scroll-component';
 function Feed({user, postsData, errorLoading,change,changePage, increaseSizeAnim}) {
     useEffect(() => {
         if (postsData && postsData.length > 0) {
@@ -62,7 +64,7 @@ function Feed({user, postsData, errorLoading,change,changePage, increaseSizeAnim
                             </InfiniteScroll>
                         )
                     ) : (
-                        <Facebook/>
+                        <LoadingOutlined/>
                     )}
                 </div>
             </div>

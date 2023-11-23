@@ -1,7 +1,6 @@
 import React, {useEffect, useRef, useState} from "react";
 import dayjs from 'dayjs';
 import {notification, Pagination, Table, Card} from "antd";
-import _ from "lodash";
 import {get} from "../utils/axios";
 import {GlobalOutlined, SendOutlined, TwitterOutlined} from "@ant-design/icons";
 import {dao} from '/utils/set'
@@ -12,7 +11,6 @@ export default function Presale() {
     const [launchAll, setLaunchAll] = useState(0);
     const [launch, setLaunch] = useState([]);
     const [launchBol, setLaunchBol] = useState(true);
-
     const hint = () => {
         notification.error({
             message: `Please note`, description: 'Error reported', placement: 'topLeft',
@@ -28,8 +26,8 @@ export default function Presale() {
                 setLaunchBol(false)
             }
         }).catch(err => {
-            setLaunch( [])
-            setLaunchAll( 0)
+            setLaunch([])
+            setLaunchAll(0)
             setLaunchBol(false)
             hint()
         })
@@ -43,7 +41,7 @@ export default function Presale() {
         }
     }, [diffTime])
     useEffect(() => {
-        getParams('/queryPresale', {
+        getParams('/queryLaunch', {
             pageIndex: launchCurrent - 1,
             pageSize: launchPageSize
         },)
@@ -60,7 +58,7 @@ export default function Presale() {
     const columns = [
         {
             title: '',
-            dataIndex: 'address',align: 'center',
+            dataIndex: 'address', align: 'center',
             width: 100,
             render: (_, record) => {
                 return <p style={{
@@ -75,21 +73,21 @@ export default function Presale() {
         },
         {
             title: 'Token name',
-            dataIndex: 'name',align: 'center',
+            dataIndex: 'name', align: 'center',
             render: (text) => {
                 return <p style={{fontWeight: 'bold', fontSize: '20px', textAlign: 'center'}}>{text}</p>
             }
         },
         {
             title: 'Token symbol',
-            dataIndex: 'symbol',align: 'center',
+            dataIndex: 'symbol', align: 'center',
             render: (text) => {
                 return <p style={{fontWeight: 'bold', fontSize: '20px', textAlign: 'center'}}>{text}</p>
             }
         },
         {
             title: 'Social Info',
-            dataIndex: 'address',align: 'center',
+            dataIndex: 'address', align: 'center',
             width: 200,
             render: (text, record) => {
                 return <div
@@ -101,18 +99,18 @@ export default function Presale() {
             }
         },
         {
-            title: 'Presale time',
-            dataIndex: 'presale_time',align: 'center',
+            title: 'Launch time',
+            dataIndex: 'launch_time', align: 'center',
             sorter: {
                 compare: (a, b) => {
-                    const data = a.presale_time ? dayjs(a.presale_time).format('YYYY-MM-DD HH:mm:ss') : 0
-                    const pa = b.presale_time ? dayjs(b.presale_time).format('YYYY-MM-DD HH:mm:ss') : 0
+                    const data = a.launch_time ? dayjs(a.launch_time).format('YYYY-MM-DD HH:mm:ss') : 0
+                    const pa = b.launch_time ? dayjs(b.launch_time).format('YYYY-MM-DD HH:mm:ss') : 0
                     return dayjs(pa).isBefore(data)
                 }
             },
             render: (text, record) => {
                 if (text) {
-                    return <div style={{display: 'flex', alignItems: 'center', justifyContent: 'start',margin:'0 auto',width:'50%'}}><img
+                    return <div style={{display: 'flex', alignItems: 'center', justifyContent: 'start',width:'50%',margin:'0 auto'}}><img
                         src="/Time.png" alt="" width={30} height={30}/>
                         <span>{dao(dayjs(text).isAfter(dayjs()) ? dayjs(text).diff(dayjs(), 'seconds') : '')}</span>
                     </div>
@@ -123,12 +121,13 @@ export default function Presale() {
         },
         {
             title: 'Platform',
-            dataIndex: 'presale_platform_logo',align: 'center',
+            dataIndex: 'launch_platform_logo', align: 'center',
             render: (text) => {
-                return <img src={baseUrl+text} alt="" width={'30px'} style={{display:'block',borderRadius:'50%',margin:'0 auto'}}/>
+                return <img src={baseUrl + text} alt="" width={'30px'} style={{display:'block',margin: '0 auto',borderRadius:'50%'}}/>
             }
         },
     ];
+
     const change = (e, a) => {
         setLaunchCurrent(e)
         setLaunchPageSize(a)
@@ -148,7 +147,7 @@ export default function Presale() {
                 }}>
                     <div style={{display: 'flex', alignItems: 'center'}}>
                         <img src="/Group.png" alt="" width={70} height={70}/>
-                        <span style={{fontWeight: 'bold', fontSize: '26px'}}>PRESALE</span>
+                        <span style={{fontWeight: 'bold', fontSize: '26px'}}> LAUNCH</span>
                     </div>
                 </div>
 
@@ -160,7 +159,7 @@ export default function Presale() {
                 <Table className={`presale anyTable`} bordered={false} columns={columns} loading={launchBol}
                        dataSource={launch} rowKey={(record) => record.symbol + record.address}
                        pagination={false} rowClassName={(record) => {
-                        return  'oneHave'
+                    return 'oneHave'
                 }}/>
             </Card>
             <p style={{

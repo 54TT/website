@@ -1,13 +1,13 @@
 import React from "react";
 import {
-    HomeIcon,
     UsersIcon,
     BellIcon,
     ChatIcon,
-    CogIcon,
     UserGroupIcon,
 } from "@heroicons/react/outline";
-import SidebarRow from "./HelperComponents/SidebarRow";
+// import SidebarRow from "./HelperComponents/SidebarRow";
+import dynamic from "next/dynamic";
+const SidebarRow = dynamic(() => import('./HelperComponents/SidebarRow'),{suspense:true})
 
 function Sidebar({user, topDist, maxWidth}) {
     return (

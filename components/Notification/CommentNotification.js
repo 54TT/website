@@ -2,7 +2,6 @@ import React from "react";
 import styled from "styled-components";
 import calculateTime from "../../utils/calculateTime";
 import Link from "next/link";
-
 function CommentNotification({ notification }) {
   return (
     notification.type === "newComment" && (

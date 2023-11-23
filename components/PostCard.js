@@ -80,9 +80,10 @@ function PostCard({post, user, change, liked}) {
                     <img height={50} width={50} style={{borderRadius:'50%'}}   src={post && post?.user?.profilePicUrl ? post.user.profilePicUrl : '/Ellipse1.png'} alt="userimg"/>
                     <div>
                         <Link href={`/${post?.user?.address?post.user.address:''}`}>
-                        <UserPTag>
+                        <div style={{ cursor: 'pointer',
+                            fontSize:'20px'}}>
                             {post?.user?.username?post?.user?.username.length>10 ? post.user.username.slice(0,8):post.user.username : ''}
-                        </UserPTag>
+                        </div>
                         </Link>
                         <p
                             style={{
@@ -103,7 +104,8 @@ function PostCard({post, user, change, liked}) {
                         handleDisagree={handleDisagree}
                     />
                     {post?.user_id === user?.id && (
-                        <ThreeDotsDiv
+                        <div style={{ borderRadius: '50%',
+                            cursor: 'pointer'}}
                             onClick={() => {
                                 handleClickOpen();
                             }}
@@ -113,10 +115,9 @@ function PostCard({post, user, change, liked}) {
                                 style={{height: "1.2rem", width: "1.2rem"}}
                                 className="text-gray-500"
                             />
-                        </ThreeDotsDiv>
+                        </div>
                     )}
                 </div>
-                <p className="ml-2 mt-5">{post.text}</p>
             </div>
 
             {post && post.picUrl ? <img src={post.picUrl||''} alt={''} style={{width: '100%',}}  /> : ''}
@@ -251,26 +252,3 @@ function PostCard({post, user, change, liked}) {
 }
 
 export default PostCard;
-
-const UserPTag = styled.p`
-  cursor: pointer;
-  margin-bottom: -0.09rem;
-  font-weight: 500;
-  font-size:20px;
-  :hover {
-    text-decoration: underline;
-  }
-`;
-
-const ThreeDotsDiv = styled.div`
-  height: 2.1rem;
-  width: 2.1rem;
-  border-radius: 50%;
-  cursor: pointer;
-  padding: 0.1rem;
-  font-size: 1.2rem;
-
-  :hover {
-    background-color: whitesmoke;
-  }
-`;
