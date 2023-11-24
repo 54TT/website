@@ -99,7 +99,7 @@ function RightSideColumn({user, chatsData, userFollowStats,change}) {
                                                         );
                                                         if (data && data.status === 200) {
                                                             chang()
-                                                            change()
+                                                            change('like')
                                                         }
                                                     }}
                                                 >
@@ -120,7 +120,7 @@ function RightSideColumn({user, chatsData, userFollowStats,change}) {
                                                         );
                                                         if (data && data.status === 200) {
                                                             chang()
-                                                            change()
+                                                            change('like')
                                                         }
                                                     }}
                                                 >

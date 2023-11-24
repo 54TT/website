@@ -12,7 +12,7 @@ import {
     Card,
     Segmented,
     Skeleton,
-    Spin
+    Statistic, Carousel
 } from 'antd'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
@@ -28,25 +28,34 @@ import baseUrl from "../utils/baseUrl";
 import _ from "lodash";
 import InfiniteScroll from 'react-infinite-scroll-component';
 // import PostCard from "./PostCard";
+import Marquee from 'react-fast-marquee'
 import cook from 'js-cookie'
 import dynamic from "next/dynamic";
 import {CountContext} from "./Layout/Layout";
+import {arrayUnique} from '/utils/set'
+const {Countdown} = Statistic;
 const PostCard = dynamic(() => import('./PostCard'), {suspense: false})
 const Bott = dynamic(() => import('./Bottom'), {suspense: false})
 export default function Home() {
     const router = useRouter();
-    const { bolLogin,changeBolLogin} = useContext(CountContext);
+    const {bolLogin, changeBolLogin} = useContext(CountContext);
     const [cookBol, setCook] = useState(false);
     useEffect(() => {
         if (cook.get('name')) {
             setCook(true)
+            getUs()
         } else {
             setCook(false)
         }
     }, [cook.get('name')])
     const refHeight = useRef(null)
+    useEffect(() => {
+        if (bolLogin && cook.get('name')) {
+            setUserPa(cook.get('name'))
+        }
+    }, [bolLogin]);
     const getUs = async () => {
-        const a =cook.get('name')
+        const a = cook.get('name')
         const {data: {user}, status} = await getUser(a)
         if (user && status === 200) {
             setUserPa(user)
@@ -54,11 +63,6 @@ export default function Home() {
             setUserPa('')
         }
     }
-    useEffect(() => {
-        if (cook.get('name')) {
-            getUs()
-        }
-    }, [cook.get('name')]);
     const [userPa, setUserPa] = useState(null);
     const [launch, setLaunch] = useState([]);
     const [launchBol, setLaunchBol] = useState(false);
@@ -115,7 +119,7 @@ export default function Home() {
         title: '', align: 'center', render: (text, record) => {
             return <p style={{
                 width: '30px',
-                backgroundColor: 'black',
+                backgroundColor: '#454545',
                 color: 'white',
                 lineHeight: '30px',
                 textAlign: 'center',
@@ -163,7 +167,8 @@ export default function Home() {
         },
         {
             title: 'DEX', align: 'center', render: (text, record) => {
-                return <img src="/dex-uniswap.png" alt="" width={'30px'} style={{borderRadius:'50%',display:'block',margin:'0 auto'}}/>
+                return <img src="/dex-uniswap.png" alt="" width={'30px'}
+                            style={{borderRadius: '50%', display: 'block', margin: '0 auto'}}/>
             }
         },
     ]
@@ -215,42 +220,96 @@ export default function Home() {
     }
     const [diffTime, setDiffTime] = useState(null)
     const refSet = useRef(null)
-    useEffect(() => {
-        refSet.current = setInterval(() => setDiffTime(diffTime - 1), 1000)
-        return () => {
-            clearInterval(refSet.current)
-        }
-    }, [diffTime])
+    // useEffect(() => {
+    //     refSet.current = setInterval(() => setDiffTime(diffTime - 1), 1000)
+    //     return () => {
+    //         clearInterval(refSet.current)
+    //     }
+    // }, [diffTime])
     const [postsData, setPostsData] = useState([])
     const [postsDataAdd, setPostsDataAdd] = useState([])
-    const [pageNumber, setPageNumber] = useState(1)
+    const [pageNumber, setPageNumber] = useState(0)
     const [postsDataBol, setPostsDataBol] = useState(false)
     const [postsDataCh, setPostsDataCh] = useState(false)
-    const change = () => {
+    // 滚动
+    const [scrollChange, setScrollChange] = useState(false)
+
+    // 点赞
+    const [clickChange, setClickChange] = useState(false)
+
+    // 删除的推文id
+    const [deleteChange, setDeleteChange] = useState(null)
+
+    const change = (name, id) => {
+        if (id) {
+            setDeleteChange(id)
+        }
+        if (name === 'scroll') {
+            setScrollChange(true)
+        }
+        if (name === 'click') {
+            setClickChange(true)
+        }
         setPostsDataCh(!postsDataCh)
     }
     useEffect(() => {
-        if (postsData&&postsData.length>0) {
-            if(bolLogin){
+        if (postsData && postsData.length > 0) {
+            if (bolLogin) {
                 changeBolLogin()
                 setPostsDataAdd(postsData)
-            }else {
-                const data = postsData.concat(postsDataAdd)
-                const aa = _.uniqBy(data, 'id')
-                setPostsDataAdd(aa)
+            } else {
+                if (scrollChange) {
+                    const data = postsDataAdd.concat(postsData)
+                    setScrollChange(false)
+                    setPostsDataAdd(data)
+                } else if (clickChange) {
+                    setClickChange(false)
+                    const data = postsDataAdd.concat(postsData)
+                    const aa = arrayUnique(data, 'id')
+                    if (deleteChange) {
+                        const man = aa.filter((i) => {
+                            return i.id !== deleteChange
+                        })
+                        setPostsDataAdd(man)
+                        setDeleteChange(null)
+                    } else {
+                        setPostsDataAdd(aa)
+                    }
+                } else {
+                    setPostsDataAdd(postsData)
+                }
             }
         } else {
-            if(bolLogin){
+            if (bolLogin) {
                 changeBolLogin()
                 setPostsDataAdd([])
-            }else {
-                setPostsDataAdd(postsDataAdd)
+            } else {
+                if (scrollChange) {
+                    setScrollChange(false)
+                    setPostsDataAdd([...postsDataAdd])
+                } else if (clickChange) {
+                    setClickChange(false)
+                    if (deleteChange) {
+                        const da = _.cloneDeep(postsDataAdd)
+                        const b = da.filter((i) => i.id !== clickChange)
+                        setPostsDataAdd(b)
+                        setDeleteChange(null)
+                    } else {
+                        setPostsDataAdd([...postsDataAdd])
+                    }
+                }
+                setPostsDataAdd([...postsDataAdd])
             }
         }
     }, [postsDataBol])
     const getPost = async () => {
+        let a = _.cloneDeep(pageNumber)
+        if (bolLogin) {
+            setPageNumber(0)
+            a = 0
+        }
         const res = await axios.get(`${baseUrl}/api/posts`, {
-            params: {pageNumber, userId: userPa?.id},
+            params: {pageNumber: a, userId: userPa?.id},
         });
         if (res.status === 200) {
             setPostsDataBol(!postsDataBol)
@@ -262,14 +321,13 @@ export default function Home() {
     }
     const changePage = () => {
         setPageNumber(pageNumber + 1)
-        change()
+        change('scroll')
     }
     useEffect(() => {
-        if( cook.get('name') && userPa?.id) {
+        if (cook.get('name') && userPa?.id) {
             getPost()
         }
     }, [postsDataCh, userPa]);
-
     const pushLink = (name) => {
         if (name.includes('http') || name.includes('https')) {
             window.open(name)
@@ -277,9 +335,16 @@ export default function Home() {
             window.open('http://' + name)
         }
     }
-    const pushSocial=()=>{
-        if(cook.get('name')){
+    const pushSocial = () => {
+        if (cook.get('name')) {
             router.push('/social')
+        }
+    }
+    const getD = (a) => {
+        if (a) {
+            return Date.now() + Number(a) * 1000
+        } else {
+            return 0
         }
     }
     return (<div className={styles['box']}>
@@ -309,61 +374,61 @@ export default function Home() {
                                         if (index > 2) {
                                             return ''
                                         } else {
-                                            return <li className={styles.li}  key={index}
-                                                >
-                                                    <div style={{display: 'flex', alignItems: 'center',width:'30%'}}>
-                                                        <p style={{
-                                                            textAlign: 'center',
-                                                            width: '30px',
-                                                            lineHeight: '30px',
-                                                            borderRadius: '50%',
-                                                            fontSize: '16px',
-                                                            backgroundColor: 'black',
-                                                            color: 'white',
-                                                            marginRight:'10px'
-                                                        }}>{i.symbol.slice(0, 1)}</p>
-                                                        <div style={{width:'78%'}}>
-                                                            <Tooltip title={i.symbol}>
-                                                                <p style={{
-                                                                    textAlign: 'center',
-                                                                    fontSize: '20px',
-                                                                    overflow: 'hidden',
-                                                                    lineHeight: '1.3',
-                                                                    textOverflow: 'ellipsis',
-                                                                    whiteSpace: 'nowrap',
-                                                                    fontWeight: 'bold'
-                                                                }}>{i.symbol}</p>
-                                                            </Tooltip>
-                                                            <div className={styles['dis']} style={{
-                                                                padding: '3px'
-                                                            }}>
-                                                                <GlobalOutlined
-                                                                    style={{cursor: 'pointer', fontSize: '20px'}}
-                                                                    onClick={() => push(i, 'one')}/>
-                                                                <TwitterOutlined
-                                                                    style={{cursor: 'pointer', fontSize: '20px'}}
-                                                                    onClick={() => push(i, 'two')}/>
-                                                                <SendOutlined
-                                                                    style={{cursor: 'pointer', fontSize: '20px'}}
-                                                                    onClick={() => push(i, 'three')}/>
-                                                            </div>
+
+                                            return <li className={styles.li} key={index}
+                                            >
+                                                <div style={{display: 'flex', alignItems: 'center', width: '30%'}}>
+                                                    <p style={{
+                                                        textAlign: 'center',
+                                                        width: '30px',
+                                                        lineHeight: '30px',
+                                                        borderRadius: '50%',
+                                                        fontSize: '16px',
+                                                        backgroundColor: '#454545',
+                                                        color: 'white',
+                                                        marginRight: '10px'
+                                                    }}>{i.symbol.slice(0, 1)}</p>
+                                                    <div style={{width: '78%'}}>
+                                                        <Tooltip title={i.symbol}>
+                                                            <p style={{
+                                                                textAlign: 'center',
+                                                                fontSize: '20px',
+                                                                overflow: 'hidden',
+                                                                lineHeight: '1.3',
+                                                                textOverflow: 'ellipsis',
+                                                                whiteSpace: 'nowrap',
+                                                                fontWeight: 'bold'
+                                                            }}>{i.symbol}</p>
+                                                        </Tooltip>
+                                                        <div className={styles['dis']} style={{
+                                                            padding: '3px'
+                                                        }}>
+                                                            <GlobalOutlined
+                                                                style={{cursor: 'pointer', fontSize: '20px'}}
+                                                                onClick={() => push(i, 'one')}/>
+                                                            <TwitterOutlined
+                                                                style={{cursor: 'pointer', fontSize: '20px'}}
+                                                                onClick={() => push(i, 'two')}/>
+                                                            <SendOutlined
+                                                                style={{cursor: 'pointer', fontSize: '20px'}}
+                                                                onClick={() => push(i, 'three')}/>
                                                         </div>
                                                     </div>
-                                                    <div style={{
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        justifyContent:'start',
-                                                        lineHeight: 1,width:'30%'
-                                                    }}>
-                                                        <span
-                                                            style={{
-                                                                fontSize: '22px'
-                                                            }}>{dao(dayjs(i.presale_time).isAfter(dayjs()) ? dayjs(i.presale_time).diff(dayjs(), 'seconds') : '')}</span>
-                                                    </div>
-                                                    <img src={baseUrl + i.presale_platform_logo}
-                                                         onClick={() => pushLink(i.presale_link)} alt=""
-                                                         width={'30px'} style={{borderRadius:'50%',marginRight:'10px'}}/>
-                                                </li>
+                                                </div>
+                                                <div style={{
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'start',
+                                                    lineHeight: 1, width: '30%'
+                                                }}>
+                                                    <Countdown title=""
+                                                               value={getD(dayjs(i.presale_time).isAfter(dayjs()) ? dayjs(i.presale_time).diff(dayjs(), 'seconds') : '')}
+                                                               format="HH:mm:ss"/>
+                                                </div>
+                                                <img src={baseUrl + i.presale_platform_logo}
+                                                     onClick={() => pushLink(i.presale_link)} alt=""
+                                                     width={'30px'} style={{borderRadius: '50%', marginRight: '10px'}}/>
+                                            </li>
                                         }
                                     }) : [] : [1, 2, 3,].map((i, index) => {
                                         return <li key={index}>
@@ -404,61 +469,60 @@ export default function Home() {
                                         if (index > 2) {
                                             return ''
                                         } else {
-                                            return<li className={styles.li} key={index}
-                                                >
-                                                    <div style={{display: 'flex', alignItems: 'center',width:'30%'}}>
-                                                        <p style={{
-                                                            textAlign: 'center',
-                                                            width: '30px',
-                                                            lineHeight: '30px',
-                                                            borderRadius: '50%',
-                                                            fontSize: '16px',
-                                                            backgroundColor: 'black',
-                                                            color: 'white',
-                                                            marginRight:'10px'
-                                                        }}>{i.symbol.slice(0, 1)}</p>
-                                                        <div style={{width:'78%'}}>
-                                                            <Tooltip title={i.symbol}>
-                                                                <p style={{
-                                                                    textAlign: 'center',
-                                                                    fontSize: '20px',
-                                                                    overflow: 'hidden',
-                                                                    lineHeight: '1.3',
-                                                                    textOverflow: 'ellipsis',
-                                                                    whiteSpace: 'nowrap',
-                                                                    fontWeight: 'bold'
-                                                                }}>{i.symbol}</p>
-                                                            </Tooltip>
-                                                            <div className={styles['dis']} style={{
-                                                                padding: '3px'
-                                                            }}>
-                                                                <GlobalOutlined
-                                                                    style={{cursor: 'pointer', fontSize: '20px'}}
-                                                                    onClick={() => push(i, 'one')}/>
-                                                                <TwitterOutlined
-                                                                    style={{cursor: 'pointer', fontSize: '20px'}}
-                                                                    onClick={() => push(i, 'two')}/>
-                                                                <SendOutlined
-                                                                    style={{cursor: 'pointer', fontSize: '20px'}}
-                                                                    onClick={() => push(i, 'three')}/>
-                                                            </div>
+                                            return <li className={styles.li} key={index}
+                                            >
+                                                <div style={{display: 'flex', alignItems: 'center', width: '30%'}}>
+                                                    <p style={{
+                                                        textAlign: 'center',
+                                                        width: '30px',
+                                                        lineHeight: '30px',
+                                                        borderRadius: '50%',
+                                                        fontSize: '16px',
+                                                        backgroundColor: '#454545',
+                                                        color: 'white',
+                                                        marginRight: '10px'
+                                                    }}>{i.symbol.slice(0, 1)}</p>
+                                                    <div style={{width: '78%'}}>
+                                                        <Tooltip title={i.symbol}>
+                                                            <p style={{
+                                                                textAlign: 'center',
+                                                                fontSize: '20px',
+                                                                overflow: 'hidden',
+                                                                lineHeight: '1.3',
+                                                                textOverflow: 'ellipsis',
+                                                                whiteSpace: 'nowrap',
+                                                                fontWeight: 'bold'
+                                                            }}>{i.symbol}</p>
+                                                        </Tooltip>
+                                                        <div className={styles['dis']} style={{
+                                                            padding: '3px'
+                                                        }}>
+                                                            <GlobalOutlined
+                                                                style={{cursor: 'pointer', fontSize: '20px'}}
+                                                                onClick={() => push(i, 'one')}/>
+                                                            <TwitterOutlined
+                                                                style={{cursor: 'pointer', fontSize: '20px'}}
+                                                                onClick={() => push(i, 'two')}/>
+                                                            <SendOutlined
+                                                                style={{cursor: 'pointer', fontSize: '20px'}}
+                                                                onClick={() => push(i, 'three')}/>
                                                         </div>
                                                     </div>
-                                                        <div style={{
-                                                            display: 'flex',
-                                                            alignItems: 'center',
-                                                            justifyContent:'start',
-                                                            lineHeight: 1,width:'30%'
-                                                        }}>
-                                                            <span
-                                                                style={{
-                                                                    fontSize: '22px'
-                                                                }}>{dao(dayjs(i.launch_time).isAfter(dayjs()) ? dayjs(i.launch_time).diff(dayjs(), 'seconds') : '')}</span>
-                                                        </div>
-                                                    <img src={baseUrl + i.launch_platform_logo}
-                                                         onClick={() => pushLink(i.launch_link)} alt=""
-                                                         width={'30px'}  style={{borderRadius:'50%',marginRight:'10px'}}/>
-                                                </li>
+                                                </div>
+                                                <div style={{
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'start',
+                                                    lineHeight: 1, width: '30%'
+                                                }}>
+                                                    <Countdown title=""
+                                                               value={getD(dayjs(i.launch_time).isAfter(dayjs()) ? dayjs(i.launch_time).diff(dayjs(), 'seconds') : '')}
+                                                               format="HH:mm:ss"/>
+                                                </div>
+                                                <img src={baseUrl + i.launch_platform_logo}
+                                                     onClick={() => pushLink(i.launch_link)} alt=""
+                                                     width={'30px'} style={{borderRadius: '50%', marginRight: '10px'}}/>
+                                            </li>
                                         }
                                     }) : [] : [1, 2, 3,].map((i, index) => {
                                         return <li key={index}>
@@ -519,23 +583,25 @@ export default function Home() {
                 </div>
             </div>
             {/*右边*/}
-            <div className={'cardParams'} style={{height: `${refHeight.current?.offsetHeight}px`}}>
-                <div style={{display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+            <div className={'cardParams'} id="scrollableDiv" style={{height: `${refHeight?.current?.offsetHeight||0}px`}}>
+                <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
                     <p style={{fontSize: '20px', fontWeight: 'bold'}}>Social</p>
                     <Link href={'/social'}>
-                        <p onClick={pushSocial} style={{fontSize: '20px', color: '#2394D4', cursor: 'pointer'}}>more></p>
+                        <p onClick={pushSocial}
+                           style={{fontSize: '20px', color: '#2394D4', cursor: 'pointer'}}>more></p>
                     </Link>
                 </div>
                 {
-                    cookBol  ? postsDataAdd?.length > 0 ? <InfiniteScroll
-                            hasMore={postsDataAdd.length === 8}
+                    cookBol ? postsDataAdd?.length > 0 ? <InfiniteScroll
+                            hasMore={true}
                             next={changePage}
+                            scrollableTarget="scrollableDiv"
                             endMessage={
                                 <p style={{textAlign: 'center'}}>
                                     <b>Yay! You have seen it all</b>
                                 </p>
                             }
-                            loader={<h4>Loading...</h4>}
+                            loader={null}
                             dataLength={postsDataAdd.length}
                         >
                             {postsDataAdd && postsDataAdd?.length > 0 ? postsDataAdd.map((post, index) => {
@@ -550,8 +616,8 @@ export default function Home() {
                                     user={userPa}
                                 />
                             }) : ''}
-                        </InfiniteScroll> : <div style={{textAlign: 'center',fontSize:'20px'}}>No data yet</div> :
-                        <div style={{textAlign: 'center',fontSize:'20px'}}>Please sign in</div>
+                        </InfiniteScroll> : <div style={{textAlign: 'center', fontSize: '20px'}}>No data yet</div> :
+                        <div style={{textAlign: 'center', fontSize: '20px'}}>Please sign in</div>
                 }
             </div>
         </div>

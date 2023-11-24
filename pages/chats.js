@@ -16,8 +16,9 @@ import dynamic from 'next/dynamic'
 import {getUser} from "../utils/axios";
 import cook from "js-cookie";
 // const Sidebar = dynamic(() => import('../components/Sidebar'));
-const ChatSearch = dynamic(() => import('../components/Chat/ChatSearch'),{suspense: false});
-const Chat = dynamic(() => import('../components/Chat/Chat'),{suspense: false});
+const ChatSearch = dynamic(() => import('../components/Chat/ChatSearch'), {suspense: false});
+const Chat = dynamic(() => import('../components/Chat/Chat'), {suspense: false});
+
 function ChatsPage() {
     const [chats, setChats] = useState([]);
     const [userPar, setUserPar] = useState({});
@@ -176,25 +177,25 @@ function ChatsPage() {
                         return [...prev];
                     });
                 } else {
-                            const ifPreviouslyTexted =  chats.filter((chat) => chat.textsWith === newText.senderId).length > 0;
-                            if (ifPreviouslyTexted) {
-                                setChats((prev) => {
-                                    let previousChat = prev.find(
-                                        (chat) => chat.textsWith === newText.senderId
-                                    );
-                                    if (!previousChat || !previousChat.lastText) {
-                                        previousChat = {
-                                            lastText: '',
-                                            created_at: ''
-                                        }
-                                    }
-                                    previousChat.lastText = newText.text;
-                                    previousChat.created_at = newText.created_at;
-                                    return [...prev];
-                                });
-                            } else {
-                                setTakeOver(!takeOver)
+                    const ifPreviouslyTexted = chats.filter((chat) => chat.textsWith === newText.senderId).length > 0;
+                    if (ifPreviouslyTexted) {
+                        setChats((prev) => {
+                            let previousChat = prev.find(
+                                (chat) => chat.textsWith === newText.senderId
+                            );
+                            if (!previousChat || !previousChat.lastText) {
+                                previousChat = {
+                                    lastText: '',
+                                    created_at: ''
+                                }
                             }
+                            previousChat.lastText = newText.text;
+                            previousChat.created_at = newText.created_at;
+                            return [...prev];
+                        });
+                    } else {
+                        setTakeOver(!takeOver)
+                    }
                 }
             });
         }
@@ -204,7 +205,7 @@ function ChatsPage() {
                 socket.current.off("newTextReceived");
             }
         };
-    }, [newText, socket,chats]);
+    }, [newText, socket, chats]);
     const endOfMessagesRef = useRef(null);
     const scrollToBottom = () => {
         endOfMessagesRef.current.scrollIntoView({
@@ -227,11 +228,11 @@ function ChatsPage() {
         }
     }
     return (
-        <div style={{backgroundColor: 'rgb(188,238,125)', marginRight: '20px', borderRadius: '10px'}}>
+        <div style={{backgroundColor: 'rgb(253,213,62)', marginRight: '20px', borderRadius: '10px'}}>
             <main className="flex" style={{height: "calc(100vh - 4.5rem)"}}>
                 <Sidebar user={userPar} maxWidth={"250px"}/>
-                <div
-                    className="flex flex-grow mx-auto h-full w-full max-w-2xl lg:max-w-[65rem] xl:max-w-[70.5rem] bg-white  rounded-lg">
+                <div style={{backgroundColor: 'rgba(201,201,201,0.7)'}}
+                     className="flex flex-grow mx-auto h-full w-full max-w-2xl lg:max-w-[65rem] xl:max-w-[70.5rem] rounded-lg">
                     <div
                         style={{
                             borderLeft: "1px solid lightgrey",
@@ -289,7 +290,11 @@ function ChatsPage() {
                                                     )}
                                                 </div>
                                                 <div className="ml-1">
-                                                    <Name>{chat?.username?.length > 10 ? chat.username.slice(0, 5) + '...' + chat.username.slice(-5) : chat.username}</Name>
+                                                    {
+                                                        chat?.username ?
+                                                            <Name>{chat?.username?.length > 10 ? chat.username.slice(0, 5) + '...' + chat.username.slice(-5) : chat.username}</Name> :
+                                                            <Name>{chat?.name?.length > 10 ? chat.name.slice(0, 5) + '...' + chat.name.slice(-5) : chat.name}</Name>
+                                                    }
                                                     <TextPreview>
                                                         {chat.lastText && chat.lastText.length > 30
                                                             ? `${chat.lastText.substring(0, 30)}...`

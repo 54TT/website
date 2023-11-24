@@ -14,7 +14,7 @@ import dynamic from "next/dynamic";
 import {notification} from "antd";
 const InfoBox = dynamic(() => import('./HelperComponents/InfoBox'),{suspense:false})
 
-function InputBox({user, setPosts, increaseSizeAnim}) {
+function InputBox({user, setPosts, increaseSizeAnim,change}) {
     const inputRef = useRef(null);
     const buttonRef = useRef(null);
     const filePickerRef = useRef(null);
@@ -62,6 +62,7 @@ function InputBox({user, setPosts, increaseSizeAnim}) {
                 setError,
             );
             if(data&&data.status===200){
+                change('send')
                 setImage(null);
                 setImagePreview(null);
                 setLoading(false);
@@ -142,9 +143,9 @@ function InputBox({user, setPosts, increaseSizeAnim}) {
                 style={{
                     boxShadow:
                         "rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px",
-                    borderRadius:'10px'
+                    borderRadius:'10px',backgroundColor:'rgb(254,239,146)'
                 }}
-                className="bg-white mt-3 mb-10"
+                className=" mt-3 mb-10"
             >
                 {textareaEnabled ? (
                     <>
@@ -162,7 +163,6 @@ function InputBox({user, setPosts, increaseSizeAnim}) {
                                     </div>
                                 </div>
                             </div>
-
                             <form className=" mt-5 flex flex-col justify-evenly">
                                 <div
                                     className={`p-3.5 bg-gray-100 rounded-xl items-center ${increaseSizeAnim.sizeIncDown} `}
@@ -172,6 +172,7 @@ function InputBox({user, setPosts, increaseSizeAnim}) {
                                         value={postText}
                                         type="text"
                                         rows="4"
+                                        style={{width:'100%'}}
                                         onChange={handleChange}
                                         className={`outline-none  bg-transparent font-light text-md placeholder-gray-400 text-lg `}
                                         placeholder={`What's on your mind, ${user.name}?`}

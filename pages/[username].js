@@ -289,7 +289,6 @@ function ProfilePage() {
                         }
 
                     </div>
-                    {/* <Username className="text-xl font-normal text-gray-600">{`@${profile.user.username}`}</Username> */}
                     {!isUserOnOwnAccount &&
                         (followBol ? (
                             <FollowButton
@@ -364,7 +363,7 @@ function ProfilePage() {
                 {/*下面*/}
                 <div
                     className=" w-full"
-                    style={{marginTop: "20px", minHeight: "calc(100vh - 26rem)", paddingTop: '60px',backgroundColor:'rgb(138,238,125)'}}
+                    style={{marginTop: "20px", minHeight: "calc(100vh - 26rem)", paddingTop: '60px',backgroundColor:'rgb(253,213,62)'}}
                 >
                     <div
                         className=" md:flex space-x-4 mx-auto max-w-[30rem] sm:max-w-xl md:max-w-3xl lg:max-w-[1000px]">

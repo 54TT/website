@@ -10,9 +10,10 @@ import dynamic from 'next/dynamic'
 import {getUser} from "../utils/axios";
 import cook from "js-cookie";
 // const Sidebar = dynamic(() => import('../components/Sidebar'));
-const Feed = dynamic(() => import('../components/Feed'),{suspense: false});
-const RightSideColumn = dynamic(() => import('../components/RightSideColumn'),{suspense: false});
+const Feed = dynamic(() => import('../components/Feed'), {suspense: false});
+const RightSideColumn = dynamic(() => import('../components/RightSideColumn'), {suspense: false});
 
+import {arrayUnique} from '/utils/set'
 function Index() {
     const [postsData, setPostsData] = useState([])
     const [postsDataAdd, setPostsDataAdd] = useState([])
@@ -21,55 +22,113 @@ function Index() {
     const [errorLoading, setErrorLoading] = useState(false)
     const [chatsData, setChatsData] = useState([])
     const [changeBol, setChangeBol] = useState(true)
-    const [pageNumber, setPageNumber] = useState(1)
+    const [pageNumber, setPageNumber] = useState(0)
     const [userPar, setUserPar] = useState(null)
-   const arrayUnique=(arr, name)=> {
-        var hash = {}
-        return arr.reduce(function(acc, cru, index) {
-            if (!hash[cru[name]]) {
-                hash[cru[name]] = { index: index }
-                acc.push(cru)
-            } else {
-                acc.splice(hash[cru[name]]['index'], 1, cru)
-            }
-            return acc
-        }, [])
-    }
+
+    // 是否滚动
+    const [scrollBol, setScrollBol] = useState(false)
+
+    //  是否点赞
+    const [clickBol, setClickBol] = useState(false)
+
+    // 是否发推文
+    const [sendBol, setSendBol] = useState(false)
+
+    // 删除的推文
+    const [deleteId, setDeleteId] = useState(null)
+
+    // 是否关注
+    const [likeBol, setLikeBol] = useState(false)
     useEffect(() => {
-        if (postsData) {
-            const data = postsDataAdd.concat(postsData)
-            const aa = arrayUnique(data, 'id')
-            setPostsDataAdd(aa)
+        if (scrollBol) {
+            setScrollBol(false)
+            if (postsData && postsData.length > 0) {
+                const data = postsDataAdd.concat(postsData)
+                setPostsDataAdd(data)
+            } else {
+                setPostsDataAdd([...postsDataAdd])
+            }
+        } else if (sendBol) {
+            setSendBol(false)
+            if (postsData && postsData.length > 0) {
+                setPostsDataAdd(postsData)
+            } else {
+                setPostsDataAdd([])
+            }
+        } else if (clickBol) {
+            setClickBol(false)
+            if (postsData && postsData.length > 0) {
+                const data = postsDataAdd.concat(postsData)
+                let aa = arrayUnique(data, 'id')
+                if (deleteId) {
+                    const man = aa.filter((i) => {
+                        return i.id !== deleteId
+                    })
+                    setPostsDataAdd(man)
+                    setDeleteId(null)
+                } else {
+                    setPostsDataAdd(aa)
+                }
+            } else {
+                if (deleteId) {
+                    const da = _.cloneDeep(postsDataAdd)
+                    const b = da.filter((i) => i.id !== deleteId)
+                    setPostsDataAdd(b)
+                    setDeleteId(null)
+                } else {
+                    setPostsDataAdd([...postsDataAdd])
+                }
+            }
         } else {
-            setPostsDataAdd(postsDataAdd)
+            if (postsData && postsData.length > 0) {
+                setPostsDataAdd(postsData)
+            } else {
+                setPostsDataAdd([])
+            }
         }
     }, [postsDataBol])
-    const getUs=async ()=>{
-        const {data:{user},status} =   await getUser(cook.get('name'))
-        if(status===200&&user){
+    const getUs = async () => {
+        const {data: {user}, status} = await getUser(cook.get('name'))
+        if (status === 200 && user) {
             setUserPar(user)
-        }else {
+        } else {
             setUserPar('')
         }
     }
     useEffect(() => {
-        if(cook.get('name')){
+        if (cook.get('name')) {
             getUs()
         }
     }, [cook.get('name')]);
-
-
-
-    const change = () => {
+    const change = (name, id) => {
+        if (name === 'gun') {
+            setScrollBol(true)
+        }
+        if (name === 'send') {
+            setSendBol(true)
+        }
+        if (name === 'click') {
+            setClickBol(true)
+        }
+        if (name === 'like') {
+            setLikeBol(true)
+        }
+        if (id) {
+            setDeleteId(id)
+        }
         setChangeBol(!changeBol)
     }
     const changePage = () => {
         setPageNumber(pageNumber + 1)
-        change()
+        change('gun')
     }
     const getParams = async () => {
+        let a = _.cloneDeep(pageNumber)
+        if (sendBol) {
+            a = 0
+        }
         const res = await axios.get(`${baseUrl}/api/posts`, {
-            params: {pageNumber, userId: userPar?.id},
+            params: {pageNumber: a, userId: userPar?.id},
         });
         if (res.status === 200) {
             setPostsDataBol(!postsDataBol)
@@ -92,8 +151,12 @@ function Index() {
         }
     }
     useEffect(() => {
-        if (userPar&&userPar.id) {
-            getParams()
+        if (userPar && userPar.id) {
+            if (!likeBol) {
+                getParams()
+            } else {
+                setLikeBol(false)
+            }
             getUsers()
         }
     }, [userPar, changeBol])
@@ -101,11 +164,11 @@ function Index() {
     return (
         <>
             <div className="min-h-screen"
-                 style={{backgroundColor: '#BCEE7D', marginRight: '20px', borderRadius: '10px'}}>
-                <main style={{display:'flex'}}>
-                    <Sidebar user={userPar?userPar : ''}/>
+                 style={{backgroundColor: 'rgb(253,213,62)', marginRight: '20px', borderRadius: '10px'}}>
+                <main style={{display: 'flex'}}>
+                    <Sidebar user={userPar ? userPar : ''}/>
                     <Feed
-                        user={userPar?userPar: ''}
+                        user={userPar ? userPar : ''}
                         postsData={postsDataAdd}
                         errorLoading={errorLoading}
                         change={change}
@@ -115,11 +178,12 @@ function Index() {
                             sizeIncUp: styles.sizeup,
                         }}
                     />
+
                     <RightSideColumn
                         chatsData={chatsData}
                         userFollowStats={postSession}
                         change={change}
-                        user={userPar?userPar : {}}
+                        user={userPar ? userPar : {}}
                     />
                 </main>
             </div>

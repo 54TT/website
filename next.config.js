@@ -5,7 +5,7 @@ module.exports = {
         styledComponents: true,
     },
     images: {
-      domains: ['localhost','dexscreener.com',"www.kindpng.com",'http://188.166.191.246:3000'], // 在这里添加您希望允许加载图像的主机名
+      domains: ['localhost','dexscreener.com',"www.kindpng.com",'http://192.168.8.39:3000'], // 在这里添加您希望允许加载图像的主机名
     },
     publicRuntimeConfig: {
         // 配置静态文件的根路径

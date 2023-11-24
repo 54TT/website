@@ -48,20 +48,17 @@ function PostCard({post, user, change, liked}) {
         if (e.keyCode == 13 && e.shiftKey == false) {
             e.preventDefault();
             buttonRef.current.click();
-
         }
     };
 
     const handleLike = async () => {
-      const data =   await likePost(post?.id, user?.id, !liked, change)
+      const data =   await likePost(post?.id, user?.id, !liked)
         if(data&&data.status===200){
-            change()
+            change('click')
         }
     };
-
     const handleClickOpen = () => {
         setOpen(true);
-
     };
 
     const handleClose = () => {
@@ -69,8 +66,11 @@ function PostCard({post, user, change, liked}) {
     };
 
     const handleAgree = async () => {
-        await deletePost(post?.id, setComments, notify, change, user.id);
-        // handleClose();
+      const data =   await deletePost(post?.id, setComments, notify,  user.id);
+        if(data&&data.status===200){
+            setOpen(false);
+            change('click',post?.id);
+        }
     };
     const handleDisagree = () => {
         handleClose();
@@ -78,8 +78,8 @@ function PostCard({post, user, change, liked}) {
 
     return (
         <div
-            style={{fontFamily: "Inter"}}
-            className="mb-7 bg-white flex flex-col justify-start rounded-2xl shadow-md"
+            style={{fontFamily: "Inter",backgroundColor:'rgb(254,239,146)'}}
+            className="mb-7 flex flex-col justify-start rounded-2xl shadow-md"
         >
             <div className="p-4">
                 <div className="flex space-x-3 items-center ml-2 relative">
@@ -224,18 +224,6 @@ function PostCard({post, user, change, liked}) {
                                         }}
                                         onKeyDown={onEnterPress}
                                     />
-                                    {/*<TextareaAutosize*/}
-                                    {/*  style={{ resize: "none", fontFamily: "Inter" }}*/}
-                                    {/*  name="commentText"*/}
-                                    {/*  value={commentText}*/}
-                                    {/*  onChange={(e) => {*/}
-                                    {/*    setCommentText(e.target.value);*/}
-                                    {/*  }}*/}
-                                    {/*  type="text"*/}
-                                    {/*  placeholder={`Write a comment...`}*/}
-                                    {/*  maxRows={"4"}*/}
-                                    {/*  onKeyDown={onEnterPress}*/}
-                                    {/*></TextareaAutosize>*/}
                                 </div>
                             </div>
                             <button

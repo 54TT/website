@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef, Suspense,useContext , startTransition} from "react";
+import React, {useState, useEffect, useRef,useContext , startTransition} from "react";
 import {getCsrfToken, signIn, useSession, signOut} from "next-auth/react"
 import baseUrl from '/utils/baseUrl'
 import {useAccount, useConnect, useNetwork, useSignMessage, useDisconnect,} from "wagmi"
@@ -15,11 +15,12 @@ import _ from 'lodash'
 import cookie from 'js-cookie'
 import {useRouter} from 'next/router'
 // import ChatSearch from "../Chat/ChatSearch";
-const ChatSearch = dynamic(() => import('../Chat/ChatSearch'), {suspense: false})
-const DrawerPage = dynamic(() => import('./Drawer'), {suspense: false})
+const ChatSearch = dynamic(() => import('../Chat/ChatSearch'), {suspense: false,ssr: true})
+const DrawerPage = dynamic(() => import('./Drawer'), {suspense: false,ssr: true})
 import {get, post, del, getUser} from '/utils/axios'
 import {ethers} from 'ethers'
 import { CountContext } from '/components/Layout/Layout';
+import Marquee from "react-fast-marquee";
 const Header = () => {
     const router = useRouter()
     const [form] = Form.useForm();
@@ -55,26 +56,6 @@ const Header = () => {
             setTokenFormBol(false)
         })
     }, 1500)
-    // const purgecss = [
-    //     "@fullhuman/postcss-purgecss",
-    //     {
-    //         content: [
-    //             "./pages/*.js",
-    //             "./pages/**/*.js",
-    //             "./components/*.js",
-    //             "./components/**/*.js",
-    //         ],
-    //         whitelistPatterns: [/^slick-/],
-    //         defaultExtractor: (content) => content.match(/[\w-/:]+(?<!:)/g) || [],
-    //     }
-    // ];
-    // module.exports = {
-    //     plugins: [
-    //         "postcss-import",
-    //         "tailwindcss",
-    //         "autoprefixer",
-    //     ],
-    // };
     useEffect(()=>{
         if(cookie.get('user')){
             getUs()
@@ -86,6 +67,7 @@ const Header = () => {
     };
     useEffect(()=>{
         if(cookie.get('name')&&cookie.get('name')!==address){
+            cookie.set('name',address)
             router.push('/')
             changeBolLogin()
             getUs()
@@ -376,14 +358,39 @@ const Header = () => {
             ),
         },
     ];
+    const [launch,setLaunch]=useState([])
+    const getLaunch=async ()=>{
+        const res = await axios.get(baseUrl+'/queryLaunch',{
+            pageIndex: 0,
+            pageSize: 10
+        })
+        const {data: {data}} = res
+        setLaunch(data && data.length > 0 ? data : [])
+    }
+    useEffect(()=>{
+        getLaunch()
+    },[])
     return (
         <div
             className={
-                "top-0 w-full  z-30 transition-all headerClass"}>
-            {
-                <Suspense fallback={<div>Loading...</div>}>
-                    <div className={styles['aaa']}>
-                        <div></div>
+                "top-0 w-full  z-30 transition-all headerClass"} >
+                {/*// <Suspense fallback={<div>Loading...</div>}>*/}
+                    <div className={styles['aaa']} style={{paddingLeft:'110px'}}>
+                        <Marquee
+                            pauseOnHover={true}
+                            speed={30}
+                            gradientWidth={100}
+                            style={{width:'25%',marginLeft:'20px'}}>
+                            {
+                                launch.length>0&&launch.map((i,index)=>{
+                                    return <div key={index} style={{marginRight:'30px',display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+                                        <span>#{index+1}</span>
+                                        <p style={{width:'20px',borderRadius:'50%',backgroundColor:'#454545',color:'white',lineHeight:'20px',textAlign:'center',margin:'0 2px'}}>{i?.symbol?.slice(0,1)}</p>
+                                  <span>{i.symbol}</span>
+                                    </div>
+                                })
+                            }
+                        </Marquee>
                         <div style={{position: 'relative', width: '30%'}}>
                             <p className={styles['search']} onClick={() => setShowChatSearch(true)}>Search pair by
                                 symbol,name,contract or token</p>
@@ -431,8 +438,7 @@ const Header = () => {
                         </div>
                     </div>
                     <DrawerPage getMoney={getMoney}/>
-                </Suspense>
-            }
+                {/*// </Suspense>*/}
             <Drawer title="Basic Drawer" destroyOnClose={true} placement="right" onClose={onClose} open={open}>
                 <Form
                     name="basic"

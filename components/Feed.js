@@ -26,6 +26,7 @@ function Feed({user, postsData, errorLoading,change,changePage, increaseSizeAnim
                 <div className="mx-auto max-w-md md:max-w-lg lg:max-w-2xl">
                     <InputBox
                         user={user}
+                        change={change}
                         setPosts={setPosts}
                         increaseSizeAnim={increaseSizeAnim}
                     />
@@ -39,14 +40,14 @@ function Feed({user, postsData, errorLoading,change,changePage, increaseSizeAnim
                         ) :
                             (
                             <InfiniteScroll
-                                hasMore={posts.length===8}
+                                hasMore={true}
                                 next={changePage}
                                 endMessage={
                                     <p style={{ textAlign: 'center' }}>
                                         <b>Yay! You have seen it all</b>
                                     </p>
                                 }
-                                loader={<h4>Loading...</h4>}
+                                loader={null}
                                 dataLength={posts.length}
                             >
                                 {posts && posts?.length > 0 ? posts.map((post,index) => {

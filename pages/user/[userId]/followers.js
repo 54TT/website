@@ -71,7 +71,7 @@ function FollowersPage() {
         />);
     }
 
-    return (<div className="h-screen" style={{backgroundColor: '#BCEE7D', marginRight: '20px', borderRadius: '10px'}}>
+    return (<div className="h-screen" style={{backgroundColor: 'rgb(253,213,62)', marginRight: '20px', borderRadius: '10px'}}>
         <main
             style={{
                 height: "calc(100vh - 4.5rem)", overflowY: "auto", display: "flex",

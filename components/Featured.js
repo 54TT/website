@@ -41,7 +41,7 @@ export default function Featured() {
             return <div style={{display: 'flex', alignItems: 'center',justifyContent:'space-between',width:'50%',margin:'0 auto'}}>
                 <p style={{
                     width: '30px',
-                    backgroundColor: 'black',
+                    backgroundColor: '#454545',
                     color: 'white',
                     lineHeight: '30px',
                     textAlign: 'center',
@@ -184,7 +184,7 @@ export default function Featured() {
                 lineHeight: '1',
                 fontSize: '20px',
                 color: 'rgb(98,98,98)'
-            }}>©DEXPert.io</p>
+            }}>©DEXpert.io</p>
         </div>
     );
 }

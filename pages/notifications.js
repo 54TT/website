@@ -15,9 +15,6 @@ const LikeNotification = dynamic(() => import('../components/Notification/LikeNo
 const CommentNotification = dynamic(() => import('../components/Notification/CommentNotification'),{suspense: false});
 const FollowNotification = dynamic(() => import('../components/Notification/FollowNotification'),{suspense: false});
 
-
-
-
 function Notifications() {
     const [notifications, setNotifications] = useState([])
     const [userPar, setUserPar] = useState(null)
@@ -67,12 +64,11 @@ function Notifications() {
         }
     }, [userPar, followStatsBol]);
     return (
-        <div style={{backgroundColor:'rgb(188,238,125)',marginRight:"20px",borderRadius:'10px'}}>
+        <div style={{backgroundColor:'rgb(253,213,62)',marginRight:"20px",borderRadius:'10px'}}>
             <main
                 className="flex"
-                style={{height: "calc(100vh - 4.5rem)"}}
-            >
-                <Sidebar user={userPar}/>
+                style={{height: "calc(100vh - 4.5rem)"}}>
+                <Sidebar user={userPar} maxWidth={"250px"}/>
                 <div
                     style={{
                         fontFamily: "Inter",

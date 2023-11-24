@@ -31,7 +31,7 @@ function Bottom(props) {
                     <img src="/Medium.png" alt="" width={45}  height={45}/>
                 </div>
             </div>
-            <div style={{color:'rgb(55,55,55,)',margin:'20px 0',display:'flex',alignItems:'center',justifyContent:'center'}}>©DEXPert.io</div>
+            <div style={{color:'rgb(55,55,55,)',margin:'20px 0',display:'flex',alignItems:'center',justifyContent:'center'}}>©DEXpert.io</div>
         </div>
     );
 }

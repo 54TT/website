@@ -1,7 +1,6 @@
 /* purgecss start ignore */
 @tailwind base;
 @tailwind components;
-
 html {
     font-family: "Rubik", sans-serif;
 }

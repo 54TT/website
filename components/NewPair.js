@@ -4,7 +4,7 @@ import _ from 'lodash'
 import {ApolloClient, InMemoryCache, useQuery} from "@apollo/client";
 import {gql} from "graphql-tag";
 import dayjs from "dayjs";
-import {autoConvertNew,} from '/utils/set'
+import {autoConvertNew,autoConvert} from '/utils/set'
 import {formatDecimal, sendGetRequestWithSensitiveData, getRelativeTimeDifference, formatDateTime} from './Utils';
 
 const client = new ApolloClient({
@@ -80,8 +80,11 @@ export default function NewPair() {
         let data = null
         if (text&&Number(text) < 1 && text.toString().includes('0000')) {
             data = formatDecimal(text.toString(),3)
+            if(data.length>10){
+                data=data.slice(0,8)
+            }
         } else if (text&&Number(text)) {
-            data = autoConvertNew(Number(text))
+            data = autoConvert(Number(text))
         }else{
             data =0
         }
@@ -98,7 +101,7 @@ export default function NewPair() {
                     width: '30px',
                     lineHeight: '30px',
                     textAlign: "center",
-                    backgroundColor: 'black',
+                    backgroundColor: '#454545',
                     color: 'white'
                 }}>{record?.token0?.symbol?.slice(0, 1) || ''}</p>
             }
@@ -137,14 +140,15 @@ export default function NewPair() {
             title: 'Volume($)', align: 'center',
             dataIndex: 'volumeUSD',
             render: (text) => {
-                return <span>{text}</span>
+                return <span>{setMany(text)}</span>
             }
         },
         {
             title: 'ReserveETH', align: 'center',
             dataIndex: 'reserveETH',
             render: (text) => {
-                return <span>{setMany(text)}</span>
+                const data =setMany(text)
+                return <span>{data}</span>
             }
         },
         {
@@ -199,7 +203,7 @@ export default function NewPair() {
                 lineHeight: '1',
                 fontSize: '20px',
                 color: 'rgb(98,98,98)'
-            }}>©DEXPert.io</p>
+            }}>©DEXpert.io</p>
         </div>
     );
 }

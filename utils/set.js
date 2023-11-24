@@ -24,7 +24,8 @@ export const dao = (name) => {
         const h = hour.toString().length === 1 ? '0' + hour : hour
         const s = sin.toString().length === 1 ? '0' + sin : sin
         if(day){
-            return day+'days after'
+            const data = Number(hour)+day*24
+            return   data + ':' + m+':'+s
         }else {
             return  h + ':' + m+':'+s
         }
@@ -38,7 +39,7 @@ export const autoConvert = (number) => {
     if (Math.abs(number) >= 1000000) {
         return `${(number / 1000000).toFixed(4).replace(/\.?0*$/, '')}M`;
     } else if (Math.abs(number) >= 1000) {
-        return `${(number / 1000).toFixed(2).replace(/\.?0*$/, '')}K`;
+        return `${(number / 1000).toFixed(4).replace(/\.?0*$/, '')}K`;
     } else {
         return number.toFixed(4).replace(/\.?0*$/, '');
     }
@@ -53,4 +54,16 @@ export const autoConvertNew = (number) => {
     }
 };
 
+export const arrayUnique = (arr, name) => {
+    var hash = {}
+    return arr.reduce(function (acc, cru, index) {
+        if (!hash[cru[name]]) {
+            hash[cru[name]] = {index: index}
+            acc.push(cru)
+        } else {
+            acc.splice(hash[cru[name]]['index'], 1, cru)
+        }
+        return acc
+    }, [])
+}
 

@@ -1,6 +1,7 @@
 import axios from "axios";
 import catchErrors from "./catchErrors";
 import baseUrl from '/utils/baseUrl'
+
 const Axios = axios.create({
     baseURL: `${baseUrl}/api/posts`,
 });
@@ -27,27 +28,20 @@ export const submitNewPost = async (
     }
 };
 
-export const deletePost = async (postId, setPosts, notify,change,userId) => {
+export const deletePost = async (postId, setPosts, notify,userId) => {
     try {
-       const data =  await Axios.delete(`/${postId}`,{data:{userId}});
-       if(data&&data.status===200){
-           notify();
-           change()
-       }
+        return   await Axios.delete(`/${postId}`,{data:{userId}});
     } catch (error) {
+
     }
 };
 
-export const likePost = async (postId, userId,  like,change) => {
+export const likePost = async (postId, userId,  like) => {
     try {
         if (like) {
-          const data =   await Axios.post(`/like/${postId}`,{userId});
-            change()
-            return data
+            return await Axios.post(`/like/${postId}`, {userId})
         } else {
-            const data=  await Axios.put(`/unlike/${postId}`,{userId});
-            change()
-            return data
+            return await Axios.put(`/unlike/${postId}`, {userId})
         }
     } catch (error) {
     }
@@ -73,15 +67,14 @@ export const deleteComment = async (
     commentId,
     setComments,
     notifyCommentDelete,handleClose,
-    userId,change
+    userId
 ) => {
     try {
-       const data =  await Axios.delete(`/${postId}/${commentId}`,{data:{userId}});
+       const data =  await axios.delete(`/${postId}/${commentId}`,{data:{userId}});
         if(data.status===200){
             setComments((prev) => prev.filter((comment) => comment._id !== commentId));
             notifyCommentDelete();
             handleClose()
-            change()
         }
     } catch (error) {
     }

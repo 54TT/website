@@ -90,7 +90,7 @@ function ChatSearch({ setShowChatSearch, setChats, chats,user, }) {
                     chats.find((chat) => chat.textsWith === resultUser.id);
                   const newChat = {
                     textsWith: resultUser.id,
-                    name: resultUser.name,
+                    name: resultUser.username,
                     profilePicUrl: resultUser.profilePicUrl,
                     lastText: "",
                   };

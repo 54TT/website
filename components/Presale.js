@@ -1,11 +1,13 @@
 import React, {useEffect, useRef, useState} from "react";
 import dayjs from 'dayjs';
-import {notification, Pagination, Table, Card} from "antd";
+import {notification, Pagination, Table, Card, Statistic} from "antd";
 import _ from "lodash";
 import {get} from "../utils/axios";
 import {GlobalOutlined, SendOutlined, TwitterOutlined} from "@ant-design/icons";
 import {dao} from '/utils/set'
 import baseUrl from "../utils/baseUrl";
+const {Countdown} = Statistic;
+
 export default function Presale() {
     const [launchPageSize, setLaunchPageSize] = useState(10);
     const [launchCurrent, setLaunchCurrent] = useState(1);
@@ -57,6 +59,13 @@ export default function Presale() {
             window.open(record.website.includes('http') ? record.website : 'https://' + record.website)
         }
     }
+        const getD = (a) => {
+            if (a) {
+                return Date.now() + Number(a) * 1000
+            } else {
+                return 0
+            }
+        }
     const columns = [
         {
             title: '',
@@ -66,7 +75,7 @@ export default function Presale() {
                 return <p style={{
                     width: '30px',
                     borderRadius: '50%',
-                    backgroundColor: 'black',
+                    backgroundColor: '#454545',
                     color: 'white',
                     textAlign: 'center',
                     lineHeight: '30px'
@@ -112,7 +121,9 @@ export default function Presale() {
             },
             render: (text, record) => {
                 if (text) {
-                    return <span style={{fontSize:'18px'}}>{dao(dayjs(text).isAfter(dayjs()) ? dayjs(text).diff(dayjs(), 'seconds') : '')}</span>
+                    return   <Countdown title=""
+                                        value={getD(dayjs(text).isAfter(dayjs()) ? dayjs(text).diff(dayjs(), 'seconds') : '')}
+                                        format="HH:mm:ss"/>
                 } else {
                     return <p style={{textAlign: 'center'}}>0</p>
                 }
@@ -150,7 +161,7 @@ export default function Presale() {
                 }}>
                     <div style={{display: 'flex', alignItems: 'center'}}>
                         <img src="/Group.png" alt="" width={70} height={70}/>
-                        <span style={{fontWeight: 'bold', fontSize: '26px'}}>PRESALE</span>
+                        <span style={{fontWeight: 'bold', fontSize: '26px'}}>Presales</span>
                     </div>
                 </div>
 
@@ -171,7 +182,7 @@ export default function Presale() {
                 lineHeight: '1',
                 fontSize: '20px',
                 color: 'rgb(98,98,98)'
-            }}>©DEXPert.io</p>
+            }}>©DEXpert.io</p>
         </div>
     )
 }

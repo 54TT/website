@@ -11,16 +11,6 @@ export const {chains, publicClient, webSocketPublicClient, provider} = configure
         publicProvider()
     ]
 );
-
-const Disclaimer = ({Text, Link}) => (
-    <Text>
-        By connecting your wallet, you agree to the{' '}
-        <Link href="https://termsofservice.xyz">Terms of Service</Link> and
-        acknowledge you have read and understand the protocol{' '}
-        <Link href="https://disclaimer.xyz">Disclaimer</Link>
-    </Text>
-);
-
 // const { connectors } = getDefaultWallets({
 //   appName: 'Dex Pert App',
 //   projectId: '91383724685e391bed500342fc272001',
@@ -39,7 +29,6 @@ const client = createClient({
 })
 import Layout from '/components/Layout/Layout'
 import Head from 'next/head';
-
 function DexPert({Component, pageProps}) {
     return (<>
         <Head>
@@ -51,11 +40,9 @@ function DexPert({Component, pageProps}) {
                 <Layout>
                     <Component {...pageProps} />
                 </Layout>
-                {/*</RainbowKitProvider>*/}
             </SessionProvider>
         </WagmiConfig>
         </>
     );
 }
-
 export default DexPert;

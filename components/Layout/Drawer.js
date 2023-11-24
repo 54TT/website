@@ -105,7 +105,7 @@ const Drawer = ({getMoney}) => {
                 </div>
                 </Link>
                 <List>
-                    <ListItem key="Dex Pboard" disablePadding sx={{display: 'block',}} className="drawerItem">
+                    <ListItem key="Home" disablePadding sx={{display: 'block',}} className="drawerItem">
                         <Link href={'/'}>
                             <ListItemButton
                                 sx={{
@@ -123,11 +123,11 @@ const Drawer = ({getMoney}) => {
 
                                     <img src={`/Home.png`} alt="logo" width={32} height={32} />
                                 </ListItemIcon>
-                                <ListItemText primary="Dex Pboard" sx={{opacity: openDrawer ? 1 : 0}}/>
+                                <ListItemText primary="Home" sx={{opacity: openDrawer ? 1 : 0}}/>
                             </ListItemButton>
                         </Link>
                     </ListItem>
-                    <ListItem key="Featured" disablePadding sx={{display: 'block'}} className="drawerItem">
+                    <ListItem key="Featured Pairs" disablePadding sx={{display: 'block'}} className="drawerItem">
                         <Link href={'/featured'}>
                             <ListItemButton
                                 sx={{
@@ -145,11 +145,11 @@ const Drawer = ({getMoney}) => {
 
                                     <img src={`/Exchange.png`} alt="logo" height={32} width={32} />
                                 </ListItemIcon>
-                                <ListItemText primary="Featured" sx={{opacity: openDrawer ? 1 : 0}}/>
+                                <ListItemText primary="Featured Pairs" sx={{opacity: openDrawer ? 1 : 0}}/>
                             </ListItemButton>
                         </Link>
                     </ListItem>
-                    <ListItem key="Presale" disablePadding sx={{display: 'block'}} className="drawerItem">
+                    <ListItem key="Presales" disablePadding sx={{display: 'block'}} className="drawerItem">
                         <Link href={'/presale'}>
                             <ListItemButton
                                 sx={{
@@ -166,11 +166,11 @@ const Drawer = ({getMoney}) => {
                                 >
                                     <img src={`/pre-sale.png`} alt="logo" height={32} width={32} />
                                 </ListItemIcon>
-                                <ListItemText primary="Presale" sx={{opacity: openDrawer ? 1 : 0}}/>
+                                <ListItemText primary="Presales" sx={{opacity: openDrawer ? 1 : 0}}/>
                             </ListItemButton>
                         </Link>
                     </ListItem>
-                    <ListItem key="Launch" disablePadding sx={{display: 'block'}} className="drawerItem">
+                    <ListItem key="Launching Soon Tokens" disablePadding sx={{display: 'block'}} className="drawerItem">
                         <Link href={'/launch'}>
                             <ListItemButton
                                 sx={{
@@ -187,7 +187,7 @@ const Drawer = ({getMoney}) => {
                                 >
                                     <img src={`/pre-sale.png`} alt="logo" height={32} width={32} />
                                 </ListItemIcon>
-                                <ListItemText primary="Launch" sx={{opacity: openDrawer ? 1 : 0}}/>
+                                <ListItemText primary="Launching Soon Tokens" sx={{opacity: openDrawer ? 1 : 0}}/>
                             </ListItemButton>
                         </Link>
                     </ListItem>
@@ -213,7 +213,7 @@ const Drawer = ({getMoney}) => {
                             </ListItemButton>
                         </Link>
                     </ListItem>
-                    <ListItem key="Information" disablePadding sx={{display: 'block'}} className="drawerItem">
+                    <ListItem key="DEXpert Community" disablePadding sx={{display: 'block'}} className="drawerItem">
                         <div  onClick={push}>
                             <ListItemButton
                                 sx={{
@@ -230,11 +230,11 @@ const Drawer = ({getMoney}) => {
                                 >
                                     <img src={`/News.png`} alt="logo" width={32} height={32} />
                                 </ListItemIcon>
-                                <ListItemText primary="Information" sx={{opacity: openDrawer ? 1 : 0}}/>
+                                <ListItemText primary="DEXpert Community" sx={{opacity: openDrawer ? 1 : 0}}/>
                             </ListItemButton>
                         </div>
                     </ListItem>
-                    <ListItem key="Comminicate" disablePadding sx={{display: 'block'}} className="drawerItem">
+                    <ListItem key="User Profile" disablePadding sx={{display: 'block'}} className="drawerItem">
                         <div onClick={pushPer} >
                             <ListItemButton
                                 sx={{
@@ -251,7 +251,7 @@ const Drawer = ({getMoney}) => {
                                 >
                                     <img src={`/Users.png`} height={32} alt="logo" width={32} />
                                 </ListItemIcon>
-                                <ListItemText primary="Comminicate" sx={{opacity: openDrawer ? 1 : 0}}/>
+                                <ListItemText primary="User Profile" sx={{opacity: openDrawer ? 1 : 0}}/>
                             </ListItemButton>
                         </div>
                     </ListItem>
