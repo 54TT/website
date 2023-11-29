@@ -1,14 +1,10 @@
-import Layout from "../components/Layout/Layout";
-import SeoHead from "../components/SeoHead";
-import PairInfo from "../components/PairInfo";
-
+// import PairInfo from "../components/PairInfo";
+import dynamic from 'next/dynamic'
+const PairInfo = dynamic(() => import('../components/PairInfo'),{suspense: false});
 export default function pairInfo() {
   return (
     <>
-      <SeoHead title='' />
-      <Layout>
         <PairInfo/>
-      </Layout>
     </>
   );
 }

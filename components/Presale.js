@@ -1,196 +1,151 @@
-import React, {useEffect, useState} from "react";
-import axios from 'axios';
-import Link from "next/link";import  baseUrl from '/utils/baseUrl';
-import Image from 'next/image';
-import {formatDecimal, sendGetRequestWithSensitiveData, getRelativeTimeDifference, formatDateTime} from './Utils';
-// import { useAccount, useNetwork} from "wagmi";
-import {useRouter} from 'next/router';
-import moment from 'moment';
-import {notification, Pagination, Table, Card} from "antd";
+import React, {useEffect, useRef, useState} from "react";
+import dayjs from 'dayjs';
+import {notification, Pagination, Table, Card, Statistic} from "antd";
 import _ from "lodash";
 import {get} from "../utils/axios";
+import {GlobalOutlined, SendOutlined, TwitterOutlined} from "@ant-design/icons";
+import {dao} from '/utils/set'
+import baseUrl from "../utils/baseUrl";
+const {Countdown} = Statistic;
 
 export default function Presale() {
-    // const { chain } = useNetwork();
-    const router = useRouter();
+    const [launchPageSize, setLaunchPageSize] = useState(10);
+    const [launchCurrent, setLaunchCurrent] = useState(1);
+    const [launchAll, setLaunchAll] = useState(0);
     const [launch, setLaunch] = useState([]);
     const [launchBol, setLaunchBol] = useState(true);
-    const [presales, setPresales] = useState([]);
-    const [chainId, setChainId] = useState("ethereum");
-    const [currentPage, setCurrentPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(30);
-    const [presaleCount, setPresaleCount] = useState(0);
+
     const hint = () => {
         notification.error({
             message: `Please note`, description: 'Error reported', placement: 'topLeft',
+            duration: 2
         });
     }
-    const [refreshedTime, setRefreshedTime] = useState(moment());
-    const updateRefreshedTime = () => {
-        setRefreshedTime(moment());
-    };
-
     const getParams = (url, params) => {
         get(url, params).then((res) => {
             if (res.status === 200) {
-                let data = res.data
-                if (data.data && data.data.length > 0) {
-                    setLaunch(data.data)
-                    setLaunchBol(false)
-                } else {
-                    setLaunch([])
-                    setLaunchBol(false)
-                }
+                let {data, count} = res.data
+                setLaunch(data && data.length > 0 ? data : [])
+                setLaunchAll(count && count.length > 0 ? count[0].count : 0)
+                setLaunchBol(false)
             }
         }).catch(err => {
+            setLaunch( [])
+            setLaunchAll( 0)
+            setLaunchBol(false)
             hint()
         })
     }
-
+    const [diffTime, setDiffTime] = useState(null)
+    const refSet = useRef(null)
     useEffect(() => {
-        getParams('/queryPresaleAndLaunch', '')
-        // const intervalId = setInterval(updateRefreshedTime, 1000);
-        // return () => clearInterval(intervalId);
+        refSet.current = setInterval(() => setDiffTime(diffTime - 1), 1000)
+        return () => {
+            clearInterval(refSet.current)
+        }
+    }, [diffTime])
+    useEffect(() => {
+        getParams('/queryPresale', {
+            pageIndex: launchCurrent - 1,
+            pageSize: launchPageSize
+        },)
     }, []);
-    const changeImg = (record) => {
-        const data = _.cloneDeep(launch)
-        data.map((i) => {
-            if (i.key === record.key) {
-                i.img = !i.img;
-            }
-            return i
-        })
-        setLaunch(data)
-    }
-
     const push = (record, name) => {
         if (name === 'a') {
             window.open(record.telegram)
         } else if (name === 'b') {
             window.open(record.twitter)
         } else {
-            window.open(record.website)
+            window.open(record.website.includes('http') ? record.website : 'https://' + record.website)
         }
     }
-
+        const getD = (a) => {
+            if (a) {
+                return Date.now() + Number(a) * 1000
+            } else {
+                return 0
+            }
+        }
     const columns = [
         {
             title: '',
-            dataIndex: 'age',
-            key: 'age',
-            width: 100,
-            render: () => {
-                return <img src="/avatar.png" alt="" width={'50px'}/>
+            dataIndex: 'address',align: 'center',
+            width: 30,
+            render: (_, record) => {
+                return <p style={{
+                    width: '30px',
+                    borderRadius: '50%',
+                    backgroundColor: '#454545',
+                    color: 'white',
+                    textAlign: 'center',
+                    lineHeight: '30px'
+                }}>{record?.symbol?.slice(0, 1)}</p>
             }
         },
         {
-            title: 'Pair',
-            dataIndex: 'name',
+            title: 'Token name',
+            dataIndex: 'name',align: 'center',width: '25%',
             render: (text) => {
-                return <p style={{fontWeight: 'bold', fontSize: '20px', textAlign: 'center'}}>{text}</p>
+                return <p style={{fontWeight: 'bold', fontSize: '18px', textAlign: 'center'}}>{text}</p>
+            }
+        },
+        {
+            title: 'Token symbol',
+            dataIndex: 'symbol',align: 'center',
+            render: (text) => {
+                return <p style={{fontWeight: 'bold', fontSize: '18px', textAlign: 'center'}}>{text}</p>
             }
         },
         {
             title: 'Social Info',
-            dataIndex: 'address',
+            dataIndex: 'address',align: 'center',
             width: 200,
             render: (text, record) => {
                 return <div
                     style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer'}}>
-                    <img src={'/Telegram.png'} alt="" width={'40px'} onClick={() => push(record, 'a')}/>
-                    <img src={'/TwitterCircled.png'} alt="" width={'40px'} onClick={() => push(record, 'b')}/>
-                    <img src={'/Website.png'} alt="" width={'40px'} onClick={() => push(record, 'c')}/>
+                    <GlobalOutlined style={{cursor: 'pointer', fontSize: '20px'}} onClick={() => push(record, 'one')}/>
+                    <TwitterOutlined style={{cursor: 'pointer', fontSize: '20px'}} onClick={() => push(record, 'two')}/>
+                    <SendOutlined style={{cursor: 'pointer', fontSize: '20px'}} onClick={() => push(record, 'three')}/>
                 </div>
             }
         },
         {
-            title: 'Pre-sale ends',
-            dataIndex: 'presale_time',
+            title: 'Presale time',
+            dataIndex: 'presale_time',align: 'center',
             sorter: {
                 compare: (a, b) => {
-                    const data = moment(a.presale_time).format('YYYY-MM-DD HH:mm:ss')
-                    const pa = moment(b.presale_time).format('YYYY-MM-DD HH:mm:ss')
-                    return moment(pa).isBefore(data)
+                    const data = a.presale_time ? dayjs(a.presale_time).format('YYYY-MM-DD HH:mm:ss') : 0
+                    const pa = b.presale_time ? dayjs(b.presale_time).format('YYYY-MM-DD HH:mm:ss') : 0
+                    return dayjs(pa).isBefore(data)
                 }
             },
-            // moment('2010-10-20').isBefore('2010-10-21');
-            render: (text) => {
-                return <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}><img
-                    src="/Time.png" alt="" width={'30px'}/> <span>{moment(text).format('YYYY-MM-DD:HH:mm:ss')}</span>
-                </div>
-            }
-        },
-        {
-            title: 'Launch time',
-            dataIndex: 'launch_time',
-            sorter: {
-                compare: (a, b) => {
-                    const data = moment(a.launch_time).format('YYYY-MM-DD HH:mm:ss')
-                    const pa = moment(b.launch_time).format('YYYY-MM-DD HH:mm:ss')
-                    return moment(pa).isBefore(data)
-                },
-            },
-            render: (text) => {
-                return <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}><img
-                    src="/Time.png" alt="" width={'30px'}/> <span>{moment(text).format('YYYY-MM-DD HH:mm:ss')}</span>
-                </div>
-            }
-        },
-        {
-            title: 'Actions',
-            key: 'action',
-            width: 50,
             render: (text, record) => {
-                return <img src={`${record.img ? "/StarHave.png" : "/StarNone.png"}`} alt="" width={'20px'}
-                            style={{cursor: 'pointer'}} onClick={() => changeImg(record)}/>
+                if (text) {
+                    return   <Countdown title=""
+                                        value={getD(dayjs(text).isAfter(dayjs()) ? dayjs(text).diff(dayjs(), 'seconds') : '')}
+                                        format="HH:mm:ss"/>
+                } else {
+                    return <p style={{textAlign: 'center'}}>0</p>
+                }
+            }
+        },
+        {
+            title: 'Platform',
+            dataIndex: 'presale_platform_logo',align: 'center',
+            render: (text) => {
+                return <img src={baseUrl+text} alt="" width={'30px'} style={{display:'block',borderRadius:'50%',margin:'0 auto'}}/>
+            }
+        },
+        {
+            title: 'DEX', align: 'center', render: (text, record) => {
+                return <img src="/dex-uniswap.png" alt="" width={'30px'} style={{borderRadius:'50%',display:'block',margin:'0 auto'}}/>
             }
         },
     ];
-    const fetchData = async (chainIdParam, pageIndex, pageSize) => {
-        try {
-            const headers = {
-                'x-api-key': '922e0369e89a40d9be91d68fde539325', // 替换为你的授权令牌
-                'Content-Type': 'application/json', // 根据需要添加其他标头
-            };
-
-            let pairCount = await axios.get( baseUrl+'/queryAllPresaleCount', {
-                headers: headers,
-                params: {}
-            });
-            setPresaleCount(pairCount.data[0].count);
-
-            let data = await axios.get( baseUrl+'/queryAllPresale', {
-                headers: headers,
-                params: {
-                    pageIndex: pageIndex,
-                    pageSize: pageSize
-                }
-            });
-            data = data.data
-            setPresales(data);
-        } catch (error) {
-            notification.error({
-                message: `Please note`, description: 'Error reported', placement: 'topLeft',
-            });
-        }
-    };
-
-    // useEffect(() => {
-    //   let chainName = chain.name;
-    //   chainName = chainName.toLocaleLowerCase();
-    //   setChainId(chainName);
-    //
-    //   fetchData(chainName, currentPage, rowsPerPage);
-    //
-    //   const timer = setInterval(() => {
-    //     fetchData(chainName, currentPage, rowsPerPage);
-    //   }, 5000);
-    //
-    //   return () => {
-    //     clearInterval(timer);
-    //   };
-    // }, [chain, currentPage, rowsPerPage]);
-
+    const change = (e, a) => {
+        setLaunchCurrent(e)
+        setLaunchPageSize(a)
+    }
     return (
         <div style={{marginRight: '20px'}}>
             <Card style={{
@@ -205,13 +160,21 @@ export default function Presale() {
                     justifyContent: 'space-between'
                 }}>
                     <div style={{display: 'flex', alignItems: 'center'}}>
-                        <img src="/Group.png" alt="" width={'70px'}/>
-                        <span style={{fontWeight: 'bold', fontSize: '26px'}}>PRESALE & LAUNCH</span>
+                        <img src="/Group.png" alt="" width={70} height={70}/>
+                        <span style={{fontWeight: 'bold', fontSize: '26px'}}>Presales</span>
                     </div>
-                    <Pagination defaultCurrent={1} total={50} pageSize={10}/>
                 </div>
-                <Table className={'hotTable presale'} columns={columns} bordered={launchBol} dataSource={launch}
-                       pagination={false}/>
+
+                <div style={{display: 'flex', justifyContent: 'end', marginBottom: '20px'}}>
+                    <Pagination defaultCurrent={1} current={launchCurrent} showSizeChanger onChange={change}
+                                total={launchAll} pageSize={launchPageSize}/>
+                </div>
+
+                <Table className={`presale anyTable`} bordered={false} columns={columns} loading={launchBol}
+                       dataSource={launch} rowKey={(record) => record.symbol + record.address}
+                       pagination={false} rowClassName={(record) => {
+                        return  'oneHave'
+                }}/>
             </Card>
             <p style={{
                 marginTop: '80px',
@@ -219,119 +182,7 @@ export default function Presale() {
                 lineHeight: '1',
                 fontSize: '20px',
                 color: 'rgb(98,98,98)'
-            }}>©DEXPert.io</p>
+            }}>©DEXpert.io</p>
         </div>
     )
-    {/*<div className="mx-auto mt-20 ml-20 mr-5">*/
-    }
-    {/*  <div className="mx-auto flex flex-col text-center justify-center h-full">*/
-    }
-    {/*    <div className="grid grid-flow-row sm:grid-flow-col grid-cols-1 mt-5">*/
-    }
-    {/*      <div className="flex flex-col rounded-lg">*/
-    }
-    {/*        <TableContainer>*/
-    }
-    {/*          <Table size="medium">*/
-    }
-    {/*            <TableHead sx={{*/
-    }
-    {/*              [`& .${tableCellClasses.root}`]: {*/
-    }
-    {/*                borderBottom: "none"*/
-    }
-    {/*              }*/
-    }
-    {/*            }}>*/
-    }
-    {/*              <TableRow>*/
-    }
-    {/*                <TableCell><span>token</span></TableCell>*/
-    }
-    {/*                <TableCell><span>platform</span></TableCell>*/
-    }
-    {/*                <TableCell><span>time</span></TableCell>*/
-    }
-    {/*                <TableCell><span>link</span></TableCell>*/
-    }
-    {/*              </TableRow>*/
-    }
-    {/*            </TableHead>*/
-    }
-    {/*            <TableBody*/
-    }
-    {/*              sx={{*/
-    }
-    {/*                [`& .${tableCellClasses.root}`]: {*/
-    }
-    {/*                  borderBottom: ".0625rem solid #23323c!important",*/
-    }
-    {/*                }*/
-    }
-    {/*              }}>*/
-    }
-    {/*              {presales.map((row) => (*/
-    }
-    {/*                <TableRow key={row.tokenAddress} className="pair-row">*/
-    }
-    {/*                  <TableCell>*/
-    }
-    {/*                    <Link href={``}>*/
-    }
-    {/*                      <Image src={`http://192.168.8.104:3004/${row.tokenLogo}`} width={20} height={20} className="inline mr-2" />*/
-    }
-    {/*                      <span></span><span>{row.tokenSymbol}</span>*/
-    }
-    {/*                    </Link>*/
-    }
-    {/*                  </TableCell>*/
-    }
-    {/*                  <TableCell><span>{row.presalePlatform}</span></TableCell>*/
-    }
-    {/*                  <TableCell><span>{getRelativeTimeDifference(formatDateTime(row.presaleTime))}</span></TableCell>*/
-    }
-    {/*                  <TableCell><span>{row.presaleLink}</span></TableCell>*/
-    }
-    {/*                </TableRow>*/
-    }
-    {/*              ))}*/
-    }
-    {/*            </TableBody>*/
-    }
-    {/*          </Table>*/
-    }
-    {/*        </TableContainer>*/
-    }
-    {/*        <TablePagination*/
-    }
-    {/*          rowsPerPageOptions={[10, 30]} // 设置每页行数选项*/
-    }
-    {/*          component="div"*/
-    }
-    {/*          count={presaleCount} // 数据总数*/
-    }
-    {/*          rowsPerPage={rowsPerPage}*/
-    }
-    {/*          page={currentPage}*/
-    }
-    {/*          onPageChange={(event, newPage) => setCurrentPage(newPage)} // 处理页码变化的回调*/
-    }
-    {/*          onRowsPerPageChange={(event) => {*/
-    }
-    {/*            setRowsPerPage(parseInt(event.target.value, 10));*/
-    }
-    {/*            setCurrentPage(0); // 当每页行数变化时，回到第一页*/
-    }
-    {/*          }}*/
-    }
-    {/*        />*/
-    }
-    {/*      </div>*/
-    }
-    {/*    </div>*/
-    }
-    {/*  </div>*/
-    }
-    {/*</div>*/
-    }
 }

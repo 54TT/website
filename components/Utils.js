@@ -1,35 +1,35 @@
 const axios = require('axios');
-const moment = require('moment');
+const dayjs = require('dayjs');
+var duration = require('dayjs/plugin/duration')
+dayjs.extend(duration)
 const dotenv = require('dotenv');
 dotenv.config();
 
-const getSubscript = (number) => {
-  // 定义下标字符的 Unicode 起始值（0 对应 U+2080）
-  const subscriptStart = 0x2080;
-  // 将数字转换为字符串
-  const numberString = number.toString();
-  // 初始化一个空字符串来存储下标字符
-  let subscript = '';
-
-  // 遍历数字字符串中的每个数字
-  for (let i = 0; i < numberString.length; i++) {
-    const digit = numberString.charAt(i);
-
-    if (/[0-9]/.test(digit)) {
-      // 如果字符是数字，则计算 Unicode 下标字符并追加到结果中
-      const unicodeValue = subscriptStart + parseInt(digit, 10);
-      subscript += String.fromCharCode(unicodeValue);
-    } else {
-      // 如果字符不是数字，则直接追加到结果中
-      subscript += digit;
-    }
-  }
-
-  return subscript;
-}
 
 
 const formatDecimal = (number, count) => {
+  const getSubscript = (number) => {
+    // 定义下标字符的 Unicode 起始值（0 对应 U+2080）
+    const subscriptStart = 0x2080;
+    // 将数字转换为字符串
+    const numberString = number.toString();
+    // 初始化一个空字符串来存储下标字符
+    let subscript = '';
+
+    // 遍历数字字符串中的每个数字
+    for (let i = 0; i < numberString.length; i++) {
+      const digit = numberString.charAt(i);
+      if (/[0-9]/.test(digit)) {
+        // 如果字符是数字，则计算 Unicode 下标字符并追加到结果中
+        const unicodeValue = subscriptStart + parseInt(digit, 10);
+        subscript += String.fromCharCode(unicodeValue);
+      } else {
+        // 如果字符不是数字，则直接追加到结果中
+        subscript += digit;
+      }
+    }
+    return subscript;
+  }
   let numberStr = (number.toString().split(".")[1]).toString();
   let count0 = 0;
   for (let i = 0; i < numberStr.length; i++) {
@@ -60,7 +60,6 @@ const formatDecimal = (number, count) => {
 async function sendGetRequestWithSensitiveData(url, sensitiveData, params = {}, options = {}) {
   // 创建 Axios 实例
   const instance = axios.create();
-
   // 请求拦截器：在发送请求之前隐藏敏感信息
   instance.interceptors.request.use(config => {
     // 删除或替换敏感信息
@@ -129,39 +128,17 @@ async function sendPostRequestWithSensitiveData(url, sensitiveData, data = {}, o
     throw error;
   }
 }
-
-
-
-// // 发起 GET 请求
-// sendGetRequestWithSensitiveData('http://192.168.8.104:3004/queryPairInfoByPairAddress', sensitiveData, getRequestParams)
-//   .then(responseData => {
-//     console.log('GET 请求处理后的响应数据:', responseData);
-//   })
-//   .catch(error => {
-//     console.error('GET 请求错误:', error);
-//   });
-
-// // 发起 POST 请求
-// sendPostRequestWithSensitiveData('http://192.168.8.104:3004/postDataEndpoint', sensitiveData, postData)
-//   .then(responseData => {
-//     console.log('POST 请求处理后的响应数据:', responseData);
-//   })
-//   .catch(error => {
-//     console.error('POST 请求错误:', error);
-//   });
-
 function formatDateTime(dateTime, format = 'YYYY-MM-DD:HH:mm:ss') {
-  return moment(dateTime).format(format);
+  return dayjs.unix(dateTime).format(format);
 }
 
 function getRelativeTimeDifference(dateTime) {
-  const now = moment();
-  const targetDateTime = moment(dateTime);
-
+  const now = dayjs();
+  const targetDateTime =dayjs(dateTime)
   if (targetDateTime.isSame(now)) {
     return 'Just now';
   } else if (targetDateTime.isAfter(now)) {
-    const duration = moment.duration(targetDateTime.diff(now));
+    const duration = dayjs.duration(targetDateTime.diff(now));
     if (duration.asYears() >= 1) {
       return `${Math.floor(duration.asYears())} years after`;
     } else if (duration.asMonths() >= 1) {
@@ -176,7 +153,7 @@ function getRelativeTimeDifference(dateTime) {
       return 'Just now';
     }
   } else {
-    const duration = moment.duration(now.diff(targetDateTime));
+    const duration = dayjs.duration(now.diff(targetDateTime));
     if (duration.asYears() >= 1) {
       return `${Math.floor(duration.asYears())} years ago`;
     } else if (duration.asMonths() >= 1) {
@@ -192,7 +169,6 @@ function getRelativeTimeDifference(dateTime) {
     }
   }
 }
-
 
 module.exports = {
   formatDecimal,

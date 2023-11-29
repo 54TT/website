@@ -6,8 +6,9 @@ function InfoBox({ Icon, message, content, setError, marginTop }) {
     <div
       style={{
         position: "relative",
+          backgroundColor:'rgb(254,239,146)'
       }}
-      className={` bg-white w-full ${
+      className={` ${
         marginTop ? "mt-0" : "mt-7"
       }  p-3 rounded-xl shadow-md`}
     >

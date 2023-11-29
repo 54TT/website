@@ -1,14 +1,9 @@
-import Presale from "../components/Presale";
-import Layout from "../components/Layout/Layout";
-import SeoHead from "../components/SeoHead";
-
+import dynamic from 'next/dynamic'
+const Presale = dynamic(() => import('../components/Presale'),{suspense: false});
 export default function index() {
   return (
     <>
-      <SeoHead title='' />
-      <Layout>
         <Presale />
-      </Layout>
     </>
   );
 }

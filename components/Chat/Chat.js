@@ -1,11 +1,10 @@
 import React from "react";
 import styled from "styled-components";
 
-function Chat({ user, text, setTexts, textsWith }) {
-  const isTextFromLoggedInUser = text.sender_id === user.id;
+function Chat({ user, text}) {
   return (
     <>
-      {isTextFromLoggedInUser ? (
+      {text?.sender_id === user?.id ||text?.senderId === user?.id ? (
         <TextDiv direction="left">
           <p>{text.text}</p>
         </TextDiv>
@@ -28,7 +27,6 @@ const TextDiv = styled.div`
   margin-right: ${(props) => props.direction === "right" && "auto"};
   width: fit-content;
   max-width: 18rem;
-
   color: "black";
   background-color: rgba(243, 244, 246);
 `;

@@ -1,252 +1,190 @@
-import React, { useEffect, useState } from "react";
-import styled from "styled-components";
+import React, {useEffect, useState} from "react";
 import Link from "next/link";
-import  baseUrl from '/utils/baseUrl'
+import baseUrl from '/utils/baseUrl'
 import calculateTime from "../utils/calculateTime";
-import cookie from "js-cookie";
 import {
-  CheckCircleIcon,
-  ExclamationCircleIcon,
-  UserAddIcon,
+    CheckCircleIcon,
+    ExclamationCircleIcon,
+    UserAddIcon,
 } from "@heroicons/react/solid";
-import { Facebook } from "react-content-loader";
 import axios from "axios";
-import { followUser, unfollowUser } from "../utils/profileActions";
-import { useRouter } from "next/router";
-import Loader from "react-loader-spinner";
-
-function RightSideColumn({ user, chatsData, userFollowStats }) {
-  const router = useRouter();
-  const [loggedInUserFollowStats, setLoggedInUserFollowStats] =
-    useState(userFollowStats);
-
-  const [usersToFollow, setUsersToFollow] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [loadingWhoToF, setLoadingWhoToF] = useState(false);
-
-  useEffect(() => {
+import {followUser, unfollowUser} from "../utils/profileActions";
+import {useRouter} from "next/router";
+import dayjs from "dayjs";
+function RightSideColumn({user, chatsData, userFollowStats,change}) {
+    const [bol, setBol] = useState(false)
+    const chang = () => {
+        setBol(!bol)
+    }
+    const router = useRouter();
+    const [loggedInUserFollowStats, setLoggedInUserFollowStats] =
+        useState([]);
+    useEffect(() => {
+        getUsersToFollow();
+        if (userFollowStats&&userFollowStats.following&&userFollowStats.following.length > 0) {
+            setLoggedInUserFollowStats(userFollowStats.following)
+        } else {
+            setLoggedInUserFollowStats([])
+        }
+    }, [bol,userFollowStats])
+    const [usersToFollow, setUsersToFollow] = useState([]);
     const getUsersToFollow = async () => {
-      try {
-        setLoadingWhoToF(true);
-        const res = await axios.get(
-          `${baseUrl}/api/profile/home/youMayLikeToFollow`,
-          {
-            headers: { Authorization: cookie.get("token") },
-          }
-        );
-        setUsersToFollow(res.data);
-        setLoadingWhoToF(false);
-      } catch (error) {
-        console.log(error);
-      }
+        try {
+            const res = await axios.get(
+                `${baseUrl}/api/profile/home/youMayLikeToFollow`,
+            );
+            if (res && res.data) {
+                setUsersToFollow(res.data);
+            } else {
+                setUsersToFollow([]);
+            }
+        } catch (error) {
+            setUsersToFollow([]);
+        }
     };
 
-    getUsersToFollow();
-  }, [loggedInUserFollowStats]);
-
-  return (
-    <ContainerDiv
-      className="hidden  p-2 lg:block max-w-[300px] lg:min-w-[290px] xl:min-w-[300px] sticky xl:mr-8"
-      style={{ alignSelf: "flex-start", top: "5.45rem" }}
-    >
-      <Title>Who to follow</Title>
-      {usersToFollow && usersToFollow.length > 0&&Array.isArray(usersToFollow) ? (
-        usersToFollow.map((fol) => {
-          const isLoggedInUserFollowing =
-            loggedInUserFollowStats?.following?.length > 0 &&
-            loggedInUserFollowStats?.following?.filter(
-              (loggedInUserFollowing) =>
-                loggedInUserFollowing.user.id === fol.id
-            ).length > 0||'';
-          return (
-            <div key={fol.id}>
-              {fol?.id !== user?.id && (
-                <div
-                  style={{ border: ".5px solid lightgrey" }}
-                  key={fol.id}
-                  className="flex justify-between items-center p-4 mb-4 rounded-lg"
-                >
-                  <div className="flex items-center">
-                    <UserImage src={fol.profilePicUrl} alt="userimg" />
-                    <div>
-                      <Name
-                        className="ml-3 cursor-pointer hover:underline"
-                        onClick={() => router.push(`/${fol.username}`)}
-                      >
-                        {fol.name}
-                      </Name>
-                      {loadingWhoToF ? (
-                        <div
-                          style={{
-                            marginLeft: "1.5rem",
-                            marginTop: "-0.95rem",
-                          }}
-                        >
-                          <Loader
-                            type="ThreeDots"
-                            color="grey"
-                            height={15}
-                            width={15}
-                            timeout={5000} //3 secs
-                          />
+    return (
+        <div
+            className="hidden  p-2 lg:block max-w-[300px] lg:min-w-[290px] xl:min-w-[300px] sticky xl:mr-8"
+            style={{alignSelf: "flex-start", top: "5.45rem"}}
+        >
+            <p style={{ fontSize: '18px',
+                marginLeft: '6px',
+                marginTop: '24px'}}>Who to follow</p>
+            {usersToFollow && usersToFollow.length > 0 && Array.isArray(usersToFollow) ? (
+                usersToFollow.map((fol) => {
+                    const isLoggedInUserFollowing =
+                        loggedInUserFollowStats?.length > 0 &&
+                        loggedInUserFollowStats?.filter(
+                            (loggedInUserFollowing) =>
+                                loggedInUserFollowing?.user?.id === fol?.id
+                        ).length > 0 || '';
+                    return (
+                        <div  className={'rightSideCard'} key={fol.id}>
+                            {fol?.id !== user?.id && (
+                                <div
+                                    key={fol.id}
+                                    className="flex justify-between items-center p-4 rounded-lg"
+                                >
+                                    <div className="flex items-center">
+                                        <img src={fol?.profilePicUrl ? fol.profilePicUrl : '/Ellipse1.png'} width={40} height={40}
+                                             style={{ borderRadius: '50%'}}   alt="userimg"/>
+                                        <div>
+                                            <Link href={`/${fol?.username}`}>
+                                            <p
+                                                className="ml-3 cursor-pointer hover:underline">
+                                                {fol?.username.length > 7 ? fol.username.slice(0, 3) + '...' + fol.username.slice('-3') : fol.name}
+                                            </p>
+                                            </Link>
+                                            {
+                                                <p style={{color: 'grey',}}
+                                                   className="ml-3">{fol?.followers ? fol?.followers.length : 0} followers</p>}
+                                        </div>
+                                    </div>
+                                    {fol?.id !== user?.id ? (
+                                        <>
+                                            {/*关注*/}
+                                            {isLoggedInUserFollowing ? (
+                                                <div style={{padding: '7px',
+                                                    display: 'flex',
+                                                    cursor: 'pointer',
+                                                    borderRadius: '10px',
+                                                    backgroundColor: 'rgba(139, 92, 246)',
+                                                    color: 'white'}}
+                                                    onClick={async () => {
+                                                        const data = await unfollowUser(
+                                                            fol.id,
+                                                            '',
+                                                            user?.id
+                                                        );
+                                                        if (data && data.status === 200) {
+                                                            chang()
+                                                            change('like')
+                                                        }
+                                                    }}
+                                                >
+                                                    <CheckCircleIcon className="h-6"/>
+                                                </div>
+                                            ) : (
+                                                <div  style={{padding: '7px',
+                                                    display: 'flex',
+                                                    cursor: 'pointer',
+                                                    borderRadius: '10px',
+                                                    backgroundColor: 'rgba(139, 92, 246)',
+                                                    color: 'white'}}
+                                                    onClick={async () => {
+                                                        const data = await followUser(
+                                                            fol.id,
+                                                            '',
+                                                            user?.id
+                                                        );
+                                                        if (data && data.status === 200) {
+                                                            chang()
+                                                            change('like')
+                                                        }
+                                                    }}
+                                                >
+                                                    <UserAddIcon className="h-6 w-6"/>
+                                                </div>
+                                            )}
+                                        </>
+                                    ) : (
+                                        <></>
+                                    )}
+                                </div>
+                            )}
                         </div>
-                      ) : (
-                        <TextPreview className="ml-3">{`${fol.followers ? fol.followers.length: 0} followers`}</TextPreview>
-                      )}
-                    </div>
-                  </div>
-                  {fol?.id !== user?.id ? (
-                    <>
-                      {isLoggedInUserFollowing ? (
-                        <FollowButton
-                          onClick={async () => {
-                            await unfollowUser(
-                              fol.id,
-                              setLoggedInUserFollowStats,
-                              setLoading
-                            );
-                          }}
+                    );
+                })
+            ) : ''}
+            <p style={{ fontSize: '18px',
+                marginLeft: '6px',
+                marginTop: '24px'}}>Recent chats</p>
+            <div style={{borderTop:'1px solid lightgray'}}>
+                {chatsData && Array.isArray(chatsData) ? (
+                    chatsData.map((chat) => (
+                        <Link href={`/chats?chat=${chat.textsWith}`} key={chat?.textsWith}>
+                        <div style={{ overflowY: 'auto',
+                            display: 'flex',
+                            cursor: 'pointer',
+                            borderRadius: '5px',
+                            borderBottom: '0.5px solid lightgray',
+                            padding: '10px',
+                            alignItems: 'flex-start'}}
+                            className="hover:bg-gray-200"
                         >
-                          <CheckCircleIcon className="h-6" />
-                        </FollowButton>
-                      ) : (
-                        <FollowButton
-                          onClick={async () => {
-                            await followUser(
-                              fol.id,
-                              setLoggedInUserFollowStats,
-                              setLoading
-                            );
-                          }}
-                        >
-                          <UserAddIcon className="h-6 w-6" />
-                        </FollowButton>
-                      )}
-                    </>
-                  ) : (
-                    <></>
-                  )}
-                </div>
-              )}
+                            <div className="relative">
+                                <img src={chat?.profilePicUrl ? chat.profilePicUrl : '/Ellipse1.png'}
+                                    width={40}  height={40} style={{ borderRadius: '50%'}} alt="userimg"/>
+                            </div>
+                            <div className="ml-1">
+                                <p style={{fontSize:'18px',userSelect:'none'}}>{chat.name}</p>
+                                <p style={{color: 'grey',}}>
+                                    {chat.texts && chat.texts.length > 30
+                                        ? `${chat.texts.substring(0, 30)}...`
+                                        : chat.texts}
+                                </p>
+                            </div>
+                            {chat.created_at && (
+                                <div style={{marginLeft:'auto'}} className="hidden xl:flex">
+                                    {chat.created_at?dayjs(chat.created_at).format('YYYY-MM-DD HH:mm:ss'):''}
+                                </div>
+                            )}
+                        </div>
+                        </Link>
+                    ))
+                ) : (
+                    <p>
+                        You do not have any chats yet. Start a{" "}
+                        <Link href={`/chats`} passHref>
+                            chat
+                        </Link>
+                        with someone!
+                    </p>
+                )}
             </div>
-          );
-        })
-      ) : (
-        <Facebook />
-      )}
-      <Title>Recent chats</Title>
-      <ChatContainerParent>
-        {chatsData&&Array.isArray(chatsData) ? (
-          chatsData.map((chat) => (
-            <ChatDiv
-              className="hover:bg-gray-200"
-              key={chat.textsWith}
-              onClick={() => router.push(`/chats?chat=${chat.textsWith}`)}
-            >
-              <div className="relative">
-                <UserImage src={chat.profilePicUrl} alt="userimg" />
-              </div>
-
-              <div className="ml-1">
-                <Name>{chat.name}</Name>
-                <TextPreview>
-                  {chat.texts && chat.texts.length > 30
-                    ? `${chat.texts.substring(0, 30)}...`
-                    : chat.texts}
-                </TextPreview>
-              </div>
-              {chat.created_at && (
-                <Date className="hidden xl:flex">
-                  {calculateTime(chat.created_at, true)}
-                </Date>
-              )}
-            </ChatDiv>
-          ))
-        ) : (
-          <p>
-            You do not have any chats yet. Start a{" "}
-            <Link href={`/chats`} passHref>
-              chat
-            </Link>{" "}
-            with someone!
-          </p>
-        )}
-      </ChatContainerParent>
-    </ContainerDiv>
-  );
+        </div>
+    );
 }
 
 export default RightSideColumn;
-
-const Title = styled.p`
-  font-size: 1.21rem;
-  font-family: inherit;
-  font-weight: 500;
-  margin-left: 0.4rem;
-  margin-top: 2rem;
-`;
-
-const ContainerDiv = styled.div`
-  font-family: "Inter";
-  height: fit-content;
-`;
-
-const ChatContainerParent = styled.div`
-  border-top: 0.5px solid lightgray;
-`;
-
-const ChatDiv = styled.div`
-  overflow-y: auto;
-  display: flex;
-  cursor: pointer;
-  border-radius: 0.2rem;
-  border-bottom: 0.5px solid lightgray;
-  font-family: Inter;
-  padding: 0.9rem 0.8rem;
-  align-items: flex-start;
-  column-gap: 0.6rem;
-  :hover {
-  }
-`;
-
-const Name = styled.p`
-  user-select: none;
-  font-size: 1.05rem;
-  font-family: Inter;
-`;
-
-const TextPreview = styled.p`
-  font-family: Inter;
-  margin-top: -0.95rem;
-  color: grey;
-  font-size: 0.9rem;
-`;
-
-const Date = styled.p`
-  font-family: Inter;
-  margin-left: auto;
-`;
-
-const UserImage = styled.img`
-  height: 2.8rem;
-  width: 2.8rem;
-  border-radius: 50%;
-  object-fit: cover;
-`;
-
-const FollowButton = styled.div`
-  height: fit-content;
-  width: fit-content;
-  padding: 0.38rem;
-  display: flex;
-  cursor: pointer;
-  border-radius: 0.5rem;
-  background-color: rgba(139, 92, 246);
-  color: white;
-  font-size: 1.1rem;
-  font-family: "Inter";
-  font-weight: 400;
-  :hover {
-    background-color: rgba(109, 40, 217);
-  }
-`;

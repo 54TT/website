@@ -7,23 +7,22 @@ function LikeNotification({ notification }) {
   return (
     notification.type === "newLike" && (
       <NotificationDiv>
-        <UserImage src={notification.user.profilePicUrl} alt="userimg" />
-        <div className="select-none">
+        <img   width={60} height={60} style={{borderRadius:'50%'}} src={notification?.user?.profilePicUrl||'/Ellipse1.png'} alt="userimg" />
+        <div className="select-none"  style={{marginLeft:'10px'}}>
           <p>
-            <Link href={`/${notification.user.username}`} passHref>
-              {notification.user.name}
-            </Link>{" "}
-            liked your{" "}
-            <Link href={`/post/${notification.post.id}`} passHref>
-              post
+            <Link href={`/${notification?.user?.username?notification.user.username:''}`} passHref>
+              {notification?.user?.name?notification?.user?.name?.length>10?notification.user.name.slice(0,3)+'...'+notification.user.name.slice(-4):notification.user.name:''}
             </Link>
-            .
+            liked your
+            {/*<Link href={`/post/${notification.post.id}`} passHref>*/}
+            {/*  post*/}
+            {/*</Link>*/}
+            {/*.*/}
           </p>
-          <p className="text-gray-500" style={{ marginTop: "-.7rem" }}>
+          <p className="text-gray-500" style={{ marginTop: "0" }}>
             {calculateTime(notification.date, true)}
           </p>
         </div>
-
         {/* {notification.post.picUrl} */}
       </NotificationDiv>
     )
@@ -31,23 +30,14 @@ function LikeNotification({ notification }) {
 }
 
 export default LikeNotification;
-
-const UserImage = styled.img`
-  height: 3.8rem;
-  width: 3.8rem;
-  border-radius: 50%;
-  object-fit: cover;
-`;
-
 const NotificationDiv = styled.div`
   display: flex;
   cursor: pointer;
   border-radius: 0.3rem;
   border-bottom: 1px solid #efefef;
   font-family: Inter;
-  padding: 0.6rem;
+  padding: 10px;
   align-items: center;
-  column-gap: 0.6rem;
   :hover {
     background-color: rgba(243, 244, 246);
   }

@@ -21,12 +21,12 @@
     background-color: rgb(254, 239, 146);
 }
 
-.ul > li:not(:first-child) {
-    border-bottom: 1px solid rgb(98, 98, 98);
+.rightUl .li:hover{
+    background-color: rgb(254, 239, 139);
 }
 
-.ul > li:last-child {
-    margin-bottom: 0;
+.ul > li:not(:first-child):not(:last-child) {
+    border-bottom: 1px solid rgb(128, 128, 128);
 }
 
 .ul > li span {
@@ -48,7 +48,6 @@
 
 .boxPar {
     display: flex;
-    align-items: flex-start;
     justify-content: space-between;
 }
 
@@ -64,51 +63,70 @@
     background-color: rgb(293, 213, 62);
     border-radius: 10px;
     padding: 20px 30px 15px 12px;
+    transition: box-shadow 0.3s;
     margin: 25px 0;
 }
-.boxLogo{
+
+.boxBott:hover {
+    box-shadow: 15px 15px 0 rgb(188, 158, 54)
+}
+
+.boxLogo {
     display: flex;
     justify-content: center;
     padding: 30px 0;
-    background-color: rgb(251,213,62);
+    background-color: rgb(251, 213, 62);
     margin-bottom: 20px;
     border-radius: 20px;
+    transition: box-shadow 0.3s;
+}
+
+.abc {
+    background-color: rgb(253, 213, 62);
+    padding: 25px;
+    border-radius: 10px;
+    transition: box-shadow 0.3s;
+}
+
+.abc:hover {
+    box-shadow: 15px 15px 0 rgb(188, 158, 54)
+}
+
+.boxLogo:hover {
+    box-shadow: 15px 15px 0 rgb(188, 158, 54)
 }
 
 .rightUl {
     width: 100%;
 }
-
 .rightUl li {
     display: flex;
     align-items: center;
-    border-bottom: 1px solid;
-    padding: 10px 20px;
+    border-bottom: 1px solid rgb(128, 128, 128);
+    padding: 5px 10px;
     justify-content: space-between;
 }
 
-.rightUl li:first-child {
-    border-bottom: none;
-}
-
 .rightUl .li {
-    background-color: rgb(188, 238, 125);
-}
-
-.rightUl .li:nth-child(even) {
     background-color: rgb(253, 213, 62);
 }
 
-.rightUl .li:nth-child(even):hover {
-    background-color: rgb(254, 239, 146);
+.rightUl .be:hover {
+    background-color: rgb(208, 255, 149);
 }
 
-.rightUl .li:nth-child(odd):hover {
-    background-color: rgb(208, 255, 149);
+.rightUl .de:hover {
+    background-color: rgb(254, 239, 146);
 }
 
 .rightUl > li:last-child {
     margin-bottom: 0;
+    border-radius: 0 0 8px 8px;
+    border-bottom: none;
+}
+
+.rightUl li:first-child {
+    border-bottom: none;
 }
 
 .button {

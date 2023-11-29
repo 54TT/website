@@ -1,151 +1,162 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import axios from "axios";
-import { useRouter } from "next/router";
+import {useRouter} from "next/router";
 import baseUrl from "../../../utils/baseUrl";
-import { parseCookies } from "nookies";
-import InfoBox from "../../../components/HelperComponents/InfoBox";
+// import InfoBox from "../../../components/HelperComponents/InfoBox";
 import {
-  CheckCircleIcon,
-  ExclamationCircleIcon,
-  UserAddIcon,
+    CheckCircleIcon, ExclamationCircleIcon, UserAddIcon,
 } from "@heroicons/react/solid";
-import Header from "../../../components/Header";
 import styled from "styled-components";
-import { followUser, unfollowUser } from "../../../utils/profileActions";
+import {followUser, unfollowUser} from "../../../utils/profileActions";
 import Sidebar from "../../../components/Sidebar";
-import {useSession} from "next-auth/react";
+import Link from 'next/link';
+import dynamic from 'next/dynamic'
+import {getUser} from "../../../utils/axios";
+import cook from "js-cookie";
+const InfoBox = dynamic(() => import('../../../components/HelperComponents/InfoBox'),{suspense: false});
+// const Sidebar = dynamic(() => import('../../../components/Sidebar'));
+function FollowersPage() {
+    const router = useRouter();
+    const getUs = async () => {
+        const a =cook.get('name')
+        const {data:{user},status} = await getUser(a)
+        if(status===200&&user){
+            setUserPar(user)
+        }else {
+            setUserPar('')
+        }
+    }
+    useEffect(() => {
+        if (cook.get('name')) {
+            getUs()
+        }
+    }, [cook.get('name')]);
+    const [loggedUserFollowStats, setLoggedUserFollowStats] = useState({});
+    const [userPar, setUserPar] = useState(null);
+    const [errorLoading, setErrorLoading] = useState(false);
+    const [followers, setFollowers] = useState([]);
+    const [followersBol, setFollowersBol] = useState(false);
+    const change = () => {
+        setFollowersBol(!followersBol)
+    }
+    const getParams = async () => {
+        const res = await axios.get(`${baseUrl}/api/profile/followers/${userPar?.id}`,);
+        if (res.status === 200) {
+            setFollowers(res.data)
+        } else {
+            setFollowers([])
+            setErrorLoading(true)
+        }
 
-function FollowersPage({ followers, errorLoading }) {
-  const router = useRouter();
-  const {user, userFollowStats,} = useSession()
-  const [followersArrayState, setFollowersArrayState] = useState(followers);
-  const [loggedUserFollowStats, setLoggedUserFollowStats] =
-    useState(userFollowStats);
-  const [loading, setLoading] = useState(false);
+    }
+    const getUsers = async () => {
+        const res = await axios.get(`${baseUrl}/api/user/userFollowStats`, {
+            params: {userId: userPar?.id},
+        });
+        if (res?.status === 200) {
+            setLoggedUserFollowStats(res.data.userFollowStats)
+        }
+    }
+    useEffect(() => {
+        if (userPar && userPar.id) {
+            getParams()
+            getUsers()
+        }
+    }, [userPar, followersBol])
+    if (errorLoading) {
+        return (<InfoBox
+            Icon={ExclamationCircleIcon}
+            message={"Oops, an error occured"}
+            content={`There was an error while fetching the users this user has followed`}
+        />);
+    }
 
-  if (errorLoading) {
-    return (
-      <InfoBox
-        Icon={ExclamationCircleIcon}
-        message={"Oops, an error occured"}
-        content={`There was an error while fetching the users this user has followed`}
-      />
-    );
-  }
-
-  return (
-    <div className="bg-gray-100 h-screen">
-      <Header user={user} />
-      <main
-        style={{
-          height: "calc(100vh - 4.5rem)",
-          overflowY: "auto",
-          display: "flex",
-        }}
-      >
-        <Sidebar user={user} topDist={"0"} maxWidth={"250px"} />
-        <div
-          style={{ fontFamily: "Inter" }}
-          className="mx-auto h-full w-full flex-1 max-w-md md:max-w-xl lg:max-w-[61.5rem] xl:max-w-[67rem] bg-white p-4 shadow-lg rounded-lg overflow-y-auto"
+    return (<div className="h-screen" style={{backgroundColor: 'rgb(253,213,62)', marginRight: '20px', borderRadius: '10px'}}>
+        <main
+            style={{
+                height: "calc(100vh - 4.5rem)", overflowY: "auto", display: "flex",
+            }}
         >
-          <div className="flex items-center ml-2">
-            <Title>Followers ·</Title>
-            <FollowersNumber className="text-gray-500 ml-2">
-              {followersArrayState.length}
-            </FollowersNumber>
-          </div>
-          {followersArrayState.length > 0 ? (
-            <GridContainer className="grid-cols-1 lg:grid-cols-2">
-              {followersArrayState.map((fol) => {
-                const isLoggedInUserFollowing =
-                  loggedUserFollowStats.following.length > 0 &&
-                  loggedUserFollowStats.following.filter(
-                    (loggedInUserFollowing) =>
-                      loggedInUserFollowing.user === fol.user.id
-                  ).length > 0;
+            <Sidebar user={userPar} topDist={"0"} maxWidth={"250px"}/>
+            <div
+                style={{
+                    fontFamily: "Inter",
+                    width: '50%',
+                    margin: '20px auto 0',
+                    overflowY: 'auto',
+                    borderRadius: '10px',
+                    padding: '20px',
+                    backgroundColor: '#B2DB7E'
+                }}>
+                <div className="flex items-center ml-2">
+                    <Title>Followers ·</Title>
+                    <FollowersNumber className="text-gray-500 ml-2">
+                        {followers?.length || 0}
+                    </FollowersNumber>
+                </div>
+                {followers.length > 0 ? (<div>
+                    {followers.map((fol) => {
+                        const isLoggedInUserFollowing = loggedUserFollowStats?.following?.length > 0 && loggedUserFollowStats?.following?.filter((loggedInUserFollowing) => loggedInUserFollowing?.user.id === fol?.user?.id).length > 0;
+                        return (<div
+                            style={{
+                                marginBottom: '10px',
+                                border: "1px solid gray",
+                                width: '30%',
+                                padding: '10px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                borderRadius: '10px',
+                                backgroundColor: '#BCEE7D',
+                                flexWrap: 'wrap'
+                            }}
+                            key={fol?.user?.id}
+                        >
+                            <div className="flex items-center  ">
+                                <img src={fol?.user?.profilePicUrl || '/Ellipse1.png'} alt="userimg" width={40}
+                                     height={40}
+                                     style={{borderRadius: '50%'}}/>
+                                <Link href={`/${fol?.user?.username}`}>
+                                    <Name className="ml-2">
+                                        {fol?.user?.username.length > 10 ? fol.user.username.slice(0, 4) + '...' + fol.user.username.slice(-3) : fol?.user?.username}
+                                    </Name>
+                                </Link>
 
-                return (
-                  <div
-                    style={{ border: "1px solid #eee" }}
-                    key={fol.user.id}
-                    className="flex items-center justify-between p-4 mb-4 rounded-lg bg-white"
-                  >
-                    <div className="flex items-center  ">
-                      <Image src={fol.user.profilePicUrl} alt="userimg" />
-                      <Name
-                        className="ml-3"
-                        onClick={() => router.push(`/${fol.user.username}`)}
-                      >
-                        {fol.user.name}
-                      </Name>
-                    </div>
-                    {fol.user.id !== user.id ? (
-                      <>
-                        {isLoggedInUserFollowing ? (
-                          <FollowButton
-                            onClick={async () => {
-                              await unfollowUser(
-                                fol.user.id,
-                                setLoggedUserFollowStats,
-                                setLoading
-                              );
-                            }}
-                          >
-                            <CheckCircleIcon className="h-6" />
-                            <p className="ml-1.5">Following</p>
-                          </FollowButton>
-                        ) : (
-                          <FollowButton
-                            onClick={async () => {
-                              await followUser(
-                                fol.user.id,
-                                setLoggedUserFollowStats,
-                                setLoading
-                              );
-                            }}
-                          >
-                            <UserAddIcon className="h-6" />
-                            <p className="ml-1.5">Follow</p>
-                          </FollowButton>
-                        )}
-                      </>
-                    ) : (
-                      <></>
-                    )}
-                  </div>
-                );
-              })}
-            </GridContainer>
-          ) : router.query.userId === user.id ? (
-            <p className="text-md text-gray-500">
-              {`You don't have any followers ☹️. The trick is to follow someone and then
+                            </div>
+                            {fol?.user?.id !== userPar?.id ? (<>
+                                {isLoggedInUserFollowing ? (<FollowButton
+                                    onClick={async () => {
+                                        const data = await unfollowUser(fol?.user?.id, setLoggedUserFollowStats, userPar?.id);
+                                        if (data && data.status === 200) {
+                                            change()
+                                        }
+                                    }}
+                                >
+                                    <CheckCircleIcon className="h-6"/>
+                                    {/*<p className="ml-1.5">Following</p>*/}
+                                </FollowButton>) : (<FollowButton
+                                    onClick={async () => {
+                                        const data = await followUser(fol?.user?.id, setLoggedUserFollowStats, userPar?.id);
+                                        if (data && data.status === 200) {
+                                            change()
+                                        }
+                                    }}
+                                >
+                                    <UserAddIcon className="h-6"/>
+                                    {/*<p className="ml-1.5">Follow</p>*/}
+                                </FollowButton>)}
+                            </>) : (<></>)}
+                        </div>);
+                    })}
+                </div>) : router?.query?.userId === userPar?.id ? (<p className="text-md text-gray-500">
+                    {`You don't have any followers ☹️. The trick is to follow someone and then
           wait for them to follow you back.`}
-            </p>
-          ) : (
-            <p className="text-md text-gray-500">{`This user doesn't have any followers.`}</p>
-          )}
-        </div>
-        <div className="w-10"></div>
-      </main>
-    </div>
-  );
+                </p>) : (<p className="text-md text-gray-500">{`This user doesn't have any followings.`}</p>)}
+            </div>
+            <div className="w-10"></div>
+        </main>
+    </div>);
 }
-
-FollowersPage.getInitialProps = async (ctx) => {
-  try {
-    const { token } = parseCookies(ctx);
-
-    const res = await axios.get(
-      `${baseUrl}/api/profile/followers/${ctx.query.userId}`,
-      {
-        headers: { Authorization: token },
-      }
-    );
-    return { followers: res.data };
-  } catch (error) {
-    return { errorLoading: true };
-  }
-};
 
 export default FollowersPage;
 
@@ -162,24 +173,13 @@ const FollowButton = styled.div`
   font-weight: 400;
 `;
 
-const GridContainer = styled.div`
-  display: grid;
-  column-gap: 0.9rem;
-`;
-
-const Image = styled.img`
-  object-fit: cover;
-  height: 6rem;
-  width: 6rem;
-  border-radius: 0.6rem;
-`;
-
 const Name = styled.p`
   cursor: pointer;
   user-select: none;
   font-weight: 500;
   font-size: 1.12rem;
   font-family: "Inter";
+
   :hover {
     text-decoration: underline;
   }
@@ -187,7 +187,7 @@ const Name = styled.p`
 
 const Title = styled.p`
   user-select: none;
-  font-size: 1.65rem;
+  font-size: 20px;
   font-weight: 600;
   font-family: Inter;
 `;
@@ -195,7 +195,6 @@ const Title = styled.p`
 const FollowersNumber = styled.p`
   font-family: Inter;
   user-select: none;
-  font-size: 1.25rem;
+  font-size: 20px;
   font-weight: 400;
-  margin-top: -1.65rem;
 `;

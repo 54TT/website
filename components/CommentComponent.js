@@ -3,16 +3,19 @@ import styled from "styled-components";
 import calculateTime from "../utils/calculateTime";
 import { useRouter } from "next/router";
 import { MinusCircleIcon, TrashIcon } from "@heroicons/react/outline";
-import ReusableDialog from "./ReusableDialog";
+// import ReusableDialog from "./ReusableDialog";
 import { deleteComment } from "../utils/postActions";
-import toast, { Toaster } from "react-hot-toast";
-
-const notifyCommentDelete = () =>
-  toast.success("Comment deleted successfully!", {
-    position: "bottom-center",
+import {notification,} from "antd";
+import dynamic from "next/dynamic";
+const ReusableDialog = dynamic(() => import('./ReusableDialog'),{suspense:false})
+import Link from  'next/link'
+const notifyCommentDelete = () =>{
+  notification.success({
+    message: `Comment deleted successfully!`, placement: 'topLeft',
+    duration:2
   });
-
-function CommentComponent({ comment, postId, user, setComments }) {
+}
+function CommentComponent({ comment, postId,change, user, setComments }) {
   const router = useRouter();
   const [isHovering, setIsHovering] = useState(false);
   const [open, setOpen] = useState(false);
@@ -33,23 +36,17 @@ function CommentComponent({ comment, postId, user, setComments }) {
     setOpen(false);
   };
 
-  const handleAgree = () => {
-    deleteComment(postId, comment._id, setComments, notifyCommentDelete);
-
-    handleClose();
+  const handleAgree = async () => {
+    await deleteComment(postId, comment.id, setComments, notifyCommentDelete,handleClose,user?.id,change);
   };
   const handleDisagree = () => {
-    console.log("I do not agree.");
     handleClose();
   };
-  console.log("comment-----------",comment)
 
   return (
     <div className="flex items-start pl-5 pr-3 mt-3">
-      <Toaster position="bottom-center" />
-      <Image
-        src={comment.profilePicUrl}
-        style={{ height: "2.45rem", width: "2.45rem", marginTop: ".2rem" }}
+      <img  alt={''}   style={{borderRadius:'50%',marginTop:'10px'}} height={50} width={50}
+        src={comment?.user?.profilePicUrl?comment.user.profilePicUrl:'/Ellipse1.png'}
         className="mr-2"
       />
       {/* extra div for flex of comment text div and the three dots  */}
@@ -63,9 +60,11 @@ function CommentComponent({ comment, postId, user, setComments }) {
           className={`bg-gray-100 rounded-3xl items-center`}
         >
           <div className="flex space-x-1">
-            <UserPTag onClick={() => router.push(`/${comment.user.username}`)}>
-              {comment.user.name} ·{"  "}
+            <Link href={`/${comment?.user?.username?comment.user.username:''}`}>
+            <UserPTag>
+              {comment?.user?.name} ·{"  "}
             </UserPTag>
+            </Link>
             <span
               className="text-gray-500 font-light text-sm"
               style={{ textDecoration: "none" }}
@@ -81,7 +80,7 @@ function CommentComponent({ comment, postId, user, setComments }) {
             {comment.text}
           </p>
         </div>
-        {isHovering && comment.user._id === user._id ? (
+        {isHovering && comment.user.id === user.id ? (
           <div style={{ width: "3rem", marginLeft: "0.2rem" }}>
             <ThreeDotsDiv
               onClick={() => {
@@ -120,13 +119,6 @@ function CommentComponent({ comment, postId, user, setComments }) {
 }
 
 export default CommentComponent;
-
-const Image = styled.img`
-  object-fit: cover;
-  height: 2.95rem;
-  width: 2.95rem;
-  border-radius: 50%;
-`;
 
 const UserPTag = styled.p`
   font-weight: 500;

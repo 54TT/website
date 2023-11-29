@@ -1,14 +1,9 @@
-import NewPair from "../components/NewPair";
-import Layout from "../components/Layout/Layout";
-import SeoHead from "../components/SeoHead";
-
+import dynamic from 'next/dynamic'
+const NewPair = dynamic(() => import('../components/NewPair'),{suspense: false});
 export default function index() {
   return (
     <>
-      {/*<SeoHead title='' />*/}
-      <Layout>
         <NewPair/>
-      </Layout>
     </>
   );
 }

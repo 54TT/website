@@ -5,19 +5,16 @@
     justify-content: space-between;
     padding: 20px
 }
-
 .search {
-    margin-left: 20px;
     cursor: pointer;
-    width: 30%;
     background-color: rgb(254,239,146);
+    width: 100%;
     color: #8A8A8A;
     line-height: 30px;
     padding: 6px 12px;
     border-radius: 6px;
     transition: box-shadow 0.3s;
 }
-
 .search:hover {
     box-shadow: 10px 10px 0 rgb(188, 158, 54)
 }

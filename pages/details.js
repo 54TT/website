@@ -1,64 +1,22 @@
 import React,{useState,useEffect} from 'react';
-import Layout from "../components/Layout/Layout";
 import {useRouter} from 'next/router';
-import  baseUrl from '/utils/baseUrl'
 import style from '../styles/details.module.css'
 import {Table, Card, Segmented,Progress } from 'antd'
-// import {useNetwork,chain} from 'wagmi'
-import axios from 'axios'
-import { formatDecimal } from '../components/Utils';
-
-function Details(props) {
+import axios from 'axios';
+function Details() {
     const router = useRouter();
-    // const { chain } = useNetwork();
     const data = router.query
     const [columnsBol,setColumnsBol] = useState(false)
-    const [pairBaseData, setPairBaseData] = useState({});
-    const [chainId, setChainId] = useState("ethereum");
-    const [pairDexData, setPairDexData] = useState({});
-    const [priceUsd, setPriceUsd] = useState(0);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState(null);
-
-    const headers = {
-        'x-api-key': '922e0369e89a40d9be91d68fde539325', // 替换为你的授权令牌
-        'Content-Type': 'application/json', // 根据需要添加其他标头
-    };
-    async function getPairInfo() {
-        try {
-            const response = await axios.get( baseUrl+'/queryPairInfoByPairAddress', {
-                headers: headers,
-                params: {
-                    pairAddress: data?.pairAddress
-                }
-            });
-            const pairBase = response?.data;
-            let pairDex = await axios.get(`https://api.dexscreener.com/latest/dex/pairs/${chainId}/${data?.pairAddress}`);
-            setPairBaseData(pairBase[0]);
-            setPairDexData(pairDex?.data?.pairs[0]);
-            const priceUsd = formatDecimal(pairDex.data.pairs[0].priceUsd, 5);
-            setPriceUsd(priceUsd);
-            // setPairAddressEllipsis(await strEllipsis(pairAddress));
-            // setTokenAddressEllipsis(await strEllipsis(pairDex.data.pairs[0].baseToken.address))
-            setIsLoading(false);
-        } catch (error) {
-            setError(error);
-            setIsLoading(false);
+    const [featured, setFeatured] = useState({});
+    const getParams =async (name)=>{
+        const data = await axios.get(`https://api.dexscreener.com/latest/dex/pairs/ethereum/${name}`);
+        if(data.status===200&&data?.data?.pair){
+            setFeatured(data.data.pair)
         }
     }
-
     useEffect(() => {
         if (data?.pairAddress) {
-            // let chainName = chain.name;
-            // chainName = chainName.toLocaleLowerCase();
-            // setChainId('ethereum')
-            // getPairInfo();
-            // const timer = setInterval(() => {
-                // getPriceUsd();
-            // }, 5000);
-            return () => {
-                // clearInterval(timer);
-            };
+            getParams(data?.pairAddress)
         }
     }, [data?.pairAddress]);
 
@@ -81,16 +39,11 @@ function Details(props) {
             title: 'Date',
             dataIndex: 'name',
             key: 'name',
-            sorter: {
-                compare: (a, b) => a.chinese - b.chinese,
-            },
         },
         {
             title: 'Type',
             dataIndex: 'age',
-            key: 'age',  sorter: {
-                compare: (a, b) => a.chinese - b.chinese,
-            },
+            key: 'age',
         },
         {
             title: 'PriceUSD',
@@ -102,28 +55,21 @@ function Details(props) {
         {
             title: 'Total',
             key: 'tags',
-            dataIndex: 'tags',  sorter: {
-                compare: (a, b) => a.chinese - b.chinese,
-            },
+            dataIndex: 'tags',
         },
         {
             title: 'Amount PLUR',
             key: 'tags',
-            dataIndex: 'tags',  sorter: {
-                compare: (a, b) => a.chinese - b.chinese,
-            },
+            dataIndex: 'tags',
         },
         {
             title: 'Maker',
             key: 'tags',
-            dataIndex: 'tags',  sorter: {
-                compare: (a, b) => a.chinese - b.chinese,
-            },
+            dataIndex: 'tags',
         },
         {
-            title: 'Actions',
-            render:()=>{
-                return <img src="/LOGOTOU.png" width={'30px'} alt=""/>
+            title: 'DEX', align: 'center', render: () => {
+                return <img src="/dex-uniswap.png" alt="" width={'30px'} style={{borderRadius:'50%',display:'block',margin:'0 auto'}}/>
             }
         },
     ];
@@ -156,29 +102,109 @@ function Details(props) {
             dataIndex: 'tags'
         },
     ];
-
     const tableParams = [
         {
             key: '1',
             name: 'John Brown',
             age: 32,
-            address: 'New York No. 1 Lake Park',
-            tags: ['nice', 'developer'],
+            address: 'New York',
         },
         {
             key: '2',
             name: 'Jim Green',
             age: 42,
-            address: 'London No. 1 Lake Park',
-            tags: ['loser'],
+            address: 'London',
         },
         {
-            key: '3',
+            key: '31',
             name: 'Joe Black',
             age: 32,
-            address: 'Sydney No. 1 Lake Park',
-            tags: ['cool', 'teacher'],
-        }
+            address: 'Sydney',
+        },
+        {
+            key: '32',
+            name: 'Joe Black',
+            age: 32,
+            address: 'Sydney',
+        },
+        {
+            key: '33',
+            name: 'Joe Black',
+            age: 32,
+            address: 'Sydney',
+        },
+        {
+            key: '34',
+            name: 'Joe Black',
+            age: 32,
+            address: 'Sydney',
+        },
+        {
+            key: '35',
+            name: 'Joe Black',
+            age: 32,
+            address: 'Sydney',
+        },
+        {
+            key: '36',
+            name: 'Joe Black',
+            age: 32,
+            address: 'Sydney',
+        },
+        {
+            key: '37',
+            name: 'Joe Black',
+            age: 32,
+            address: 'Sydney',
+        },
+        {
+            key: '38',
+            name: 'Joe Black',
+            age: 32,
+            address: 'Sydney',
+        },
+        {
+            key: '39',
+            name: 'Joe Black',
+            age: 32,
+            address: 'Sydney',
+        },
+        {
+            key: '3a',
+            name: 'Joe Black',
+            age: 32,
+            address: 'Sydney',
+        },
+        {
+            key: '3s',
+            name: 'Joe Black',
+            age: 32,
+            address: 'Sydney',
+        },
+        {
+            key: '3ss',
+            name: 'Joe Black',
+            age: 32,
+            address: 'Sydney',
+        },
+        {
+            key: '3d',
+            name: 'Joe Black',
+            age: 32,
+            address: 'Sydney',
+        },
+        {
+            key: '3da',
+            name: 'Joe Black',
+            age: 32,
+            address: 'Sydney',
+        },
+        {
+            key: '3dada',
+            name: 'Joe Black',
+            age: 32,
+            address: 'Sydney',
+        },
     ];
     const changeColumns=(e)=>{
         if(e==='Holders'){
@@ -188,30 +214,29 @@ function Details(props) {
         }
     }
     return (
-        <Layout>
             <div className={style['box']}>
                 <div className={style['top']}>
                     <div style={{display: 'flex', alignItems: 'center'}}>
-                        <img src="/LOGOTOU.png" alt="" width={'50px'}/>
+                        <p style={{backgroundColor:'black',color:'white',fontSize:'20px',width:'50px',lineHeight:'50px',textAlign:'center',borderRadius:'50%'}}>{featured?.baseToken?.symbol?.slice(0,1)}</p>
                         <div style={{marginLeft: '15px'}}>
-                            <p style={{fontWeight: 'bold', fontSize: '20px'}}>PLUR</p>
+                            <p style={{fontWeight: 'bold', fontSize: '20px'}}>{featured?.baseToken?.name}</p>
                             <p style={{color: 'rgb(98,98,98)'}}><span
-                                style={{fontSize: '18px', color: 'black'}}>CO2/</span>WTTH</p>
+                                style={{fontSize: '18px', color: 'black'}}>{featured?.baseToken?.symbol?featured.baseToken.symbol+'/':''}</span>{featured?.quoteToken?.symbol||''}</p>
                         </div>
                     </div>
                     <div>
                         <p style={{fontSize: '18px'}}>PLUR: <span
-                            style={{color: 'rgb(32,134,192)'}}>9dsau93ufash8dh</span></p>
+                            style={{color: 'rgb(32,134,192)'}}>{featured?.baseToken?.address?featured.baseToken.address.slice(0,3)+'...'+featured.baseToken.address.slice(-4):''}</span></p>
                         <p style={{fontSize: '18px'}}>PAIR: <span
-                            style={{color: 'rgb(32,134,192)'}}>9dsau93ufash8dh</span></p>
+                            style={{color: 'rgb(32,134,192)'}}>{featured?.pairAddress?featured.pairAddress.slice(0,3)+'...'+featured.pairAddress.slice(-4):''}</span></p>
                     </div>
                     <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '20%'}}>
-                        <img src="/LOGOTOU.png" alt="" width={'30px'}/>
-                        <img src="/LOGOTOU.png" alt="" width={'30px'}/>
-                        <img src="/LOGOTOU.png" alt="" width={'30px'}/>
-                        <img src="/LOGOTOU.png" alt="" width={'30px'}/>
-                        <img src="/LOGOTOU.png" alt="" width={'30px'}/>
-                        <img src="/LOGOTOU.png" alt="" width={'30px'}/>
+                        <img src="/Star1.png" alt="" width={30}   height={30}/>
+                        <img src="/Website2.png" alt="" width={30}   height={30}/>
+                        <img src="/TwitterX.png" alt="" width={30}   height={30}/>
+                        <img src="/Telegram2.png" alt="" width={30}   height={30}/>
+                        <img src="/Ellipse15.png" alt="" width={30}   height={30}/>
+                        <img src="/etherscan.png" alt="" width={30}   height={30}/>
                     </div>
                     <p style={{
                         backgroundColor: 'rgb(188,158,45)',
@@ -219,7 +244,7 @@ function Details(props) {
                         fontSize: '20px',
                         fontWeight: 'bold',
                         borderRadius: '6px'
-                    }}>$0.000094</p>
+                    }}>{featured?.priceUsd?'$'+featured.priceUsd:''}</p>
                     <div style={{
                         display: 'flex', alignItems: 'end',
                         flexDirection: 'column'
@@ -229,8 +254,8 @@ function Details(props) {
                             letterSpacing: '2px',
                             fontSize: '20px',
                             fontWeight: 'bold'
-                        }}>+ 2207.2%</span>24H</p>
-                        <p style={{color: 'rgb(98,98,98)', textAlign: 'center'}}>0.00043ETH</p>
+                        }}> {featured?.priceChange?.h24>0?'+'+featured.priceChange.h24+'%':''}</span> {featured?.priceChange?.h24?'24H':''}</p>
+                        <p style={{color: 'rgb(98,98,98)', textAlign: 'center'}}>{featured?.priceNative?featured.priceNative+'ETH':''}</p>
                     </div>
                 </div>
                 <div className={style['bottom']}>
@@ -241,18 +266,18 @@ function Details(props) {
                                     params.map((i, index) => {
                                         return <div key={index} className={style['keyOne']} style={params.length-1===index||params.length-2===index?{}:{marginBottom:'20px'}}>
                                             <p style={{color: 'rgb(98,98,98)'}}>{i.name}</p>
-                                            <p style={{fontWeight: 'bold', fontSize: '18px'}}>{i.nu ? i.nu : '-'}</p>
+                                            <p style={{fontWeight: 'bold',lineHeight:'1', fontSize: i.nu.length>8?'12px':'15px'}}>{i.nu ? i.nu : '-'}</p>
                                         </div>
                                     })
                                 }
                             </div>
                             <div className={style['bot']}>
                                 <p style={{fontSize: '18px'}}>SWAP</p>
-                                <img src="/LOGOTOU.png" alt="" width={'40px'}/>
+                                <img src="/LOGOTOU.png" alt="" width={40} height={40}  />
                             </div>
                         </div>
-                        <div style={{width:'70%'}}>
-                            <iframe src={`https://dexscreener.com/ethereum/${data?.pairAddress}?embed=1&theme=dark`} className="w-full h-full"></iframe>
+                        <div style={{width:'80%'}}>
+                            <iframe src={`https://dexscreener.com/ethereum/${data?.pairAddress}?embed=1&theme=dark`} style={{width:'100%',height:'100%'}}></iframe>
                         </div>
                     </div>
                     <div className={style['right']}>
@@ -262,16 +287,16 @@ function Details(props) {
                             backgroundColor: 'rgb(188,158,45)',
                             borderRadius: '10px',
                             width: '70%',
-                            border:'none'
+                            border:'none',
                         }}>
                             <Segmented className={'detailSegmented'} onChange={changeColumns} options={['Trade History', 'Holders']}/>
-                            <Table className={'hotTable'} pagination={false} columns={columnsBol?columns:column} dataSource={tableParams}/>
+                            <Table className={'hotTable anyTable'} pagination={false} columns={columnsBol?columns:column} dataSource={tableParams}  scroll={{
+                                y: 200,
+                            }} size="small"/>
                           </Card>
                     </div>
                 </div>
             </div>
-
-        </Layout>
     );
 }
 

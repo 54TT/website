@@ -1,48 +1,41 @@
 import React from "react";
 import {
-    HomeIcon,
     UsersIcon,
     BellIcon,
     ChatIcon,
-    CogIcon,
     UserGroupIcon,
 } from "@heroicons/react/outline";
-import SidebarRow from "./HelperComponents/SidebarRow";
+// import SidebarRow from "./HelperComponents/SidebarRow";
+import dynamic from "next/dynamic";
+const SidebarRow = dynamic(() => import('./HelperComponents/SidebarRow'),{suspense:false})
 
 function Sidebar({user, topDist, maxWidth}) {
     return (
         <div
             className={
                 maxWidth
-                    ? `p-2 max-w-[400px] xl:min-w-[230px]  sticky xl:ml-6`
-                    : `p-2 max-w-[600px] xl:min-w-[300px] sticky xl:ml-6`
+                    ? `p-2 max-w-[400px] xl:min-w-[230px]   xl:ml-6`
+                    : `p-2 max-w-[600px] xl:min-w-[300px]  xl:ml-6`
             }
             style={{
                 alignSelf: "flex-start",
-                top: topDist ? `${topDist}` : "4.5rem",
                 fontFamily: "Inter",
             }}
         >
             <SidebarRow
-                src={user ? user.profilePicUrl : ''}
-                title={user ? user.name : ''}
-                route={user ? `/${user.username}` : ''}
-            />
-            <span>dada</span>
-            <SidebarRow
                 Icon={UsersIcon}
                 title="Home"
-                route={'/'}
+                route={'/social'}
             />
             <SidebarRow
                 Icon={UsersIcon}
                 title="Following"
-                route={user ? `/user/${user.id}/following` : ''}
+                route={user&&user.id ? `/user/${user.id}/following` : `/user/1/following`}
             />
             <SidebarRow
                 Icon={UserGroupIcon}
                 title="Followers"
-                route={user ? `/user/${user.id}/followers` : ''}
+                route={user&&user.id ? `/user/${user.id}/followers` : `/user/1/followers`}
             />
             <SidebarRow
                 Icon={BellIcon}

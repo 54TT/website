@@ -1,14 +1,10 @@
-import Home from "../components/Home";
-import Layout from "../components/Layout/Layout";
-import SeoHead from "../components/SeoHead";
-
+// import Home from "../components/Home";
+import dynamic from 'next/dynamic'
+const Home = dynamic(() => import('../components/Home'),{suspense: false});
 export default function index() {
   return (
     <>
-      <SeoHead title='' />
-      <Layout>
         <Home />
-      </Layout>
     </>
   );
 }

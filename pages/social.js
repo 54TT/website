@@ -2,96 +2,194 @@ import React, {useEffect, useState} from "react";
 import axios from "axios";
 import Sidebar from "../components/Sidebar";
 import baseUrl from '/utils/baseUrl'
-// import { parseCookies } from "nookies";
-import Feed from "../components/Feed";
+// import Feed from "../components/Feed";
 import styles from "../styles/social.module.css";
-import RightSideColumn from "../components/RightSideColumn";
-import Layout from "../components/Layout/Layout";
-import {getCsrfToken, signIn, useSession} from "next-auth/react";
-import {useConnect, useAccount, useSignMessage} from "wagmi";
-import {InjectedConnector} from "wagmi/connectors/injected";
-import {SiweMessage} from "siwe";
+// import RightSideColumn from "../components/RightSideColumn";
+import _ from 'lodash'
+import dynamic from 'next/dynamic'
+import {getUser} from "../utils/axios";
+import cook from "js-cookie";
+// const Sidebar = dynamic(() => import('../components/Sidebar'));
+const Feed = dynamic(() => import('../components/Feed'), {suspense: false});
+const RightSideColumn = dynamic(() => import('../components/RightSideColumn'), {suspense: false});
 
-function Index({postsData, chatsData, errorLoading}) {
-    const {address, isConnected} = useAccount()
-    // const {user, userFollowStats,} = useSession()
-    const {data: session, status} = useSession()
-    const {signMessageAsync} = useSignMessage()
-    const handleLogin = async () => {
-        try {
-            const callbackUrl = "/protected"
-            const message = new SiweMessage({
-                domain: window.location.host,
-                address: address,
-                statement: "Sign in with Ethereum to the app.",
-                uri: window.location.origin,
-                version: "1",
-                // chainId: chain?.id,
-                nonce: await getCsrfToken(),
-            })
-            const signature = await signMessageAsync({
-                message: message.prepareMessage(),
-            })
-            signIn("credentials", {
-                message: JSON.stringify(message),
-                redirect: false,
-                signature,
-                callbackUrl,
-            })
-        } catch (error) {
-            window.alert(error)
+import {arrayUnique} from '/utils/set'
+function Index() {
+    const [postsData, setPostsData] = useState([])
+    const [postsDataAdd, setPostsDataAdd] = useState([])
+    const [postsDataBol, setPostsDataBol] = useState(false)
+    const [postSession, setPostSession] = useState({})
+    const [errorLoading, setErrorLoading] = useState(false)
+    const [chatsData, setChatsData] = useState([])
+    const [changeBol, setChangeBol] = useState(true)
+    const [pageNumber, setPageNumber] = useState(0)
+    const [userPar, setUserPar] = useState(null)
+
+    // 是否滚动
+    const [scrollBol, setScrollBol] = useState(false)
+
+    //  是否点赞
+    const [clickBol, setClickBol] = useState(false)
+
+    // 是否发推文
+    const [sendBol, setSendBol] = useState(false)
+
+    // 删除的推文
+    const [deleteId, setDeleteId] = useState(null)
+
+    // 是否关注
+    const [likeBol, setLikeBol] = useState(false)
+    useEffect(() => {
+        if (scrollBol) {
+            setScrollBol(false)
+            if (postsData && postsData.length > 0) {
+                const data = postsDataAdd.concat(postsData)
+                setPostsDataAdd(data)
+            } else {
+                setPostsDataAdd([...postsDataAdd])
+            }
+        } else if (sendBol) {
+            setSendBol(false)
+            if (postsData && postsData.length > 0) {
+                setPostsDataAdd(postsData)
+            } else {
+                setPostsDataAdd([])
+            }
+        } else if (clickBol) {
+            setClickBol(false)
+            if (postsData && postsData.length > 0) {
+                const data = postsDataAdd.concat(postsData)
+                let aa = arrayUnique(data, 'id')
+                if (deleteId) {
+                    const man = aa.filter((i) => {
+                        return i.id !== deleteId
+                    })
+                    setPostsDataAdd(man)
+                    setDeleteId(null)
+                } else {
+                    setPostsDataAdd(aa)
+                }
+            } else {
+                if (deleteId) {
+                    const da = _.cloneDeep(postsDataAdd)
+                    const b = da.filter((i) => i.id !== deleteId)
+                    setPostsDataAdd(b)
+                    setDeleteId(null)
+                } else {
+                    setPostsDataAdd([...postsDataAdd])
+                }
+            }
+        } else {
+            if (postsData && postsData.length > 0) {
+                setPostsDataAdd(postsData)
+            } else {
+                setPostsDataAdd([])
+            }
+        }
+    }, [postsDataBol])
+    const getUs = async () => {
+        const {data: {user}, status} = await getUser(cook.get('name'))
+        if (status === 200 && user) {
+            setUserPar(user)
+        } else {
+            setUserPar('')
         }
     }
-    const {connect} = useConnect({
-        connector: new InjectedConnector(),
-    });
-    useEffect(()=>{
-        console.log('14---------------', isConnected, session)
-        if(isConnected&&!session){
-            handleLogin()
-        }else if(!isConnected){
-            connect()
+    useEffect(() => {
+        if (cook.get('name')) {
+            getUs()
         }
-    },[isConnected])
+    }, [cook.get('name')]);
+    const change = (name, id) => {
+        if (name === 'gun') {
+            setScrollBol(true)
+        }
+        if (name === 'send') {
+            setSendBol(true)
+        }
+        if (name === 'click') {
+            setClickBol(true)
+        }
+        if (name === 'like') {
+            setLikeBol(true)
+        }
+        if (id) {
+            setDeleteId(id)
+        }
+        setChangeBol(!changeBol)
+    }
+    const changePage = () => {
+        setPageNumber(pageNumber + 1)
+        change('gun')
+    }
+    const getParams = async () => {
+        let a = _.cloneDeep(pageNumber)
+        if (sendBol) {
+            a = 0
+        }
+        const res = await axios.get(`${baseUrl}/api/posts`, {
+            params: {pageNumber: a, userId: userPar?.id},
+        });
+        if (res.status === 200) {
+            setPostsDataBol(!postsDataBol)
+            setPostsData(res.data)
+        } else {
+            setPostsDataBol(!postsDataBol)
+            setPostsData([])
+        }
+        const chatRes = await axios.get(`${baseUrl}/api/chats`, {
+            params: {userId: userPar?.id},
+        });
+        setChatsData(chatRes && chatRes?.data.length > 0 ? chatRes.data : [])
+    }
+    const getUsers = async () => {
+        const res = await axios.get(`${baseUrl}/api/user/userFollowStats`, {
+            params: {userId: userPar?.id},
+        });
+        if (res?.status === 200) {
+            setPostSession(res.data.userFollowStats)
+        }
+    }
+    useEffect(() => {
+        if (userPar && userPar.id) {
+            if (!likeBol) {
+                getParams()
+            } else {
+                setLikeBol(false)
+            }
+            getUsers()
+        }
+    }, [userPar, changeBol])
 
     return (
         <>
-            <Layout>
-                <div className="bg-gray-100 min-h-screen">
-                    <main className="flex">
-                        <Sidebar user={session?session.user:''}/>
-                        <Feed
-                            user={session?session.user:''}
-                            postsData={postsData}
-                            errorLoading={errorLoading}
-                            increaseSizeAnim={{
-                                sizeIncDown: styles.increasesizereally,
-                                sizeIncUp: styles.sizeup,
-                            }}
-                        />
-                        <RightSideColumn
-                            chatsData={chatsData}
-                            userFollowStats={ session?session.userFollowStats:''}
-                            user={session?session.user:''}
-                        />
-                    </main>
-                </div>
-            </Layout>
+            <div className="min-h-screen"
+                 style={{backgroundColor: 'rgb(253,213,62)', marginRight: '20px', borderRadius: '10px'}}>
+                <main style={{display: 'flex'}}>
+                    <Sidebar user={userPar ? userPar : ''}/>
+                    <Feed
+                        user={userPar ? userPar : ''}
+                        postsData={postsDataAdd}
+                        errorLoading={errorLoading}
+                        change={change}
+                        changePage={changePage}
+                        increaseSizeAnim={{
+                            sizeIncDown: styles.increasesizereally,
+                            sizeIncUp: styles.sizeup,
+                        }}
+                    />
+
+                    <RightSideColumn
+                        chatsData={chatsData}
+                        userFollowStats={postSession}
+                        change={change}
+                        user={userPar ? userPar : {}}
+                    />
+                </main>
+            </div>
         </>
     );
 }
 
-Index.getInitialProps = async (ctx) => {
-    try {
-        const res = await axios.get(`${baseUrl}/api/posts`, {
-            params: {pageNumber: 1},
-        });
-
-        const chatRes = await axios.get(`${baseUrl}/api/chats`);
-        return {postsData: res.data, chatsData: chatRes.data};
-    } catch (error) {
-        return {errorLoading: true};
-    }
-};
 
 export default Index;
