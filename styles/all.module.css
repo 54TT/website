@@ -1,0 +1,532 @@
+.chatLeft{
+    padding: 10px;
+    border-radius: 35%;
+    margin-bottom: 11px;
+    margin-left: auto;
+    width: fit-content;
+    color: black;
+    background-color: rgba(243, 244, 246);
+}
+.chatRight{
+    padding: 10px;
+    border-radius: 35%;
+    margin-bottom: 11px;
+    margin-right: auto;
+    width: fit-content;
+    color: black;
+    background-color: rgba(243, 244, 246);
+}
+.chatSearchTop{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: white;
+    z-index: 100;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0 5px 15px;
+}
+.chatSearchName{
+    user-select: none;
+    font-size: 17px;
+}
+.errorTop{
+     display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 15px;
+    width: 100%;
+    margin-bottom: -20px;
+}
+.errorName{
+    color: #fe6f8a;
+    font-size: 16px;
+    font-weight: bold;
+    margin-left: 10px;
+}
+.infoBoxTop{
+    position: relative;
+    background-color:rgb(254,239,146);
+}
+.infoBoxIcon{
+    right: 10px;
+    top: 10px;
+    position: absolute;
+    cursor: pointer;
+}
+.sidebarRowName{
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.commentNotificationBox{
+    display: flex;
+    cursor: pointer;
+    border-radius: 8px;
+    border-bottom: 1px solid #efefef;
+    padding: 10px;
+    align-items: center;
+    justify-content: space-between;
+
+}
+.followNotificationBox{
+    height: fit-content;
+    margin-left: 10px;
+    padding: 10px;
+    display: flex;
+    cursor: pointer;
+    border-radius: 7px;
+    background-color: transparent;
+    color: rgba(107, 114, 128);
+    align-self: flex-start;
+    font-size: 16px;
+    box-shadow: rgba(60, 64, 67, 0.3) 0 1px 2px 0,rgba(60, 64, 67, 0.15) 0 1px 3px 1px;
+}
+
+.followerUserBox{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.followerUserName{
+    overflow: hidden;text-overflow: ellipsis; white-space: nowrap;
+}
+.profileFieldsBox{
+    position: relative;
+}
+.profileFieldsIconBox{
+    display:flex;align-items:center;
+}
+.profileFieldsIcon{
+    font-size:20px;font-weight:bold;margin-right:10px;
+}
+.profileFieldsIcons{
+    font-size:20px;font-weight:bold;
+}
+.profileFieldsTextarea{
+    overflow: hidden;
+    resize: none;
+    outline: none;
+    padding:15px;
+    margin: 0 0;
+    border: 2px solid #f0e6ff;
+    width: 100%;
+    color: black;
+    border-radius: 10px;
+}
+.profileFieldsDiv{
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 15px 0 0 0;
+    border: 2px solid #f0e6ff;
+}
+.profileFieldsInput{
+    width: 100%;
+    outline: none;
+    border: none;
+    color: black;
+    margin-left: 10px;
+}
+.profileFieldsAdd{
+    cursor: pointer;
+    padding: 6px;
+    margin-top: 15px;
+    background-color: #efeeef;
+    border-radius: 6px;
+    font-weight: bold;
+}
+.profileFieldsYou{
+    display:flex;
+    column-gap: 6px;
+    margin-top: 8px;
+    padding: 10px;
+    background-color: #efeeef;
+    border-radius:7px;
+    user-select: none;
+    cursor: pointer;
+}
+.profileFieldsName{
+    color: black;
+    text-decoration: none;
+}
+.bottomBox{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: rgb(293, 213, 62);
+        border-radius: 10px;
+        padding: 20px 30px 15px 12px;
+        transition: box-shadow 0.3s;
+        margin: 25px 0;
+
+}
+.bottomBox:hover {
+    box-shadow: 15px 15px 0 rgb(188, 158, 54)
+}
+.bottomTop{
+    width: 20%;
+}
+.bottomImg{
+    margin: 0 auto;width:50%;
+}
+.bottomSlign{
+    font-size: 20px;font-weight: bold;text-align: center;
+}
+.bottomText{
+    width: 78%;color: rgb(98,98,98);font-size: 18px;font-weight: bold;line-height: 1.5;
+}
+.bottomBoxLogo {
+    display: flex;
+    justify-content: center;
+    padding: 20px 0;
+    background-color: rgb(251, 213, 62);
+    margin-bottom: 20px;
+    border-radius: 20px;
+    transition: box-shadow 0.3s;
+}
+.bottomBoxLogo:hover {
+    box-shadow: 15px 15px 0 rgb(188, 158, 54)
+}
+.bottomImgs{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;width: 20%;
+}
+.bottomBot{
+    color:rgb(55,55,55);margin:20px 0;display:flex;align-items:center;justify-content:center;
+}
+
+
+
+.commentCommentImg{
+    border-radius:50%;margin-top:10px;
+}
+.commentCommentUser{
+    font-weight: bold;
+    margin-bottom: -5px;
+    font-size:15px;
+    cursor: pointer;
+}
+.commentCommentHov{
+    width: 50px;margin-left: 8px;
+}
+.commentCommentOpen{
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    padding: 7px;
+    font-size: 18px;
+}
+.commentCommentIs{
+    visibility: hidden;
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    padding: 7px;
+    font-size: 18px;
+}
+
+.featuredColumnsBox{
+    display: flex;align-items: center;justify-content:space-between;width:50%;margin:0 auto;
+}
+.featuredColumns{
+    width: 30px;
+    background-color: #454545;
+    color: white;
+    line-height: 30px;
+    text-align: center;
+    border-radius: 50%;
+}
+.featuredBox{
+    margin-right: 20px;
+}
+.featuredBoxCard{
+    min-width: 700px;
+    background-color: rgb(253, 213, 62);
+    width: 100%; border: none;
+}
+.featuredBoxTop{
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.featuredBoxBot{
+    display: flex;align-items: center; justify-content: end;
+}
+.featuredBoxName{
+    margin-top: 80px;
+    text-align: center;
+    line-height: 1;
+    font-size: 20px;
+    color: rgb(98,98,98);
+}
+
+
+.inputBoxBoxLine{
+    height: 1px;
+    background-color: lightgrey;
+    margin: 1px 16px;
+    display: block;
+}
+.inputBoxBox{
+    box-shadow: rgba(50, 50, 93, 0.25) 0 2px 5px -1px, rgba(0, 0, 0, 0.3) 0 1px 3px -1px;
+    border-radius:10px;
+    background-color:rgb(254,239,146)
+}
+.inputBoxView{
+    margin-top: 18px;margin-bottom: -18px;position: relative;
+}
+.inputBoxIcon{
+    cursor: pointer;
+    position: absolute;
+    top: 4.5%;
+    right: 6.5%;
+    padding: 7px;
+    background-color: white;
+    border-radius: 50%;
+    z-index: 70;
+}
+.inputBoxImg{
+    height: 300px;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 20px;
+    transition: all 0.22s ease-out;
+}
+
+
+
+.launchTableP{
+    width: 30px;
+    border-radius: 50%;
+    background-color: #454545;
+    color: white;
+    text-align: center;
+    line-height: 30px;
+}
+.launchTableText{
+    font-weight: bold;font-size: 18px;text-align: center;
+}
+.launchTableDiv{
+    display: flex;align-items: center;justify-content: space-between;cursor: pointer;
+}
+.launchTableImg{
+    display:block;border-radius:50%;margin:0 auto;
+}
+
+.launchBox{
+    margin-right: 20px;
+}
+
+.launchBoxCard{
+    min-width: 700px;
+    background-color: rgb(253, 213, 62);
+    width: 100%;
+    border: none;
+}
+.launchBoxCardBox{
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.launchBoxFilter{
+   display: flex; justify-content: end;margin-bottom: 20px;
+}
+.launchBoxBot{
+    margin-top: 80px;
+    text-align: center;
+    line-height: 1;
+    font-size: 20px;
+    color: rgb(98,98,98);
+}
+.newPairTable{
+    display: flex;
+    align-items: start;
+    justify-content: start;
+}
+.newPairTableText{
+    display: flex;align-items: flex-end;line-height: 1;margin-left: 15px;
+}
+.newPairTableImg{
+    border-radius: 50%;display: block;margin: 0 auto;height: auto;width: auto;
+}
+
+
+.postCardBox{
+    background-color:rgb(254,239,146);
+}
+.postCardBoxClick{
+    border-top: 1px solid lightgrey;
+    border-bottom: 1px solid lightgrey;
+    margin-top: 10px;
+}
+.presaleBoxTableText{
+    width: 30px;
+    border-radius: 50%;
+    background-color: #454545;
+    color: white;
+    text-align: center;
+    line-height: 30px;
+}
+.presaleBoxTableP{
+    font-weight: bold;font-size: 18px;text-align: center,
+}
+.presaleBoxTableImg{
+    display: flex;align-items:center;justify-content: space-between;cursor: pointer;
+}
+.presaleBoxTableImgs{
+    display:block;border-radius:50%;margin:0 auto;
+}
+
+.rightSideColumnName{
+    font-size: 18px;
+    margin-left: 6px;
+    margin-top: 24px;
+}
+.rightSideColumnClick{
+   padding: 7px;
+    display: flex;
+    cursor: pointer;
+    border-radius: 10px;
+    background-color: rgba(139, 92, 246);
+    color: white;
+}
+.rightSideColumnL{
+    overflow-y: auto;
+    display: flex;
+    cursor: pointer;
+    border-radius: 5px;
+    border-bottom: 1px solid lightgray;
+    padding: 10px;
+    align-items: flex-start;
+}
+
+
+.followersBox{
+    background-color: rgb(253,213,62);margin-right: 20px;border-radius: 10px;
+}
+.followersBoxMin{
+    height: calc(100vh - 4.5rem);overflow-y: auto;display: flex;
+}
+.followersBoxData{
+    width: 50%;
+    margin: 20px auto 0;
+    overflow-y: auto;
+    border-radius: 10px;
+    padding: 20px;
+    background-color: #B2DB7E;
+}
+.followersBoxName{
+    user-select: none;
+    font-size: 20px;
+    font-weight: bold;
+}
+.followersBoxFollow{
+    margin-bottom: 10px;
+    border: 1px solid rgb(128, 128, 128);
+    width: 30%;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 10px;
+    background-color: #BCEE7D;
+    flex-wrap: wrap;
+}
+.followersBoxLink{
+    cursor: pointer;
+    user-select: none;
+    font-weight: bold;
+    font-size: 19px;
+}
+.followersBoxFoll{
+    height: fit-content;
+    padding: 7px;
+    display: flex;
+    cursor: pointer;
+    border-radius: 7px;
+    background-color: rgba(139, 92, 246);
+    color: white;
+    font-size: 18px;
+}
+
+
+
+.followingBox{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+}
+
+
+.usernameBox{
+    background-color: rgb(188,238,125);
+    margin-right: 20px;
+    border-radius: 10px;
+}
+.usernameBoxTop{
+    position: relative;
+    width: 100%;
+    height: 250px;
+    overflow: hidden;
+    border-radius: 10px 10px 0 0;
+}
+.usernameBoxSetName{
+    position: absolute;
+    left: 50%;
+    bottom: -10px;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    width: 40%;
+    justify-content:center;
+}
+.usernameBoxIcon{
+    font-size: 20px;font-weight: bold;margin-left: 10px;color: blue;
+}
+.usernameBoxDiv{
+    display: flex;
+    position: absolute;
+    cursor: pointer;
+    bottom: 10px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 10px;
+    border-radius: 10px;
+    background-color: rgba(139, 92, 246);
+    color: white;
+    font-size: 16px;
+}
+.usernameBoxUp{
+    padding: 10px;
+    cursor: pointer;
+    background-color: white;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    border-radius: 50%;
+}
+.usernameBoxUpdate{
+    padding: 10px;
+    background-color: white;
+    cursor: pointer;
+    position: absolute;
+    right: 2%;
+    bottom: 2%;
+    border-radius: 50%;
+}
+.usernameBoxBot{
+    margin-top: 20px;min-height: calc(100vh - 26rem);padding-top: 60px;background-color:rgb(253,213,62);
+}
+

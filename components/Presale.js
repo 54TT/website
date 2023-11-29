@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useContext, useEffect, useRef, useState} from "react";
 import dayjs from 'dayjs';
 import {notification, Pagination, Table, Card, Statistic} from "antd";
 import _ from "lodash";
@@ -6,15 +6,17 @@ import {get} from "../utils/axios";
 import {GlobalOutlined, SendOutlined, TwitterOutlined} from "@ant-design/icons";
 import {dao} from '/utils/set'
 import baseUrl from "../utils/baseUrl";
+import styled from '/styles/all.module.css'
 const {Countdown} = Statistic;
-
+import Image from 'next/image'
+import {changeLang} from "/utils/set";
 export default function Presale() {
+    const presale=changeLang('presale')
     const [launchPageSize, setLaunchPageSize] = useState(10);
     const [launchCurrent, setLaunchCurrent] = useState(1);
     const [launchAll, setLaunchAll] = useState(0);
     const [launch, setLaunch] = useState([]);
     const [launchBol, setLaunchBol] = useState(true);
-
     const hint = () => {
         notification.error({
             message: `Please note`, description: 'Error reported', placement: 'topLeft',
@@ -72,37 +74,29 @@ export default function Presale() {
             dataIndex: 'address',align: 'center',
             width: 30,
             render: (_, record) => {
-                return <p style={{
-                    width: '30px',
-                    borderRadius: '50%',
-                    backgroundColor: '#454545',
-                    color: 'white',
-                    textAlign: 'center',
-                    lineHeight: '30px'
-                }}>{record?.symbol?.slice(0, 1)}</p>
+                return <p className={styled.presaleBoxTableText}>{record?.symbol?.slice(0, 1)}</p>
             }
         },
         {
-            title: 'Token name',
+            title: presale.token,
             dataIndex: 'name',align: 'center',width: '25%',
             render: (text) => {
-                return <p style={{fontWeight: 'bold', fontSize: '18px', textAlign: 'center'}}>{text}</p>
+                return <p className={styled.presaleBoxTableP}>{text}</p>
             }
         },
         {
-            title: 'Token symbol',
+            title: presale.symbol,
             dataIndex: 'symbol',align: 'center',
             render: (text) => {
-                return <p style={{fontWeight: 'bold', fontSize: '18px', textAlign: 'center'}}>{text}</p>
+                return <p className={styled.presaleBoxTableP}>{text}</p>
             }
         },
         {
-            title: 'Social Info',
+            title: presale.social,
             dataIndex: 'address',align: 'center',
             width: 200,
             render: (text, record) => {
-                return <div
-                    style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer'}}>
+                return <div className={styled.presaleBoxTableImg}>
                     <GlobalOutlined style={{cursor: 'pointer', fontSize: '20px'}} onClick={() => push(record, 'one')}/>
                     <TwitterOutlined style={{cursor: 'pointer', fontSize: '20px'}} onClick={() => push(record, 'two')}/>
                     <SendOutlined style={{cursor: 'pointer', fontSize: '20px'}} onClick={() => push(record, 'three')}/>
@@ -110,7 +104,7 @@ export default function Presale() {
             }
         },
         {
-            title: 'Presale time',
+            title: presale.time,
             dataIndex: 'presale_time',align: 'center',
             sorter: {
                 compare: (a, b) => {
@@ -130,15 +124,15 @@ export default function Presale() {
             }
         },
         {
-            title: 'Platform',
+            title: presale.platform,
             dataIndex: 'presale_platform_logo',align: 'center',
             render: (text) => {
-                return <img src={baseUrl+text} alt="" width={'30px'} style={{display:'block',borderRadius:'50%',margin:'0 auto'}}/>
+                return <img src={baseUrl+text} alt="" width={'30px'} className={styled.presaleBoxTableImgs}/>
             }
         },
         {
-            title: 'DEX', align: 'center', render: (text, record) => {
-                return <img src="/dex-uniswap.png" alt="" width={'30px'} style={{borderRadius:'50%',display:'block',margin:'0 auto'}}/>
+            title: presale.dex, align: 'center', render: (text, record) => {
+                return <Image src="/dex-uniswap.png" alt="" width={30} style={{height: 'auto',width: 'auto'}} height={30} className={styled.presaleBoxTableImgs}/>
             }
         },
     ];
@@ -147,25 +141,16 @@ export default function Presale() {
         setLaunchPageSize(a)
     }
     return (
-        <div style={{marginRight: '20px'}}>
-            <Card style={{
-                minWidth: 700,
-                backgroundColor: 'rgb(253, 213, 62)',
-                width: '100%', border: 'none'
-            }}>
-                <div style={{
-                    marginBottom: '10px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between'
-                }}>
+        <div className={styled.launchBox}>
+            <Card className={styled.launchBoxCard}>
+                <div className={styled.launchBoxCardBox}>
                     <div style={{display: 'flex', alignItems: 'center'}}>
-                        <img src="/Group.png" alt="" width={70} height={70}/>
-                        <span style={{fontWeight: 'bold', fontSize: '26px'}}>Presales</span>
+                        <Image src="/Group.png" alt="" width={70} height={70}/>
+                        <span style={{fontWeight: 'bold', fontSize: '26px'}}>{presale.presales}</span>
                     </div>
                 </div>
 
-                <div style={{display: 'flex', justifyContent: 'end', marginBottom: '20px'}}>
+                <div className={styled.launchBoxFilter}>
                     <Pagination defaultCurrent={1} current={launchCurrent} showSizeChanger onChange={change}
                                 total={launchAll} pageSize={launchPageSize}/>
                 </div>
@@ -176,13 +161,7 @@ export default function Presale() {
                         return  'oneHave'
                 }}/>
             </Card>
-            <p style={{
-                marginTop: '80px',
-                textAlign: 'center',
-                lineHeight: '1',
-                fontSize: '20px',
-                color: 'rgb(98,98,98)'
-            }}>©DEXpert.io</p>
+            <p className={styled.launchBoxBot}>©DEXpert.io</p>
         </div>
     )
 }

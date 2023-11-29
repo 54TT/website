@@ -1,6 +1,5 @@
 import axios from "axios";
-import React, {useEffect, useState} from "react";
-import styled from "styled-components";
+import React, {useContext, useEffect, useState} from "react";
 import InfoBox from "../components/HelperComponents/InfoBox";
 import Sidebar from "../components/Sidebar";
 import baseUrl from "../utils/baseUrl";
@@ -11,11 +10,13 @@ import dynamic from 'next/dynamic'
 import {getUser} from "/utils/axios";
 import cook from "js-cookie";
 // const Sidebar = dynamic(() => import('../components/Sidebar'));
-const LikeNotification = dynamic(() => import('../components/Notification/LikeNotification'),{suspense: false});
-const CommentNotification = dynamic(() => import('../components/Notification/CommentNotification'),{suspense: false});
-const FollowNotification = dynamic(() => import('../components/Notification/FollowNotification'),{suspense: false});
+const LikeNotification = dynamic(() => import('../components/Notification/LikeNotification'),);
+const CommentNotification = dynamic(() => import('../components/Notification/CommentNotification'),);
+const FollowNotification = dynamic(() => import('../components/Notification/FollowNotification'),);
+import {changeLang} from "/utils/set";
 
 function Notifications() {
+    const social=changeLang('social')
     const [notifications, setNotifications] = useState([])
     const [userPar, setUserPar] = useState(null)
     const [followStatsBol, setFollowStatsBol] = useState(false)
@@ -80,10 +81,17 @@ function Notifications() {
                         backgroundColor:'#B2DB7E'
                     }}>
                     <div className="flex items-center ml-2">
-                        <Title>Notifications ·</Title>
-                        <NotificationCount className="text-gray-500 ml-2">
+                        <p style={{
+                            userSelect: 'none',
+                            fontSize: '20px',
+                            fontWeight: 'bold'
+                        }}>{social.notification} ·</p>
+                        <p style={{
+                            userSelect: 'none',
+                            fontSize: '20px'
+                        }} className="text-gray-500 ml-2">
                             {notifications?.length}
-                        </NotificationCount>
+                        </p>
                     </div>
 
                     {notifications.length > 0 ? (
@@ -112,7 +120,7 @@ function Notifications() {
                         </div>
                     ) : (
                         <p className="text-md text-gray-500">
-                            {`You don't have any notifications, ${userPar?.name}.`}
+                            {`${social.noti} ${userPar?.name}.`}
                         </p>
                     )}
                 </div>
@@ -124,15 +132,3 @@ function Notifications() {
 
 export default Notifications;
 
-const Title = styled.p`
-  user-select: none;
-  font-size: 20px;
-  font-weight: bold;
-  font-family: Inter;
-`;
-
-const NotificationCount = styled.p`
-  font-family: Inter;
-  user-select: none;
-  font-size: 20px;
-`;

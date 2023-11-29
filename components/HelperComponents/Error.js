@@ -1,36 +1,18 @@
-
 import React from "react";
-import styled from "styled-components";
 import {WomanOutlined} from '@ant-design/icons'
+import styled from '/styles/all.module.css';
 function ErrorComponent({ errorMessage }) {
   return (
-    <ErrorContainer>
+    <div className={styled.errorTop}>
       <WomanOutlined
         style={{
-          fontSize: "1.31rem",
+          fontSize: "20px",
           color: "#fe6f8a",
         }}
       />
-      <ErrorText>{errorMessage}</ErrorText>
-    </ErrorContainer>
+      <p className={styled.errorName}>{errorMessage}</p>
+    </div>
   );
 }
 
 export default ErrorComponent;
-
-export const ErrorText = styled.p`
-  color: #fe6f8a;
-  font-size: 0.93rem;
-  font-family: "Roboto", sans-serif;
-  font-weight: 600;
-  margin-left: 0.3rem;
-`;
-
-export const ErrorContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 1rem;
-  width: 100%;
-  margin-bottom: -1.15rem;
-`;

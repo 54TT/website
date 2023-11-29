@@ -1,5 +1,4 @@
 import React, {useContext, useEffect, useRef, useState} from "react";
-import styled from "styled-components";
 import baseUrl from '/utils/baseUrl'
 import {
     CheckCircleIcon,
@@ -29,13 +28,14 @@ import {useRouter} from "next/router";
 import {EmojiSadIcon} from "@heroicons/react/outline";
 import dynamic from 'next/dynamic'
 import cook from "js-cookie";
-const PostCard = dynamic(() => import('../components/PostCard'),{suspense: false});
-const InfoBox = dynamic(() => import('../components/HelperComponents/InfoBox'),{suspense: false});
-const ProfileFields = dynamic(() => import('../components/ProfileComponents/ProfileFields'),{suspense: false});
-const FollowingUsers = dynamic(() => import('../components/ProfileComponents/FollowingUsers'),{suspense: false});
-const FollowerUsers = dynamic(() => import('../components/ProfileComponents/FollowerUsers'),{suspense: false});
+const PostCard = dynamic(() => import('../components/PostCard'),);
+const InfoBox = dynamic(() => import('../components/HelperComponents/InfoBox'),);
+const ProfileFields = dynamic(() => import('../components/ProfileComponents/ProfileFields'),);
+const FollowingUsers = dynamic(() => import('../components/ProfileComponents/FollowingUsers'),);
+const FollowerUsers = dynamic(() => import('../components/ProfileComponents/FollowerUsers'),);
 import {getUser} from "/utils/axios";
 import {CountContext} from "../components/Layout/Layout";
+import styled from '/styles/all.module.css'
 function ProfilePage() {
     const { changeBolName } = useContext(CountContext);
     const coverImageRef = useRef(null);
@@ -225,21 +225,9 @@ function ProfilePage() {
             <div
                 className={` ${
                     !isUserOnOwnAccount ? "min-h-[32.4rem]" : "min-h-[29.3rem]"
-                }  shadow-lg`}
-                style={{
-                    fontFamily: "Inter",
-                    backgroundColor: "rgb(188,238,125)",
-                    marginRight: '20px',
-                    borderRadius: '10px'
-                }}
+                }  shadow-lg ${styled.usernameBox}`}
             >
-                <div style={{
-                    position: "relative",
-                    width: '100%',
-                    height: '250px',
-                    overflow: 'hidden',
-                    borderRadius: '10px 10px 0 0'
-                }}>
+                <div className={styled.usernameBoxTop}>
                     <input
                         type="file"
                         accept="image/*"
@@ -267,12 +255,7 @@ function ProfilePage() {
                         translate: '-50% -50%'
                     }}/>
                     {/*修改name*/}
-                    <div style={{
-                        position: 'absolute',
-                        left: '50%',
-                        bottom: '-10px',
-                        transform: 'translate(-50%, -50%)', display: 'flex', alignItems: 'center', width: '40%',justifyContent:'center'
-                    }}>
+                    <div className={styled.usernameBoxSetName}>
                         {
                             editProfile ? <Input onChange={changeIn} value={editInput}
                                                  style={{fontSize: '20px', fontWeight: 'bold'}}/> :
@@ -283,15 +266,14 @@ function ProfilePage() {
                                 <CloseOutlined style={{fontSize: '20px', fontWeight: 'bold'}}
                                                onClick={() => setEditProfile(false)}/> <CheckOutlined
                                 style={{fontSize: '20px', fontWeight: 'bold', marginLeft: '10px'}} onClick={setName}/>
-                            </div> : <FormOutlined
-                                style={{fontSize: '20px', fontWeight: 'bold', marginLeft: '10px', color: 'blue'}}
+                            </div> : <FormOutlined className={styled.usernameBoxIcon}
                                 onClick={() => setEditProfile(true)}/>
                         }
 
                     </div>
                     {!isUserOnOwnAccount &&
                         (followBol ? (
-                            <FollowButton
+                            <div  className={styled.usernameBoxDiv}
                                 onClick={async () => {
                                     await unfollowUser(
                                         profile?.user_id,
@@ -303,9 +285,9 @@ function ProfilePage() {
                             >
                                 <CheckCircleIcon className="h-6"/>
                                 <p className="ml-1.5">Following</p>
-                            </FollowButton>
+                            </div>
                         ) : (
-                            <FollowButton
+                            <div  className={styled.usernameBoxDiv}
                                 onClick={async () => {
                                     await followUser(
                                         profile?.user_id,
@@ -317,20 +299,12 @@ function ProfilePage() {
                             >
                                 <UserAddIcon className="h-6"/>
                                 <p className="ml-1.5">Follow</p>
-                            </FollowButton>
+                            </div>
                         ))}
 
                     {isUserOnOwnAccount && (
                         <>
-                            <div style={{
-                                padding: '10px',
-                                cursor: 'pointer',
-                                backgroundColor: 'white',
-                                position: 'absolute',
-                                top: '50%',
-                                left: '50%',
-                                borderRadius: '50%'
-                            }} onClick={() => profilePicRef.current.click()}>
+                            <div className={styled.usernameBoxUp} onClick={() => profilePicRef.current.click()}>
                                 {loadingProfilePic ? (
                                     <>
                                         <LoadingOutlined/>
@@ -340,15 +314,7 @@ function ProfilePage() {
                                         style={{fontSize: '20px', color: 'purple', fontWeight: 'bold'}}/>
                                 )}
                             </div>
-                            <div style={{
-                                padding: '10px',
-                                backgroundColor: 'white',
-                                cursor: 'pointer',
-                                position: 'absolute',
-                                right: '2%',
-                                bottom: '2%',
-                                borderRadius: '50%'
-                            }} onClick={() => coverImageRef.current.click()}>
+                            <div className={styled.usernameBoxUpdate} onClick={() => coverImageRef.current.click()}>
                                 {loadingCoverPic ? (
                                     <>
                                         <LoadingOutlined/>
@@ -362,18 +328,13 @@ function ProfilePage() {
                 </div>
                 {/*下面*/}
                 <div
-                    className=" w-full"
-                    style={{marginTop: "20px", minHeight: "calc(100vh - 26rem)", paddingTop: '60px',backgroundColor:'rgb(253,213,62)'}}
-                >
+                    className={`w-full ${styled.usernameBoxBot}`} >
                     <div
                         className=" md:flex space-x-4 mx-auto max-w-[30rem] sm:max-w-xl md:max-w-3xl lg:max-w-[1000px]">
                         {/*左边关注*/}
                         <div
                             className="max-w-[28rem] ml-4 static mt-3 md:sticky md:mt-6 flex-1 md:max-w-[27rem]"
                             style={{
-                                // position: "-webkit-sticky" /* for Safari */,
-                                // position: "sticky",
-                                top: "6rem",
                                 alignSelf: "flex-start",
                             }}
                         >
@@ -441,17 +402,3 @@ function ProfilePage() {
 }
 
 export default ProfilePage;
-
-const FollowButton = styled.div`
-  display: flex;
-  position: absolute;
-  cursor: pointer;
-  bottom: 10px;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  padding: 0.45rem 0.5rem;
-  border-radius: 0.5rem;
-  background-color: rgba(139, 92, 246);
-  color: white;
-  font-size: 1.1rem;
-`;

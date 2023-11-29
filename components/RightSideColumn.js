@@ -1,10 +1,10 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import Link from "next/link";
 import baseUrl from '/utils/baseUrl'
-import calculateTime from "../utils/calculateTime";
+import styled from '/styles/all.module.css';
+import {changeLang} from "/utils/set";
 import {
     CheckCircleIcon,
-    ExclamationCircleIcon,
     UserAddIcon,
 } from "@heroicons/react/solid";
 import axios from "axios";
@@ -12,6 +12,7 @@ import {followUser, unfollowUser} from "../utils/profileActions";
 import {useRouter} from "next/router";
 import dayjs from "dayjs";
 function RightSideColumn({user, chatsData, userFollowStats,change}) {
+    const social = changeLang('social')
     const [bol, setBol] = useState(false)
     const chang = () => {
         setBol(!bol)
@@ -46,11 +47,9 @@ function RightSideColumn({user, chatsData, userFollowStats,change}) {
     return (
         <div
             className="hidden  p-2 lg:block max-w-[300px] lg:min-w-[290px] xl:min-w-[300px] sticky xl:mr-8"
-            style={{alignSelf: "flex-start", top: "5.45rem"}}
+            style={{alignSelf: "flex-start"}}
         >
-            <p style={{ fontSize: '18px',
-                marginLeft: '6px',
-                marginTop: '24px'}}>Who to follow</p>
+            <p className={styled.rightSideColumnName}>{social.who}</p>
             {usersToFollow && usersToFollow.length > 0 && Array.isArray(usersToFollow) ? (
                 usersToFollow.map((fol) => {
                     const isLoggedInUserFollowing =
@@ -85,12 +84,7 @@ function RightSideColumn({user, chatsData, userFollowStats,change}) {
                                         <>
                                             {/*关注*/}
                                             {isLoggedInUserFollowing ? (
-                                                <div style={{padding: '7px',
-                                                    display: 'flex',
-                                                    cursor: 'pointer',
-                                                    borderRadius: '10px',
-                                                    backgroundColor: 'rgba(139, 92, 246)',
-                                                    color: 'white'}}
+                                                <div className={styled.rightSideColumnClick}
                                                     onClick={async () => {
                                                         const data = await unfollowUser(
                                                             fol.id,
@@ -137,21 +131,13 @@ function RightSideColumn({user, chatsData, userFollowStats,change}) {
                     );
                 })
             ) : ''}
-            <p style={{ fontSize: '18px',
-                marginLeft: '6px',
-                marginTop: '24px'}}>Recent chats</p>
+            <p className={styled.rightSideColumnName}>{social.recent}</p>
             <div style={{borderTop:'1px solid lightgray'}}>
                 {chatsData && Array.isArray(chatsData) ? (
                     chatsData.map((chat) => (
                         <Link href={`/chats?chat=${chat.textsWith}`} key={chat?.textsWith}>
-                        <div style={{ overflowY: 'auto',
-                            display: 'flex',
-                            cursor: 'pointer',
-                            borderRadius: '5px',
-                            borderBottom: '0.5px solid lightgray',
-                            padding: '10px',
-                            alignItems: 'flex-start'}}
-                            className="hover:bg-gray-200"
+                        <div
+                            className={`hover:bg-gray-200 ${styled.rightSideColumnL}`}
                         >
                             <div className="relative">
                                 <img src={chat?.profilePicUrl ? chat.profilePicUrl : '/Ellipse1.png'}
@@ -174,13 +160,11 @@ function RightSideColumn({user, chatsData, userFollowStats,change}) {
                         </Link>
                     ))
                 ) : (
+                    <Link href={`/chats`} passHref>
                     <p>
-                        You do not have any chats yet. Start a{" "}
-                        <Link href={`/chats`} passHref>
-                            chat
-                        </Link>
-                        with someone!
+                        {social.chat}
                     </p>
+                    </Link>
                 )}
             </div>
         </div>

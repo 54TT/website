@@ -1,5 +1,5 @@
-import React, {useState, useEffect, useRef,useContext , startTransition} from "react";
-import {getCsrfToken, signIn, useSession, signOut} from "next-auth/react"
+import React, {useState, useEffect, useRef, useContext, Suspense, startTransition} from "react";
+import {getCsrfToken,} from "next-auth/react"
 import baseUrl from '/utils/baseUrl'
 import {useAccount, useConnect, useNetwork, useSignMessage, useDisconnect,} from "wagmi"
 import {InjectedConnector} from 'wagmi/connectors/injected'
@@ -15,12 +15,13 @@ import _ from 'lodash'
 import cookie from 'js-cookie'
 import {useRouter} from 'next/router'
 // import ChatSearch from "../Chat/ChatSearch";
-const ChatSearch = dynamic(() => import('../Chat/ChatSearch'), {suspense: false,ssr: true})
-const DrawerPage = dynamic(() => import('./Drawer'), {suspense: false,ssr: true})
+const ChatSearch = dynamic(async () => await import('../Chat/ChatSearch'),)
+const DrawerPage = dynamic(async () => await import('./Drawer'),)
 import {get, post, del, getUser} from '/utils/axios'
 import {ethers} from 'ethers'
-import { CountContext } from '/components/Layout/Layout';
+import {CountContext} from '/components/Layout/Layout';
 import Marquee from "react-fast-marquee";
+import {changeLang} from "/utils/set";
 const Header = () => {
     const router = useRouter()
     const [form] = Form.useForm();
@@ -30,7 +31,8 @@ const Header = () => {
     const {connect} = useConnect({
         connector: new InjectedConnector(),
     });
-    const { bolName ,changeBolLogin,} = useContext(CountContext);
+    const {bolName, changeBolLogin, changeShowData, changeFont, changeFamily} = useContext(CountContext);
+    const header=changeLang('header')
     const [open, setOpen] = useState(false);
     const [openPresale, setOpenPresale] = useState(false);
     const [openLaunch, setOpenLaunch] = useState(false);
@@ -56,23 +58,23 @@ const Header = () => {
             setTokenFormBol(false)
         })
     }, 1500)
-    useEffect(()=>{
-        if(cookie.get('user')){
+    useEffect(() => {
+        if (cookie.get('user') && bolName && address) {
             getUs()
         }
-    },[bolName])
+    }, [bolName])
     const onClose = () => {
         setOpen(false);
         form.resetFields()
     };
-    useEffect(()=>{
-        if(cookie.get('name')&&cookie.get('name')!==address){
-            cookie.set('name',address)
+    useEffect(() => {
+        if (cookie.get('name') && cookie.get('name') !== address && address) {
+            cookie.set('name', address, {expires: 1})
             router.push('/')
             changeBolLogin()
             getUs()
         }
-    },[address])
+    }, [address])
     const showDrawer = () => {
         if (cookie.get('name')) {
             setOpen(true);
@@ -190,9 +192,6 @@ const Header = () => {
     const [showChatSearch, setShowChatSearch] = useState(false);
     const [chats, setChats] = useState([]);
     const [userPar, setUserPar] = useState(null);
-    const da = () => {
-        setShowChatSearch(!showChatSearch)
-    }
     const getParams = async () => {
         const res = await axios.get(`${baseUrl}/api/chats`, {
             params: {userId: userPar?.id}
@@ -222,7 +221,6 @@ const Header = () => {
     const setB = () => {
         setBol(!bol)
     }
-
     const getUs = async () => {
         const data = await axios.get(baseUrl + "/api/user", {
             params: {
@@ -232,20 +230,25 @@ const Header = () => {
         if (data?.data && data?.data?.user) {
             setUserPar(data?.data?.user)
             cookie.set('name', address, {expires: 1})
+            changeShowData()
             cookie.set('user', JSON.stringify(data?.data?.user), {expires: 1})
         } else {
-            const ip = await axios.post(baseUrl + "/api/user", {
-                address, ipV4Address: '192.168.8.44', ipV6Address: 'fe80::c866:13ad:29e5:a2f7%4'
-            })
-            if (ip?.data && ip?.data?.user) {
-                setUserPar(ip?.data?.user)
-                cookie.set('user', JSON.stringify(ip?.data?.user), {expires: 1})
-                cookie.set('name', address, {expires: 1})
+            const {data} = await axios.get('https://api.ipify.org?format=json')
+            if (data && data.ip) {
+                const ip = await axios.post(baseUrl + "/api/user", {
+                    address, ipV4Address: data.ip
+                })
+                if (ip?.data && ip?.data?.user) {
+                    setUserPar(ip?.data?.user)
+                    cookie.set('user', JSON.stringify(ip?.data?.user), {expires: 1})
+                    changeShowData()
+                    cookie.set('name', address, {expires: 1})
+                }
             }
         }
     }
     useEffect(() => {
-        if (bol) {
+        if (bol && address) {
             getUs()
         }
     }, [bol])
@@ -260,7 +263,8 @@ const Header = () => {
             // 判断是否是eth
             if (chain && chain.name !== 'unknow' && chain.chainId) {
                 try {
-                    const message = `请签名证明你是钱包账户的拥有者\nstatement:${window.location.host}\nNonce:\n${await getCsrfToken()}\ndomain:\n ${window.location.host}\naddress: ${address}\nchainId:${chain.chainId}\nuri: ${window.location.origin}\n`
+                    // await getCsrfToken()
+                    const message = `请签名证明你是钱包账户的拥有者\nstatement:${window.location.host}\nNonce:\n${Date.now()}\ndomain:\n ${window.location.host}\naddress: ${address}\nchainId:${chain.chainId}\nuri: ${window.location.origin}\n`
                     // 签名
                     const signature = await signer.signMessage(message)
                     // 验证签名
@@ -358,87 +362,106 @@ const Header = () => {
             ),
         },
     ];
-    const [launch,setLaunch]=useState([])
-    const getLaunch=async ()=>{
-        const res = await axios.get(baseUrl+'/queryLaunch',{
+    const [launch, setLaunch] = useState([])
+    const showSearch = () => {
+        if (cookie.get('name')) {
+            setShowChatSearch(true)
+        } else {
+            getMoney()
+        }
+    }
+    const getLaunch = async () => {
+        const res = await axios.get(baseUrl + '/queryLaunch', {
             pageIndex: 0,
             pageSize: 10
         })
         const {data: {data}} = res
         setLaunch(data && data.length > 0 ? data : [])
     }
-    useEffect(()=>{
+    useEffect(() => {
         getLaunch()
-    },[])
+    }, [])
+    const handleChange = (value) => {
+        changeFont(value)
+    }
     return (
         <div
-            className={
-                "top-0 w-full  z-30 transition-all headerClass"} >
-                {/*// <Suspense fallback={<div>Loading...</div>}>*/}
-                    <div className={styles['aaa']} style={{paddingLeft:'110px'}}>
-                        <Marquee
-                            pauseOnHover={true}
-                            speed={30}
-                            gradientWidth={100}
-                            style={{width:'25%',marginLeft:'20px'}}>
-                            {
-                                launch.length>0&&launch.map((i,index)=>{
-                                    return <div key={index} style={{marginRight:'30px',display:'flex',alignItems:'center',justifyContent:'space-between'}}>
-                                        <span>#{index+1}</span>
-                                        <p style={{width:'20px',borderRadius:'50%',backgroundColor:'#454545',color:'white',lineHeight:'20px',textAlign:'center',margin:'0 2px'}}>{i?.symbol?.slice(0,1)}</p>
-                                  <span>{i.symbol}</span>
-                                    </div>
-                                })
-                            }
-                        </Marquee>
-                        <div style={{position: 'relative', width: '30%'}}>
-                            <p className={styles['search']} onClick={() => setShowChatSearch(true)}>Search pair by
-                                symbol,name,contract or token</p>
-                            {showChatSearch && (
-                                <ChatSearch
-                                    setShowChatSearch={setShowChatSearch}
-                                    chats={chats}
-                                    setChats={setChats}
-                                    user={userPar}
-                                />
-                            )}
-                        </div>
-                        <div style={{display: 'flex', alignItems: 'center'}}>
-                            <Button type={'primary'} className={styles['but']}
-                                    style={{marginRight: '20px', backgroundColor: 'rgb(254,239,146)'}}
-                                    onClick={showDrawer}>Add
-                                Coin</Button>
-                            {
-                                no && address ? <div style={{display: 'flex', alignItems: 'center'}}>
-                                    <Link href={`/${userPar && userPar.address ? userPar.address : ''}`}>
-                                        <img style={{
-                                            marginRight: '10px',
-                                            borderRadius: '50%', cursor: 'pointer'
-                                        }} width={35}
-                                             src={userPar&&userPar.profilePicUrl ? userPar.profilePicUrl : '/Ellipse1.png'}
-                                             alt=""/>
-                                    </Link>
-                                    <Dropdown
-                                        menu={{
-                                            items,
-                                        }}
-                                        placement="bottomLeft"
-                                        arrow
-                                    >
-                                        <Button type={'primary'} className={styles['but']}
-                                                style={{
-                                                    color: 'black',
-                                                    backgroundColor: 'rgb(254,239,146)'
-                                                }}>{userPar&&userPar.username ?userPar.username.length>5? userPar.username.slice(0, 5) + '...' :userPar.username: ''}</Button>
-                                    </Dropdown>
-                                </div> : <Button type={'primary'} className={styles['but']}
-                                                 style={{backgroundColor: 'rgb(254,239,146)'}}
-                                                 onClick={getMoney}>Login</Button>
-                            }
-                        </div>
-                    </div>
-                    <DrawerPage getMoney={getMoney}/>
-                {/*// </Suspense>*/}
+            className={"top-0 w-full  z-30 transition-all headerClass"}>
+            <div className={styles['aaa']} style={{paddingLeft: '110px'}}>
+                <Marquee
+                    pauseOnHover={true}
+                    speed={30}
+                    gradientWidth={100}
+                    className={styles.marqueeBox}>
+                    {
+                        launch.length > 0 && launch.map((i, index) => {
+                            return <div key={index} className={styles.marquee}>
+                                <span>#{index + 1}</span>
+                                <p className={styles.marqueeName}>{i?.symbol?.slice(0, 1)}</p>
+                                <span>{i.symbol}</span>
+                            </div>
+                        })
+                    }
+                </Marquee>
+                <div className={styles.searchToken}>
+                    <p className={styles['search']} onClick={showSearch}>{header.search}</p>
+                    {showChatSearch && (
+                        <ChatSearch
+                            setShowChatSearch={setShowChatSearch}
+                            chats={chats}
+                            setChats={setChats}
+                            user={userPar}
+                        />
+                    )}
+                </div>
+                <div className={styles.login}>
+                    {/*<Select*/}
+                    {/*    style={{*/}
+                    {/*        width: 120,*/}
+                    {/*    }}*/}
+                    {/*    defaultValue={'english'}*/}
+                    {/*    onChange={handleChange}*/}
+                    {/*    options={[*/}
+                    {/*        {*/}
+                    {/*            value: 'chinese',*/}
+                    {/*            label: '中文简体',*/}
+                    {/*        },*/}
+                    {/*        {*/}
+                    {/*            value: 'traditional',*/}
+                    {/*            label: '中文繁体',*/}
+                    {/*        },*/}
+                    {/*        {*/}
+                    {/*            value: 'english',*/}
+                    {/*            label: 'English',*/}
+                    {/*        },*/}
+                    {/*    ]}*/}
+                    {/*/>*/}
+                    <Button type={'primary'} className={styles['but']}
+                            onClick={showDrawer}>{header.addCoin}</Button>
+                    {
+                        no && address ? <div className={styles.loginBox}>
+                            <Link href={`/${userPar && userPar.address ? userPar.address : ''}`}>
+                                <img className={'loginImg'} width={35}
+                                     src={userPar && userPar.profilePicUrl ? userPar.profilePicUrl : '/Ellipse1.png'}
+                                     alt=""/>
+                            </Link>
+                            <Dropdown
+                                menu={{
+                                    items,
+                                }}
+                                placement="bottomLeft"
+                                arrow
+                            >
+                                <Button type={'primary'}
+                                        className={`${styles.loginName} ${styles.but}`}>{userPar && userPar.username ? userPar.username.length > 5 ? userPar.username.slice(0, 5) + '...' : userPar.username : ''}</Button>
+                            </Dropdown>
+                        </div> : <Button type={'primary'} className={styles['but']}
+                                         onClick={getMoney}>{header.login}</Button>
+                    }
+                </div>
+            </div>
+            <DrawerPage getMoney={getMoney}/>
+            {/*</Suspense>*/}
             <Drawer title="Basic Drawer" destroyOnClose={true} placement="right" onClose={onClose} open={open}>
                 <Form
                     name="basic"
@@ -462,15 +485,15 @@ const Header = () => {
                         <Input onChange={changeToken} ref={inputRef}
                                style={tokenFormBol ? {borderColor: 'red'} : {}}/>
                     </Form.Item>
-                    <div style={{display: 'flex', alignItems: 'center', marginBottom: '10px'}}>
+                    <div className={styles.addShow}>
                         {
-                            !openPresale ? <CaretRightFilled style={{cursor: 'pointer', fontSize: '20px',}}
+                            !openPresale ? <CaretRightFilled className={styles.addCur}
                                                              onClick={hidePresale}/> :
                                 <CaretDownFilled onClick={hidePresale}
-                                                 style={{cursor: 'pointer', fontSize: '20px', marginTop: '5px'}}/>
+                                                 className={`${styles.addCur} ${styles.addCurMt5}`}/>
                         }
-                        <p style={{lineHeight: 1, cursor: 'pointer'}} onClick={hidePresale}>presale</p>
-                        <p style={{width: '100%', height: '1px', backgroundColor: 'gray'}}></p>
+                        <p className={styles.addPresale} onClick={hidePresale}>presale</p>
+                        <p className={styles.lines}></p>
                     </div>
                     <div style={!openPresale ? {display: 'none'} : {}}>
                         <Form.Item
@@ -519,15 +542,15 @@ const Header = () => {
                         </Form.Item>
                     </div>
                     {/*launch*/}
-                    <div style={{display: 'flex', alignItems: 'center', marginBottom: '10px'}}>
+                    <div className={styles.addShow}>
                         {
-                            !openLaunch ? <CaretRightFilled style={{cursor: 'pointer', fontSize: '20px',}}
+                            !openLaunch ? <CaretRightFilled className={`${styles.addCur}`}
                                                             onClick={hideLaunch}/> :
                                 <CaretDownFilled onClick={hideLaunch}
-                                                 style={{cursor: 'pointer', fontSize: '20px', marginTop: '5px'}}/>
+                                                 className={`${styles.addCur} ${styles.addCurMt5}`}/>
                         }
-                        <p style={{lineHeight: 1, cursor: 'pointer'}} onClick={hideLaunch}>launch</p>
-                        <p style={{width: '100%', height: '1px', backgroundColor: 'gray'}}></p>
+                        <p className={styles.addPresale} onClick={hideLaunch}>launch</p>
+                        <p className={styles.lines}></p>
                     </div>
                     <div style={!openLaunch ? {display: 'none'} : {}}>
                         <Form.Item
@@ -579,18 +602,14 @@ const Header = () => {
                         </Form.Item>
                     </div>
                     {/*link*/}
-                    <div style={{display: 'flex', alignItems: 'center', marginBottom: '10px'}}>
+                    <div className={styles.addShow}>
                         {
-                            openLink ? <CaretRightFilled style={{cursor: 'pointer', fontSize: '20px',}}
+                            openLink ? <CaretRightFilled className={styles.addCur}
                                                          onClick={hideLink}/> : <CaretDownFilled onClick={hideLink}
-                                                                                                 style={{
-                                                                                                     cursor: 'pointer',
-                                                                                                     fontSize: '20px',
-                                                                                                     marginTop: '5px'
-                                                                                                 }}/>
+                                                                                                 className={`${styles.addCur} ${styles.addCurMt5}`}/>
                         }
-                        <p style={{lineHeight: 1, cursor: 'pointer'}} onClick={hideLink}>Link</p>
-                        <p style={{width: '100%', height: '1px', backgroundColor: 'gray'}}></p>
+                        <p className={styles.addPresale} onClick={hideLink}>Link</p>
+                        <p className={styles.lines}></p>
                     </div>
                     <div style={openLink ? {display: 'none'} : {}}>
                         <Form.Item

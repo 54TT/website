@@ -1,6 +1,11 @@
 import Router from "next/router";
 import {gql} from "graphql-tag";
 import {ApolloClient, InMemoryCache} from "@apollo/client";
+import {en} from '/language/en'
+import {tcn} from '/language/tcn'
+import {scn} from '/language/scn'
+import {useContext} from "react";
+import {CountContext} from "../components/Layout/Layout";
 export const redirectUser = (ctx, location) => {
     if (ctx.req) {
         //if the user is on server side, since req and res inside ctx object are pressent only on server side
@@ -65,5 +70,11 @@ export const arrayUnique = (arr, name) => {
         }
         return acc
     }, [])
+}
+
+export  const changeLang=(name)=>{
+    const { changeFamily} = useContext(CountContext);
+    const data = changeFamily === 'english' ? en : changeFamily === 'traditional' ? tcn : scn
+    return  data[name]
 }
 

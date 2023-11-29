@@ -1,4 +1,12 @@
 {
-  "presets": [ "next/babel" ],
-  "plugins": [ "inline-react-svg" ]
+  "presets": [["next/babel", {
+      "useBuiltIns": "usage",
+      "corejs": 3,
+      "targets": {
+        "browsers": ["last 2 versions", "safari >= 7"]
+      }
+    },"@babel/preset-env"
+  ]
+],
+  "plugins": ["inline-react-svg"]
 }

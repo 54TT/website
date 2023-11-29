@@ -10,8 +10,8 @@ import dynamic from 'next/dynamic'
 import {getUser} from "../utils/axios";
 import cook from "js-cookie";
 // const Sidebar = dynamic(() => import('../components/Sidebar'));
-const Feed = dynamic(() => import('../components/Feed'), {suspense: false});
-const RightSideColumn = dynamic(() => import('../components/RightSideColumn'), {suspense: false});
+const Feed = dynamic(() => import('../components/Feed'), );
+const RightSideColumn = dynamic(() => import('../components/RightSideColumn'), );
 
 import {arrayUnique} from '/utils/set'
 function Index() {

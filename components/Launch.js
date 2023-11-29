@@ -1,17 +1,20 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useContext, useEffect, useRef, useState} from "react";
 import dayjs from 'dayjs';
 import {notification, Pagination, Table, Card, Statistic} from "antd";
 import {get} from "../utils/axios";
 import {GlobalOutlined, SendOutlined, TwitterOutlined} from "@ant-design/icons";
-import {dao} from '/utils/set'
 import baseUrl from "../utils/baseUrl";
 const {Countdown} = Statistic;
+import styled from '/styles/all.module.css'
+import Image from 'next/image'
+import {changeLang} from "/utils/set";
 
 export default function Presale() {
+    const launch=changeLang('launch')
     const [launchPageSize, setLaunchPageSize] = useState(10);
     const [launchCurrent, setLaunchCurrent] = useState(1);
     const [launchAll, setLaunchAll] = useState(0);
-    const [launch, setLaunch] = useState([]);
+    const [launchPro, setLaunch] = useState([]);
     const [launchBol, setLaunchBol] = useState(true);
     const hint = () => {
         notification.error({
@@ -70,37 +73,29 @@ export default function Presale() {
             dataIndex: 'address',align: 'center',
             width: 30,
             render: (_, record) => {
-                return <p style={{
-                    width: '30px',
-                    borderRadius: '50%',
-                    backgroundColor: '#454545',
-                    color: 'white',
-                    textAlign: 'center',
-                    lineHeight: '30px'
-                }}>{record?.symbol?.slice(0, 1)}</p>
+                return <p className={styled.launchTableP}>{record?.symbol?.slice(0, 1)}</p>
             }
         },
         {
-            title: 'Token name',
+            title: launch.token,
             dataIndex: 'name',align: 'center',width: '25%',
             render: (text) => {
-                return <p style={{fontWeight: 'bold', fontSize: '18px', textAlign: 'center'}}>{text}</p>
+                return <p className={styled.launchTableText}>{text}</p>
             }
         },
         {
-            title: 'Token symbol',
+            title: launch.symbol,
             dataIndex: 'symbol',align: 'center',
             render: (text) => {
-                return <p style={{fontWeight: 'bold', fontSize: '18px', textAlign: 'center'}}>{text}</p>
+                return <p className={styled.launchTableText}>{text}</p>
             }
         },
         {
-            title: 'Social Info',
+            title: launch.social,
             dataIndex: 'address',align: 'center',
             width: 200,
             render: (text, record) => {
-                return <div
-                    style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer'}}>
+                return <div className={styled.launchTableDiv}>
                     <GlobalOutlined style={{cursor: 'pointer', fontSize: '20px'}} onClick={() => push(record, 'one')}/>
                     <TwitterOutlined style={{cursor: 'pointer', fontSize: '20px'}} onClick={() => push(record, 'two')}/>
                     <SendOutlined style={{cursor: 'pointer', fontSize: '20px'}} onClick={() => push(record, 'three')}/>
@@ -108,7 +103,7 @@ export default function Presale() {
             }
         },
         {
-            title: 'Launch time',
+            title: launch.time,
             dataIndex: 'launch_time',align: 'center',
             sorter: {
                 compare: (a, b) => {
@@ -128,15 +123,15 @@ export default function Presale() {
             }
         },
         {
-            title: 'Platform',
+            title: launch.platform,
             dataIndex: 'launch_platform_logo',align: 'center',
             render: (text) => {
-                return <img src={baseUrl+text} alt="" width={'30px'} style={{display:'block',borderRadius:'50%',margin:'0 auto'}}/>
+                return <img src={baseUrl+text} alt=""  width={'30px'} className={styled.launchTableImg}/>
             }
         },
         {
-            title: 'DEX', align: 'center', render: (text, record) => {
-                return <img src="/dex-uniswap.png" alt="" width={'30px'} style={{borderRadius:'50%',display:'block',margin:'0 auto'}}/>
+            title: launch.dex, align: 'center', render: (text, record) => {
+                return <Image src="/dex-uniswap.png" alt="" style={{height: 'auto',width: 'auto'}} width={30} height={30} className={styled.launchTableImg}/>
             }
         },
     ];
@@ -146,40 +141,25 @@ export default function Presale() {
         setLaunchPageSize(a)
     }
     return (
-        <div style={{marginRight: '20px'}}>
-            <Card style={{
-                minWidth: 700,
-                backgroundColor: 'rgb(253, 213, 62)',
-                width: '100%', border: 'none'
-            }}>
-                <div style={{
-                    marginBottom: '10px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between'
-                }}>
+        <div >
+            <Card className={styled.launchBoxCard}>
+                <div className={styled.launchBoxCardBox}>
                     <div style={{display: 'flex', alignItems: 'center'}}>
                         <img src="/Group.png" alt="" width={70} height={70}/>
-                        <span style={{fontWeight: 'bold', fontSize: '26px'}}> Launching Soon</span>
+                        <span style={{fontWeight: 'bold', fontSize: '26px'}}> {launch.launch}</span>
                     </div>
                 </div>
-                <div style={{display: 'flex', justifyContent: 'end', marginBottom: '20px'}}>
+                <div className={styled.launchBoxFilter}>
                     <Pagination defaultCurrent={1} current={launchCurrent} showSizeChanger onChange={change}
                                 total={launchAll} pageSize={launchPageSize}/>
                 </div>
                 <Table className={`presale anyTable`} bordered={false} columns={columns} loading={launchBol}
-                       dataSource={launch} rowKey={(record) => record.symbol + record.address}
+                       dataSource={launchPro} rowKey={(record) => record.symbol + record.address}
                        pagination={false} rowClassName={(record) => {
                     return 'oneHave'
                 }}/>
             </Card>
-            <p style={{
-                marginTop: '80px',
-                textAlign: 'center',
-                lineHeight: '1',
-                fontSize: '20px',
-                color: 'rgb(98,98,98)'
-            }}>©DEXpert.io</p>
+            <p className={styled.launchBoxBot}>©DEXpert.io</p>
         </div>
     )
 }

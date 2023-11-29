@@ -1,12 +1,11 @@
 import axios from "axios";
 import {useRouter} from "next/router";
-import React, {useState, useEffect, useRef} from "react";
+import React, {useState, useEffect, useRef, useContext} from "react";
 import baseUrl from "../utils/baseUrl";
 import io from "socket.io-client";
 import Sidebar from "../components/Sidebar";
 // import ChatSearch from "../components/Chat/ChatSearch";
 import {SearchIcon} from "@heroicons/react/outline";
-import styled from "styled-components";
 import calculateTime from "../utils/calculateTime";
 // import Chat from "../components/Chat/Chat";
 import {LoadingOutlined} from '@ant-design/icons'
@@ -16,10 +15,12 @@ import dynamic from 'next/dynamic'
 import {getUser} from "../utils/axios";
 import cook from "js-cookie";
 // const Sidebar = dynamic(() => import('../components/Sidebar'));
-const ChatSearch = dynamic(() => import('../components/Chat/ChatSearch'), {suspense: false});
-const Chat = dynamic(() => import('../components/Chat/Chat'), {suspense: false});
+const ChatSearch = dynamic(() => import('../components/Chat/ChatSearch'), );
+const Chat = dynamic(() => import('../components/Chat/Chat'), );
+import {changeLang} from "/utils/set";
 
 function ChatsPage() {
+    const social=changeLang('social')
     const [chats, setChats] = useState([]);
     const [userPar, setUserPar] = useState({});
     const getUs = async () => {
@@ -243,7 +244,13 @@ function ChatsPage() {
                         }}
                         className="lg:min-w-[27rem] pt-4"
                     >
-                        <Title>Chats</Title>
+                        <p style={{
+                            userSelect: 'none',
+                            fontSize: '20px',
+                            fontWeight: 'bold',
+                            fontFamily: 'Inter',
+                            margin:'15px',
+                        }}>{social.chats}</p>
                         <div
                             onClick={() => setShowChatSearch(true)}
                             className="flex items-center  relative rounded-full bg-gray-100 p-2  m-4 h-12">
@@ -251,7 +258,7 @@ function ChatsPage() {
                             <input
                                 className="ml-2 bg-transparent outline-none placeholder-gray-500 w-full font-thin hidden md:flex md:items-center flex-shrink"
                                 type="text"
-                                placeholder="Search users"
+                                placeholder={social.search}
                             />
                             {showChatSearch && (
                                 <ChatSearch
@@ -267,7 +274,15 @@ function ChatsPage() {
                                 {chats && chats.length > 0 ? (
                                     chats.map((chat) => (
                                         <Link href={`/chats?chat=${chat?.textsWith}`} key={chat.textsWith}>
-                                            <ChatDiv>
+                                            <div style={{
+                                                display: 'flex',
+                                                cursor: 'pointer',
+                                                borderRadius: '7px',
+                                                borderBottom: '1px solid #efefef',
+                                                padding: '12px',
+                                                alignItems: 'flex-start',
+                                                columnGap: '10px',
+                                            }}>
                                                 <div className="relative">
                                                     <img width={80} height={80} style={{
                                                         borderRadius: '50%'
@@ -279,10 +294,10 @@ function ChatsPage() {
                                                         <AppleOutlined
                                                             style={{
                                                                 color: "#55d01d",
-                                                                fontSize: "1.85rem",
+                                                                fontSize: "20px",
                                                                 position: "absolute",
-                                                                bottom: "-.5rem",
-                                                                right: "0rem",
+                                                                bottom: "-10px",
+                                                                right: "0",
                                                             }}
                                                         />
                                                     ) : (
@@ -292,25 +307,39 @@ function ChatsPage() {
                                                 <div className="ml-1">
                                                     {
                                                         chat?.username ?
-                                                            <Name>{chat?.username?.length > 10 ? chat.username.slice(0, 5) + '...' + chat.username.slice(-5) : chat.username}</Name> :
-                                                            <Name>{chat?.name?.length > 10 ? chat.name.slice(0, 5) + '...' + chat.name.slice(-5) : chat.name}</Name>
+                                                            <p style={{
+                                                                userSelect: 'none',
+                                                                fontWeight: 'bold',
+                                                                fontSize: '18px',
+                                                                marginBottom: '10px'
+                                                            }}>{chat?.username?.length > 10 ? chat.username.slice(0, 5) + '...' + chat.username.slice(-5) : chat.username}</p> :
+                                                            <p style={{
+                                                                userSelect: 'none',
+                                                                fontWeight: 'bold',
+                                                                fontSize: '18px',
+                                                                marginBottom: '10px'
+                                                            }}>{chat?.name?.length > 10 ? chat.name.slice(0, 5) + '...' + chat.name.slice(-5) : chat.name}</p>
                                                     }
-                                                    <TextPreview>
+                                                    <p style={{
+                                                        marginTop: '-13px'
+                                                    }}>
                                                         {chat.lastText && chat.lastText.length > 30
                                                             ? `${chat.lastText.substring(0, 30)}...`
                                                             : chat.lastText}
-                                                    </TextPreview>
+                                                    </p>
                                                 </div>
                                                 {chat.created_at && (
-                                                    <Date>{calculateTime(chat.created_at, true)}</Date>
+                                                    <p style={{
+                                                        marginLeft: 'auto'
+                                                    }}>{calculateTime(chat.created_at, true)}</p>
                                                 )}
-                                            </ChatDiv>
+                                            </div>
                                         </Link>
                                     ))
                                 ) : (
                                     <>
                                         <p className="p-5 text-gray-500">
-                                            Start a chat with someone!
+                                            {social.one}
                                         </p>
                                     </>
                                 )}
@@ -321,7 +350,6 @@ function ChatsPage() {
                     {router.query?.chat && (
                         <div
                             style={{
-                                minWidth: "27rem",
                                 flex: "1",
                                 borderRight: "1px solid lightgrey",
                                 fontFamily: "Inter",
@@ -329,22 +357,40 @@ function ChatsPage() {
                         >
                             {/*右边聊天*/}
                             {chatUserData && chatUserData.profilePicUrl ? (
-                                <ChatHeaderDiv>
+                                <div style={{
+                                    display: 'flex',
+                                    cursor: 'pointer',
+                                    borderRadius: '8px',
+                                    borderBottom: '1px solid #efefef',
+                                    padding: '10px',
+                                    alignItems: 'center',
+                                    columnGap: '7px'
+                                }}>
                                     <img width={80} height={80} style={{
                                         borderRadius: '50%'
                                     }} src={chatUserData?.profilePicUrl || '/Ellipse1.png'} alt="userimg"/>
                                     <div>
-                                        <ChatName>{chatUserData?.name.length > 7 ? chatUserData.name.slice(0, 3) + '...' + chatUserData.name.slice(-3) : chatUserData.name}</ChatName>
+                                        <p style={{
+                                            userSelect: 'none',
+                                            fontWeight: 'bold',
+                                            fontSize: '18px',
+                                            marginBottom: '10px',
+                                        }}>{chatUserData?.name.length > 7 ? chatUserData.name.slice(0, 3) + '...' + chatUserData.name.slice(-3) : chatUserData.name}</p>
                                         {connectedUsers.length > 0 &&
                                             connectedUsers.filter(
                                                 (user) => user?.userId === openChatId?.current
-                                            ).length > 0 && <LastActive>{"Online"}</LastActive>}
+                                            ).length > 0 && <p style={{
+                                                userSelect: 'none',
+                                                fontSize: '15px',
+                                                color: 'rgba(107, 114, 128)',
+                                                marginTop: '-17px',
+                                            }}>{"Online"}</p>}
                                     </div>
-                                </ChatHeaderDiv>
+                                </div>
                             ) : (
                                 <div
                                     className="max-w-[28rem]"
-                                    style={{padding: "1rem 0.9rem"}}
+                                    style={{padding: "14px"}}
                                 >
                                     <LoadingOutlined/>
                                 </div>
@@ -372,7 +418,8 @@ function ChatsPage() {
                                         ) : (
                                             <div></div>
                                         )}
-                                        <EndOfMessage ref={endOfMessagesRef}/>
+                                        <div style={{marginBottom: '30px'
+                                        }} ref={endOfMessagesRef}/>
                                     </>
                                 </div>
                                 <div
@@ -391,7 +438,7 @@ function ChatsPage() {
                                             onChange={(e) => {
                                                 setNewText(e.target.value);
                                             }}
-                                            placeholder="Send a new text..."
+                                            placeholder={social.send}
                                         />
                                         <button
                                             hidden
@@ -415,68 +462,3 @@ function ChatsPage() {
 
 export default ChatsPage;
 
-const Title = styled.p`
-  user-select: none;
-  font-size: 1.65rem;
-  font-weight: 600;
-  font-family: Inter;
-  margin: 1rem;
-`;
-
-const ChatDiv = styled.div`
-  display: flex;
-  cursor: pointer;
-  border-radius: 0.3rem;
-  border-bottom: 1px solid #efefef;
-  font-family: Inter;
-  padding: 1rem 0.9rem;
-  align-items: flex-start;
-  column-gap: 0.6rem;
-`;
-
-const ChatHeaderDiv = styled.div`
-  display: flex;
-  cursor: pointer;
-  border-radius: 0.3rem;
-  border-bottom: 1px solid #efefef;
-  font-family: Inter;
-  padding: 1rem 0.9rem;
-  align-items: center;
-  column-gap: 0.6rem;
-`;
-const Name = styled.p`
-  user-select: none;
-  font-weight: 600;
-  font-size: 18px;
-  margin-bottom: 10px;
-  font-family: Inter;
-`;
-
-const ChatName = styled.p`
-  user-select: none;
-  font-weight: 600;
-  font-size: 1.2rem;
-  margin-bottom: 10px;
-  font-family: Inter;
-`;
-
-const TextPreview = styled.p`
-  font-family: Inter;
-  margin-top: -0.95rem;
-`;
-
-const Date = styled.p`
-  font-family: Inter;
-  margin-left: auto;
-`;
-
-const LastActive = styled.p`
-  user-select: none;
-  font-size: 0.9rem;
-  color: rgba(107, 114, 128);
-  margin-top: -1.1rem;
-`;
-
-const EndOfMessage = styled.div`
-  margin-bottom: 30px;
-`;

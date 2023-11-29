@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import styled from "styled-components";
 import calculateTime from "../utils/calculateTime";
 import { useRouter } from "next/router";
 import { MinusCircleIcon, TrashIcon } from "@heroicons/react/outline";
@@ -7,7 +6,8 @@ import { MinusCircleIcon, TrashIcon } from "@heroicons/react/outline";
 import { deleteComment } from "../utils/postActions";
 import {notification,} from "antd";
 import dynamic from "next/dynamic";
-const ReusableDialog = dynamic(() => import('./ReusableDialog'),{suspense:false})
+import styled from '/styles/all.module.css'
+const ReusableDialog = dynamic(() => import('./ReusableDialog'),)
 import Link from  'next/link'
 const notifyCommentDelete = () =>{
   notification.success({
@@ -45,9 +45,9 @@ function CommentComponent({ comment, postId,change, user, setComments }) {
 
   return (
     <div className="flex items-start pl-5 pr-3 mt-3">
-      <img  alt={''}   style={{borderRadius:'50%',marginTop:'10px'}} height={50} width={50}
+      <img  alt={''}   height={50} width={50}
         src={comment?.user?.profilePicUrl?comment.user.profilePicUrl:'/Ellipse1.png'}
-        className="mr-2"
+        className={`mr - 2 ${styled.commentCommentImg}`}
       />
       {/* extra div for flex of comment text div and the three dots  */}
       <div
@@ -56,14 +56,14 @@ function CommentComponent({ comment, postId,change, user, setComments }) {
         onMouseOut={handleMouseOut}
       >
         <div
-          style={{ padding: ".48rem 1rem" }}
+          style={{ padding: "10px  14px" }}
           className={`bg-gray-100 rounded-3xl items-center`}
         >
           <div className="flex space-x-1">
             <Link href={`/${comment?.user?.username?comment.user.username:''}`}>
-            <UserPTag>
+            <p className={styled.commentCommentUser}>
               {comment?.user?.name} ·{"  "}
-            </UserPTag>
+            </p>
             </Link>
             <span
               className="text-gray-500 font-light text-sm"
@@ -75,33 +75,33 @@ function CommentComponent({ comment, postId,change, user, setComments }) {
 
           <p
             className="text-gray-800 font-light"
-            style={{ fontSize: "0.97rem" }}
+            style={{ fontSize: "10px" }}
           >
             {comment.text}
           </p>
         </div>
         {isHovering && comment.user.id === user.id ? (
-          <div style={{ width: "3rem", marginLeft: "0.2rem" }}>
-            <ThreeDotsDiv
+          <div className={styled.commentCommentHov}>
+            <div
+              className={`flex justify-center items-center ${styled.commentCommentOpen}`}
               onClick={() => {
                 handleClickOpen();
               }}
-              className="flex justify-center items-center"
             >
               <MinusCircleIcon
-                style={{ height: "1.2rem", width: "1.2rem" }}
+                style={{ height: "18px", width: "18px" }}
                 className="text-gray-500"
               />
-            </ThreeDotsDiv>
+            </div>
           </div>
         ) : (
-          <div style={{ width: "3rem", marginLeft: "0.2rem" }}>
-            <ThreeDotsDiv style={{ visibility: "hidden" }}>
+          <div  className={styled.commentCommentHov}>
+            <div className={styled.commentCommentIs}>
               <MinusCircleIcon
-                style={{ height: "1.15rem", width: "1.15rem" }}
+                style={{ height: "18px", width: "18px" }}
                 className="text-red-600"
               />
-            </ThreeDotsDiv>
+            </div>
           </div>
         )}
       </div>
@@ -119,25 +119,3 @@ function CommentComponent({ comment, postId,change, user, setComments }) {
 }
 
 export default CommentComponent;
-
-const UserPTag = styled.p`
-  font-weight: 500;
-  margin-bottom: -0.1rem;
-  font-size: 0.93rem;
-  cursor: pointer;
-  :hover {
-    text-decoration: underline;
-  }
-`;
-
-const ThreeDotsDiv = styled.div`
-  height: 2.1rem;
-  width: 2.1rem;
-  border-radius: 50%;
-  cursor: pointer;
-  padding: 0.1rem;
-  font-size: 1.2rem;
-  :hover {
-    background-color: whitesmoke;
-  }
-`;

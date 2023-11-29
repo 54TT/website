@@ -1,16 +1,20 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {Table, Pagination, Card} from 'antd'
 import _ from 'lodash'
 import {ApolloClient, InMemoryCache, useQuery} from "@apollo/client";
 import {gql} from "graphql-tag";
 import dayjs from "dayjs";
+import Image from 'next/image'
 import {autoConvertNew,autoConvert} from '/utils/set'
 import {formatDecimal, sendGetRequestWithSensitiveData, getRelativeTimeDifference, formatDateTime} from './Utils';
-
+import styled from '/styles/all.module.css'
 const client = new ApolloClient({
     uri: 'http://188.166.191.246:8000/subgraphs/name/dsb/uniswap', cache: new InMemoryCache(),
 });
+import {changeLang} from "/utils/set";
+
 export default function NewPair() {
+    const newPair=changeLang('newPair')
     const [currentPage, setCurrentPage] = useState(1);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const GET_DATA = gql`query LiveNewPair {
@@ -95,33 +99,21 @@ export default function NewPair() {
         {
             title: '', align: 'right', width: 30,
             render: (text, record) => {
-                return <p style={{
-                    borderRadius: '50%',
-                    fontSize: '20px',
-                    width: '30px',
-                    lineHeight: '30px',
-                    textAlign: "center",
-                    backgroundColor: '#454545',
-                    color: 'white'
-                }}>{record?.token0?.symbol?.slice(0, 1) || ''}</p>
+                return <p className={styled.launchTableP}>{record?.token0?.symbol?.slice(0, 1) || ''}</p>
             }
         },
         {
-            title: 'Pair',
+            title: newPair?.pair,
             dataIndex: 'name',
-            render: (text, record) => <div style={{
-                display: 'flex',
-                alignItems: 'start',
-                justifyContent: 'start',
-            }}>
-                <p style={{display: 'flex', alignItems: 'flex-end', lineHeight: '1', marginLeft: '15px'}}><span
+            render: (text, record) => <div className={styled.newPairTable}>
+                <p className={styled.newPairTableText}><span
                     style={{fontSize: '18px'}}>{record?.token0?.symbol ? record?.token0?.symbol.length > 7 ? record?.token0?.symbol.slice(0, 5) : record?.token0?.symbol + '/' : ''}</span><span
                     style={{color: 'rgb(98,98,98)'}}>{record?.token1?.symbol ? record?.token1?.symbol.length > 7 ? record?.token1?.symbol.slice(0, 5) : record?.token1?.symbol : ''}</span>
                 </p>
             </div>,
         },
         {
-            title: 'Price($)',
+            title: newPair?.price+'($)',
             dataIndex: 'age', align: 'center',
             render: (text, record) => {
                 const data = record?.liquidityPositionSnapshots[0]?.token0PriceUSD || 0
@@ -129,7 +121,7 @@ export default function NewPair() {
             }
         },
         {
-            title: 'Created', align: 'center',
+            title: newPair?.time, align: 'center',
             dataIndex: 'tags',
             render: (_, record) => {
                 const data =  record?.createdAtTimestamp.toString().length>10?Number(record.createdAtTimestamp.toString().slice(0,10)):record.createdAtTimestamp
@@ -137,14 +129,14 @@ export default function NewPair() {
             }
         },
         {
-            title: 'Volume($)', align: 'center',
+            title: newPair?.volume+'($)', align: 'center',
             dataIndex: 'volumeUSD',
             render: (text) => {
                 return <span>{setMany(text)}</span>
             }
         },
         {
-            title: 'ReserveETH', align: 'center',
+            title: newPair?.reserve, align: 'center',
             dataIndex: 'reserveETH',
             render: (text) => {
                 const data =setMany(text)
@@ -152,42 +144,33 @@ export default function NewPair() {
             }
         },
         {
-            title: 'TrackedReserveETH', align: 'center',
+            title: newPair?.tracked, align: 'center',
             dataIndex: 'trackedReserveETH',
             render: (text) => {
                 return <span>{setMany(text)}</span>
             }
         },
         {
-            title: 'txCount', align: 'center',
+            title: newPair.txCount, align: 'center',
             dataIndex: 'txCount',
             render: (text) => {
                 return <span>{text ? text : ''}</span>
             }
         },
         {
-            title: 'DEX', align: 'center', render: (text, record) => {
-                return <img src="/dex-uniswap.png" alt="" width={'30px'}
-                            style={{borderRadius: '50%', display: 'block', margin: '0 auto'}}/>
+            title: newPair.dex, align: 'center', render: (text, record) => {
+                return <Image src="/dex-uniswap.png" alt="" width={30} height={30}
+                           className={styled.newPairTableImg}/>
             }
         },
     ];
     return (
-        <div style={{marginRight: '20px'}}>
-            <Card style={{
-                minWidth: 700,
-                backgroundColor: 'rgb(253, 213, 62)',
-                width: '100%', border: 'none'
-            }}>
-                <div style={{
-                    marginBottom: '10px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between'
-                }}>
+        <div className={styled.launchBox}>
+            <Card className={styled.launchBoxCard}>
+                <div className={styled.launchBoxCardBox}>
                     <div style={{display: 'flex', alignItems: 'center'}}>
-                        <img src="/gpsReceiving.png" alt="" height={70} width={70}/>
-                        <span style={{fontWeight: 'bold', fontSize: '26px'}}>COMING SOON</span>
+                        <Image src="/gpsReceiving.png" alt="" height={70} width={70}/>
+                        <span style={{fontWeight: 'bold', fontSize: '26px'}}>{newPair?.newPair}</span>
                     </div>
                     <Pagination defaultCurrent={1} current={currentPage} onChange={chang} total={tableTotal}
                                 pageSize={rowsPerPage}/>
@@ -197,13 +180,7 @@ export default function NewPair() {
                        loading={loading} columns={columns} bordered={false} dataSource={tableParams}
                        pagination={false}/>
             </Card>
-            <p style={{
-                marginTop: '80px',
-                textAlign: 'center',
-                lineHeight: '1',
-                fontSize: '20px',
-                color: 'rgb(98,98,98)'
-            }}>©DEXpert.io</p>
+            <p className={styled.launchBoxBot}>©DEXpert.io</p>
         </div>
     );
 }

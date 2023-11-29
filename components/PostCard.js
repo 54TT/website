@@ -1,9 +1,7 @@
 import React, {useEffect, useRef, useState} from "react";
-import styled from "styled-components";
-import calculateTime from "../utils/calculateTime";
 import {ThumbUpIcon} from "@heroicons/react/solid";
 import Link from 'next/link'
-
+import styled from '/styles/all.module.css'
 import {
     ChatAltIcon,
     MinusCircleIcon,
@@ -52,8 +50,8 @@ function PostCard({post, user, change, liked}) {
     };
 
     const handleLike = async () => {
-      const data =   await likePost(post?.id, user?.id, !liked)
-        if(data&&data.status===200){
+        const data = await likePost(post?.id, user?.id, !liked)
+        if (data && data.status === 200) {
             change('click')
         }
     };
@@ -66,10 +64,10 @@ function PostCard({post, user, change, liked}) {
     };
 
     const handleAgree = async () => {
-      const data =   await deletePost(post?.id, setComments, notify,  user.id);
-        if(data&&data.status===200){
+        const data = await deletePost(post?.id, setComments, notify, user.id);
+        if (data && data.status === 200) {
             setOpen(false);
-            change('click',post?.id);
+            change('click', post?.id);
         }
     };
     const handleDisagree = () => {
@@ -78,8 +76,7 @@ function PostCard({post, user, change, liked}) {
 
     return (
         <div
-            style={{fontFamily: "Inter",backgroundColor:'rgb(254,239,146)'}}
-            className="mb-7 flex flex-col justify-start rounded-2xl shadow-md"
+            className={`mb-7 flex flex-col justify-start rounded-2xl shadow-md ${styled.postCardBox}`}
         >
             <div className="p-4">
                 <div className="flex space-x-3 items-center ml-2 relative">
@@ -97,7 +94,7 @@ function PostCard({post, user, change, liked}) {
                         </Link>
                         <p
                             style={{
-                                fontSize: ".91rem",
+                                fontSize: "10px",
                             }}
                             className="text-gray-500 font-light"
                         >
@@ -124,16 +121,16 @@ function PostCard({post, user, change, liked}) {
                              className="flex justify-center items-center absolute top-0 right-2"
                         >
                             <MinusCircleIcon
-                                style={{height: "1.2rem", width: "1.2rem"}}
+                                style={{height: "18px", width: "18px"}}
                                 className="text-gray-500"
                             />
                         </div>
                     )}
                 </div>
             </div>
-            <div style={{marginLeft:'20px'}}>{post?.text || ''}</div>
+            <div style={{marginLeft: '20px'}}>{post?.text || ''}</div>
             {post && post.picUrl ? <img src={post.picUrl || ''} alt={''} style={{width: '100%',}}/> : ''}
-            <div style={{marginTop: "0.65rem"}} className="ml-5 mr-5">
+            <div style={{marginTop: "10px"}} className="ml-5 mr-5">
                 <div className="flex justify-between w-full">
                     <div className="flex items-center space-x-0.5 cursor-pointer hover:underline">
                         <ThumbUpIcon
@@ -152,12 +149,7 @@ function PostCard({post, user, change, liked}) {
             </div>
             {/*点赞*/}
             <div
-                style={{
-                    borderTop: ".65px solid lightgrey",
-                    borderBottom: ".65px solid lightgrey",
-                    marginTop: ".6rem",
-                }}
-                className="flex space-x-4 ml-4 mr-4 justify-evenly items-center text-gray-500"
+                className={`flex space-x-4 ml-4 mr-4 justify-evenly items-center text-gray-500 ${styled.postCardBoxClick}`}
             >
                 <div
                     onClick={() => handleLike()}
@@ -207,7 +199,7 @@ function PostCard({post, user, change, liked}) {
                                      alt="profile pic"
                                 />
                                 <div
-                                    style={{padding: ".85rem"}}
+                                    style={{padding: "10px"}}
                                     className={`flex bg-gray-100 rounded-3xl items-center w-full`}
                                 >
                                     <TextArea

@@ -1,4 +1,3 @@
-'use client'
 import "../styles/tailwind.css";
 import "../styles/slick.css";
 import {SessionProvider} from "next-auth/react"
@@ -36,11 +35,11 @@ function DexPert({Component, pageProps}) {
             <title>My new cool app</title>
         </Head>
         <WagmiConfig client={client}>
-            <SessionProvider session={pageProps.session} refetchInterval={0}>
+        {/*    <SessionProvider session={pageProps.session} refetchInterval={0}>*/}
                 <Layout>
                     <Component {...pageProps} />
                 </Layout>
-            </SessionProvider>
+            {/*</SessionProvider>*/}
         </WagmiConfig>
         </>
     );

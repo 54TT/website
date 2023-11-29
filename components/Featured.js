@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useContext, useEffect, useRef, useState} from "react";
 import axios from 'axios';
 import {formatDecimal, getRelativeTimeDifference, formatDateTime} from './Utils';
 import dayjs from 'dayjs';
@@ -6,13 +6,16 @@ import {notification, Pagination, Table, Card, Segmented} from "antd";
 import {get} from "../utils/axios";
 import {useRouter} from 'next/router'
 import {autoConvert} from '/utils/set'
-
+import styled from '/styles/all.module.css'
+import Image from 'next/image'
+import {changeLang} from "/utils/set";
 export default function Featured() {
+    const featured =changeLang('featured')
     const router = useRouter()
     const ref = useRef(null)
     const [featuredPageSize, setFeaturedPageSize] = useState(10);
     const [featuredCurrent, setFeaturedCurrent] = useState(1);
-    const [featuredAll, setFeaturedAll] = useState(null);
+    const [featuredAll, setFeaturedAll] = useState(0);
     const [featuredBol, setFeaturedBol] = useState(true);
     const [time, setTime] = useState('h24')
     const [tableParams, setTableParams] = useState([]);
@@ -37,16 +40,9 @@ export default function Featured() {
         }
     }
     const columns = [{
-        title: 'PAIR',align: 'center',  render: (text, record) => {
-            return <div style={{display: 'flex', alignItems: 'center',justifyContent:'space-between',width:'50%',margin:'0 auto'}}>
-                <p style={{
-                    width: '30px',
-                    backgroundColor: '#454545',
-                    color: 'white',
-                    lineHeight: '30px',
-                    textAlign: 'center',
-                    borderRadius: '50%'
-                }}>{record?.baseToken?.symbol?.slice(0, 1)}</p>
+        title: featured.pair,align: 'center',  render: (text, record) => {
+            return <div className={styled.featuredColumnsBox}>
+                <p className={styled.featuredColumns}>{record?.baseToken?.symbol?.slice(0, 1)}</p>
                 <div style={{lineHeight:'1'}}>
                     <p>{record?.baseToken?.symbol.length>7?record.baseToken.symbol.slice(0,4):record.baseToken.symbol}/<span style={{color:'#626262'}}>{record?.quoteToken?.symbol.length>7?record.quoteToken.symbol.slice(0,4):record.quoteToken.symbol}</span></p>
                     {/*<p>{record?.pairAddress?record.pairAddress.length>10?record.pairAddress.slice(0,5)+':'+record.pairAddress.slice(-5):record.pairAddress:''}</p>*/}
@@ -55,7 +51,7 @@ export default function Featured() {
         }
     },
         {
-            title: 'PRICE',align: 'center',  render: (text, record) => {
+            title: featured.price,align: 'center',  render: (text, record) => {
                 return <div>{record?.priceUsd ? formatDecimal(record?.priceUsd, 3) : ''}</div>
             },
             sorter: {
@@ -65,7 +61,7 @@ export default function Featured() {
             },
         },
         {
-            title: 'Create Time',align: 'center',  render: (text, record) => {
+            title: featured.createTime,align: 'center',  render: (text, record) => {
                 const data =  record.pairCreatedAt.toString().length>10?Number(record.pairCreatedAt.toString().slice(0,10)):record.pairCreatedAt
                 return <p>{record?.pairCreatedAt ? getRelativeTimeDifference(formatDateTime(data)) : ''}</p>
             },
@@ -84,23 +80,23 @@ export default function Featured() {
             }
         },
         {
-            title: 'TXNS',align: 'center',  render: (text, record) => {
+            title: featured.txns,align: 'center',  render: (text, record) => {
                 return <p>{record?.txns[time]?.buys + record?.txns[time]?.sells ? autoConvert(record?.txns[time]?.buys + record?.txns[time]?.sells) : 0}</p>
             }
         },
         {
-            title: 'VOLUME',align: 'center',  render: (text, record) => {
+            title: featured.volume,align: 'center',  render: (text, record) => {
                 return <p>{record?.volume[time] ? autoConvert(record?.volume[time]) : 0}</p>
             }
         },
         {
-            title: 'LIQUIDITY',align: 'center',  render: (text, record) => {
+            title: featured.liquidity,align: 'center',  render: (text, record) => {
                 return <p> {record?.liquidity?.usd ? autoConvert(record.liquidity.usd) : ''}</p>
             }
         },
         {
-            title: 'DEX', align: 'center', render: (text, record) => {
-                return <img src="/dex-uniswap.png" alt="" width={'30px'} style={{borderRadius:'50%',display:'block',margin:'0 auto'}}/>
+            title: featured.dex, align: 'center', render: (text, record) => {
+                return <Image src="/dex-uniswap.png" alt="" width={30} height={30} style={{borderRadius:'50%',display:'block',margin:'0 auto',height:'auto',width:'auto'}}/>
             }
         },
     ]
@@ -145,21 +141,12 @@ export default function Featured() {
         setFeaturedPageSize(a)
     }
     return (
-        <div style={{marginRight: '20px'}}>
-            <Card style={{
-                minWidth: 700,
-                backgroundColor: 'rgb(253, 213, 62)',
-                width: '100%', border: 'none'
-            }}>
-                <div style={{
-                    marginBottom: '10px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between'
-                }}>
+        <div className={styled.featuredBox}>
+            <Card className={styled.featuredBoxCard}>
+                <div className={styled.featuredBoxTop}>
                     <div style={{display: 'flex', alignItems: 'center'}}>
-                        <img src="/wallet.png" alt="" width={70}  height={70}/>
-                        <span style={{fontWeight: 'bold', fontSize: '26px'}}>FEATURED</span>
+                        <Image src="/wallet.png" alt="" width={70}  height={70}/>
+                        <span style={{fontWeight: 'bold', fontSize: '26px'}}>{featured.featured}</span>
                     </div>
                     <Segmented options={['5m', '1h', '6h', '24h']} onChange={changSeg} defaultValue={'24h'}/>
 
@@ -172,19 +159,13 @@ export default function Featured() {
                         },
                     };
                 }} loading={featuredBol} bordered={false} dataSource={tableParams} pagination={false}/>
-                <div style={{display: 'flex', alignItems: 'center', justifyContent: 'end'}}>
+                <div className={styled.featuredBoxBot}>
                     <Pagination defaultCurrent={1} style={{marginTop: '20px'}} showSizeChanger current={featuredCurrent}
                                 total={featuredAll} onChange={changePag}
                                 pageSize={featuredPageSize}/>
                 </div>
             </Card>
-            <p style={{
-                marginTop: '80px',
-                textAlign: 'center',
-                lineHeight: '1',
-                fontSize: '20px',
-                color: 'rgb(98,98,98)'
-            }}>©DEXpert.io</p>
+            <p className={styled.featuredBoxName}>©DEXpert.io</p>
         </div>
     );
 }

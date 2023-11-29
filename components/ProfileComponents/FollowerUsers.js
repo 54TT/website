@@ -1,13 +1,14 @@
 import axios from "axios";
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import cookie from "js-cookie";
-import styled from "styled-components";
 import {useRouter} from "next/router";
 import baseUrl from '/utils/baseUrl'
 import Link from 'next/link'
+import styled from '/styles/all.module.css'
+import {changeLang} from "/utils/set";
 
 function FollowerUsers({profile, userFollowStats, user}) {
-    const router = useRouter();
+    const username=changeLang('username')
     const [followers, setFollowers] = useState([]);
     const getFollowers = async () => {
         try {
@@ -30,20 +31,18 @@ function FollowerUsers({profile, userFollowStats, user}) {
 
     return (
         <div
-            style={{fontFamily: "Inter"}}
             className="bg-white rounded-2xl shadow-md  mt-5 p-5"
         >
             <div className="flex justify-between">
                 <div className="flex">
                     <h1
                         className="text-2xl font-semibold"
-                        style={{fontFamily: "inherit"}}
                     >
-                        Followers ·
+                        {username.followers}
                     </h1>
                     <span
                         className="ml-1 text-gray-500 text-lg"
-                        style={{marginTop: ".15rem"}}
+                        style={{marginTop: "7px"}}
                     >
             {followers && followers.length > 0 ? followers.length : "0"}
           </span>
@@ -51,17 +50,15 @@ function FollowerUsers({profile, userFollowStats, user}) {
 
                 {followers && followers.length > 0 && (
                     <Link href={`/user/${profile?.user_id}/followers`}>
-                        <p className="text-md font-normal cursor-pointer select-none text-purple-400 hover:underline"
-                           style={{fontFamily: "inherit"}}
-                        >
-                            View All
+                        <p className="text-md font-normal cursor-pointer select-none text-purple-400 hover:underline">
+                            {username.viewAll}
                         </p>
                     </Link>
                 )}
             </div>
 
             {followers && followers.length > 0 ? (
-                <GridContainer>
+                <div className={styled.followerUserBox}>
                     {followers.map((fol, i) => i < 5 && (
                         <Link href={`/${fol?.user?.address}`} key={fol?.user?.id}>
                             <div
@@ -71,31 +68,22 @@ function FollowerUsers({profile, userFollowStats, user}) {
                                 <img src={fol?.user?.profilePicUrl||'/Ellipse1.png'} alt="userprof"   width={50}
                                        height={50}/>
                                 <Link href={`/${fol?.user?.address}`}>
-                                <p style={{overflow: "hidden", textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>
+                                <p className={styled.followerUserName}>
                                     {fol?.user?.username.slice(0, 6)}
                                 </p>
                                 </Link>
                             </div>
                         </Link>
                     ))}
-                </GridContainer>
+                </div>
             ) : profile?.user_id === user?.id ? (
-                <p className="text-md text-gray-500">
-                    {`You don't have any followers ☹️. The trick is to follow someone and then
-          wait for them to follow you back.`}
+                <p className="text-md text-gray-500">{username.noFollowers}
                 </p>
             ) : (
-                <p className="text-md text-gray-500">{`${profile?.name} doesn't have any followers.`}</p>
+                <p className="text-md text-gray-500">{`${profile?.name} ${username.otherNoFollowers}`}</p>
             )}
         </div>
     );
 }
 
 export default FollowerUsers;
-
-
-const GridContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-`;

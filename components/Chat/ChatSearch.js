@@ -1,15 +1,14 @@
 import {
-  ArrowLeftIcon,
   DotsHorizontalIcon,
-  SearchIcon,
 } from "@heroicons/react/solid";
 import axios from "axios";
-import React, { useState, useRef } from "react";
-import styled from "styled-components";
+import React, {useState, useRef, useContext} from "react";
 import Link from "next/link";
 import { useClickAway } from "react-use";
 import baseUrl from "../../utils/baseUrl";
+import styled from '/styles/all.module.css';
 function ChatSearch({ setShowChatSearch, setChats, chats,user, }) {
+  const social=changeLang('social')
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -43,18 +42,7 @@ function ChatSearch({ setShowChatSearch, setChats, chats,user, }) {
   return (
     <div
       ref={ref}
-      style={{
-        position: "absolute",
-        top: "0",
-        left: "0",
-        width: "100%",
-        backgroundColor: "white",
-        zIndex: "100",
-        padding: "10px",
-        borderRadius: "10px",
-        boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
-        fontFamily: "Inter",
-      }}
+      className={styled.chatSearchTop}
     >
       <div className="flex items-center">
 
@@ -63,7 +51,7 @@ function ChatSearch({ setShowChatSearch, setChats, chats,user, }) {
             autoFocus={true}
             className="ml-1 bg-transparent outline-none placeholder-gray-500 w-full font-thin"
             type="text"
-            placeholder="Search users"
+            placeholder={social.search}
             value={searchTerm}
             onChange={handleChange}
           />
@@ -105,7 +93,7 @@ function ChatSearch({ setShowChatSearch, setChats, chats,user, }) {
                 className="flex items-center space-x-3 mt-2 cursor-pointer hover:bg-gray-100 rounded-lg p-2"
               >
                 <img style={{borderRadius:'50%'}} width={50} src={resultUser?.profilePicUrl?resultUser.profilePicUrl:'/Ellipse1.png'} alt="userimg" />
-                <Name>{resultUser?.name?resultUser.name.length>10?resultUser.name.slice(0,5)+'...'+resultUser.name.slice(-5):resultUser.name:''}</Name>
+                <p className={styled.chatSearchName}>{resultUser?.name?resultUser.name.length>10?resultUser.name.slice(0,5)+'...'+resultUser.name.slice(-5):resultUser.name:''}</p>
               </div>
             </Link>
           ))}
@@ -113,21 +101,11 @@ function ChatSearch({ setShowChatSearch, setChats, chats,user, }) {
       ) : (
         <div className="w-full flex items-center justify-center mt-5 mb-2">
           <p className="text-gray-400 font-thin ">
-            Start typing to begin searching...
+            {social.start}
           </p>
         </div>
       )}
     </div>
   );
 }
-// const clickOutsideConfig = {
-//   handleClickOutside: () => SearchDropdown.handleClickOutside,
-// };
-
-// export default onClickOutside(SearchDropdown, clickOutsideConfig);
 export default ChatSearch;
-const Name = styled.p`
-  user-select: none;
-  font-family: Inter;
-  font-size: 1rem;
-`;

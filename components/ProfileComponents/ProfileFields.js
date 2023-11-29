@@ -1,10 +1,11 @@
-import React, { useState } from "react";
-import styled from "styled-components";
+import React, {useContext, useState} from "react";
 import { ArrowSmRightIcon, PencilAltIcon } from "@heroicons/react/solid";
 import { profileUpdate } from "../../utils/profileActions";
 import {YoutubeOutlined,TwitterOutlined,ArrowRightOutlined,FacebookOutlined,FormOutlined,InstagramOutlined,LoadingOutlined,ArrowLeftOutlined} from '@ant-design/icons'
 import { useEffect } from "react";
 import {notification} from "antd";
+import styled from '/styles/all.module.css'
+import {changeLang} from "/utils/set";
 const notifyError = () =>{
   notification.error({
     message: `Please enter a bio.`, description: 'Error reported', placement: 'topLeft',
@@ -12,6 +13,7 @@ const notifyError = () =>{
   });
 }
 function ProfileFields({ profile, isUserOnOwnAccount,user ,change}) {
+  const username =changeLang('username')
   const [bio, setBio] = useState("");
   useEffect(()=>{
     if(profile){
@@ -47,20 +49,18 @@ function ProfileFields({ profile, isUserOnOwnAccount,user ,change}) {
 
   return (
     <div
-      style={{ fontFamily: "Inter", position: "relative" }}
-      className="bg-white justify-start rounded-2xl shadow-md p-5"
+      className={`bg-white justify-start rounded-2xl shadow-md p-5 ${styled.profileFieldsBox}`}
     >
       {editProfile ? (
         <div className="flex justify-between ml-1 mr-0.5 mb-1">
           <h1
             className="text-2xl font-semibold"
-            style={{ fontFamily: "inherit" }}
           >
-            Intro
+            {username.intro}
           </h1>
-          <div style={{display:'flex',alignItems:'center',}}>
-          <ArrowLeftOutlined style={{fontSize:'20px',fontWeight:'bold',marginRight:'10px',}} onClick={()=>setEditProfile(false)}/>
-            <ArrowRightOutlined style={{fontSize:'20px',fontWeight:'bold'}}   onClick={updateProfile}/>
+          <div className={styled.profileFieldsIconBox}>
+          <ArrowLeftOutlined className={styled.profileFieldsIcon} onClick={()=>setEditProfile(false)}/>
+            <ArrowRightOutlined className={styled.profileFieldsIcons}   onClick={updateProfile}/>
           </div>
         </div>
       ) : (
@@ -68,9 +68,8 @@ function ProfileFields({ profile, isUserOnOwnAccount,user ,change}) {
           <div className="flex justify-between">
             <h1
               className="text-2xl font-semibold mb-1"
-              style={{ fontFamily: "inherit" }}
             >
-              Intro
+              {username.intro}
             </h1>
             {isUserOnOwnAccount && (
               <FormOutlined style={{fontSize:'20px',fontWeight:'bold'}}
@@ -82,51 +81,51 @@ function ProfileFields({ profile, isUserOnOwnAccount,user ,change}) {
       )}
       {editProfile ? (
         <div>
-          <Bio
+          <textarea  className={styled.profileFieldsTextarea}
             name="bio"
             value={bio}
             onChange={handleChange}
-            placeholder="Enter Bio"
+            placeholder={username.enterBio}
             rows="2"
             wrap="soft"
           />
           <div>
-            <SocialMedia>
+            <div className={styled.profileFieldsDiv}>
               <YoutubeOutlined style={{ color: "#8f85de" }}/>
-              <SocialMediaInput
+              <input className={styled.profileFieldsInput}
                 name="youtube"
                 value={youtube}
                 onChange={handleChange}
                 placeholder="YouTube"
               />
-            </SocialMedia>
-            <SocialMedia>
+            </div>
+            <div className={styled.profileFieldsDiv}>
               <TwitterOutlined style={{ color: "#8f85de" }}/>
-              <SocialMediaInput
+              <input  className={styled.profileFieldsInput}
                 name="twitter"
                 value={twitter}
                 onChange={handleChange}
                 placeholder="Twitter"
               />
-            </SocialMedia>
-            <SocialMedia>
+            </div>
+            <div className={styled.profileFieldsDiv}>
               <InstagramOutlined style={{ color: "#8f85de" }}/>
-              <SocialMediaInput
+              <input   className={styled.profileFieldsInput}
                 name="instagram"
                 value={instagram}
                 onChange={handleChange}
                 placeholder="Instagram"
               />
-            </SocialMedia>
-            <SocialMedia>
+            </div>
+            <div className={styled.profileFieldsDiv}>
               <FacebookOutlined style={{ color: "#8f85de" }}/>
-              <SocialMediaInput
+              <input className={styled.profileFieldsInput}
                 name="facebook"
                 value={facebook}
                 onChange={handleChange}
                 placeholder="Facebook"
               />
-            </SocialMedia>
+            </div>
           </div>
         </div>
       ) : (
@@ -137,7 +136,7 @@ function ProfileFields({ profile, isUserOnOwnAccount,user ,change}) {
             </div>
           ) : (
             isUserOnOwnAccount && (
-              <AddDiv onClick={() => setEditProfile(true)}>Add Bio</AddDiv>
+              <div  className={styled.profileFieldsAdd}  onClick={() => setEditProfile(true)}>{username.addBio}</div>
             )
           )}
           {social.youtube === "" &&
@@ -145,59 +144,61 @@ function ProfileFields({ profile, isUserOnOwnAccount,user ,change}) {
           social.twitter === "" &&
           social.instagram === "" ? (
             isUserOnOwnAccount && (
-              <AddDiv onClick={() => setEditProfile(true)}>
-                Add Social Media Links
-              </AddDiv>
+              <div  className={styled.profileFieldsAdd} onClick={() => setEditProfile(true)}>
+                {username.addSocial}
+              </div>
             )
           ) : (
             <div className="mt-5">
               {social?.youtube && (
-                <AnchorTag
-                  target="_blank"
+                         <p className={styled.profileFieldsName}
+
+                                       target="_blank"
                   href={`https://${social?.youtube}`}
                   rel="noopener noreferrer"
                 >
-                  <SocialMediaDisplayDiv>
+                  <div className={styled.profileFieldsYou}>
                     <YoutubeOutlined style={{ color: "#8f85de" }}/>
                     <p>{social?.youtube}</p>
-                  </SocialMediaDisplayDiv>
-                </AnchorTag>
+                  </div>
+                </p>
               )}
               {social?.twitter&& (
-                <AnchorTag
-                  target="_blank"
+                           <p className={styled.profileFieldsName}
+
+                                       target="_blank"
                   href={`https://${social.twitter}`}
                   rel="noopener noreferrer"
                 >
-                  <SocialMediaDisplayDiv>
+                  <div className={styled.profileFieldsYou}>
                     <TwitterOutlined style={{ color: "#8f85de" }}/>
                     <p>{social?.twitter}</p>
-                  </SocialMediaDisplayDiv>
-                </AnchorTag>
+                  </div>
+                </p>
               )}
               {social?.facebook && (
-                <AnchorTag
-                  target="_blank"
+                     <p className={styled.profileFieldsName}
+                                       target="_blank"
                   href={`https://${social.facebook}`}
                   rel="noopener noreferrer"
                 >
-                  <SocialMediaDisplayDiv>
+                  <div className={styled.profileFieldsYou}>
                     <FacebookOutlined style={{ color: "#8f85de" }}/>
                     <p>{social?.facebook}</p>
-                  </SocialMediaDisplayDiv>
-                </AnchorTag>
+                  </div>
+                </p>
               )}
               {social?.instagram && (
-                <AnchorTag
+                <p className={styled.profileFieldsName}
                   target="_blank"
                   href={`https://${social.instagram}`}
                   rel="noopener noreferrer"
                 >
-                  <SocialMediaDisplayDiv>
+                  <div className={styled.profileFieldsYou}>
                     <InstagramOutlined style={{ color: "#8f85de" }}/>
                     <p>{social?.instagram}</p>
-                  </SocialMediaDisplayDiv>
-                </AnchorTag>
+                  </div>
+                </p>
               )}
             </div>
           )}
@@ -206,83 +207,4 @@ function ProfileFields({ profile, isUserOnOwnAccount,user ,change}) {
     </div>
   );
 }
-
 export default ProfileFields;
-
-const AddDiv = styled.div`
-  cursor: pointer;
-  padding: 0.65rem;
-  margin-top: 1rem;
-  background-color: #efeeef;
-  border-radius: 0.4rem;
-  :hover {
-    background-color: #e2e2e2;
-  }
-  font-weight: 500;
-`;
-
-
-const Bio = styled.textarea`
-  overflow: hidden;
-  resize: none;
-  outline: none;
-  padding: 15px;
-  margin: 0 0;
-  border: 1.5px solid #f0e6ff;
-  width: 100%;
-  color: black;
-  border-radius: 10px;
-
-  ::placeholder {
-    /* Chrome, Firefox, Opera, Safari 10.1+ */
-    color: #8f85de;
-    opacity: 0.46; /* Firefox */
-  }
-`;
-
-const SocialMedia = styled.div`
-  background-color: white;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-radius: 10px;
-  padding: 1rem;
-  margin: 1.5rem 0 0 0;
-  border: 1.5px solid #f0e6ff;
-`;
-
-const SocialMediaInput = styled.input`
-  width: 100%;
-  outline: none;
-  border: none;
-  color: black;
-  margin-left: 0.75rem;
-  ::placeholder {
-    /* Chrome, Firefox, Opera, Safari 10.1+ */
-    color: #8f85de;
-    opacity: 0.46; /* Firefox */
-  }
-`;
-
-const SocialMediaDisplayDiv = styled.div`
-  display: flex;
-  column-gap: 0.4rem;
-  margin-top: 0.7rem;
-  padding: 0.5rem;
-  padding: 0.65rem;
-  background-color: #efeeef;
-  border-radius: 0.4rem;
-  cursor: pointer;
-  :hover {
-    background-color: #e2e2e2;
-  }
-  user-select: none;
-`;
-
-const AnchorTag = styled.a`
-  color: black;
-  text-decoration: none;
-  :hover {
-    color: black;
-  }
-`;

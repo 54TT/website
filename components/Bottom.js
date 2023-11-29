@@ -1,37 +1,31 @@
-import React from 'react';
-import styles from "../styles/home.module.css";
+import React, {useContext} from 'react';
+import styles from "/styles/all.module.css";
+import Image from 'next/image'
+import {CountContext} from "./Layout/Layout";
+import {changeLang} from "/utils/set";
 function Bottom(props) {
+    const {changeFamily,} = useContext(CountContext);
+    const bottom = changeLang('bottom')
     return (
         <div>
-            <div className={styles['boxBott']}>
-                <div style={{width: '20%'}}>
-                    <img src="/video.png" alt=""  style={{margin: '0 auto',width:'50%'}}/>
-                    <p style={{fontSize: '20px', fontWeight: 'bold', textAlign: 'center'}}>Instructional video</p>
+            <div className={styles.bottomBoxLogo} style={{marginTop: '20px'}}>
+                <div className={styles.bottomTop}>
+                    <div className={styles.bottomImg}>
+                        <Image src="/video.png" alt="" width={100} height={100} style={{width:'100%'}}/>
+                    </div>
+                    <p className={styles.bottomSlign}>{bottom.video}</p>
                 </div>
-                <p style={{width: '78%', color: 'rgb(98,98,98)', fontSize: '18px', fontWeight: 'bold', lineHeight: 1,}}>All
-                    content provided on our website, hyperlinked websites, and applications, forums, blogs, social media
-                    accounts and other DEX-related platforms are intended to provide you with general information only. We
-                    make no guarantees of any kind regarding our content, including but not limited to the accuracy and
-                    timeliness of the information. Nothing we provide should be construed as financial, legal, or any other
-                    type of advice on which you specifically rely for any purpose. Any use or reliance you make on our
-                    content is entirely at your own risk. What you should do is do your own research, review and analysis
-                    and verify our content before relying on it. Trading is a high-risk activity that can result in
-                    significant losses, so you should consult your financial advisor before making any decisions. Nothing on
-                    our website should be considered an invitation or offer to take any action</p>
+                <p className={styles.bottomText} style={changeFamily!=='english'?{letterSpacing:'2px'}:{}}>{bottom.introduce}</p>
             </div>
-            <div className={styles['boxLogo']}>
-                <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between', width: '20%'
-                }}>
-                    <img src="/TwitterX1.png"  alt="" width={45}/>
-                    <img src="/TelegramApp.png" alt="" width={45} height={45}/>
-                    <img src="/Discord.png" alt="" width={45}  height={45}/>
-                    <img src="/Medium.png" alt="" width={45}  height={45}/>
+            <div className={styles['bottomBoxLogo']}>
+                <div className={styles.bottomImgs}>
+                    <Image src="/TwitterX1.png" alt="" width={45} height={45}/>
+                    <Image src="/TelegramApp.png" alt="" width={45} height={45}/>
+                    <Image src="/Discord.png" alt="" width={45} height={45}/>
+                    <Image src="/Medium.png" alt="" width={45} height={45}/>
                 </div>
             </div>
-            <div style={{color:'rgb(55,55,55,)',margin:'20px 0',display:'flex',alignItems:'center',justifyContent:'center'}}>©DEXpert.io</div>
+            <div className={styles.bottomBot}>©DEXpert.io</div>
         </div>
     );
 }

@@ -1,14 +1,14 @@
 import React, {useEffect, useState} from "react";
-import styled from "styled-components";
 import calculateTime from "../../utils/calculateTime";
 import Link from "next/link";
 import {CheckCircleIcon, UserAddIcon} from "@heroicons/react/solid";
+import styled from '/styles/all.module.css'
 import {followUser, unfollowUser} from "../../utils/profileActions";
 
 function FollowNotification({notification, userFollowStats, userPar, chang, }) {
     return (
         notification.type === "newFollower" && (
-            <NotificationDiv>
+            <div className={styled.commentNotificationBox}>
                 <div style={{display: 'flex', alignItems: 'center'}}>
                     <img   height={50} width={50} style={{ borderRadius: '50%', marginRight: '15px'}}
                          src={notification?.user?.profilePicUrl ? notification.user.profilePicUrl : '/Ellipse1.png'}
@@ -29,7 +29,7 @@ function FollowNotification({notification, userFollowStats, userPar, chang, }) {
                 userFollowStats?.following.filter(
                     (following) => following?.user?.id === notification?.user?.id
                 ).length > 0 ? (
-                    <FollowButton
+                    <div className={styled.followNotificationBox}
                         onClick={async () => {
                             const data = await unfollowUser(
                                 notification?.user?.id,
@@ -43,10 +43,10 @@ function FollowNotification({notification, userFollowStats, userPar, chang, }) {
                     >
                         <CheckCircleIcon className="h-5"/>
                         <p className="ml-1.5">Following</p>
-                    </FollowButton>
+                    </div>
                 ) : (
-                    <FollowButton
-                        onClick={async () => {
+                    <div  className={styled.followNotificationBox}
+                          onClick={async () => {
                             const data = await followUser(
                                 notification?.user?.id,
                                 '',
@@ -59,48 +59,12 @@ function FollowNotification({notification, userFollowStats, userPar, chang, }) {
                     >
                         <UserAddIcon className="h-5"/>
                         <p className="ml-1.5">Follow back</p>
-                    </FollowButton>
+                    </div>
                 )}
                 {/* {notification.post.picUrl} */}
-            </NotificationDiv>
+            </div>
         )
     );
 }
 
 export default FollowNotification;
-
-
-const NotificationDiv = styled.div`
-  display: flex;
-  cursor: pointer;
-  border-radius: 0.3rem;
-  border-bottom: 1px solid #efefef;
-  font-family: Inter;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px;
-`;
-
-const FollowButton = styled.div`
-  height: fit-content;
-  margin-left: 0.4rem;
-  padding: 0.5rem;
-  display: flex;
-  cursor: pointer;
-  border-radius: 0.5rem;
-  /* border: 1.5px solid black; */
-  background-color: transparent;
-  color: rgba(107, 114, 128);
-  align-self: flex-start;
-  font-size: 0.95rem;
-  font-family: "Inter";
-  font-weight: 400;
-  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
-  rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
-
-  :hover {
-    box-shadow: rgba(0, 0, 0, 0.07) 0px 1px 2px, rgba(0, 0, 0, 0.07) 0px 2px 4px,
-    rgba(0, 0, 0, 0.07) 0px 4px 8px, rgba(0, 0, 0, 0.07) 0px 8px 16px,
-    rgba(0, 0, 0, 0.07) 0px 16px 32px, rgba(0, 0, 0, 0.07) 0px 32px 64px;
-  }
-`;

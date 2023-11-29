@@ -1,11 +1,11 @@
 import React from "react";
-import styled from "styled-components";
 import calculateTime from "../../utils/calculateTime";
 import Link from "next/link";
+import styled from '/styles/all.module.css'
 function CommentNotification({ notification }) {
   return (
     notification.type === "newComment" && (
-      <NotificationDiv>
+      <div className={styled.commentNotificationBox}>
         <img   height={60} width={60}  style={{borderRadius:'50%'}} src={notification?.user?.profilePicUrl||'/Ellipse1.png'} alt="userimg" />
         <div className="select-none" style={{marginLeft:'10px'}}>
           <p>
@@ -24,23 +24,8 @@ function CommentNotification({ notification }) {
         </div>
 
         {/* {notification.post.picUrl} */}
-      </NotificationDiv>
+      </div>
     )
   );
 }
-
 export default CommentNotification;
-
-
-const NotificationDiv = styled.div`
-  display: flex;
-  cursor: pointer;
-  border-radius: 0.3rem;
-  border-bottom: 1px solid #efefef;
-  font-family: Inter;
-  padding: 10px;
-  align-items: center;
-  :hover {
-    background-color: rgba(243, 244, 246);
-  }
-`;

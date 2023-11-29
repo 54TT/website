@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useContext} from "react";
 import {
     UsersIcon,
     BellIcon,
@@ -7,9 +7,11 @@ import {
 } from "@heroicons/react/outline";
 // import SidebarRow from "./HelperComponents/SidebarRow";
 import dynamic from "next/dynamic";
-const SidebarRow = dynamic(() => import('./HelperComponents/SidebarRow'),{suspense:false})
+const SidebarRow = dynamic(() => import('./HelperComponents/SidebarRow'),)
+import {changeLang} from "/utils/set";
 
 function Sidebar({user, topDist, maxWidth}) {
+    const social=changeLang('social')
     return (
         <div
             className={
@@ -24,27 +26,27 @@ function Sidebar({user, topDist, maxWidth}) {
         >
             <SidebarRow
                 Icon={UsersIcon}
-                title="Home"
+                title={social.home}
                 route={'/social'}
             />
             <SidebarRow
                 Icon={UsersIcon}
-                title="Following"
+                title={social.following}
                 route={user&&user.id ? `/user/${user.id}/following` : `/user/1/following`}
             />
             <SidebarRow
                 Icon={UserGroupIcon}
-                title="Followers"
+                title={social.followers}
                 route={user&&user.id ? `/user/${user.id}/followers` : `/user/1/followers`}
             />
             <SidebarRow
                 Icon={BellIcon}
-                title="Notifications"
+                title={social.notification}
                 route={"/notifications"}
             />
             <SidebarRow
                 Icon={ChatIcon}
-                title="Messenger" route={"/chats"}/>
+                title={social.messenger} route={"/chats"}/>
         </div>
     );
 }

@@ -22,3 +22,60 @@
 .but:hover {
     box-shadow: 10px 10px 0 rgb(188, 158, 54)
 }
+
+.marqueeBox{
+    width: 25%!important; margin-left: 20px;
+}
+.marquee{
+    margin-right: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.marqueeName{
+    width: 20px;
+    border-radius: 50%;
+    background-color: #454545;
+    color: white;
+    line-height: 20px;
+    text-align: center;
+    margin: 0 2px;
+}
+.searchToken{
+    position: relative;width: 30%;
+}
+.login{
+    display: flex;align-items: center;
+}
+
+.loginBox{
+    display: flex;align-items: center;
+}
+
+.loginImg{
+    margin-right: 10px;border-radius: 50%; cursor: pointer;
+}
+.loginName{
+    color: black;
+    background-color: rgb(254,239,146);
+}
+.but{
+    background-color: rgb(254,239,146);
+    margin-left: 10px;
+}
+.addShow{
+    display: flex;align-items: center; margin-bottom: 10px;
+}
+.addCur{
+    cursor: pointer;font-size: 20px;
+}
+.addCurMt5{
+    margin-top: 5px;
+}
+.addPresale{
+    line-height: 1; cursor: pointer;
+}
+.lines{
+    width: 100%;height: 1px;background-color: rgb(128, 128, 128);
+}

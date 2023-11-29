@@ -6,6 +6,7 @@ import {useRouter} from 'next/router';
 import {get, post, del, getUser} from '/utils/axios'
 import Link from 'next/link'
 import {dao, autoConvert,} from '/utils/set'
+import Image from 'next/image'
 import {
     Tooltip,
     Table,
@@ -16,7 +17,6 @@ import {
 } from 'antd'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
-
 dayjs.extend(duration)
 import {
     TwitterOutlined,
@@ -34,11 +34,13 @@ import dynamic from "next/dynamic";
 import {CountContext} from "./Layout/Layout";
 import {arrayUnique} from '/utils/set'
 const {Countdown} = Statistic;
-const PostCard = dynamic(() => import('./PostCard'), {suspense: false})
-const Bott = dynamic(() => import('./Bottom'), {suspense: false})
-export default function Home() {
+const PostCard = dynamic(() => import('./PostCard'))
+const Bott = dynamic(() => import('./Bottom'))
+import {changeLang} from "/utils/set";
+function Home() {
     const router = useRouter();
-    const {bolLogin, changeBolLogin} = useContext(CountContext);
+    const {bolLogin, changeShowData, showData, changeBolLogin} = useContext(CountContext);
+    const home=changeLang('home')
     const [cookBol, setCook] = useState(false);
     useEffect(() => {
         if (cook.get('name')) {
@@ -54,6 +56,12 @@ export default function Home() {
             setUserPa(cook.get('name'))
         }
     }, [bolLogin]);
+    useEffect(() => {
+        if (showData) {
+            getPost()
+            changeShowData()
+        }
+    }, [showData])
     const getUs = async () => {
         const a = cook.get('name')
         const {data: {user}, status} = await getUser(a)
@@ -70,6 +78,11 @@ export default function Home() {
     const [presaleBol, setPresaleBol] = useState(false);
     const [featuredBol, setFeaturedBol] = useState(true);
     const [featured, setFeatured] = useState([]);
+    const params = [{
+        data: presale,
+        bol: presaleBol,
+       name:home.presale
+    }, {data: launch, bol: launchBol,name:home.launch}]
     const getParams = (url, params, name) => {
         get(url, params).then(async (res) => {
             if (res.status === 200) {
@@ -127,19 +140,19 @@ export default function Home() {
             }}>{record?.baseToken?.symbol?.slice(0, 1)}</p>
         }
     }, {
-        title: 'PAIR', align: 'center', render: (text, record) => {
+        title: home.pair, align: 'center', render: (text, record) => {
             return <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
                 <span>{record.baseToken?.symbol}/{record.quoteToken?.symbol}</span>
             </div>
         }
     },
         {
-            title: 'PRICE', align: 'center', render: (text, record) => {
+            title: home.price, align: 'center', render: (text, record) => {
                 return <div>{record?.priceUsd ? formatDecimal(record?.priceUsd, 3) : ''}</div>
             }
         },
         {
-            title: 'Create Time', align: 'center', render: (text, record) => {
+            title:home.price, align: 'center', render: (text, record) => {
                 const data = record.pairCreatedAt.toString().length > 10 ? Number(record.pairCreatedAt.toString().slice(0, 10)) : record.pairCreatedAt
                 return <p>{record?.pairCreatedAt ? getRelativeTimeDifference(formatDateTime(data)) : ''}</p>
             }
@@ -151,24 +164,30 @@ export default function Home() {
             }
         },
         {
-            title: 'TXNS', align: 'center', render: (text, record) => {
+            title: home.txns, align: 'center', render: (text, record) => {
                 return <p>{(record?.txns[time]?.buys + record?.txns[time]?.sells) ? autoConvert(record?.txns[time]?.buys + record?.txns[time]?.sells) : 0}</p>
             }
         },
         {
-            title: 'VOLUME', align: 'center', render: (text, record) => {
+            title: home.volume, align: 'center', render: (text, record) => {
                 return <p>{record?.volume[time] ? autoConvert(record?.volume[time]) : 0}</p>
             }
         },
         {
-            title: 'LIQUIDITY', align: 'center', render: (text, record) => {
+            title: home.liquidity, align: 'center', render: (text, record) => {
                 return <p> {record?.liquidity?.usd ? autoConvert(record.liquidity.usd) : 0}</p>
             }
         },
         {
-            title: 'DEX', align: 'center', render: (text, record) => {
-                return <img src="/dex-uniswap.png" alt="" width={'30px'}
-                            style={{borderRadius: '50%', display: 'block', margin: '0 auto'}}/>
+            title: home.dex, align: 'center', render: (text, record) => {
+                return <Image src="/dex-uniswap.png" alt="" width={30} height={30}
+                              style={{
+                                  borderRadius: '50%',
+                                  display: 'block',
+                                  margin: '0 auto',
+                                  height: 'auto',
+                                  width: 'auto'
+                              }}/>
             }
         },
     ]
@@ -218,14 +237,6 @@ export default function Home() {
             setTime('h24')
         }
     }
-    const [diffTime, setDiffTime] = useState(null)
-    const refSet = useRef(null)
-    // useEffect(() => {
-    //     refSet.current = setInterval(() => setDiffTime(diffTime - 1), 1000)
-    //     return () => {
-    //         clearInterval(refSet.current)
-    //     }
-    // }, [diffTime])
     const [postsData, setPostsData] = useState([])
     const [postsDataAdd, setPostsDataAdd] = useState([])
     const [pageNumber, setPageNumber] = useState(0)
@@ -239,7 +250,6 @@ export default function Home() {
 
     // 删除的推文id
     const [deleteChange, setDeleteChange] = useState(null)
-
     const change = (name, id) => {
         if (id) {
             setDeleteChange(id)
@@ -310,7 +320,7 @@ export default function Home() {
         }
         const res = await axios.get(`${baseUrl}/api/posts`, {
             params: {pageNumber: a, userId: userPa?.id},
-        });
+        })
         if (res.status === 200) {
             setPostsDataBol(!postsDataBol)
             setPostsData(res.data)
@@ -352,213 +362,85 @@ export default function Home() {
             {/*左边*/}
             <div ref={refHeight} className={styles['left']}>
                 {/*上面*/}
-                <div style={{display: 'flex', justifyContent: 'space-between',}}>
-                    {/*右边*/}
-                    <div style={{width: '46%', backgroundColor: 'rgb(253,213,62)', padding: '0'}}
-                         className={'cardParams'}>
-                        <Card style={{
-                            minWidth: 300,
-                            backgroundColor: 'rgb(253, 213, 62)',
-                            width: '100%',
-                            border: 'none'
-                        }}>
-                            <ul className={styles['rightUl']}>
-                                <li>
-                                    <p style={{fontSize: '20px', fontWeight: 'bold'}}>Presale</p>
-                                    <Link href={'/presale'}>
-                                        <p style={{fontSize: '20px', color: '#2394D4', cursor: 'pointer'}}>more></p>
-                                    </Link>
-                                </li>
-                                {
-                                    presaleBol ? presale.length > 0 ? presale.map((i, index) => {
-                                        if (index > 2) {
-                                            return ''
-                                        } else {
-
-                                            return <li className={styles.li} key={index}
-                                            >
-                                                <div style={{display: 'flex', alignItems: 'center', width: '30%'}}>
-                                                    <p style={{
-                                                        textAlign: 'center',
-                                                        width: '30px',
-                                                        lineHeight: '30px',
-                                                        borderRadius: '50%',
-                                                        fontSize: '16px',
-                                                        backgroundColor: '#454545',
-                                                        color: 'white',
-                                                        marginRight: '10px'
-                                                    }}>{i.symbol.slice(0, 1)}</p>
-                                                    <div style={{width: '78%'}}>
-                                                        <Tooltip title={i.symbol}>
-                                                            <p style={{
-                                                                textAlign: 'center',
-                                                                fontSize: '20px',
-                                                                overflow: 'hidden',
-                                                                lineHeight: '1.3',
-                                                                textOverflow: 'ellipsis',
-                                                                whiteSpace: 'nowrap',
-                                                                fontWeight: 'bold'
-                                                            }}>{i.symbol}</p>
-                                                        </Tooltip>
-                                                        <div className={styles['dis']} style={{
-                                                            padding: '3px'
-                                                        }}>
-                                                            <GlobalOutlined
-                                                                style={{cursor: 'pointer', fontSize: '20px'}}
-                                                                onClick={() => push(i, 'one')}/>
-                                                            <TwitterOutlined
-                                                                style={{cursor: 'pointer', fontSize: '20px'}}
-                                                                onClick={() => push(i, 'two')}/>
-                                                            <SendOutlined
-                                                                style={{cursor: 'pointer', fontSize: '20px'}}
-                                                                onClick={() => push(i, 'three')}/>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div style={{
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'start',
-                                                    lineHeight: 1, width: '30%'
-                                                }}>
-                                                    <Countdown title=""
-                                                               value={getD(dayjs(i.presale_time).isAfter(dayjs()) ? dayjs(i.presale_time).diff(dayjs(), 'seconds') : '')}
-                                                               format="HH:mm:ss"/>
-                                                </div>
-                                                <img src={baseUrl + i.presale_platform_logo}
-                                                     onClick={() => pushLink(i.presale_link)} alt=""
-                                                     width={'30px'} style={{borderRadius: '50%', marginRight: '10px'}}/>
-                                            </li>
-                                        }
-                                    }) : [] : [1, 2, 3,].map((i, index) => {
-                                        return <li key={index}>
-                                            <div style={{
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                width: '100%',
-                                                lineHeight: '50px'
-                                            }}>
-                                                <Skeleton.Avatar active={true} size={'default'} shape={'circle'}
-                                                                 style={{marginRight: '15px'}}/>
-                                                <Skeleton.Input active={true} size={'default'} block={true}/>
-                                            </div>
+                <div className={styles.homeTop}>
+                    {
+                        params.map((item, index) => {
+                            return <div key={index}
+                                        className={`cardParams ${styles.homeModule}`}>
+                                <Card className={styles.homeCard}>
+                                    <ul className={styles['rightUl']}>
+                                        <li>
+                                            <p className={styles.homeCardName}>{item.name}</p>
+                                            <Link href={item.name === 'presale' ? '/presale' : '/launch'}>
+                                                <p className={styles.homeCardMore}>{home.more}</p>
+                                            </Link>
                                         </li>
-                                    })
-                                }
-                                {}
-                            </ul>
-                        </Card>
-                    </div>
-                    <div style={{width: '46%', backgroundColor: 'rgb(253,213,62)', padding: '0'}}
-                         className={'cardParams'}>
-                        <Card style={{
-                            minWidth: 300,
-                            backgroundColor: 'rgb(253, 213, 62)',
-                            width: '100%',
-                            border: 'none'
-                        }}>
-                            <ul className={styles['rightUl']}>
-                                <li>
-                                    <p style={{fontSize: '20px', fontWeight: 'bold'}}>Launch</p>
-                                    <Link href={'/launch'}>
-                                        <p style={{fontSize: '20px', color: '#2394D4', cursor: 'pointer'}}>more></p>
-                                    </Link>
-                                </li>
-                                {
-                                    launchBol ? launch.length > 0 ? launch.map((i, index) => {
-                                        if (index > 2) {
-                                            return ''
-                                        } else {
-                                            return <li className={styles.li} key={index}
-                                            >
-                                                <div style={{display: 'flex', alignItems: 'center', width: '30%'}}>
-                                                    <p style={{
-                                                        textAlign: 'center',
-                                                        width: '30px',
-                                                        lineHeight: '30px',
-                                                        borderRadius: '50%',
-                                                        fontSize: '16px',
-                                                        backgroundColor: '#454545',
-                                                        color: 'white',
-                                                        marginRight: '10px'
-                                                    }}>{i.symbol.slice(0, 1)}</p>
-                                                    <div style={{width: '78%'}}>
-                                                        <Tooltip title={i.symbol}>
-                                                            <p style={{
-                                                                textAlign: 'center',
-                                                                fontSize: '20px',
-                                                                overflow: 'hidden',
-                                                                lineHeight: '1.3',
-                                                                textOverflow: 'ellipsis',
-                                                                whiteSpace: 'nowrap',
-                                                                fontWeight: 'bold'
-                                                            }}>{i.symbol}</p>
-                                                        </Tooltip>
-                                                        <div className={styles['dis']} style={{
-                                                            padding: '3px'
-                                                        }}>
-                                                            <GlobalOutlined
-                                                                style={{cursor: 'pointer', fontSize: '20px'}}
-                                                                onClick={() => push(i, 'one')}/>
-                                                            <TwitterOutlined
-                                                                style={{cursor: 'pointer', fontSize: '20px'}}
-                                                                onClick={() => push(i, 'two')}/>
-                                                            <SendOutlined
-                                                                style={{cursor: 'pointer', fontSize: '20px'}}
-                                                                onClick={() => push(i, 'three')}/>
+                                        {
+                                            item.bol ? item?.data?.length > 0 ? item.data.map((i, index) => {
+                                                if (index > 2) {
+                                                    return ''
+                                                } else {
+                                                    return <li className={styles.li} key={index}
+                                                    >
+                                                        <div className={styles.homeCardListBox}>
+                                                            <p className={styles.homeCardIm}>{i.symbol.slice(0, 1)}</p>
+                                                            <div style={{width: '78%'}}>
+                                                                <Tooltip title={i.symbol}>
+                                                                    <p className={styles.homeCardSymbol}>{i.symbol}</p>
+                                                                </Tooltip>
+                                                                <div className={styles['dis']} style={{
+                                                                    padding: '3px'
+                                                                }}>
+                                                                    <GlobalOutlined
+                                                                        style={{cursor: 'pointer', fontSize: '20px'}}
+                                                                        onClick={() => push(i, 'one')}/>
+                                                                    <TwitterOutlined
+                                                                        style={{cursor: 'pointer', fontSize: '20px'}}
+                                                                        onClick={() => push(i, 'two')}/>
+                                                                    <SendOutlined
+                                                                        style={{cursor: 'pointer', fontSize: '20px'}}
+                                                                        onClick={() => push(i, 'three')}/>
+                                                                </div>
+                                                            </div>
                                                         </div>
+                                                        <div className={styles.homeCardDate}>
+                                                            <Countdown title=""
+                                                                       value={getD(dayjs(i.presale_time ? i.presale_time : i.launch_time).isAfter(dayjs()) ? dayjs(i.presale_time ? i.presale_time : i.launch_time).diff(dayjs(), 'seconds') : '')}
+                                                                       format="HH:mm:ss"/>
+                                                        </div>
+                                                        <img
+                                                            src={`${baseUrl}${i?.presale_platform_logo ? i.presale_platform_logo : i.launch_platform_logo}`}
+                                                            onClick={() => pushLink(i?.presale_link ? i.presale_link : i.launch_link)}
+                                                            alt=""
+                                                            width={'30px'} height={'30px'}
+                                                            className={styles.homeCardListImg}/>
+                                                    </li>
+                                                }
+                                            }) : [] : [1, 2, 3,].map((i, index) => {
+                                                return <li key={index}>
+                                                    <div className={styles.homeCardModule}>
+                                                        <Skeleton.Avatar active={true} size={'default'} shape={'circle'}
+                                                                         style={{marginRight: '15px'}}/>
+                                                        <Skeleton.Input active={true} size={'default'} block={true}/>
                                                     </div>
-                                                </div>
-                                                <div style={{
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'start',
-                                                    lineHeight: 1, width: '30%'
-                                                }}>
-                                                    <Countdown title=""
-                                                               value={getD(dayjs(i.launch_time).isAfter(dayjs()) ? dayjs(i.launch_time).diff(dayjs(), 'seconds') : '')}
-                                                               format="HH:mm:ss"/>
-                                                </div>
-                                                <img src={baseUrl + i.launch_platform_logo}
-                                                     onClick={() => pushLink(i.launch_link)} alt=""
-                                                     width={'30px'} style={{borderRadius: '50%', marginRight: '10px'}}/>
-                                            </li>
+                                                </li>
+                                            })
                                         }
-                                    }) : [] : [1, 2, 3,].map((i, index) => {
-                                        return <li key={index}>
-                                            <div style={{
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                width: '100%',
-                                                lineHeight: '50px'
-                                            }}>
-                                                <Skeleton.Avatar active={true} size={'default'} shape={'circle'}
-                                                                 style={{marginRight: '15px'}}/>
-                                                <Skeleton.Input active={true} size={'default'} block={true}/>
-                                            </div>
-                                        </li>
-                                    })
-                                }
-                                {}
-                            </ul>
-                        </Card>
-                    </div>
+                                    </ul>
+                                </Card>
+                            </div>
+                        })
+                    }
                 </div>
                 {/*下面*/}
-                <div className={'homeTable'}>
-                    <div className={styles['dis']} style={{width: '100%', marginBottom: '10px', padding: '0 24px'}}>
-                        <p style={{fontSize: '20px', fontWeight: 'bold'}}>Featured</p>
-                        {/*style={{width: '37%'}}*/}
+                <div className={`homeTable ${styles.homeCardBot}`}>
+                    <div className={styles['dis']}>
+                        <p style={{fontSize: '20px', fontWeight: 'bold'}}>{home.featured}</p>
                         <div className={styles['dis']}>
                             {/*时间选择*/}
                             <Segmented options={['5m', '1h', '6h', '24h']} onChange={changSeg} defaultValue={'24h'}/>
                             <Link href={'/featured'}>
-                                <p style={{
-                                    fontSize: '20px',
-                                    color: '#2394D4',
-                                    cursor: 'pointer',
-                                    marginLeft: '30px'
-                                }}>more></p>
+                                <p className={styles.homeFeaturedMore}>{home.more}</p>
                             </Link>
                         </div>
                     </div>
@@ -576,19 +458,16 @@ export default function Home() {
                     }}
                            dataSource={featured.length > 5 ? featured.slice(0, 5) : featured}
                            pagination={false} bordered={false}/>
-                    <div style={{
-                        display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-end', marginTop: '10px'
-                    }}>
-                    </div>
                 </div>
             </div>
             {/*右边*/}
-            <div className={'cardParams'} id="scrollableDiv" style={{height: `${refHeight?.current?.offsetHeight||0}px`}}>
-                <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
-                    <p style={{fontSize: '20px', fontWeight: 'bold'}}>Social</p>
+            <div className={'cardParams'} id="scrollableDiv"
+                 style={{height: `${refHeight?.current?.offsetHeight || 0}px`}}>
+                <div className={styles.homeRightTop}>
+                    <p className={styles.homeRightTopName}>{home.social}</p>
                     <Link href={'/social'}>
                         <p onClick={pushSocial}
-                           style={{fontSize: '20px', color: '#2394D4', cursor: 'pointer'}}>more></p>
+                           style={{fontSize: '20px', color: '#2394D4', cursor: 'pointer'}}>{home.more}</p>
                     </Link>
                 </div>
                 {
@@ -616,11 +495,13 @@ export default function Home() {
                                     user={userPa}
                                 />
                             }) : ''}
-                        </InfiniteScroll> : <div style={{textAlign: 'center', fontSize: '20px'}}>No data yet</div> :
-                        <div style={{textAlign: 'center', fontSize: '20px'}}>Please sign in</div>
+                        </InfiniteScroll> : <div style={{textAlign: 'center', fontSize: '20px'}}>{home.noData}</div> :
+                        <div style={{textAlign: 'center', fontSize: '20px'}}>{home.sign}</div>
                 }
             </div>
         </div>
         <Bott/>
     </div>);
 }
+
+export default Home

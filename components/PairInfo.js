@@ -87,7 +87,7 @@ export default function PairInfo() {
             <div className="grid grid-flow-row grid-cols-2 px-3 mt-3">
               <div className="grid grid-flow-row grid-cols-2 m-9 w-32">
                 <div className="w-9">
-                  <img src={`${pairBaseData?.logo?baseUrl+'/'+pairBaseData.logo:'/Ellipse1.png'}`} alt="logo" width={40} height={40} className="inline rounded-full" />
+                  <img src={`${pairBaseData?.logo?baseUrl+pairBaseData.logo:'/Ellipse1.png'}`} alt="logo" width={40} height={40} className="inline rounded-full" />
                 </div>
                 <div className="w-32">
                   <div>
@@ -98,26 +98,6 @@ export default function PairInfo() {
                     </div>
                 </div>
               </div>
-              {/* <div className="mt-4">
-                  <span className="text-xs">token: {tokenAddressEllipsis}</span>
-                  <CopyToClipboard text={pairDexData.baseToken.address}>
-                    <Image src="/assets/copy.svg" width={20} height={20} className="ml-2 inline cursor-pointer" />
-                  </CopyToClipboard>
-                  <span className="text-xs truncate inline ml-6">pair: {pairAddressEllipsis}</span>
-                  <CopyToClipboard text={pairDexData.pairAddress}>
-                    <Image src="/assets/copy.svg" width={20} height={20} className="ml-2 inline cursor-pointer" />
-                  </CopyToClipboard>
-                </div> */}
-              {/* <div className="mt-5">
-                  <ul className="inline-block space-x-5">
-                    <li className="inline">
-                      <Link href={`https://etherscan.io/token/${pairDexData.baseToken.address}`} target="_blank">
-                        <Image src="/assets/ether-scan.png" width={20} height={20} />
-                      </Link>
-                    </li>
-
-                  </ul>
-                </div> */}
               <div className="m-9">
                 <p className="text-block text-3xl">$ {priceUsd}</p>
                 <span style={{ color: pairDexData.priceChange.h24 >= 0 ? '#17c671' : '#ea3943' }}>{pairDexData.priceChange.h24} %</span>

@@ -1,5 +1,4 @@
 import React, {useRef, useState, useEffect} from "react";
-import styled from "styled-components";
 import {CameraIcon, ChevronUpIcon} from "@heroicons/react/solid";
 import {ArrowSmRightIcon} from "@heroicons/react/solid";
 import {XIcon} from "@heroicons/react/solid";
@@ -12,7 +11,8 @@ import {ExclamationCircleIcon} from "@heroicons/react/outline";
 import {LoadingOutlined} from '@ant-design/icons'
 import dynamic from "next/dynamic";
 import {notification} from "antd";
-const InfoBox = dynamic(() => import('./HelperComponents/InfoBox'),{suspense:false})
+import styled from '/styles/all.module.css'
+const InfoBox = dynamic(() => import('./HelperComponents/InfoBox'),)
 
 function InputBox({user, setPosts, increaseSizeAnim,change}) {
     const inputRef = useRef(null);
@@ -82,16 +82,7 @@ function InputBox({user, setPosts, increaseSizeAnim,change}) {
     const FormBottomHalf = ({}) => {
         return (
             <>
-        <span
-            className="mt-5"
-            style={{
-                height: ".65px",
-                backgroundColor: "lightgrey",
-                margin: "0.1 1.1rem 0 1.1rem",
-                display: "block",
-            }}
-        ></span>
-
+        <p className={`mt-5 ${styled.inputBoxBoxLine}`}></p>
                 <div className="flex space-x-4 mt-2 ml-4 mr-4 justify-evenly items-center">
                     <div
                         className="flex flex-grow justify-center items-center hover:bg-gray-100 space-x-2 mb-2 pt-2 pb-2 pl-2.5 pr-2.5 rounded-xl cursor-pointer"
@@ -139,14 +130,7 @@ function InputBox({user, setPosts, increaseSizeAnim,change}) {
 
     return (
         <>
-            <div
-                style={{
-                    boxShadow:
-                        "rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px",
-                    borderRadius:'10px',backgroundColor:'rgb(254,239,146)'
-                }}
-                className=" mt-3 mb-10"
-            >
+            <div className={`${styled.inputBoxBox} mt-3 mb-10`}>
                 {textareaEnabled ? (
                     <>
                         <div className="pt-6 pl-6 pr-6">
@@ -158,7 +142,7 @@ function InputBox({user, setPosts, increaseSizeAnim,change}) {
                                         {user.username}
                                     </p>
                                     <div className="flex text-gray-500 text-sm space-x-1 items-center">
-                                        <GlobalOutlined style={{fontSize: "1rem"}}/>
+                                        <GlobalOutlined style={{fontSize: "18px"}}/>
                                         <p>Public</p>
                                     </div>
                                 </div>
@@ -167,17 +151,16 @@ function InputBox({user, setPosts, increaseSizeAnim,change}) {
                                 <div
                                     className={`p-3.5 bg-gray-100 rounded-xl items-center ${increaseSizeAnim.sizeIncDown} `}
                                 >
-                                    <InputTextarea
+                                    <textarea
                                         name="postText"
                                         value={postText}
-                                        type="text"
                                         rows="4"
-                                        style={{width:'100%'}}
+                                        style={{width:'100%',resize: 'none'}}
                                         onChange={handleChange}
                                         className={`outline-none  bg-transparent font-light text-md placeholder-gray-400 text-lg `}
                                         placeholder={`What's on your mind, ${user.name}?`}
                                         onKeyDown={onEnterPress}
-                                    ></InputTextarea>
+                                    ></textarea>
                                     <ChevronUpIcon
                                         className="h-6 w-6 cursor-pointer text-gray-500 ml-auto"
                                         onClick={() => {
@@ -187,29 +170,19 @@ function InputBox({user, setPosts, increaseSizeAnim,change}) {
                                 </div>
                                 {imagePreview && (
                                     <>
-                                        <ImageContainerDiv
-                                            style={{marginTop: "1.15rem", marginBottom: "-1.2rem"}}
-                                        >
-                                            <ImagePreviewDiv
-                                                onClick={() => {
+                                        <div className={styled.inputBoxView}>
+                                            <div className={styled.inputBoxIcon} onClick={() => {
                                                     setImage(null);
                                                     setImagePreview(null);
                                                 }}
                                             >
                                                 <XIcon className="h-6 text-gray-700"/>
-                                            </ImagePreviewDiv>
-                                            <img style={{
-                                                height: '300px',
-                                                width: '90%',
-                                                marginLeft: 'auto',
-                                                marginRight: 'auto',
-                                                marginBottom: '20px',
-                                                transition: 'all 0.22s ease-out'
-                                            }}
+                                            </div>
+                                            <img className={styled.inputBoxImg}
                                                  src={imagePreview}
                                                  alt="imagePreview"
                                             ></img>
-                                        </ImageContainerDiv>
+                                        </div>
                                     </>
                                 )}
                                 <FormBottomHalf/>
@@ -245,29 +218,22 @@ function InputBox({user, setPosts, increaseSizeAnim,change}) {
 
                                 {imagePreview && (
                                     <>
-                                        <ImageContainerDiv
-                                            style={{marginTop: "1.125rem", marginBottom: "-.25rem"}}
+                                        <div
+                                            className={styled.inputBoxView}
                                         >
-                                            <ImagePreviewDiv
+                                            <div className={styled.inputBoxIcon}
                                                 onClick={() => {
                                                     setImage(null);
                                                     setImagePreview(null);
                                                 }}
                                             >
                                                 <XIcon className="h-6 text-gray-700"/>
-                                            </ImagePreviewDiv>
-                                            <img style={{
-                                                height: '300px',
-                                                width: '90%',
-                                                marginLeft: 'auto',
-                                                marginRight: 'auto',
-                                                marginBottom: '20px',
-                                                transition: 'all 0.22s ease-out'
-                                            }}
+                                            </div>
+                                            <img className={styled.inputBoxImg}
                                                  src={imagePreview}
                                                  alt="imagePreview"
                                             ></img>
-                                        </ImageContainerDiv>
+                                        </div>
                                     </>
                                 )}
                                 <FormBottomHalf/>
@@ -289,22 +255,3 @@ function InputBox({user, setPosts, increaseSizeAnim,change}) {
 }
 
 export default InputBox;
-const ImagePreviewDiv = styled.div`
-  cursor: pointer;
-  position: absolute;
-  top: 4.5%;
-  right: 6.5%;
-  padding: 0.3rem;
-  background-color: white;
-  border-radius: 50%;
-  z-index: 70;
-`;
-
-const ImageContainerDiv = styled.div`
-  position: relative;
-`;
-
-
-const InputTextarea = styled.textarea`
-  resize: none;
-`;

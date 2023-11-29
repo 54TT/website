@@ -2,11 +2,11 @@
 .ul {
     list-style: none;
 }
-
 .dis {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-top: 10px;
 }
 
 .ul > li {
@@ -56,30 +56,9 @@
     width: 64%;
 }
 
-.boxBott {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: rgb(293, 213, 62);
-    border-radius: 10px;
-    padding: 20px 30px 15px 12px;
-    transition: box-shadow 0.3s;
-    margin: 25px 0;
-}
 
-.boxBott:hover {
-    box-shadow: 15px 15px 0 rgb(188, 158, 54)
-}
 
-.boxLogo {
-    display: flex;
-    justify-content: center;
-    padding: 30px 0;
-    background-color: rgb(251, 213, 62);
-    margin-bottom: 20px;
-    border-radius: 20px;
-    transition: box-shadow 0.3s;
-}
+
 
 .abc {
     background-color: rgb(253, 213, 62);
@@ -92,9 +71,6 @@
     box-shadow: 15px 15px 0 rgb(188, 158, 54)
 }
 
-.boxLogo:hover {
-    box-shadow: 15px 15px 0 rgb(188, 158, 54)
-}
 
 .rightUl {
     width: 100%;
@@ -153,4 +129,75 @@
     text-overflow: ellipsis;
 }
 
+.homeTop{
+    display: flex;justify-content: space-between;
+}
 
+.homeModule{
+    width: 46%; background-color: rgb(253,213,62); padding: 0;
+}
+.homeCard{
+    min-width: 300px;
+    background-color: rgb(253, 213, 62);
+    width: 100%;
+    border: none;
+}
+.homeCardName{
+    font-size: 20px;font-weight: bold;
+}
+.homeCardMore{
+    font-size: 20px;color: #2394D4;cursor: pointer;
+}
+.homeCardListBox{
+    display: flex;align-items: center;width: 30%;
+}
+.homeCardIm{
+    text-align: center;
+    width: 30px;
+    line-height: 30px;
+    border-radius: 50%;
+    font-size: 16px;
+    background-color: #454545;
+    color: white;
+    margin-right: 10px;
+}
+.homeCardDate{
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    line-height: 1;
+    width: 30%;
+}
+.homeCardSymbol{
+    text-align: center;
+    font-size: 20px;
+    overflow: hidden;
+    line-height: 1.3;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: bold;
+}
+.homeCardListImg{
+    border-radius: 50%;margin-right: 10px;
+}
+.homeCardModule{
+    display: flex;
+    align-items: center;
+    width: 100%;
+    line-height: 50px;
+}
+.homeCardBot{
+    width: 100%;margin-bottom: 10px;padding: 0 24px;
+}
+.homeFeaturedMore{
+    font-size: 20px;
+    color: #2394D4;
+    cursor: pointer;
+    margin-left: 30px;
+}
+.homeRightTop{
+    display:flex; align-items: center; justify-content: space-between;
+}
+.homeRightTopName{
+    font-size: 20px;font-weight: bold;
+}

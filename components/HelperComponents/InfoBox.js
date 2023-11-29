@@ -1,14 +1,11 @@
 import { XIcon } from "@heroicons/react/solid";
 import React from "react";
+import styled from '/styles/all.module.css'
 
 function InfoBox({ Icon, message, content, setError, marginTop }) {
   return (
     <div
-      style={{
-        position: "relative",
-          backgroundColor:'rgb(254,239,146)'
-      }}
-      className={` ${
+      className={`${styled.infoBoxTop} ${
         marginTop ? "mt-0" : "mt-7"
       }  p-3 rounded-xl shadow-md`}
     >
@@ -25,14 +22,7 @@ function InfoBox({ Icon, message, content, setError, marginTop }) {
       </p>
       {setError && (
         <XIcon
-          className="h-4 sm:h-6 "
-          style={{
-            right: ".6rem",
-            top: ".6rem",
-            position: "absolute",
-
-            cursor: "pointer",
-          }}
+          className={`h-4 sm:h-6 ${styled.infoBoxIcon}`}
           onClick={() => {
             setError(null);
           }}
