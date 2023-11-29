@@ -11,5 +11,6 @@ module.exports = {
         // 配置静态文件的根路径
         // assetPrefix:  NODE_ENV === 'production' ? '/public' : '',
     },
+    distDir: 'build',
   }
   
