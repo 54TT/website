@@ -1,4 +1,4 @@
-.chatLeft{
+.chatLeft {
     padding: 10px;
     border-radius: 35%;
     margin-bottom: 11px;
@@ -7,7 +7,8 @@
     color: black;
     background-color: rgba(243, 244, 246);
 }
-.chatRight{
+
+.chatRight {
     padding: 10px;
     border-radius: 35%;
     margin-bottom: 11px;
@@ -16,7 +17,8 @@
     color: black;
     background-color: rgba(243, 244, 246);
 }
-.chatSearchTop{
+
+.chatSearchTop {
     position: absolute;
     top: 0;
     left: 0;
@@ -27,40 +29,46 @@
     border-radius: 10px;
     box-shadow: rgba(0, 0, 0, 0.35) 0 5px 15px;
 }
-.chatSearchName{
+
+.chatSearchName {
     user-select: none;
     font-size: 17px;
 }
-.errorTop{
-     display: flex;
+
+.errorTop {
+    display: flex;
     justify-content: center;
     align-items: center;
     margin-top: 15px;
     width: 100%;
     margin-bottom: -20px;
 }
-.errorName{
+
+.errorName {
     color: #fe6f8a;
     font-size: 16px;
     font-weight: bold;
     margin-left: 10px;
 }
-.infoBoxTop{
+
+.infoBoxTop {
     position: relative;
-    background-color:rgb(254,239,146);
+    background-color: rgb(254, 239, 146);
 }
-.infoBoxIcon{
+
+.infoBoxIcon {
     right: 10px;
     top: 10px;
     position: absolute;
     cursor: pointer;
 }
-.sidebarRowName{
+
+.sidebarRowName {
     font-weight: bold;
     font-size: 16px;
 }
 
-.commentNotificationBox{
+.commentNotificationBox {
     display: flex;
     cursor: pointer;
     border-radius: 8px;
@@ -70,7 +78,8 @@
     justify-content: space-between;
 
 }
-.followNotificationBox{
+
+.followNotificationBox {
     height: fit-content;
     margin-left: 10px;
     padding: 10px;
@@ -81,41 +90,54 @@
     color: rgba(107, 114, 128);
     align-self: flex-start;
     font-size: 16px;
-    box-shadow: rgba(60, 64, 67, 0.3) 0 1px 2px 0,rgba(60, 64, 67, 0.15) 0 1px 3px 1px;
+    box-shadow: rgba(60, 64, 67, 0.3) 0 1px 2px 0, rgba(60, 64, 67, 0.15) 0 1px 3px 1px;
 }
 
-.followerUserBox{
+.followerUserBox {
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
-.followerUserName{
-    overflow: hidden;text-overflow: ellipsis; white-space: nowrap;
+
+.followerUserName {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
-.profileFieldsBox{
+
+.profileFieldsBox {
     position: relative;
 }
-.profileFieldsIconBox{
-    display:flex;align-items:center;
+
+.profileFieldsIconBox {
+    display: flex;
+    align-items: center;
 }
-.profileFieldsIcon{
-    font-size:20px;font-weight:bold;margin-right:10px;
+
+.profileFieldsIcon {
+    font-size: 20px;
+    font-weight: bold;
+    margin-right: 10px;
 }
-.profileFieldsIcons{
-    font-size:20px;font-weight:bold;
+
+.profileFieldsIcons {
+    font-size: 20px;
+    font-weight: bold;
 }
-.profileFieldsTextarea{
+
+.profileFieldsTextarea {
     overflow: hidden;
     resize: none;
     outline: none;
-    padding:15px;
+    padding: 15px;
     margin: 0 0;
     border: 2px solid #f0e6ff;
     width: 100%;
     color: black;
     border-radius: 10px;
 }
-.profileFieldsDiv{
+
+.profileFieldsDiv {
     background-color: white;
     display: flex;
     align-items: center;
@@ -125,14 +147,16 @@
     margin: 15px 0 0 0;
     border: 2px solid #f0e6ff;
 }
-.profileFieldsInput{
+
+.profileFieldsInput {
     width: 100%;
     outline: none;
     border: none;
     color: black;
     margin-left: 10px;
 }
-.profileFieldsAdd{
+
+.profileFieldsAdd {
     cursor: pointer;
     padding: 6px;
     margin-top: 15px;
@@ -140,82 +164,107 @@
     border-radius: 6px;
     font-weight: bold;
 }
-.profileFieldsYou{
-    display:flex;
+
+.profileFieldsYou {
+    display: flex;
     column-gap: 6px;
     margin-top: 8px;
     padding: 10px;
     background-color: #efeeef;
-    border-radius:7px;
+    border-radius: 7px;
     user-select: none;
     cursor: pointer;
 }
-.profileFieldsName{
+
+.profileFieldsName {
     color: black;
     text-decoration: none;
 }
-.bottomBox{
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background-color: rgb(293, 213, 62);
-        border-radius: 10px;
-        padding: 20px 30px 15px 12px;
-        transition: box-shadow 0.3s;
-        margin: 25px 0;
+
+.bottomBox {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgb(293, 213, 62);
+    border-radius: 10px;
+    padding: 20px 30px 15px 12px;
+    transition: box-shadow 0.3s;
+    margin: 25px 0;
 
 }
+
 .bottomBox:hover {
     box-shadow: 15px 15px 0 rgb(188, 158, 54)
 }
-.bottomTop{
+
+.bottomTop {
     width: 20%;
 }
-.bottomImg{
-    margin: 0 auto;width:50%;
+
+.bottomImg {
+    margin: 0 auto;
+    width: 50%;
 }
-.bottomSlign{
-    font-size: 20px;font-weight: bold;text-align: center;
+
+.bottomSlign {
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
 }
-.bottomText{
-    width: 78%;color: rgb(98,98,98);font-size: 18px;font-weight: bold;line-height: 1.5;
+
+.bottomText {
+    width: 78%;
+    font-size: 18px;
+    font-weight: bold;
+    line-height: 1.5;
 }
+
 .bottomBoxLogo {
     display: flex;
     justify-content: center;
-    padding: 20px 0;
-    background-color: rgb(251, 213, 62);
+    padding: 15px 0;
     margin-bottom: 20px;
     border-radius: 20px;
     transition: box-shadow 0.3s;
 }
+
 .bottomBoxLogo:hover {
     box-shadow: 15px 15px 0 rgb(188, 158, 54)
 }
-.bottomImgs{
+
+.bottomImgs {
     display: flex;
     align-items: center;
-    justify-content: space-between;width: 20%;
+    justify-content: space-between;
+    width: 15%;
 }
-.bottomBot{
-    color:rgb(55,55,55);margin:20px 0;display:flex;align-items:center;justify-content:center;
+
+.bottomBot {
+    margin: 20px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 
-
-.commentCommentImg{
-    border-radius:50%;margin-top:10px;
+.commentCommentImg {
+    border-radius: 50%;
+    margin-top: 10px;
 }
-.commentCommentUser{
+
+.commentCommentUser {
     font-weight: bold;
     margin-bottom: -5px;
-    font-size:15px;
+    font-size: 15px;
     cursor: pointer;
 }
-.commentCommentHov{
-    width: 50px;margin-left: 8px;
+
+.commentCommentHov {
+    width: 50px;
+    margin-left: 8px;
 }
-.commentCommentOpen{
+
+.commentCommentOpen {
     height: 40px;
     width: 40px;
     border-radius: 50%;
@@ -223,7 +272,8 @@
     padding: 7px;
     font-size: 18px;
 }
-.commentCommentIs{
+
+.commentCommentIs {
     visibility: hidden;
     height: 40px;
     width: 40px;
@@ -233,58 +283,77 @@
     font-size: 18px;
 }
 
-.featuredColumnsBox{
-    display: flex;align-items: center;justify-content:space-between;width:50%;margin:0 auto;
+.featuredColumnsBox {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    width: 90%;
+    margin: 0 auto;
 }
-.featuredColumns{
+
+.featuredColumns {
     width: 30px;
     background-color: #454545;
     color: white;
     line-height: 30px;
     text-align: center;
     border-radius: 50%;
+    margin-right: 10px;
 }
-.featuredBox{
+
+.featuredBox {
     margin-right: 20px;
 }
-.featuredBoxCard{
+
+.featuredBoxCard {
     min-width: 700px;
-    background-color: rgb(253, 213, 62);
-    width: 100%; border: none;
+    /*background-color: rgb(253, 213, 62);*/
+    width: 100%;
+    border: none;
 }
-.featuredBoxTop{
+
+.featuredBoxTop {
     margin-bottom: 10px;
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
-.featuredBoxBot{
-    display: flex;align-items: center; justify-content: end;
+
+.featuredBoxBot {
+    display: flex;
+    align-items: center;
+    justify-content: end;
 }
-.featuredBoxName{
+
+.featuredBoxName {
     margin-top: 80px;
     text-align: center;
     line-height: 1;
     font-size: 20px;
-    color: rgb(98,98,98);
+    color: rgb(98, 98, 98);
 }
 
 
-.inputBoxBoxLine{
+.inputBoxBoxLine {
     height: 1px;
     background-color: lightgrey;
     margin: 1px 16px;
     display: block;
 }
-.inputBoxBox{
+
+.inputBoxBox {
     box-shadow: rgba(50, 50, 93, 0.25) 0 2px 5px -1px, rgba(0, 0, 0, 0.3) 0 1px 3px -1px;
-    border-radius:10px;
-    background-color:rgb(254,239,146)
+    border-radius: 10px;
+    background-color: rgb(254, 239, 146)
 }
-.inputBoxView{
-    margin-top: 18px;margin-bottom: -18px;position: relative;
+
+.inputBoxView {
+    margin-top: 18px;
+    margin-bottom: -18px;
+    position: relative;
 }
-.inputBoxIcon{
+
+.inputBoxIcon {
     cursor: pointer;
     position: absolute;
     top: 4.5%;
@@ -294,7 +363,8 @@
     border-radius: 50%;
     z-index: 70;
 }
-.inputBoxImg{
+
+.inputBoxImg {
     height: 300px;
     width: 90%;
     margin-left: auto;
@@ -304,8 +374,7 @@
 }
 
 
-
-.launchTableP{
+.launchTableP {
     width: 30px;
     border-radius: 50%;
     background-color: #454545;
@@ -313,64 +382,90 @@
     text-align: center;
     line-height: 30px;
 }
-.launchTableText{
-    font-weight: bold;font-size: 18px;text-align: center;
-}
-.launchTableDiv{
-    display: flex;align-items: center;justify-content: space-between;cursor: pointer;
-}
-.launchTableImg{
-    display:block;border-radius:50%;margin:0 auto;
+
+.launchTableText {
+    font-weight: bold;
+    font-size: 18px;
+    text-align: center;
 }
 
-.launchBox{
+.launchTableDiv {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+}
+
+.launchTableImg {
+    display: block;
+    border-radius: 50%;
+    margin: 0 auto;
+}
+
+.launchBox {
     margin-right: 20px;
 }
 
-.launchBoxCard{
+.launchBoxCard {
     min-width: 700px;
-    background-color: rgb(253, 213, 62);
     width: 100%;
     border: none;
 }
-.launchBoxCardBox{
+
+.launchBoxCardBox {
     margin-bottom: 10px;
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
-.launchBoxFilter{
-   display: flex; justify-content: end;margin-bottom: 20px;
+
+.launchBoxFilter {
+    display: flex;
+    justify-content: end;
+    margin-bottom: 20px;
 }
-.launchBoxBot{
+
+.launchBoxBot {
     margin-top: 80px;
     text-align: center;
     line-height: 1;
     font-size: 20px;
-    color: rgb(98,98,98);
+    color: rgb(98, 98, 98);
 }
-.newPairTable{
+
+.newPairTable {
     display: flex;
     align-items: start;
     justify-content: start;
 }
-.newPairTableText{
-    display: flex;align-items: flex-end;line-height: 1;margin-left: 15px;
+
+.newPairTableText {
+    display: flex;
+    align-items: flex-end;
+    line-height: 1;
+    margin-left: 15px;
 }
-.newPairTableImg{
-    border-radius: 50%;display: block;margin: 0 auto;height: auto;width: auto;
+
+.newPairTableImg {
+    border-radius: 50%;
+    display: block;
+    margin: 0 auto;
+    height: auto;
+    width: auto;
 }
 
 
-.postCardBox{
-    background-color:rgb(254,239,146);
+.postCardBox {
+    background-color: rgb(254, 239, 146);
 }
-.postCardBoxClick{
+
+.postCardBoxClick {
     border-top: 1px solid lightgrey;
     border-bottom: 1px solid lightgrey;
     margin-top: 10px;
 }
-.presaleBoxTableText{
+
+.presaleBoxTableText {
     width: 30px;
     border-radius: 50%;
     background-color: #454545;
@@ -378,30 +473,42 @@
     text-align: center;
     line-height: 30px;
 }
-.presaleBoxTableP{
-    font-weight: bold;font-size: 18px;text-align: center,
-}
-.presaleBoxTableImg{
-    display: flex;align-items:center;justify-content: space-between;cursor: pointer;
-}
-.presaleBoxTableImgs{
-    display:block;border-radius:50%;margin:0 auto;
+
+.presaleBoxTableP {
+    font-weight: bold;
+    font-size: 18px;
+    text-align: center;
 }
 
-.rightSideColumnName{
+.presaleBoxTableImg {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+}
+
+.presaleBoxTableImgs {
+    display: block;
+    border-radius: 50%;
+    margin: 0 auto;
+}
+
+.rightSideColumnName {
     font-size: 18px;
     margin-left: 6px;
     margin-top: 24px;
 }
-.rightSideColumnClick{
-   padding: 7px;
+
+.rightSideColumnClick {
+    padding: 7px;
     display: flex;
     cursor: pointer;
     border-radius: 10px;
     background-color: rgba(139, 92, 246);
     color: white;
 }
-.rightSideColumnL{
+
+.rightSideColumnL {
     overflow-y: auto;
     display: flex;
     cursor: pointer;
@@ -412,13 +519,19 @@
 }
 
 
-.followersBox{
-    background-color: rgb(253,213,62);margin-right: 20px;border-radius: 10px;
+.followersBox {
+    background-color: rgb(253, 213, 62);
+    margin-right: 20px;
+    border-radius: 10px;
 }
-.followersBoxMin{
-    height: calc(100vh - 4.5rem);overflow-y: auto;display: flex;
+
+.followersBoxMin {
+    height: calc(100vh - 4.5rem);
+    overflow-y: auto;
+    display: flex;
 }
-.followersBoxData{
+
+.followersBoxData {
     width: 50%;
     margin: 20px auto 0;
     overflow-y: auto;
@@ -426,12 +539,14 @@
     padding: 20px;
     background-color: #B2DB7E;
 }
-.followersBoxName{
+
+.followersBoxName {
     user-select: none;
     font-size: 20px;
     font-weight: bold;
 }
-.followersBoxFollow{
+
+.followersBoxFollow {
     margin-bottom: 10px;
     border: 1px solid rgb(128, 128, 128);
     width: 30%;
@@ -443,13 +558,15 @@
     background-color: #BCEE7D;
     flex-wrap: wrap;
 }
-.followersBoxLink{
+
+.followersBoxLink {
     cursor: pointer;
     user-select: none;
     font-weight: bold;
     font-size: 19px;
 }
-.followersBoxFoll{
+
+.followersBoxFoll {
     height: fit-content;
     padding: 7px;
     display: flex;
@@ -461,8 +578,7 @@
 }
 
 
-
-.followingBox{
+.followingBox {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -470,19 +586,21 @@
 }
 
 
-.usernameBox{
-    background-color: rgb(188,238,125);
+.usernameBox {
+    background-color: rgb(188, 238, 125);
     margin-right: 20px;
     border-radius: 10px;
 }
-.usernameBoxTop{
+
+.usernameBoxTop {
     position: relative;
     width: 100%;
     height: 250px;
     overflow: hidden;
     border-radius: 10px 10px 0 0;
 }
-.usernameBoxSetName{
+
+.usernameBoxSetName {
     position: absolute;
     left: 50%;
     bottom: -10px;
@@ -490,12 +608,17 @@
     display: flex;
     align-items: center;
     width: 40%;
-    justify-content:center;
+    justify-content: center;
 }
-.usernameBoxIcon{
-    font-size: 20px;font-weight: bold;margin-left: 10px;color: blue;
+
+.usernameBoxIcon {
+    font-size: 20px;
+    font-weight: bold;
+    margin-left: 10px;
+    color: blue;
 }
-.usernameBoxDiv{
+
+.usernameBoxDiv {
     display: flex;
     position: absolute;
     cursor: pointer;
@@ -508,7 +631,8 @@
     color: white;
     font-size: 16px;
 }
-.usernameBoxUp{
+
+.usernameBoxUp {
     padding: 10px;
     cursor: pointer;
     background-color: white;
@@ -517,7 +641,8 @@
     left: 50%;
     border-radius: 50%;
 }
-.usernameBoxUpdate{
+
+.usernameBoxUpdate {
     padding: 10px;
     background-color: white;
     cursor: pointer;
@@ -526,7 +651,11 @@
     bottom: 2%;
     border-radius: 50%;
 }
-.usernameBoxBot{
-    margin-top: 20px;min-height: calc(100vh - 26rem);padding-top: 60px;background-color:rgb(253,213,62);
+
+.usernameBoxBot {
+    margin-top: 20px;
+    min-height: calc(100vh - 26rem);
+    padding-top: 60px;
+    background-color: rgb(253, 213, 62);
 }
 

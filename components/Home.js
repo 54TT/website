@@ -37,9 +37,10 @@ const {Countdown} = Statistic;
 const PostCard = dynamic(() => import('./PostCard'))
 const Bott = dynamic(() => import('./Bottom'))
 import {changeLang} from "/utils/set";
+import {responseIterator} from "@apollo/client/link/http/responseIterator";
 function Home() {
     const router = useRouter();
-    const {bolLogin, changeShowData, showData, changeBolLogin} = useContext(CountContext);
+    const {bolLogin, changeShowData, showData, changeBolLogin,changeTheme} = useContext(CountContext);
     const home=changeLang('home')
     const [cookBol, setCook] = useState(false);
     useEffect(() => {
@@ -141,41 +142,42 @@ function Home() {
         }
     }, {
         title: home.pair, align: 'center', render: (text, record) => {
-            return <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-                <span>{record.baseToken?.symbol}/{record.quoteToken?.symbol}</span>
+            return <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}} >
+                <span className={changeTheme?'darknessFont':'brightFont'}>{record?.baseToken?.symbol}/</span>
+                <span style={{color:'rgb(156,156,156)'}}>{record?.quoteToken?.symbol}</span>
             </div>
         }
     },
         {
             title: home.price, align: 'center', render: (text, record) => {
-                return <div>{record?.priceUsd ? formatDecimal(record?.priceUsd, 3) : ''}</div>
+                return <div className={changeTheme?'darknessFont':'brightFont'}>{record?.priceUsd ? formatDecimal(record?.priceUsd, 3) : ''}</div>
             }
         },
         {
             title:home.price, align: 'center', render: (text, record) => {
                 const data = record.pairCreatedAt.toString().length > 10 ? Number(record.pairCreatedAt.toString().slice(0, 10)) : record.pairCreatedAt
-                return <p>{record?.pairCreatedAt ? getRelativeTimeDifference(formatDateTime(data)) : ''}</p>
+                return <p className={changeTheme?'darknessFont':'brightFont'}>{record?.pairCreatedAt ? getRelativeTimeDifference(formatDateTime(data)) : ''}</p>
             }
         },
         {
             title: <span>{'% ' + time}</span>, align: 'center', render: (text, record) => {
                 return <p
-                    style={{color: record?.priceChange[time] > 0 ? 'green' : 'red'}}>{record?.priceChange[time] ? record.priceChange[time] : 0}</p>
+                    style={{color: changeTheme?record?.priceChange[time] > 0 ? 'rgb(97,123,64)' : 'rgb(209,68,68)':record?.priceChange[time] > 0 ? 'green' : 'red'}}>{record?.priceChange[time] ? record.priceChange[time] : 0}</p>
             }
         },
         {
             title: home.txns, align: 'center', render: (text, record) => {
-                return <p>{(record?.txns[time]?.buys + record?.txns[time]?.sells) ? autoConvert(record?.txns[time]?.buys + record?.txns[time]?.sells) : 0}</p>
+                return <p className={changeTheme?'darknessFont':'brightFont'}>{(record?.txns[time]?.buys + record?.txns[time]?.sells) ? autoConvert(record?.txns[time]?.buys + record?.txns[time]?.sells) : 0}</p>
             }
         },
         {
             title: home.volume, align: 'center', render: (text, record) => {
-                return <p>{record?.volume[time] ? autoConvert(record?.volume[time]) : 0}</p>
+                return <p className={changeTheme?'darknessFont':'brightFont'}>{record?.volume[time] ? autoConvert(record?.volume[time]) : 0}</p>
             }
         },
         {
             title: home.liquidity, align: 'center', render: (text, record) => {
-                return <p> {record?.liquidity?.usd ? autoConvert(record.liquidity.usd) : 0}</p>
+                return <p className={changeTheme?'darknessFont':'brightFont'}> {record?.liquidity?.usd ? autoConvert(record.liquidity.usd) : 0}</p>
             }
         },
         {
@@ -244,10 +246,8 @@ function Home() {
     const [postsDataCh, setPostsDataCh] = useState(false)
     // 滚动
     const [scrollChange, setScrollChange] = useState(false)
-
     // 点赞
     const [clickChange, setClickChange] = useState(false)
-
     // 删除的推文id
     const [deleteChange, setDeleteChange] = useState(null)
     const change = (name, id) => {
@@ -367,44 +367,47 @@ function Home() {
                         params.map((item, index) => {
                             return <div key={index}
                                         className={`cardParams ${styles.homeModule}`}>
-                                <Card className={styles.homeCard}>
+                                <Card className={`${styles.homeCard} ${changeTheme?'darknessTwo':'brightTwo'}`} >
                                     <ul className={styles['rightUl']}>
                                         <li>
-                                            <p className={styles.homeCardName}>{item.name}</p>
+                                            <p className={`${styles.homeCardName} ${changeTheme?'darknessFont':'brightFont'}`} >{item.name}</p>
                                             <Link href={item.name === 'presale' ? '/presale' : '/launch'}>
                                                 <p className={styles.homeCardMore}>{home.more}</p>
                                             </Link>
                                         </li>
                                         {
                                             item.bol ? item?.data?.length > 0 ? item.data.map((i, index) => {
-                                                if (index > 2) {
+                                                if (index > 5) {
                                                     return ''
                                                 } else {
-                                                    return <li className={styles.li} key={index}
+                                                    return <li className={`${styles.li} ${changeTheme?'darknessItem':'brightItem'}`}  key={index}
                                                     >
                                                         <div className={styles.homeCardListBox}>
                                                             <p className={styles.homeCardIm}>{i.symbol.slice(0, 1)}</p>
                                                             <div style={{width: '78%'}}>
                                                                 <Tooltip title={i.symbol}>
-                                                                    <p className={styles.homeCardSymbol}>{i.symbol}</p>
+                                                                    <p className={`${styles.homeCardSymbol} ${changeTheme?'darknessFont':'brightFont'}`}>{i.symbol}</p>
                                                                 </Tooltip>
                                                                 <div className={styles['dis']} style={{
                                                                     padding: '3px'
                                                                 }}>
                                                                     <GlobalOutlined
                                                                         style={{cursor: 'pointer', fontSize: '20px'}}
+                                                                        className={changeTheme?'darknessFont':'brightFont'}
                                                                         onClick={() => push(i, 'one')}/>
                                                                     <TwitterOutlined
                                                                         style={{cursor: 'pointer', fontSize: '20px'}}
+                                                                        className={changeTheme?'darknessFont':'brightFont'}
                                                                         onClick={() => push(i, 'two')}/>
                                                                     <SendOutlined
                                                                         style={{cursor: 'pointer', fontSize: '20px'}}
+                                                                        className={changeTheme?'darknessFont':'brightFont'}
                                                                         onClick={() => push(i, 'three')}/>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                         <div className={styles.homeCardDate}>
-                                                            <Countdown title=""
+                                                            <Countdown title="" className={changeTheme?'darknessFont':'brightFont'}
                                                                        value={getD(dayjs(i.presale_time ? i.presale_time : i.launch_time).isAfter(dayjs()) ? dayjs(i.presale_time ? i.presale_time : i.launch_time).diff(dayjs(), 'seconds') : '')}
                                                                        format="HH:mm:ss"/>
                                                         </div>
@@ -433,9 +436,9 @@ function Home() {
                     }
                 </div>
                 {/*下面*/}
-                <div className={`homeTable ${styles.homeCardBot}`}>
+                <div  className={`homeTable ${changeTheme?'darknessTwo':'brightTwo'} ${styles.homeCardBot}`}>
                     <div className={styles['dis']}>
-                        <p style={{fontSize: '20px', fontWeight: 'bold'}}>{home.featured}</p>
+                        <p style={{fontSize: '20px', fontWeight: 'bold'}} className={changeTheme?'darknessFont':'brightFont'}>{home.featured}</p>
                         <div className={styles['dis']}>
                             {/*时间选择*/}
                             <Segmented options={['5m', '1h', '6h', '24h']} onChange={changSeg} defaultValue={'24h'}/>
@@ -448,7 +451,7 @@ function Home() {
                     <Table columns={columns}
                            rowKey={(record) => record?.baseToken?.address + record?.quoteToken?.address}
                            loading={featuredBol}
-                           className={'tablesss anyTable'} onRow={(record) => {
+                           className={`${changeTheme?'darkTable':'tablesss'}  anyTable`} onRow={(record) => {
                         return {
                             onClick: (event) => {
                                 const data = record.pairAddress
@@ -461,10 +464,10 @@ function Home() {
                 </div>
             </div>
             {/*右边*/}
-            <div className={'cardParams'} id="scrollableDiv"
-                 style={{height: `${refHeight?.current?.offsetHeight || 0}px`}}>
+            <div className={`cardParams ${changeTheme?'socialScrollD':'socialScroll'} ${changeTheme?'darknessTwo':'brightTwo'} }`} id="scrollableDiv"
+                 style={{height: `${refHeight?.current?.scrollHeight || 0}px`}}>
                 <div className={styles.homeRightTop}>
-                    <p className={styles.homeRightTopName}>{home.social}</p>
+                    <p className={`${styles.homeRightTopName} ${changeTheme?'darknessFont':'brightFont'}`} >{home.social}</p>
                     <Link href={'/social'}>
                         <p onClick={pushSocial}
                            style={{fontSize: '20px', color: '#2394D4', cursor: 'pointer'}}>{home.more}</p>

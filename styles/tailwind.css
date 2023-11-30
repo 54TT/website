@@ -5,24 +5,44 @@ html {
     font-family: "Rubik", sans-serif;
 }
 
-body {
+.whiteMode {
     background-color: rgb(249, 181, 54);
 }
 
-body::-webkit-scrollbar {
+.whiteMode::-webkit-scrollbar {
     width: 10px;
-    background-color: #F5F5F5;
+    background-color: rgb(249, 188, 54);
 }
 
 /*定义滚动条轨道：内阴影+圆角*/
-body::-webkit-scrollbar-track {
-    background-color: #F5F5F5;
+.whiteMode::-webkit-scrollbar-track {
+    background-color: rgb(249, 188, 54);
 }
 
 /*定义滑块：内阴影+圆角*/
-body::-webkit-scrollbar-thumb {
+.whiteMode::-webkit-scrollbar-thumb {
     border-radius: 10px;
-    background-color: #555;
+    background-color: rgb(253, 213, 62);
+}
+
+.darkMode {
+    background-color: rgb(37, 35, 42);
+}
+
+.darkMode::-webkit-scrollbar {
+    width: 10px;
+    background-color: rgb(37, 35, 42);
+}
+
+/*定义滚动条轨道：内阴影+圆角*/
+.darkMode::-webkit-scrollbar-track {
+    background-color: rgb(37, 35, 42);
+}
+
+/*定义滑块：内阴影+圆角*/
+.darkMode::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background-color: rgb(59, 55, 71);
 }
 
 p {
@@ -98,15 +118,10 @@ li.check:before {
 /* purgecss end ignore */
 
 .MuiDrawer-paper {
-    /*background-image: url("/assets/home-background.png");*/
-    /* border-right: .0625rem solid #23323c!important; */
     box-shadow: 0 -8px 4px 0 hsla(0, 0%, 100%, .5);
+    transition: width 5s;
 }
 
-
-.drawerItem:hover {
-    background-color: #DDF1E2;
-}
 
 .headerClass {
     opacity: 1;
@@ -227,13 +242,37 @@ li.check:before {
     background-color: rgb(254, 239, 146) !important;
 }
 
+.darkTable .ant-table .ant-table-content .ant-table-thead .ant-table-cell {
+    background-color: rgb(59, 55, 71);
+    padding: 8px !important;
+    border: none !important;
+}
+
+.darkTable .ant-table .ant-table-content .ant-table-thead .ant-table-cell:before {
+    display: none;
+}
+
+.darkTable .ant-table .ant-table-content .ant-table-tbody .ant-table-row .ant-table-cell {
+    background-color: rgb(59, 55, 71);
+    border: none !important;
+    padding: 8px !important;
+}
+
+.darkTable .ant-table .ant-table-content .ant-table-tbody .ant-table-row:not(:last-child) .ant-table-cell {
+    border-bottom: 1px solid rgb(128, 128, 128);
+}
+
+.darkTable .ant-table .ant-table-content .ant-table-tbody .ant-table-row:hover .ant-table-cell {
+    background-color: rgb(53, 47, 74) !important;
+}
+
 .bbb {
     margin-left: 10px;
 }
 
 
-.hotTable .ant-table .ant-table-container  .ant-table-thead .ant-table-cell {
-    background-color: rgb(188, 238, 125)!important;
+.hotTable .ant-table .ant-table-container .ant-table-thead .ant-table-cell {
+    background-color: rgb(188, 238, 125) !important;
     border: none;
 }
 
@@ -241,14 +280,38 @@ li.check:before {
     display: none;
 }
 
-.presale .ant-table .ant-table-content .ant-table-thead .ant-table-cell {
-    background-color: #BCEE7D;
-    border: none;
+.hotTable .ant-table .ant-table-container .ant-table-tbody .ant-table-row:hover .ant-table-cell {
+    background-color: rgb(254, 239, 146) !important;
 }
 
-.presale .ant-table .ant-table-content .ant-table-thead .ant-table-cell:before {
+.hotTable .ant-table .ant-table-container .ant-table-tbody .ant-table-row .ant-table-cell {
+    background-color: rgb(253, 213, 62) !important;
+    border-bottom-color: #626262;
+}
+
+.hotTableD .ant-table .ant-table-container .ant-table-thead .ant-table-cell {
+    background-color: rgb(37, 30, 38) !important;
+    border: none;
+    color: rgb(143, 143, 143) !important;
+}
+.hotTableD .ant-table .ant-table-container .ant-table-thead .ant-table-cell .ant-table-column-sorter .ant-table-column-sorter-inner span {
+    color: rgb(143, 143, 143);
+}
+.hotTableD .ant-table .ant-table-container .ant-table-thead .ant-table-cell:before {
     display: none;
 }
+
+.hotTableD .ant-table .ant-table-container .ant-table-tbody .ant-table-row:hover .ant-table-cell {
+    background-color: rgb(53, 47, 74) !important;
+}
+
+.hotTableD .ant-table .ant-table-container .ant-table-tbody .ant-table-row .ant-table-cell {
+    background-color: rgb(59, 55, 71) !important;
+    border-bottom-color: #626262;
+}
+
+
+
 
 .anyHave .ant-table-cell {
     background-color: #BCEE7D !important;
@@ -262,37 +325,30 @@ li.check:before {
     background-color: rgb(209, 209, 209) !important;
 }
 
-.hotTable .ant-table  .ant-table-container  .ant-table-tbody .ant-table-row .ant-table-cell {
-    background-color: rgb(253, 213, 62)!important;
-    border-bottom-color: #626262;
-    /*padding: 5px!important;*/
-}
-
-
 
 .presale .ant-table .ant-table-content .ant-table-tbody .ant-table-row:hover .ant-table-cell {
     background-color: rgb(254, 239, 146) !important;
 }
-
-
-.presale .ant-table .ant-table-content .ant-table-tbody tr  td {
-    border-bottom:1px solid black !important;
+.presale .ant-table .ant-table-content .ant-table-thead .ant-table-cell {
+    background-color: #BCEE7D;
+    border: none;
+}
+.presale .ant-table .ant-table-content .ant-table-thead .ant-table-cell:before {
+    display: none;
+}
+.presale .ant-table .ant-table-content .ant-table-tbody tr td {
+    border-bottom: 1px solid black !important;
 }
 
-.anyTable .ant-table .ant-table-content .ant-table-thead  .ant-table-cell .ant-table-column-sorters .ant-table-column-title {
+.anyTable .ant-table .ant-table-content .ant-table-thead .ant-table-cell .ant-table-column-sorters .ant-table-column-title {
     flex: none !important;
 }
-
-.anyTable .ant-table .ant-table-content .ant-table-thead  .ant-table-cell .ant-table-column-sorters {
+.anyTable .ant-table .ant-table-content .ant-table-thead .ant-table-cell .ant-table-column-sorters {
     justify-content: center !important;
 }
 
 
-.hotTable .ant-table .ant-table-container .ant-table-tbody .ant-table-row:hover .ant-table-cell {
-    background-color: rgb(254, 239, 146) !important;
-}
-
- .ant-table .ant-table-container .ant-table-tbody .ant-table-row:hover {
+.ant-table .ant-table-container .ant-table-tbody .ant-table-row:hover {
     cursor: pointer;
 }
 
@@ -300,35 +356,55 @@ li.check:before {
     background-color: rgb(253, 213, 62);
     margin-bottom: 20px;
 }
+
 .detailSegmented .ant-segmented-item-selected {
     background-color: #FEEF92 !important;
 }
+
 .cardParams .ant-card .ant-card-body {
     padding: 0 !important;
 }
+
 .cardParams {
     width: 34%;
-    background-color: rgb(253,213,62);
+    background-color: rgb(253, 213, 62);
     border-radius: 12px;
     padding: 10px 8px;
     overflow-y: auto;
     transition: box-shadow 0.3s;
 }
 
-.cardParams::-webkit-scrollbar {
+.socialScroll::-webkit-scrollbar {
     width: 10px;
-    background-color: #F5F5F5;
+    background-color: rgb(253, 213, 62);
 }
 
 /*定义滚动条轨道：内阴影+圆角*/
-.cardParams::-webkit-scrollbar-track {
-    background-color: #F5F5F5;
+.socialScroll::-webkit-scrollbar-track {
+    background-color: rgb(253, 213, 62);
 }
 
 /*定义滑块：内阴影+圆角*/
-.cardParams::-webkit-scrollbar-thumb {
+.socialScroll::-webkit-scrollbar-thumb {
     border-radius: 10px;
-    background-color: #555;
+    background-color: rgb(249, 188, 54);
+}
+
+/*sss*/
+.socialScrollD::-webkit-scrollbar {
+    width: 10px;
+    background-color: rgb(59, 55, 71);
+}
+
+/*定义滚动条轨道：内阴影+圆角*/
+.socialScrollD::-webkit-scrollbar-track {
+    background-color: rgb(59, 55, 71);
+}
+
+/*定义滑块：内阴影+圆角*/
+.socialScrollD::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background-color: rgb(37, 30, 38);
 }
 
 .cardParams:hover {
@@ -338,7 +414,7 @@ li.check:before {
 .homeTable {
     width: 100%;
     position: relative;
-    background-color: rgb(253, 213, 62);
+    /*background-color: rgb(253, 213, 62);*/
     margin-top: 35px;
     padding: 10px 0;
     border-radius: 12px;

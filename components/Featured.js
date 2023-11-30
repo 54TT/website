@@ -9,8 +9,10 @@ import {autoConvert} from '/utils/set'
 import styled from '/styles/all.module.css'
 import Image from 'next/image'
 import {changeLang} from "/utils/set";
+import {CountContext} from "./Layout/Layout";
 export default function Featured() {
     const featured =changeLang('featured')
+    const {changeTheme} = useContext(CountContext);
     const router = useRouter()
     const ref = useRef(null)
     const [featuredPageSize, setFeaturedPageSize] = useState(10);
@@ -44,15 +46,14 @@ export default function Featured() {
             return <div className={styled.featuredColumnsBox}>
                 <p className={styled.featuredColumns}>{record?.baseToken?.symbol?.slice(0, 1)}</p>
                 <div style={{lineHeight:'1'}}>
-                    <p>{record?.baseToken?.symbol.length>7?record.baseToken.symbol.slice(0,4):record.baseToken.symbol}/<span style={{color:'#626262'}}>{record?.quoteToken?.symbol.length>7?record.quoteToken.symbol.slice(0,4):record.quoteToken.symbol}</span></p>
-                    {/*<p>{record?.pairAddress?record.pairAddress.length>10?record.pairAddress.slice(0,5)+':'+record.pairAddress.slice(-5):record.pairAddress:''}</p>*/}
+                    <p className={changeTheme?'darknessFont':'brightFont'}>{record?.baseToken?.symbol.length>7?record.baseToken.symbol.slice(0,4):record.baseToken.symbol}/<span style={{color:'#626262'}}>{record?.quoteToken?.symbol.length>7?record.quoteToken.symbol.slice(0,4):record.quoteToken.symbol}</span></p>
                 </div>
             </div>
         }
     },
         {
-            title: featured.price,align: 'center',  render: (text, record) => {
-                return <div>{record?.priceUsd ? formatDecimal(record?.priceUsd, 3) : ''}</div>
+            title: <span  className={changeTheme?'darknessFont':'brightFont'}>{featured.price}</span>,align: 'center',  render: (text, record) => {
+                return <div className={changeTheme?'darknessFont':'brightFont'}>{record?.priceUsd ? formatDecimal(record?.priceUsd, 3) : ''}</div>
             },
             sorter: {
                 compare: (a, b) => {
@@ -61,9 +62,9 @@ export default function Featured() {
             },
         },
         {
-            title: featured.createTime,align: 'center',  render: (text, record) => {
+            title: <span  className={changeTheme?'darknessFont':'brightFont'}>{featured.createTime}</span>,align: 'center',  render: (text, record) => {
                 const data =  record.pairCreatedAt.toString().length>10?Number(record.pairCreatedAt.toString().slice(0,10)):record.pairCreatedAt
-                return <p>{record?.pairCreatedAt ? getRelativeTimeDifference(formatDateTime(data)) : ''}</p>
+                return <p className={changeTheme?'darknessFont':'brightFont'}>{record?.pairCreatedAt ? getRelativeTimeDifference(formatDateTime(data)) : ''}</p>
             },
             sorter: {
                 compare: (a, b) => {
@@ -74,24 +75,24 @@ export default function Featured() {
             },
         },
         {
-            title: <span>{'% '+time}</span> ,align: 'center',  render: (text, record) => {
+            title: <span className={changeTheme?'darknessFont':'brightFont'}>{'% '+time}</span> ,align: 'center',  render: (text, record) => {
                 return <p
                     style={{color: record?.priceChange[time] > 0 ? 'green' : 'red'}}>{record?.priceChange[time]?record.priceChange[time]:0}</p>
             }
         },
         {
             title: featured.txns,align: 'center',  render: (text, record) => {
-                return <p>{record?.txns[time]?.buys + record?.txns[time]?.sells ? autoConvert(record?.txns[time]?.buys + record?.txns[time]?.sells) : 0}</p>
+                return <p className={changeTheme?'darknessFont':'brightFont'}>{record?.txns[time]?.buys + record?.txns[time]?.sells ? autoConvert(record?.txns[time]?.buys + record?.txns[time]?.sells) : 0}</p>
             }
         },
         {
             title: featured.volume,align: 'center',  render: (text, record) => {
-                return <p>{record?.volume[time] ? autoConvert(record?.volume[time]) : 0}</p>
+                return <p className={changeTheme?'darknessFont':'brightFont'}>{record?.volume[time] ? autoConvert(record?.volume[time]) : 0}</p>
             }
         },
         {
             title: featured.liquidity,align: 'center',  render: (text, record) => {
-                return <p> {record?.liquidity?.usd ? autoConvert(record.liquidity.usd) : ''}</p>
+                return <p className={changeTheme?'darknessFont':'brightFont'}> {record?.liquidity?.usd ? autoConvert(record.liquidity.usd) : ''}</p>
             }
         },
         {
@@ -140,18 +141,19 @@ export default function Featured() {
         setFeaturedCurrent(e)
         setFeaturedPageSize(a)
     }
+
     return (
         <div className={styled.featuredBox}>
-            <Card className={styled.featuredBoxCard}>
+            <Card className={`${styled.featuredBoxCard} ${changeTheme?'darknessTwo':'brightTwo'}`} >
                 <div className={styled.featuredBoxTop}>
                     <div style={{display: 'flex', alignItems: 'center'}}>
                         <Image src="/wallet.png" alt="" width={70}  height={70}/>
-                        <span style={{fontWeight: 'bold', fontSize: '26px'}}>{featured.featured}</span>
+                        <span style={{fontWeight: 'bold', fontSize: '26px'}} className={changeTheme?'darknessFont':'brightFont'}>{featured.featured}</span>
                     </div>
                     <Segmented options={['5m', '1h', '6h', '24h']} onChange={changSeg} defaultValue={'24h'}/>
 
                 </div>
-                <Table className={'hotTable anyTable'} columns={columns} rowKey={(record)=>record?.baseToken?.address+record?.quoteToken?.address} onRow={(record) => {
+                <Table className={`anyTable ${changeTheme?'hotTableD':'hotTable'}`} columns={columns} rowKey={(record)=>record?.baseToken?.address+record?.quoteToken?.address} onRow={(record) => {
                     return {
                         onClick: (event) => {
                             const data = record.pairAddress

@@ -1,40 +1,71 @@
-import React, {createContext, useState} from "react";
+import React, {createContext, useState, useEffect} from "react";
 // import Header from "./Header";
-import { FloatButton } from 'antd';
+import {FloatButton} from 'antd';
 import {useRouter} from "next/router";
 import {Anchor} from 'antd'
 import dynamic from "next/dynamic";
-const Header = dynamic(async () =>await import('./Header'),)
+
+const Header = dynamic(() => import('./Header'),)
 export const CountContext = createContext(null);
 const Layout = ({children}) => {
     const router = useRouter()
 
     // 修改name
-    const [bolName,setBol]=useState(false)
+    const [bolName, setBol] = useState(false)
 
     // 切换连接
-    const [bolLogin,setBolLogin]=useState(false)
+    const [bolLogin, setBolLogin] = useState(false)
 
     // 登录刷新
-    const [showData,setShowData]=useState(false)
+    const [showData, setShowData] = useState(false)
 
     // 切换字体
-    const [changeFamily,setChangeFamily]=useState('english')
-    const changeFont=(name)=>{
+    const [changeFamily, setChangeFamily] = useState('english')
+
+    // 切换背景
+    const [changeTheme, setChangeTheme] = useState(false)
+    const changeBack = () => {
+        setChangeTheme(!changeTheme)
+    }
+    const changeFont = (name) => {
         setChangeFamily(name)
     }
-    const changeShowData=()=>{
+    const changeShowData = () => {
         setShowData(!showData)
     }
-    const changeBolName=()=>{
+    const changeBolName = () => {
         setBol(!bolName)
     }
-    const changeBolLogin=()=>{
+    const changeBolLogin = () => {
         setBolLogin(!bolLogin)
     }
+
+    useEffect(() => {
+        if (changeTheme) {
+            const body = document.querySelector('body');
+            body.classList.add('darkMode');
+            body.classList.remove('whiteMode');
+        } else {
+            const body = document.querySelector('body');
+            body.classList.remove('darkMode');
+            body.classList.add('whiteMode');
+        }
+
+    }, [changeTheme])
     return (
-        <CountContext.Provider value={{changeFamily,changeFont,bolName,changeShowData,showData, changeBolName,changeBolLogin,bolLogin}}>
-            <div className={'layout'} id={'part-1'}>
+        <CountContext.Provider value={{
+            changeBack,
+            changeTheme,
+            changeFamily,
+            changeFont,
+            bolName,
+            changeShowData,
+            showData,
+            changeBolName,
+            changeBolLogin,
+            bolLogin
+        }}>
+            <div id={'part-1'}>
                 <Header/>
                 <div
                     style={router.pathname === '/' ? {} : router.pathname === '/statement' ? {marginLeft: '20px'} : {marginLeft: '90px'}}>
@@ -51,7 +82,7 @@ const Layout = ({children}) => {
                         ]}
                     />
                 </div>
-                <FloatButton.BackTop />
+                <FloatButton.BackTop/>
             </div>
         </CountContext.Provider>
     )

@@ -5,9 +5,9 @@
     justify-content: space-between;
     padding: 20px
 }
+
 .search {
     cursor: pointer;
-    background-color: rgb(254,239,146);
     width: 100%;
     color: #8A8A8A;
     line-height: 30px;
@@ -15,25 +15,37 @@
     border-radius: 6px;
     transition: box-shadow 0.3s;
 }
+
 .search:hover {
     box-shadow: 10px 10px 0 rgb(188, 158, 54)
+}
+
+.eth {
+    color: rgb(156, 156, 156);
+    border-radius: 15px;
+    padding-right: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .but:hover {
     box-shadow: 10px 10px 0 rgb(188, 158, 54)
 }
 
-.marqueeBox{
-    width: 25%!important; margin-left: 20px;
+.marqueeBox {
+    width: 25% !important;
+    margin-left: 20px;
 }
-.marquee{
+
+.marquee {
     margin-right: 30px;
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 
-.marqueeName{
+.marqueeName {
     width: 20px;
     border-radius: 50%;
     background-color: #454545;
@@ -42,40 +54,61 @@
     text-align: center;
     margin: 0 2px;
 }
-.searchToken{
-    position: relative;width: 30%;
-}
-.login{
-    display: flex;align-items: center;
+
+.searchToken {
+    position: relative;
+    width: 30%;
 }
 
-.loginBox{
-    display: flex;align-items: center;
+.login {
+    display: flex;
+    align-items: center;
 }
 
-.loginImg{
-    margin-right: 10px;border-radius: 50%; cursor: pointer;
+.loginBox {
+    display: flex;
+    align-items: center;
+}
+
+.loginImg {
+    margin-right: 10px;
+    border-radius: 50%;
+    cursor: pointer;
 }
 .loginName{
-    color: black;
-    background-color: rgb(254,239,146);
+    border: none!important;
 }
-.but{
-    background-color: rgb(254,239,146);
+.loginName  span{
+    font-weight: bold;
+    color: #8A8A8A!important;
+}
+
+.but {
     margin-left: 10px;
 }
-.addShow{
-    display: flex;align-items: center; margin-bottom: 10px;
+
+.addShow {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
 }
-.addCur{
-    cursor: pointer;font-size: 20px;
+
+.addCur {
+    cursor: pointer;
+    font-size: 20px;
 }
-.addCurMt5{
+
+.addCurMt5 {
     margin-top: 5px;
 }
-.addPresale{
-    line-height: 1; cursor: pointer;
+
+.addPresale {
+    line-height: 1;
+    cursor: pointer;
 }
-.lines{
-    width: 100%;height: 1px;background-color: rgb(128, 128, 128);
+
+.lines {
+    width: 100%;
+    height: 1px;
+    background-color: rgb(128, 128, 128);
 }

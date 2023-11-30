@@ -12,7 +12,6 @@ import cook from "js-cookie";
 // const Sidebar = dynamic(() => import('../components/Sidebar'));
 const Feed = dynamic(() => import('../components/Feed'), );
 const RightSideColumn = dynamic(() => import('../components/RightSideColumn'), );
-
 import {arrayUnique} from '/utils/set'
 function Index() {
     const [postsData, setPostsData] = useState([])

@@ -12,9 +12,11 @@ const client = new ApolloClient({
     uri: 'http://188.166.191.246:8000/subgraphs/name/dsb/uniswap', cache: new InMemoryCache(),
 });
 import {changeLang} from "/utils/set";
+import {CountContext} from "./Layout/Layout";
 
 export default function NewPair() {
     const newPair=changeLang('newPair')
+    const {changeTheme} = useContext(CountContext);
     const [currentPage, setCurrentPage] = useState(1);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const GET_DATA = gql`query LiveNewPair {
@@ -107,7 +109,7 @@ export default function NewPair() {
             dataIndex: 'name',
             render: (text, record) => <div className={styled.newPairTable}>
                 <p className={styled.newPairTableText}><span
-                    style={{fontSize: '18px'}}>{record?.token0?.symbol ? record?.token0?.symbol.length > 7 ? record?.token0?.symbol.slice(0, 5) : record?.token0?.symbol + '/' : ''}</span><span
+                    style={{fontSize: '18px'}} className={changeTheme ? 'darknessFont' : 'brightFont'}>{record?.token0?.symbol ? record?.token0?.symbol.length > 7 ? record?.token0?.symbol.slice(0, 5) : record?.token0?.symbol + '/' : ''}</span><span
                     style={{color: 'rgb(98,98,98)'}}>{record?.token1?.symbol ? record?.token1?.symbol.length > 7 ? record?.token1?.symbol.slice(0, 5) : record?.token1?.symbol : ''}</span>
                 </p>
             </div>,
@@ -117,7 +119,7 @@ export default function NewPair() {
             dataIndex: 'age', align: 'center',
             render: (text, record) => {
                 const data = record?.liquidityPositionSnapshots[0]?.token0PriceUSD || 0
-                return <p>{data ? autoConvertNew(Number(data)) : 0}</p>
+                return <p className={changeTheme ? 'darknessFont' : 'brightFont'}>{data ? autoConvertNew(Number(data)) : 0}</p>
             }
         },
         {
@@ -125,14 +127,14 @@ export default function NewPair() {
             dataIndex: 'tags',
             render: (_, record) => {
                 const data =  record?.createdAtTimestamp.toString().length>10?Number(record.createdAtTimestamp.toString().slice(0,10)):record.createdAtTimestamp
-                return <span>{record?.createdAtTimestamp ? getRelativeTimeDifference(formatDateTime(data)): ''}</span>
+                return <span className={changeTheme ? 'darknessFont' : 'brightFont'}>{record?.createdAtTimestamp ? getRelativeTimeDifference(formatDateTime(data)): ''}</span>
             }
         },
         {
             title: newPair?.volume+'($)', align: 'center',
             dataIndex: 'volumeUSD',
             render: (text) => {
-                return <span>{setMany(text)}</span>
+                return <span className={changeTheme ? 'darknessFont' : 'brightFont'}>{setMany(text)}</span>
             }
         },
         {
@@ -140,21 +142,21 @@ export default function NewPair() {
             dataIndex: 'reserveETH',
             render: (text) => {
                 const data =setMany(text)
-                return <span>{data}</span>
+                return <span className={changeTheme ? 'darknessFont' : 'brightFont'}>{data}</span>
             }
         },
         {
             title: newPair?.tracked, align: 'center',
             dataIndex: 'trackedReserveETH',
             render: (text) => {
-                return <span>{setMany(text)}</span>
+                return <span className={changeTheme ? 'darknessFont' : 'brightFont'}>{setMany(text)}</span>
             }
         },
         {
             title: newPair.txCount, align: 'center',
             dataIndex: 'txCount',
             render: (text) => {
-                return <span>{text ? text : ''}</span>
+                return <span className={changeTheme ? 'darknessFont' : 'brightFont'}>{text ? text : ''}</span>
             }
         },
         {
@@ -166,17 +168,17 @@ export default function NewPair() {
     ];
     return (
         <div className={styled.launchBox}>
-            <Card className={styled.launchBoxCard}>
+            <Card className={`${styled.launchBoxCard} ${changeTheme?'darknessTwo':'brightTwo'}`}>
                 <div className={styled.launchBoxCardBox}>
                     <div style={{display: 'flex', alignItems: 'center'}}>
                         <Image src="/gpsReceiving.png" alt="" height={70} width={70}/>
-                        <span style={{fontWeight: 'bold', fontSize: '26px'}}>{newPair?.newPair}</span>
+                        <span style={{fontWeight: 'bold', fontSize: '26px'}} className={changeTheme ? 'darknessFont' : 'brightFont'}>{newPair?.newPair}</span>
                     </div>
                     <Pagination defaultCurrent={1} current={currentPage} onChange={chang} total={tableTotal}
                                 pageSize={rowsPerPage}/>
                 </div>
                 <Table rowKey={(i) => i.id + i?.token0?.id + i?.token1?.id + i?.token0?.name}
-                       className={'hotTable anyTable'}
+                       className={`anyTable ${changeTheme ? 'hotTableD' : 'hotTable'}`}
                        loading={loading} columns={columns} bordered={false} dataSource={tableParams}
                        pagination={false}/>
             </Card>

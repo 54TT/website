@@ -7,7 +7,8 @@ import axios from 'axios';
 import {Dropdown, Drawer, Form, Select, Input, DatePicker, Button, notification,} from 'antd'
 import {CaretDownFilled, CaretRightFilled, LoadingOutlined} from '@ant-design/icons';
 import styles from './css/header.module.css'
-// import DrawerPage from './Drawer'
+import DrawerPage from './Drawer'
+
 const {Option} = Select;
 import dynamic from "next/dynamic";
 import Link from 'next/link'
@@ -15,13 +16,14 @@ import _ from 'lodash'
 import cookie from 'js-cookie'
 import {useRouter} from 'next/router'
 // import ChatSearch from "../Chat/ChatSearch";
-const ChatSearch = dynamic(async () => await import('../Chat/ChatSearch'),)
-const DrawerPage = dynamic(async () => await import('./Drawer'),)
+const ChatSearch = dynamic(() => import('../Chat/ChatSearch'),)
+// const DrawerPage = dynamic( () =>  import('./Drawer'),)
 import {get, post, del, getUser} from '/utils/axios'
 import {ethers} from 'ethers'
 import {CountContext} from '/components/Layout/Layout';
 import Marquee from "react-fast-marquee";
 import {changeLang} from "/utils/set";
+
 const Header = () => {
     const router = useRouter()
     const [form] = Form.useForm();
@@ -31,8 +33,8 @@ const Header = () => {
     const {connect} = useConnect({
         connector: new InjectedConnector(),
     });
-    const {bolName, changeBolLogin, changeShowData, changeFont, changeFamily} = useContext(CountContext);
-    const header=changeLang('header')
+    const {bolName, changeBolLogin, changeShowData, changeFont, changeTheme} = useContext(CountContext);
+    const header = changeLang('header')
     const [open, setOpen] = useState(false);
     const [openPresale, setOpenPresale] = useState(false);
     const [openLaunch, setOpenLaunch] = useState(false);
@@ -384,6 +386,7 @@ const Header = () => {
     const handleChange = (value) => {
         changeFont(value)
     }
+
     return (
         <div
             className={"top-0 w-full  z-30 transition-all headerClass"}>
@@ -395,16 +398,17 @@ const Header = () => {
                     className={styles.marqueeBox}>
                     {
                         launch.length > 0 && launch.map((i, index) => {
-                            return <div key={index} className={styles.marquee}>
-                                <span>#{index + 1}</span>
+                            return <div key={index}  className={`${styles.marquee} `}>
+                                <span className={changeTheme?'darknessFont':'brightFont'}>#{index + 1}</span>
                                 <p className={styles.marqueeName}>{i?.symbol?.slice(0, 1)}</p>
-                                <span>{i.symbol}</span>
+                                <span className={changeTheme?'darknessFont':'brightFont'}>{i.symbol}</span>
                             </div>
                         })
                     }
                 </Marquee>
                 <div className={styles.searchToken}>
-                    <p className={styles['search']} onClick={showSearch}>{header.search}</p>
+                    <p className={`${styles['search']} ${changeTheme ? 'darknessThree' : 'brightFore'}`}
+                       onClick={showSearch}>{header.search}</p>
                     {showChatSearch && (
                         <ChatSearch
                             setShowChatSearch={setShowChatSearch}
@@ -415,6 +419,7 @@ const Header = () => {
                     )}
                 </div>
                 <div className={styles.login}>
+                    {/*切换字体*/}
                     {/*<Select*/}
                     {/*    style={{*/}
                     {/*        width: 120,*/}
@@ -436,8 +441,16 @@ const Header = () => {
                     {/*        },*/}
                     {/*    ]}*/}
                     {/*/>*/}
-                    <Button type={'primary'} className={styles['but']}
-                            onClick={showDrawer}>{header.addCoin}</Button>
+                    {/*添加代币*/}
+                    {/*<Button type={'primary'} className={styles['but']}*/}
+                    {/*        onClick={showDrawer}>{header.addCoin}</Button>*/}
+                    <div className={`${styles.eth} ${changeTheme ? 'darknessTwo' : 'brightEth'}`}>
+                        <img src="/Ellipse27.png" alt="" width={30} style={{border: '50%'}}/>
+                        <p>$:2028</p>
+                        <p style={{display: 'flex', alignItems: 'center', marginLeft: '8px'}}><img src="/GasStation.png"
+                                                                                                   width={20} alt=""/>29
+                        </p>
+                    </div>
                     {
                         no && address ? <div className={styles.loginBox}>
                             <Link href={`/${userPar && userPar.address ? userPar.address : ''}`}>
@@ -452,10 +465,10 @@ const Header = () => {
                                 placement="bottomLeft"
                                 arrow
                             >
-                                <Button type={'primary'}
-                                        className={`${styles.loginName} ${styles.but}`}>{userPar && userPar.username ? userPar.username.length > 5 ? userPar.username.slice(0, 5) + '...' : userPar.username : ''}</Button>
+                                <Button
+                                        className={`${styles.loginName} ${styles.but} ${changeTheme ? 'darknessThree' : 'brightFore'} `}>{userPar && userPar.username ? userPar.username.length > 5 ? userPar.username.slice(0, 5) + '...' : userPar.username : ''}</Button>
                             </Dropdown>
-                        </div> : <Button type={'primary'} className={styles['but']}
+                        </div> : <Button  className={`${styles['but']} ${styles.loginName} ${changeTheme ? 'darknessThree' : 'brightFore'}`}
                                          onClick={getMoney}>{header.login}</Button>
                     }
                 </div>

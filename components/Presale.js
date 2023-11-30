@@ -7,11 +7,15 @@ import {GlobalOutlined, SendOutlined, TwitterOutlined} from "@ant-design/icons";
 import {dao} from '/utils/set'
 import baseUrl from "../utils/baseUrl";
 import styled from '/styles/all.module.css'
+
 const {Countdown} = Statistic;
 import Image from 'next/image'
 import {changeLang} from "/utils/set";
+import {CountContext} from "./Layout/Layout";
+
 export default function Presale() {
-    const presale=changeLang('presale')
+    const presale = changeLang('presale')
+    const {changeTheme} = useContext(CountContext);
     const [launchPageSize, setLaunchPageSize] = useState(10);
     const [launchCurrent, setLaunchCurrent] = useState(1);
     const [launchAll, setLaunchAll] = useState(0);
@@ -32,8 +36,8 @@ export default function Presale() {
                 setLaunchBol(false)
             }
         }).catch(err => {
-            setLaunch( [])
-            setLaunchAll( 0)
+            setLaunch([])
+            setLaunchAll(0)
             setLaunchBol(false)
             hint()
         })
@@ -61,17 +65,17 @@ export default function Presale() {
             window.open(record.website.includes('http') ? record.website : 'https://' + record.website)
         }
     }
-        const getD = (a) => {
-            if (a) {
-                return Date.now() + Number(a) * 1000
-            } else {
-                return 0
-            }
+    const getD = (a) => {
+        if (a) {
+            return Date.now() + Number(a) * 1000
+        } else {
+            return 0
         }
+    }
     const columns = [
         {
             title: '',
-            dataIndex: 'address',align: 'center',
+            dataIndex: 'address', align: 'center',
             width: 30,
             render: (_, record) => {
                 return <p className={styled.presaleBoxTableText}>{record?.symbol?.slice(0, 1)}</p>
@@ -79,33 +83,38 @@ export default function Presale() {
         },
         {
             title: presale.token,
-            dataIndex: 'name',align: 'center',width: '25%',
+            dataIndex: 'name', align: 'center', width: '25%',
             render: (text) => {
-                return <p className={styled.presaleBoxTableP}>{text}</p>
+                return <p
+                    className={`${styled.presaleBoxTableP} ${changeTheme ? 'darknessFont' : 'brightFont'}`}>{text}</p>
             }
         },
         {
             title: presale.symbol,
-            dataIndex: 'symbol',align: 'center',
+            dataIndex: 'symbol', align: 'center',
             render: (text) => {
-                return <p className={styled.presaleBoxTableP}>{text}</p>
+                return <p
+                    className={`${styled.presaleBoxTableP} ${changeTheme ? 'darknessFont' : 'brightFont'}`}>{text}</p>
             }
         },
         {
             title: presale.social,
-            dataIndex: 'address',align: 'center',
+            dataIndex: 'address', align: 'center',
             width: 200,
             render: (text, record) => {
                 return <div className={styled.presaleBoxTableImg}>
-                    <GlobalOutlined style={{cursor: 'pointer', fontSize: '20px'}} onClick={() => push(record, 'one')}/>
-                    <TwitterOutlined style={{cursor: 'pointer', fontSize: '20px'}} onClick={() => push(record, 'two')}/>
-                    <SendOutlined style={{cursor: 'pointer', fontSize: '20px'}} onClick={() => push(record, 'three')}/>
+                    <GlobalOutlined className={changeTheme ? 'darknessFont' : 'brightFont'}
+                                    style={{cursor: 'pointer', fontSize: '20px'}} onClick={() => push(record, 'one')}/>
+                    <TwitterOutlined className={changeTheme ? 'darknessFont' : 'brightFont'}
+                                     style={{cursor: 'pointer', fontSize: '20px'}} onClick={() => push(record, 'two')}/>
+                    <SendOutlined className={changeTheme ? 'darknessFont' : 'brightFont'}
+                                  style={{cursor: 'pointer', fontSize: '20px'}} onClick={() => push(record, 'three')}/>
                 </div>
             }
         },
         {
-            title: presale.time,
-            dataIndex: 'presale_time',align: 'center',
+            title: <span className={changeTheme ? 'darknessFont' : 'brightFont'}>{presale.time}</span>,
+            dataIndex: 'presale_time', align: 'center',
             sorter: {
                 compare: (a, b) => {
                     const data = a.presale_time ? dayjs(a.presale_time).format('YYYY-MM-DD HH:mm:ss') : 0
@@ -115,24 +124,26 @@ export default function Presale() {
             },
             render: (text, record) => {
                 if (text) {
-                    return   <Countdown title=""
-                                        value={getD(dayjs(text).isAfter(dayjs()) ? dayjs(text).diff(dayjs(), 'seconds') : '')}
-                                        format="HH:mm:ss"/>
+                    return <Countdown title="" className={changeTheme ? 'darknessFont' : 'brightFont'}
+                                      value={getD(dayjs(text).isAfter(dayjs()) ? dayjs(text).diff(dayjs(), 'seconds') : '')}
+                                      format="HH:mm:ss"/>
                 } else {
-                    return <p style={{textAlign: 'center'}}>0</p>
+                    return <p style={{textAlign: 'center'}}
+                              className={changeTheme ? 'darknessFont' : 'brightFont'}>00:00:00</p>
                 }
             }
         },
         {
             title: presale.platform,
-            dataIndex: 'presale_platform_logo',align: 'center',
+            dataIndex: 'presale_platform_logo', align: 'center',
             render: (text) => {
-                return <img src={baseUrl+text} alt="" width={'30px'} className={styled.presaleBoxTableImgs}/>
+                return <img src={baseUrl + text} alt="" width={'30px'} className={styled.presaleBoxTableImgs}/>
             }
         },
         {
             title: presale.dex, align: 'center', render: (text, record) => {
-                return <Image src="/dex-uniswap.png" alt="" width={30} style={{height: 'auto',width: 'auto'}} height={30} className={styled.presaleBoxTableImgs}/>
+                return <Image src="/dex-uniswap.png" alt="" width={30} style={{height: 'auto', width: 'auto'}}
+                              height={30} className={styled.presaleBoxTableImgs}/>
             }
         },
     ];
@@ -142,23 +153,22 @@ export default function Presale() {
     }
     return (
         <div className={styled.launchBox}>
-            <Card className={styled.launchBoxCard}>
+            <Card className={`${styled.launchBoxCard} ${changeTheme?'darknessTwo':'brightTwo'}`}>
                 <div className={styled.launchBoxCardBox}>
                     <div style={{display: 'flex', alignItems: 'center'}}>
                         <Image src="/Group.png" alt="" width={70} height={70}/>
-                        <span style={{fontWeight: 'bold', fontSize: '26px'}}>{presale.presales}</span>
+                        <span style={{fontWeight: 'bold', fontSize: '26px'}} className={changeTheme ? 'darknessFont' : 'brightFont'}>{presale.presales}</span>
+                    </div>
+                    <div className={styled.launchBoxFilter}>
+                        <Pagination defaultCurrent={1} current={launchCurrent} showSizeChanger onChange={change}
+                                    total={launchAll} pageSize={launchPageSize}/>
                     </div>
                 </div>
-
-                <div className={styled.launchBoxFilter}>
-                    <Pagination defaultCurrent={1} current={launchCurrent} showSizeChanger onChange={change}
-                                total={launchAll} pageSize={launchPageSize}/>
-                </div>
-
-                <Table className={`presale anyTable`} bordered={false} columns={columns} loading={launchBol}
+                <Table className={`anyTable ${changeTheme ? 'hotTableD' : 'hotTable'}`} bordered={false}
+                       columns={columns} loading={launchBol}
                        dataSource={launch} rowKey={(record) => record.symbol + record.address}
                        pagination={false} rowClassName={(record) => {
-                        return  'oneHave'
+                    return 'oneHave'
                 }}/>
             </Card>
             <p className={styled.launchBoxBot}>©DEXpert.io</p>
