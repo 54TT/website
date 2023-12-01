@@ -4,7 +4,7 @@ import { profileUpdate } from "../../utils/profileActions";
 import {YoutubeOutlined,TwitterOutlined,ArrowRightOutlined,FacebookOutlined,FormOutlined,InstagramOutlined,LoadingOutlined,ArrowLeftOutlined} from '@ant-design/icons'
 import { useEffect } from "react";
 import {notification} from "antd";
-import styled from '/styles/all.module.css'
+import styled from '/public/styles/all.module.css'
 import {changeLang} from "/utils/set";
 const notifyError = () =>{
   notification.error({

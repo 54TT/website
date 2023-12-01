@@ -5,7 +5,7 @@ import baseUrl from '/utils/baseUrl'
 import {useRouter} from "next/router";
 import {LoadingOutlined} from '@ant-design/icons'
 import Link from 'next/link'
-import styled from '/styles/all.module.css'
+import styled from '/public/styles/all.module.css'
 import {changeLang} from "/utils/set";
 
 function FollowingUsers({profile, userFollowStats, user}) {

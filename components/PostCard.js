@@ -1,7 +1,7 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useContext, useEffect, useRef, useState} from "react";
 import {ThumbUpIcon} from "@heroicons/react/solid";
 import Link from 'next/link'
-import styled from '/styles/all.module.css'
+import styled from '/public/styles/all.module.css'
 import {
     ChatAltIcon,
     MinusCircleIcon,
@@ -16,6 +16,7 @@ import ReusableDialog from "./ReusableDialog";
 
 const {TextArea} = Input
 import dayjs from 'dayjs'
+import {CountContext} from "./Layout/Layout";
 
 const notify = () => {
     notification.success({
@@ -25,6 +26,7 @@ const notify = () => {
 }
 
 function PostCard({post, user, change, liked}) {
+    const {changeTheme} = useContext(CountContext);
     const [comments, setComments] = useState([]);
     useEffect(() => {
         if (post && post.comments && post.comments.length > 0) {
@@ -48,7 +50,6 @@ function PostCard({post, user, change, liked}) {
             buttonRef.current.click();
         }
     };
-
     const handleLike = async () => {
         const data = await likePost(post?.id, user?.id, !liked)
         if (data && data.status === 200) {
@@ -58,7 +59,6 @@ function PostCard({post, user, change, liked}) {
     const handleClickOpen = () => {
         setOpen(true);
     };
-
     const handleClose = () => {
         setOpen(false);
     };
@@ -73,11 +73,10 @@ function PostCard({post, user, change, liked}) {
     const handleDisagree = () => {
         handleClose();
     };
-
     return (
         <div
-            className={`mb-7 flex flex-col justify-start rounded-2xl shadow-md ${styled.postCardBox}`}
-        >
+            className={`mb-7 flex flex-col justify-start rounded-2xl shadow-md ${changeTheme?'darknessThree':'brightBackTwo'}`}>
+            {/*头像*/}
             <div className="p-4">
                 <div className="flex space-x-3 items-center ml-2 relative">
                     <img height={50} width={50} style={{borderRadius: '50%'}}
@@ -88,7 +87,7 @@ function PostCard({post, user, change, liked}) {
                             <div style={{
                                 cursor: 'pointer',
                                 fontSize: '20px'
-                            }}>
+                            }} className={changeTheme?'darknessFont':'brightFont'}>
                                 {post?.user?.username ? post?.user?.username.length > 10 ? post.user.username.slice(0, 8) : post.user.username : ''}
                             </div>
                         </Link>
@@ -128,8 +127,11 @@ function PostCard({post, user, change, liked}) {
                     )}
                 </div>
             </div>
-            <div style={{marginLeft: '20px'}}>{post?.text || ''}</div>
+            {/*文本*/}
+            <div style={{marginLeft: '20px'}} className={changeTheme?'darknessFont':'brightFont'}>{post?.text || ''}</div>
+            {/*图片*/}
             {post && post.picUrl ? <img src={post.picUrl || ''} alt={''} style={{width: '100%',}}/> : ''}
+            {/*几条聊天*/}
             <div style={{marginTop: "10px"}} className="ml-5 mr-5">
                 <div className="flex justify-between w-full">
                     <div className="flex items-center space-x-0.5 cursor-pointer hover:underline">
@@ -153,7 +155,7 @@ function PostCard({post, user, change, liked}) {
             >
                 <div
                     onClick={() => handleLike()}
-                    className="flex flex-grow justify-center hover:bg-gray-100 space-x-2 mb-1 mt-1 pt-2 pb-2 pl-2.5 pr-2.5 rounded-xl cursor-pointer "
+                    className={`flex flex-grow justify-center space-x-2 mb-1 mt-1 pt-2 pb-2 pl-2.5 pr-2.5 rounded-xl cursor-pointer ${changeTheme?'darknesDarkItem':'brightWhiteItem'} `}
                 >
                     <ThumbUpOutlineIcon
                         className={`h-6 ${liked ? "text-transparent" : ""}`}
@@ -172,7 +174,7 @@ function PostCard({post, user, change, liked}) {
                 </div>
                 <div
                     onClick={() => setShowComments((prev) => !prev)}
-                    className="flex flex-grow justify-center hover:bg-gray-100 space-x-2 mb-1 mt-1 pt-2 pb-2 pl-2.5 pr-2.5 rounded-xl cursor-pointer"
+                    className={` ${changeTheme?'darknesDarkItem':'brightWhiteItem'} flex flex-grow justify-center  space-x-2 mb-1 mt-1 pt-2 pb-2 pl-2.5 pr-2.5 rounded-xl cursor-pointer`}
                 >
                     <ChatAltIcon className="h-6"/>
                     <p style={{userSelect: "none"}}>Comment</p>

@@ -15,12 +15,13 @@ import dynamic from 'next/dynamic'
 import {getUser} from "../utils/axios";
 import cook from "js-cookie";
 // const Sidebar = dynamic(() => import('../components/Sidebar'));
-const ChatSearch = dynamic(() => import('../components/Chat/ChatSearch'), );
-const Chat = dynamic(() => import('../components/Chat/Chat'), );
+const ChatSearch = dynamic(() => import('../components/Chat/ChatSearch'),{ ssr: false });
+const Chat = dynamic(() => import('../components/Chat/Chat'),{ ssr: false });
 import {changeLang} from "/utils/set";
 
 function ChatsPage() {
     const social=changeLang('social')
+
     const [chats, setChats] = useState([]);
     const [userPar, setUserPar] = useState({});
     const getUs = async () => {

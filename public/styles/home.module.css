@@ -6,7 +6,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 10px;
+    margin-top: 5px;
 }
 
 .ul > li {
@@ -47,16 +47,10 @@
     width: 64%;
 }
 .abc {
-    background-color: rgb(253, 213, 62);
     padding: 25px;
     border-radius: 10px;
     transition: box-shadow 0.3s;
 }
-
-.abc:hover {
-    box-shadow: 15px 15px 0 rgb(188, 158, 54)
-}
-
 
 .rightUl {
     width: 100%;

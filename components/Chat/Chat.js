@@ -1,5 +1,5 @@
 import React from "react";
-import styled from '/styles/all.module.css'
+import styled from '/public/styles/all.module.css'
 function Chat({ user, text}) {
   return (
     <>

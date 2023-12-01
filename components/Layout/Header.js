@@ -16,7 +16,7 @@ import _ from 'lodash'
 import cookie from 'js-cookie'
 import {useRouter} from 'next/router'
 // import ChatSearch from "../Chat/ChatSearch";
-const ChatSearch = dynamic(() => import('../Chat/ChatSearch'),)
+const ChatSearch = dynamic(() => import('../Chat/ChatSearch'), {ssr: false})
 // const DrawerPage = dynamic( () =>  import('./Drawer'),)
 import {get, post, del, getUser} from '/utils/axios'
 import {ethers} from 'ethers'
@@ -265,23 +265,27 @@ const Header = () => {
             // 判断是否是eth
             if (chain && chain.name !== 'unknow' && chain.chainId) {
                 try {
+                    const date = Date.now();
                     // await getCsrfToken()
-                    const message = `请签名证明你是钱包账户的拥有者\nstatement:${window.location.host}\nNonce:\n${Date.now()}\ndomain:\n ${window.location.host}\naddress: ${address}\nchainId:${chain.chainId}\nuri: ${window.location.origin}\n`
+                    // const message = `请签名证明你是钱包账户的拥有者\nstatement:${window.location.host}\nNonce:\n${date}\ndomain:\n ${window.location.host}\naddress: ${address}\nchainId:${chain.chainId}\nuri: ${window.location.origin}\n`
+                    const  message = date+'';
+                    console.log("message:",date)
                     // 签名
                     const signature = await signer.signMessage(message)
+                    console.log("signature:",signature)
+                    console.log("address:",address)
                     // 验证签名
                     const recoveredAddress = ethers.utils.verifyMessage(message, signature);
-                    if (recoveredAddress) {
+                    console.log("recoveredAddress:",recoveredAddress)
+                    if (recoveredAddress === address) {
                         setB()
                     }
                 } catch (err) {
                     return null
                 }
             } else {
-
             }
         } else {
-
         }
         // const cook = cookie.get('name')
         // if (!cook) {
@@ -386,7 +390,6 @@ const Header = () => {
     const handleChange = (value) => {
         changeFont(value)
     }
-
     return (
         <div
             className={"top-0 w-full  z-30 transition-all headerClass"}>
@@ -398,16 +401,16 @@ const Header = () => {
                     className={styles.marqueeBox}>
                     {
                         launch.length > 0 && launch.map((i, index) => {
-                            return <div key={index}  className={`${styles.marquee} `}>
-                                <span className={changeTheme?'darknessFont':'brightFont'}>#{index + 1}</span>
+                            return <div key={index} className={`${styles.marquee} `}>
+                                <span className={changeTheme ? 'darknessFont' : 'brightFont'}>#{index + 1}</span>
                                 <p className={styles.marqueeName}>{i?.symbol?.slice(0, 1)}</p>
-                                <span className={changeTheme?'darknessFont':'brightFont'}>{i.symbol}</span>
+                                <span className={changeTheme ? 'darknessFont' : 'brightFont'}>{i.symbol}</span>
                             </div>
                         })
                     }
                 </Marquee>
                 <div className={styles.searchToken}>
-                    <p className={`${styles['search']} ${changeTheme ? 'darknessThree' : 'brightFore'}`}
+                    <p className={`${styles['search']} ${changeTheme ? 'darknessThree' : 'brightFore boxHover'}`}
                        onClick={showSearch}>{header.search}</p>
                     {showChatSearch && (
                         <ChatSearch
@@ -444,11 +447,12 @@ const Header = () => {
                     {/*添加代币*/}
                     {/*<Button type={'primary'} className={styles['but']}*/}
                     {/*        onClick={showDrawer}>{header.addCoin}</Button>*/}
-                    <div className={`${styles.eth} ${changeTheme ? 'darknessTwo' : 'brightEth'}`}>
-                        <img src="/Ellipse27.png" alt="" width={30} style={{border: '50%'}}/>
-                        <p>$:2028</p>
+                    <div className={`${styles.eth} ${changeTheme ? 'darknessTwo' : 'brightTwo'}`}>
+                        <img src="/Ellipse27.png" alt="" width={30} style={{border: '50%', marginRight: '6px'}}/>
+                        <p className={changeTheme ? 'darknessFont' : 'brightFont'}>$:2028</p>
                         <p style={{display: 'flex', alignItems: 'center', marginLeft: '8px'}}><img src="/GasStation.png"
-                                                                                                   width={20} alt=""/>29
+                                                                                                   width={20} alt=""/>
+                            <span className={changeTheme ? 'darknessFont' : 'brightFont'}>29</span>
                         </p>
                     </div>
                     {
@@ -466,10 +470,11 @@ const Header = () => {
                                 arrow
                             >
                                 <Button
-                                        className={`${styles.loginName} ${styles.but} ${changeTheme ? 'darknessThree' : 'brightFore'} `}>{userPar && userPar.username ? userPar.username.length > 5 ? userPar.username.slice(0, 5) + '...' : userPar.username : ''}</Button>
+                                    className={`${styles.loginName} ${styles.but} ${changeTheme ? 'darknessThree' : 'brightFore boxHover'} `}>{userPar && userPar.username ? userPar.username.length > 5 ? userPar.username.slice(0, 5) + '...' : userPar.username : ''}</Button>
                             </Dropdown>
-                        </div> : <Button  className={`${styles['but']} ${styles.loginName} ${changeTheme ? 'darknessThree' : 'brightFore'}`}
-                                         onClick={getMoney}>{header.login}</Button>
+                        </div> : <Button
+                            className={`${styles['but']} ${styles.loginName} ${changeTheme ? 'darknessThree' : 'brightFore boxHover'}`}
+                            onClick={getMoney}>{header.login}</Button>
                     }
                 </div>
             </div>

@@ -3,15 +3,15 @@ import axios from "axios";
 import Sidebar from "../components/Sidebar";
 import baseUrl from '/utils/baseUrl'
 // import Feed from "../components/Feed";
-import styles from "../styles/social.module.css";
+import styles from "../public/styles/social.module.css";
 // import RightSideColumn from "../components/RightSideColumn";
 import _ from 'lodash'
 import dynamic from 'next/dynamic'
 import {getUser} from "../utils/axios";
 import cook from "js-cookie";
 // const Sidebar = dynamic(() => import('../components/Sidebar'));
-const Feed = dynamic(() => import('../components/Feed'), );
-const RightSideColumn = dynamic(() => import('../components/RightSideColumn'), );
+const Feed = dynamic(() => import('../components/Feed'), { ssr: false });
+const RightSideColumn = dynamic(() => import('../components/RightSideColumn'), { ssr: false });
 import {arrayUnique} from '/utils/set'
 function Index() {
     const [postsData, setPostsData] = useState([])

@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useRef, useContext} from "react";
-import styles from "../styles/home.module.css";
+import styles from "../public/styles/home.module.css";
 import axios from 'axios';
 import {formatDecimal, sendGetRequestWithSensitiveData, getRelativeTimeDifference, formatDateTime} from './Utils';
 import {useRouter} from 'next/router';
@@ -17,6 +17,7 @@ import {
 } from 'antd'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
+
 dayjs.extend(duration)
 import {
     TwitterOutlined,
@@ -33,15 +34,17 @@ import cook from 'js-cookie'
 import dynamic from "next/dynamic";
 import {CountContext} from "./Layout/Layout";
 import {arrayUnique} from '/utils/set'
+
 const {Countdown} = Statistic;
-const PostCard = dynamic(() => import('./PostCard'))
-const Bott = dynamic(() => import('./Bottom'))
+const PostCard = dynamic(() => import('./PostCard'), {ssr: false})
+const Bott = dynamic(() => import('./Bottom'), {ssr: false})
 import {changeLang} from "/utils/set";
 import {responseIterator} from "@apollo/client/link/http/responseIterator";
+
 function Home() {
     const router = useRouter();
-    const {bolLogin, changeShowData, showData, changeBolLogin,changeTheme} = useContext(CountContext);
-    const home=changeLang('home')
+    const {bolLogin, changeShowData, showData, changeBolLogin, changeTheme} = useContext(CountContext);
+    const home = changeLang('home')
     const [cookBol, setCook] = useState(false);
     useEffect(() => {
         if (cook.get('name')) {
@@ -79,11 +82,17 @@ function Home() {
     const [presaleBol, setPresaleBol] = useState(false);
     const [featuredBol, setFeaturedBol] = useState(true);
     const [featured, setFeatured] = useState([]);
+    const changeAllTheme = (a, b) => {
+        return changeTheme ? a : b
+    }
+    const packageHtml = (name) => {
+        return <span className={changeAllTheme('darknessFont', 'brightFont')}>{name}</span>
+    }
     const params = [{
         data: presale,
         bol: presaleBol,
-       name:home.presale
-    }, {data: launch, bol: launchBol,name:home.launch}]
+        name: home.presale
+    }, {data: launch, bol: launchBol, name: home.launch}]
     const getParams = (url, params, name) => {
         get(url, params).then(async (res) => {
             if (res.status === 200) {
@@ -141,47 +150,65 @@ function Home() {
             }}>{record?.baseToken?.symbol?.slice(0, 1)}</p>
         }
     }, {
-        title: home.pair, align: 'center', render: (text, record) => {
-            return <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}} >
-                <span className={changeTheme?'darknessFont':'brightFont'}>{record?.baseToken?.symbol}/</span>
-                <span style={{color:'rgb(156,156,156)'}}>{record?.quoteToken?.symbol}</span>
+        title: packageHtml(home.pair),
+        align: 'center',
+        render: (text, record) => {
+            return <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+                {
+                    packageHtml(record?.baseToken?.symbol+'/')
+                }
+                <span style={{color: 'rgb(156,156,156)'}}>{record?.quoteToken?.symbol}</span>
             </div>
         }
     },
         {
-            title: home.price, align: 'center', render: (text, record) => {
-                return <div className={changeTheme?'darknessFont':'brightFont'}>{record?.priceUsd ? formatDecimal(record?.priceUsd, 3) : ''}</div>
+            title: packageHtml(home.price),
+            align: 'center',
+            render: (text, record) => {
+                return packageHtml(record?.priceUsd ? formatDecimal(record?.priceUsd, 3) : '')
             }
         },
         {
-            title:home.price, align: 'center', render: (text, record) => {
+            title: packageHtml(home.createTime),
+            align: 'center',
+            render: (text, record) => {
                 const data = record.pairCreatedAt.toString().length > 10 ? Number(record.pairCreatedAt.toString().slice(0, 10)) : record.pairCreatedAt
-                return <p className={changeTheme?'darknessFont':'brightFont'}>{record?.pairCreatedAt ? getRelativeTimeDifference(formatDateTime(data)) : ''}</p>
+                return packageHtml(record?.pairCreatedAt ? getRelativeTimeDifference(formatDateTime(data)) : '')
             }
         },
         {
-            title: <span>{'% ' + time}</span>, align: 'center', render: (text, record) => {
+            title: packageHtml('% ' + time),
+            align: 'center',
+            render: (text, record) => {
                 return <p
-                    style={{color: changeTheme?record?.priceChange[time] > 0 ? 'rgb(97,123,64)' : 'rgb(209,68,68)':record?.priceChange[time] > 0 ? 'green' : 'red'}}>{record?.priceChange[time] ? record.priceChange[time] : 0}</p>
+                    style={{color: changeTheme ? record?.priceChange[time] > 0 ? 'rgb(97,123,64)' : 'rgb(209,68,68)' : record?.priceChange[time] > 0 ? 'green' : 'red'}}>{record?.priceChange[time] ? record.priceChange[time] : 0}</p>
             }
         },
         {
-            title: home.txns, align: 'center', render: (text, record) => {
-                return <p className={changeTheme?'darknessFont':'brightFont'}>{(record?.txns[time]?.buys + record?.txns[time]?.sells) ? autoConvert(record?.txns[time]?.buys + record?.txns[time]?.sells) : 0}</p>
+            title: packageHtml(home.txns),
+            align: 'center',
+            render: (text, record) => {
+                return  packageHtml((record?.txns[time]?.buys + record?.txns[time]?.sells) ? autoConvert(record?.txns[time]?.buys + record?.txns[time]?.sells) : 0)
             }
         },
         {
-            title: home.volume, align: 'center', render: (text, record) => {
-                return <p className={changeTheme?'darknessFont':'brightFont'}>{record?.volume[time] ? autoConvert(record?.volume[time]) : 0}</p>
+            title:packageHtml(home.volume) ,
+            align: 'center',
+            render: (text, record) => {
+                return  packageHtml(record?.volume[time] ? autoConvert(record?.volume[time]) : 0)
             }
         },
         {
-            title: home.liquidity, align: 'center', render: (text, record) => {
-                return <p className={changeTheme?'darknessFont':'brightFont'}> {record?.liquidity?.usd ? autoConvert(record.liquidity.usd) : 0}</p>
+            title: packageHtml(home.liquidity) ,
+            align: 'center',
+            render: (text, record) => {
+                return packageHtml(record?.liquidity?.usd ? autoConvert(record.liquidity.usd) : 0)
             }
         },
         {
-            title: home.dex, align: 'center', render: (text, record) => {
+            title: packageHtml(home.dex),
+            align: 'center',
+            render: (text, record) => {
                 return <Image src="/dex-uniswap.png" alt="" width={30} height={30}
                               style={{
                                   borderRadius: '50%',
@@ -203,7 +230,6 @@ function Home() {
             pageIndex: 0,
             pageSize: 10
         }, 'presale')
-
     }, []);
     const gets = () => {
         getParams('/queryFeatured', {
@@ -357,6 +383,7 @@ function Home() {
             return 0
         }
     }
+
     return (<div className={styles['box']}>
         <div className={styles['boxPar']}>
             {/*左边*/}
@@ -366,13 +393,13 @@ function Home() {
                     {
                         params.map((item, index) => {
                             return <div key={index}
-                                        className={`cardParams ${styles.homeModule}`}>
-                                <Card className={`${styles.homeCard} ${changeTheme?'darknessTwo':'brightTwo'}`} >
+                                        className={`cardParams ${styles.homeModule} ${!changeTheme && 'boxHover'}`}>
+                                <Card className={`${styles.homeCard} ${changeAllTheme('darknessTwo', 'brightTwo')}`}>
                                     <ul className={styles['rightUl']}>
                                         <li>
-                                            <p className={`${styles.homeCardName} ${changeTheme?'darknessFont':'brightFont'}`} >{item.name}</p>
+                                            <p className={`${styles.homeCardName} ${changeAllTheme('darknessFont', 'brightFont')}`}>{item.name}</p>
                                             <Link href={item.name === 'presale' ? '/presale' : '/launch'}>
-                                                <p className={styles.homeCardMore}>{home.more}</p>
+                                                <p className={styles.homeCardMore}>{home.more}></p>
                                             </Link>
                                         </li>
                                         {
@@ -380,34 +407,36 @@ function Home() {
                                                 if (index > 5) {
                                                     return ''
                                                 } else {
-                                                    return <li className={`${styles.li} ${changeTheme?'darknessItem':'brightItem'}`}  key={index}
-                                                    >
+                                                    return <li
+                                                        className={`${styles.li} ${changeAllTheme('darknessItem', 'brightItem')}`}
+                                                        key={index}>
                                                         <div className={styles.homeCardListBox}>
                                                             <p className={styles.homeCardIm}>{i.symbol.slice(0, 1)}</p>
                                                             <div style={{width: '78%'}}>
                                                                 <Tooltip title={i.symbol}>
-                                                                    <p className={`${styles.homeCardSymbol} ${changeTheme?'darknessFont':'brightFont'}`}>{i.symbol}</p>
+                                                                    <p className={`${styles.homeCardSymbol} ${changeAllTheme('darknessFont', 'brightFont')}`}>{i.symbol}</p>
                                                                 </Tooltip>
                                                                 <div className={styles['dis']} style={{
                                                                     padding: '3px'
                                                                 }}>
-                                                                    <GlobalOutlined
-                                                                        style={{cursor: 'pointer', fontSize: '20px'}}
-                                                                        className={changeTheme?'darknessFont':'brightFont'}
-                                                                        onClick={() => push(i, 'one')}/>
-                                                                    <TwitterOutlined
-                                                                        style={{cursor: 'pointer', fontSize: '20px'}}
-                                                                        className={changeTheme?'darknessFont':'brightFont'}
-                                                                        onClick={() => push(i, 'two')}/>
-                                                                    <SendOutlined
-                                                                        style={{cursor: 'pointer', fontSize: '20px'}}
-                                                                        className={changeTheme?'darknessFont':'brightFont'}
-                                                                        onClick={() => push(i, 'three')}/>
+                                                                    <img onClick={() => push(i, 'one')}
+                                                                         src={changeAllTheme('/Websitee.svg', "/Websiteaa.svg")}
+                                                                         alt="" width={16}/>
+                                                                    <img onClick={() => push(i, 'two')}
+                                                                         src={changeAllTheme('/TwitterX22.svg', "/TwitterX11.svg")}
+                                                                         alt="" width={18}/>
+                                                                    <img onClick={() => push(i, 'three')}
+                                                                         src={changeAllTheme("/Telegramss.svg", 'Telegram11.svg')}
+                                                                         alt="" width={20}/>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                         <div className={styles.homeCardDate}>
-                                                            <Countdown title="" className={changeTheme?'darknessFont':'brightFont'}
+                                                            <img
+                                                                src={changeAllTheme("/icon _timer.svg", '/icon _time1.svg')}
+                                                                alt="" width={15}/>
+                                                            <Countdown title=""
+                                                                       className={changeAllTheme('darknessFont', 'brightFont')}
                                                                        value={getD(dayjs(i.presale_time ? i.presale_time : i.launch_time).isAfter(dayjs()) ? dayjs(i.presale_time ? i.presale_time : i.launch_time).diff(dayjs(), 'seconds') : '')}
                                                                        format="HH:mm:ss"/>
                                                         </div>
@@ -436,14 +465,16 @@ function Home() {
                     }
                 </div>
                 {/*下面*/}
-                <div  className={`homeTable ${changeTheme?'darknessTwo':'brightTwo'} ${styles.homeCardBot}`}>
+                <div
+                    className={`homeTable ${changeAllTheme('darknessTwo', 'brightTwo boxHover')} ${styles.homeCardBot}`}>
                     <div className={styles['dis']}>
-                        <p style={{fontSize: '20px', fontWeight: 'bold'}} className={changeTheme?'darknessFont':'brightFont'}>{home.featured}</p>
+                        <p style={{fontSize: '20px', fontWeight: 'bold'}}
+                           className={changeAllTheme('darknessFont', 'brightFont')}>{home.featured}</p>
                         <div className={styles['dis']}>
                             {/*时间选择*/}
                             <Segmented options={['5m', '1h', '6h', '24h']} onChange={changSeg} defaultValue={'24h'}/>
                             <Link href={'/featured'}>
-                                <p className={styles.homeFeaturedMore}>{home.more}</p>
+                                <p className={styles.homeFeaturedMore}>{home.more}></p>
                             </Link>
                         </div>
                     </div>
@@ -451,7 +482,7 @@ function Home() {
                     <Table columns={columns}
                            rowKey={(record) => record?.baseToken?.address + record?.quoteToken?.address}
                            loading={featuredBol}
-                           className={`${changeTheme?'darkTable':'tablesss'}  anyTable`} onRow={(record) => {
+                           className={`${changeAllTheme('darkTable', 'tablesss')}  anyTable`} onRow={(record) => {
                         return {
                             onClick: (event) => {
                                 const data = record.pairAddress
@@ -464,13 +495,15 @@ function Home() {
                 </div>
             </div>
             {/*右边*/}
-            <div className={`cardParams ${changeTheme?'socialScrollD':'socialScroll'} ${changeTheme?'darknessTwo':'brightTwo'} }`} id="scrollableDiv"
-                 style={{height: `${refHeight?.current?.scrollHeight || 0}px`}}>
+            <div
+                className={`cardParams ${changeAllTheme('socialScrollD darknessThrees', 'socialScroll brightTwo boxHover')}`}
+                id="scrollableDiv"
+                style={{height: `${refHeight?.current?.scrollHeight || 0}px`}}>
                 <div className={styles.homeRightTop}>
-                    <p className={`${styles.homeRightTopName} ${changeTheme?'darknessFont':'brightFont'}`} >{home.social}</p>
+                    <p className={`${styles.homeRightTopName} ${changeAllTheme('darknessFont', 'brightFont')}`}>{home.social}</p>
                     <Link href={'/social'}>
                         <p onClick={pushSocial}
-                           style={{fontSize: '20px', color: '#2394D4', cursor: 'pointer'}}>{home.more}</p>
+                           style={{fontSize: '20px', color: '#2394D4', cursor: 'pointer'}}>{home.more}></p>
                     </Link>
                 </div>
                 {
@@ -498,8 +531,10 @@ function Home() {
                                     user={userPa}
                                 />
                             }) : ''}
-                        </InfiniteScroll> : <div style={{textAlign: 'center', fontSize: '20px'}}>{home.noData}</div> :
-                        <div style={{textAlign: 'center', fontSize: '20px'}}>{home.sign}</div>
+                        </InfiniteScroll> : <div style={{textAlign: 'center', fontSize: '20px'}}
+                                                 className={changeAllTheme('darknessFont', 'brightFont')}>{home.noData}</div> :
+                        <div style={{textAlign: 'center', fontSize: '20px'}}
+                             className={changeAllTheme('darknessFont', 'brightFont')}>{home.sign}</div>
                 }
             </div>
         </div>

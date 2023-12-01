@@ -5,7 +5,7 @@ import {useRouter} from "next/router";
 import {Anchor} from 'antd'
 import dynamic from "next/dynamic";
 
-const Header = dynamic(() => import('./Header'),)
+const Header = dynamic(() => import('./Header'),{ ssr: false })
 export const CountContext = createContext(null);
 const Layout = ({children}) => {
     const router = useRouter()

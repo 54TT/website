@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from "react";
 import Link from "next/link";
 import baseUrl from '/utils/baseUrl'
-import styled from '/styles/all.module.css';
+import styled from '/public/styles/all.module.css';
 import {changeLang} from "/utils/set";
 import {
     CheckCircleIcon,

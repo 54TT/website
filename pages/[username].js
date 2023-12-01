@@ -28,14 +28,14 @@ import {useRouter} from "next/router";
 import {EmojiSadIcon} from "@heroicons/react/outline";
 import dynamic from 'next/dynamic'
 import cook from "js-cookie";
-const PostCard = dynamic(() => import('../components/PostCard'),);
-const InfoBox = dynamic(() => import('../components/HelperComponents/InfoBox'),);
-const ProfileFields = dynamic(() => import('../components/ProfileComponents/ProfileFields'),);
-const FollowingUsers = dynamic(() => import('../components/ProfileComponents/FollowingUsers'),);
-const FollowerUsers = dynamic(() => import('../components/ProfileComponents/FollowerUsers'),);
+const PostCard = dynamic(() => import('../components/PostCard'),{ ssr: false });
+const InfoBox = dynamic(() => import('../components/HelperComponents/InfoBox'),{ ssr: false });
+const ProfileFields = dynamic(() => import('../components/ProfileComponents/ProfileFields'),{ ssr: false });
+const FollowingUsers = dynamic(() => import('../components/ProfileComponents/FollowingUsers'),{ ssr: false });
+const FollowerUsers = dynamic(() => import('../components/ProfileComponents/FollowerUsers'),{ ssr: false });
 import {getUser} from "/utils/axios";
 import {CountContext} from "../components/Layout/Layout";
-import styled from '/styles/all.module.css'
+import styled from '/public/styles/all.module.css'
 function ProfilePage() {
     const { changeBolName } = useContext(CountContext);
     const coverImageRef = useRef(null);

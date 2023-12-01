@@ -13,8 +13,8 @@ import Sidebar from "../../../components/Sidebar";
 import dynamic from 'next/dynamic'
 import {getUser} from "../../../utils/axios";
 import cook from "js-cookie";
-import styled from '/styles/all.module.css'
-const InfoBox = dynamic(() => import('../../../components/HelperComponents/InfoBox'),);
+import styled from '/public/styles/all.module.css'
+const InfoBox = dynamic(() => import('../../../components/HelperComponents/InfoBox'),{ ssr: false });
 // const Sidebar = dynamic(() => import('../../../components/Sidebar'))
 import {changeLang} from "/utils/set";
 function FollowingPage() {

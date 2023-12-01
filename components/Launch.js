@@ -5,7 +5,7 @@ import {get} from "../utils/axios";
 import {GlobalOutlined, SendOutlined, TwitterOutlined} from "@ant-design/icons";
 import baseUrl from "../utils/baseUrl";
 const {Countdown} = Statistic;
-import styled from '/styles/all.module.css'
+import styled from '/public/styles/all.module.css'
 import Image from 'next/image'
 import {changeLang} from "/utils/set";
 import {CountContext} from "./Layout/Layout";
@@ -23,6 +23,9 @@ export default function Presale() {
             message: `Please note`, description: 'Error reported', placement: 'topLeft',
             duration: 2
         });
+    }
+    const changeAllTheme = (a, b) => {
+        return changeTheme ? a : b
     }
     const getParams = (url, params) => {
         get(url, params).then((res) => {
@@ -82,14 +85,14 @@ export default function Presale() {
             title: launch.token,
             dataIndex: 'name',align: 'center',width: '25%',
             render: (text) => {
-                return <p className={changeTheme ? 'darknessFont' : 'brightFont'}>{text}</p>
+                return <p className={changeAllTheme('darknessFont' ,'brightFont')}>{text}</p>
             }
         },
         {
             title: launch.symbol,
             dataIndex: 'symbol',align: 'center',
             render: (text) => {
-                return <p className={`${styled.launchTableText} ${changeTheme ? 'darknessFont' : 'brightFont'}`}>{text}</p>
+                return <p className={`${styled.launchTableText} ${changeAllTheme('darknessFont' ,'brightFont')}`}>{text}</p>
             }
         },
         {
@@ -98,14 +101,14 @@ export default function Presale() {
             width: 200,
             render: (text, record) => {
                 return <div className={styled.launchTableDiv}>
-                    <GlobalOutlined className={changeTheme ? 'darknessFont' : 'brightFont'} style={{cursor: 'pointer', fontSize: '20px'}} onClick={() => push(record, 'one')}/>
-                    <TwitterOutlined className={changeTheme ? 'darknessFont' : 'brightFont'} style={{cursor: 'pointer', fontSize: '20px'}} onClick={() => push(record, 'two')}/>
-                    <SendOutlined className={changeTheme ? 'darknessFont' : 'brightFont'} style={{cursor: 'pointer', fontSize: '20px'}} onClick={() => push(record, 'three')}/>
+                    <GlobalOutlined className={changeAllTheme('darknessFont' ,'brightFont')} style={{cursor: 'pointer', fontSize: '20px'}} onClick={() => push(record, 'one')}/>
+                    <TwitterOutlined className={changeAllTheme('darknessFont' ,'brightFont')} style={{cursor: 'pointer', fontSize: '20px'}} onClick={() => push(record, 'two')}/>
+                    <SendOutlined className={changeAllTheme('darknessFont' ,'brightFont')} style={{cursor: 'pointer', fontSize: '20px'}} onClick={() => push(record, 'three')}/>
                 </div>
             }
         },
         {
-            title:  <span className={changeTheme ? 'darknessFont' : 'brightFont'}>{launch.time}</span>,
+            title:  <span className={changeAllTheme('darknessFont' ,'brightFont')}>{launch.time}</span>,
             dataIndex: 'launch_time',align: 'center',
             sorter: {
                 compare: (a, b) => {
@@ -116,7 +119,7 @@ export default function Presale() {
             },
             render: (text, record) => {
                 if (text) {
-                    return  <Countdown title="" className={changeTheme ? 'darknessFont' : 'brightFont'}
+                    return  <Countdown title="" className={changeAllTheme('darknessFont' ,'brightFont')}
                                        value={getD(dayjs(text).isAfter(dayjs()) ? dayjs(text).diff(dayjs(), 'seconds') : '')}
                                        format="HH:mm:ss"/>
                 } else {
@@ -144,18 +147,18 @@ export default function Presale() {
     }
     return (
         <div style={{marginRight:'20px'}}>
-            <Card className={`${styled.launchBoxCard}  ${changeTheme?'darknessTwo':'brightTwo'}`} >
+            <Card className={`${styled.launchBoxCard}  ${changeAllTheme('darknessTwo','brightTwo')}`} >
                 <div className={styled.launchBoxCardBox}>
                     <div style={{display: 'flex', alignItems: 'center'}}>
                         <img src="/Group.png" alt="" width={70} height={70}/>
-                        <span style={{fontWeight: 'bold', fontSize: '26px'}} className={changeTheme ? 'darknessFont' : 'brightFont'}> {launch.launch}</span>
+                        <span style={{fontWeight: 'bold', fontSize: '26px'}} className={changeAllTheme('darknessFont' ,'brightFont')}> {launch.launch}</span>
                     </div>
                     <div className={styled.launchBoxFilter}>
                         <Pagination defaultCurrent={1} current={launchCurrent} showSizeChanger onChange={change}
                                     total={launchAll} pageSize={launchPageSize}/>
                     </div>
                 </div>
-                <Table className={`anyTable ${changeTheme ? 'hotTableD' : 'hotTable'}`} bordered={false} columns={columns} loading={launchBol}
+                <Table className={`anyTable ${changeAllTheme('hotTableD' ,'hotTable')}`} bordered={false} columns={columns} loading={launchBol}
                        dataSource={launchPro} rowKey={(record) => record.symbol + record.address}
                        pagination={false} rowClassName={(record) => {
                     return 'oneHave'

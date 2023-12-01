@@ -1,5 +1,5 @@
 import React, {useContext} from 'react';
-import styles from "/styles/all.module.css";
+import styles from "/public/styles/all.module.css";
 import Image from 'next/image'
 import {CountContext} from "./Layout/Layout";
 import {changeLang} from "/utils/set";
@@ -8,8 +8,8 @@ function Bottom(props) {
     const {changeFamily, changeTheme} = useContext(CountContext);
     const bottom = changeLang('bottom')
     return (
-        <div style={{marginTop: '30px'}}>
-            <div className={`${styles.bottomBoxLogo} ${changeTheme ? 'darknessTwo' : 'brightTwo'}`}>
+        <div style={{marginTop: '35px'}}>
+            <div style={{marginBottom:"30px"}} className={`${styles.bottomBoxLogo} ${changeTheme ? 'darknessTwo' : 'brightTwo boxHover'}`}>
                 <div className={styles.bottomTop}>
                     <div className={styles.bottomImg}>
                         <Image src="/video.png" alt="" width={100} height={100} style={{width: '100%'}}/>
@@ -22,7 +22,7 @@ function Bottom(props) {
                        color: changeTheme ? 'rgb(156,156,156)' : 'rgb(55, 55, 55)'
                    } : {color: changeTheme ? 'rgb(156,156,156)' : 'rgb(55, 55, 55)'}}>{bottom.introduce}</p>
             </div>
-            <div className={`${styles['bottomBoxLogo']}  ${changeTheme ? 'darknessTwo' : 'brightTwo'}`}>
+            <div className={`${styles['bottomBoxLogo']}  ${changeTheme ? 'darknessTwo' : 'brightTwo boxHover'}`}>
                 <div className={styles.bottomImgs}>
                     <Image src="/TwitterX1.png" alt="" width={45} height={45}/>
                     <Image src="/TelegramApp.png" alt="" width={45} height={45}/>

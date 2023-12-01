@@ -10,9 +10,9 @@ import dynamic from 'next/dynamic'
 import {getUser} from "/utils/axios";
 import cook from "js-cookie";
 // const Sidebar = dynamic(() => import('../components/Sidebar'));
-const LikeNotification = dynamic(() => import('../components/Notification/LikeNotification'),);
-const CommentNotification = dynamic(() => import('../components/Notification/CommentNotification'),);
-const FollowNotification = dynamic(() => import('../components/Notification/FollowNotification'),);
+const LikeNotification = dynamic(() => import('../components/Notification/LikeNotification'),{ ssr: false });
+const CommentNotification = dynamic(() => import('../components/Notification/CommentNotification'),{ ssr: false });
+const FollowNotification = dynamic(() => import('../components/Notification/FollowNotification'),{ ssr: false });
 import {changeLang} from "/utils/set";
 
 function Notifications() {

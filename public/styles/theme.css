@@ -12,9 +12,17 @@
     background-color: rgb(59, 55, 71) !important;
 }
 
-.darknessItem:hover {
-    background-color: rgb(53, 47, 74);
+.darknessThrees {
+    background-color: rgb(37,30,38) !important;
 }
+
+.darknessItem:hover {
+    background-color: rgb(53, 47, 74)!important;
+}
+.darknesDarkItem:hover {
+    background-color: rgb(59,55,71)!important;
+}
+
 
 .darknessTwo .MuiDrawer-paper {
     background-color: rgb(59, 55, 71) !important;
@@ -26,13 +34,15 @@
 }
 
 .darknessFont {
-    color: rgb(143, 143, 143) !important;
+    color: rgb(243, 243, 243) !important;
 }
 .darknessFont .ant-statistic-content .ant-statistic-content-value {
-    color: rgb(143, 143, 143) !important;
+    color: rgb(243, 243, 243) !important;
 }
-
-
+.darknessBack {
+    background-color: rgb(44,37,69) !important;
+    color: white;
+}
 
 
 /*亮色*/
@@ -42,6 +52,9 @@
 
 .brightItem:hover {
     background-color: #DDF1E2;
+}
+.brightWhiteItem:hover {
+    background-color: rgb(128, 128, 128)!important;
 }
 
 .brightOne .ant-switch-handle::before {
@@ -60,6 +73,11 @@
     background-color: rgb(253, 213, 62) !important;
 }
 
+
+.brightBackTwo {
+    background-color: white !important;
+}
+
 .brightTwo .MuiDrawer-paper {
     background-color: rgb(253, 213, 62) !important;
 }
@@ -72,6 +90,15 @@
     color: rgb(37, 35, 42) !important;
 }
 
+.brightFBack {
+    background-color: rgb(188,158,45) !important;
+}
+
 .brightFont .ant-statistic-content .ant-statistic-content-value {
     color: rgb(37, 35, 42) !important;
+    font-size: 20px;
+}
+
+.boxHover:hover{
+    box-shadow: 15px 15px 0 rgb(188, 158, 54);
 }

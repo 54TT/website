@@ -91,7 +91,6 @@ const Drawer = ({getMoney}) => {
         changeBack(value)
         setValue(value)
     }
-
     return (
         <div className={changeTheme?'darknessTwo':'brightTwo'} style={{position: 'relative'}}>
             <Drawer variant="permanent" open={openDrawer} onMouseEnter={handleDrawerOpen}
@@ -107,14 +106,13 @@ const Drawer = ({getMoney}) => {
                                     minWidth: 0,
                                     mr: openDrawer ? 3 : 0,
                                     justifyContent: 'center',
+                                    marginLeft:'10px'
                                 }}
                             >
-                                <Image src={'/LOGO.png'} alt="logo" width={45} height={45}/>
+                                <Image src={'/logoTop.svg'} alt="logo" width={30} height={30}/>
                             </ListItemIcon>
-                            {/*Vector*/}
-                            <ListItemText primary={<div style={{width: '50%'}}><Image width={100} height={100}
-                                                                                      style={{width: '100%'}}
-                                                                                      src="/Vector.png" alt=""/></div>}
+                            <ListItemText primary={<div style={{width: '50%'}}>
+                                <Image width={100} height={100} style={{width: '100%'}} src="/Vector.png" alt=""/></div>}
                                           sx={{opacity: openDrawer ? 1 : 0}}/>
                         </DrawerHeader>
                     </div>
@@ -135,7 +133,7 @@ const Drawer = ({getMoney}) => {
                                         justifyContent: 'center',
                                     }}
                                 >
-                                    <Image src={`/Home.png`} alt="logo" width={32} height={32}/>
+                                    <Image src={`/HomeLogo.svg`} alt="logo" width={32} height={32}/>
                                 </ListItemIcon>
                                 <ListItemText primary={<span className={changeTheme?'darknessFont':'brightFont'}>{drawer.home}</span>} sx={{opacity: openDrawer ? 1 : 0}}/>
                             </ListItemButton>
@@ -156,7 +154,7 @@ const Drawer = ({getMoney}) => {
                                         justifyContent: 'center',
                                     }}
                                 >
-                                    <Image src={`/Exchange.png`} alt="logo" height={32} width={32}/>
+                                    <Image src={`/ExchangeLogo.svg`} alt="logo" height={32} width={32}/>
                                 </ListItemIcon>
                                 <ListItemText primary={<span className={changeTheme?'darknessFont':'brightFont'}>{drawer.featured}</span>} sx={{opacity: openDrawer ? 1 : 0}}/>
                             </ListItemButton>
@@ -177,7 +175,7 @@ const Drawer = ({getMoney}) => {
                                         justifyContent: 'center',
                                     }}
                                 >
-                                    <Image src={`/pre-sale.png`} alt="logo" height={32} width={32}/>
+                                    <Image src={`/pre-saleLogo.svg`} alt="logo" height={32} width={32}/>
                                 </ListItemIcon>
                                 <ListItemText primary={ <span className={changeTheme?'darknessFont':'brightFont'}>{drawer.presale}</span>} sx={{opacity: openDrawer ? 1 : 0}}/>
                             </ListItemButton>
@@ -198,7 +196,7 @@ const Drawer = ({getMoney}) => {
                                         justifyContent: 'center',
                                     }}
                                 >
-                                    <Image src={`/pre-sale.png`} alt="logo" height={32} width={32}/>
+                                    <Image src={`/pre-saleLogo.svg`} alt="logo" height={32} width={32}/>
                                 </ListItemIcon>
                                 <ListItemText primary={<span className={changeTheme?'darknessFont':'brightFont'}>{drawer.launch}</span>} sx={{opacity: openDrawer ? 1 : 0}}/>
                             </ListItemButton>
@@ -219,7 +217,7 @@ const Drawer = ({getMoney}) => {
                                         justifyContent: 'center',
                                     }}
                                 >
-                                    <Image src={`/newPairs.png`} alt="logo" height={32} width={32}/>
+                                    <Image src={`/newpairsLogo.svg`} alt="logo" height={32} width={32}/>
                                 </ListItemIcon>
                                 <ListItemText primary={<span className={changeTheme?'darknessFont':'brightFont'}>{drawer.newPair}</span>} sx={{opacity: openDrawer ? 1 : 0}}/>
                             </ListItemButton>
@@ -240,7 +238,7 @@ const Drawer = ({getMoney}) => {
                                         justifyContent: 'center',
                                     }}
                                 >
-                                    <Image src={`/News.png`} alt="logo" width={32} height={32}/>
+                                    <Image src={`/NewsLogo.svg`} alt="logo" width={32} height={32}/>
                                 </ListItemIcon>
                                 <ListItemText primary={<span className={changeTheme?'darknessFont':'brightFont'}>{drawer.community}</span>} sx={{opacity: openDrawer ? 1 : 0}}/>
                             </ListItemButton>
@@ -261,15 +259,15 @@ const Drawer = ({getMoney}) => {
                                         justifyContent: 'center',
                                     }}
                                 >
-                                    <Image src={`/Users.png`} height={32} alt="logo" width={32}/>
+                                    <Image src={`/UserSettings.svg`} height={32} alt="logo" width={32}/>
                                 </ListItemIcon>
                                 <ListItemText primary={<span className={changeTheme?'darknessFont':'brightFont'}>{drawer.user}</span>} sx={{opacity: openDrawer ? 1 : 0}}/>
                             </ListItemButton>
                         </div>
                     </ListItem>
                 </List>
-                <div style={{position: 'absolute', bottom: '20px', left: '15px'}}>
-                    <Switch  size={'small'} checked={value} className={changeTheme?'darknessOne':'brightOne'} onChange={changeThemes}/>
+                <div style={{position: 'absolute', bottom: '20px', left: '8px'}}>
+                    <Switch checked={value} className={changeTheme?'darknessOne':'brightOne'} onChange={changeThemes}/>
                 </div>
             </Drawer>
         </div>

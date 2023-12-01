@@ -1,6 +1,6 @@
 import React from "react";
 import {WomanOutlined} from '@ant-design/icons'
-import styled from '/styles/all.module.css';
+import styled from '/public/styles/all.module.css';
 function ErrorComponent({ errorMessage }) {
   return (
     <div className={styled.errorTop}>

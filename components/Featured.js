@@ -1,19 +1,22 @@
 import React, {useContext, useEffect, useRef, useState} from "react";
 import axios from 'axios';
-import {formatDecimal, getRelativeTimeDifference, formatDateTime} from './Utils';
+import {formatDateTime, formatDecimal, getRelativeTimeDifference} from './Utils';
 import dayjs from 'dayjs';
-import {notification, Pagination, Table, Card, Segmented} from "antd";
+import {Card, Pagination, Segmented, Table} from "antd";
 import {get} from "../utils/axios";
 import {useRouter} from 'next/router'
-import {autoConvert} from '/utils/set'
-import styled from '/styles/all.module.css'
+import {autoConvert, changeLang} from '/utils/set'
+import styled from '/public/styles/all.module.css'
 import Image from 'next/image'
-import {changeLang} from "/utils/set";
 import {CountContext} from "./Layout/Layout";
+
 export default function Featured() {
     const featured =changeLang('featured')
     const {changeTheme} = useContext(CountContext);
     const router = useRouter()
+    const changeAllTheme = (a, b) => {
+        return changeTheme ? a : b
+    }
     const ref = useRef(null)
     const [featuredPageSize, setFeaturedPageSize] = useState(10);
     const [featuredCurrent, setFeaturedCurrent] = useState(1);
@@ -41,19 +44,22 @@ export default function Featured() {
             setTime('h24')
         }
     }
+    const packageHtml=(name)=>{
+        return <span className={changeAllTheme('darknessFont', 'brightFont')}>{name}</span>
+    }
     const columns = [{
-        title: featured.pair,align: 'center',  render: (text, record) => {
+        title: packageHtml(featured.pair),align: 'center',  render: (text, record) => {
             return <div className={styled.featuredColumnsBox}>
                 <p className={styled.featuredColumns}>{record?.baseToken?.symbol?.slice(0, 1)}</p>
                 <div style={{lineHeight:'1'}}>
-                    <p className={changeTheme?'darknessFont':'brightFont'}>{record?.baseToken?.symbol.length>7?record.baseToken.symbol.slice(0,4):record.baseToken.symbol}/<span style={{color:'#626262'}}>{record?.quoteToken?.symbol.length>7?record.quoteToken.symbol.slice(0,4):record.quoteToken.symbol}</span></p>
+                    <p className={changeAllTheme('darknessFont','brightFont')}>{record?.baseToken?.symbol.length>7?record.baseToken.symbol.slice(0,4):record.baseToken.symbol}/<span style={{color:'#626262'}}>{record?.quoteToken?.symbol.length>7?record.quoteToken.symbol.slice(0,4):record.quoteToken.symbol}</span></p>
                 </div>
             </div>
         }
     },
         {
-            title: <span  className={changeTheme?'darknessFont':'brightFont'}>{featured.price}</span>,align: 'center',  render: (text, record) => {
-                return <div className={changeTheme?'darknessFont':'brightFont'}>{record?.priceUsd ? formatDecimal(record?.priceUsd, 3) : ''}</div>
+            title: packageHtml(featured.price),align: 'center',  render: (text, record) => {
+                return <div className={changeAllTheme('darknessFont','brightFont')}>{record?.priceUsd ? formatDecimal(record?.priceUsd, 3) : ''}</div>
             },
             sorter: {
                 compare: (a, b) => {
@@ -62,9 +68,9 @@ export default function Featured() {
             },
         },
         {
-            title: <span  className={changeTheme?'darknessFont':'brightFont'}>{featured.createTime}</span>,align: 'center',  render: (text, record) => {
+            title: packageHtml(featured.createTime),align: 'center',  render: (text, record) => {
                 const data =  record.pairCreatedAt.toString().length>10?Number(record.pairCreatedAt.toString().slice(0,10)):record.pairCreatedAt
-                return <p className={changeTheme?'darknessFont':'brightFont'}>{record?.pairCreatedAt ? getRelativeTimeDifference(formatDateTime(data)) : ''}</p>
+                return <p className={changeAllTheme('darknessFont','brightFont')}>{record?.pairCreatedAt ? getRelativeTimeDifference(formatDateTime(data)) : ''}</p>
             },
             sorter: {
                 compare: (a, b) => {
@@ -75,28 +81,28 @@ export default function Featured() {
             },
         },
         {
-            title: <span className={changeTheme?'darknessFont':'brightFont'}>{'% '+time}</span> ,align: 'center',  render: (text, record) => {
+            title:  packageHtml('% '+time) ,align: 'center',  render: (text, record) => {
                 return <p
                     style={{color: record?.priceChange[time] > 0 ? 'green' : 'red'}}>{record?.priceChange[time]?record.priceChange[time]:0}</p>
             }
         },
         {
-            title: featured.txns,align: 'center',  render: (text, record) => {
-                return <p className={changeTheme?'darknessFont':'brightFont'}>{record?.txns[time]?.buys + record?.txns[time]?.sells ? autoConvert(record?.txns[time]?.buys + record?.txns[time]?.sells) : 0}</p>
+            title:  packageHtml(featured.txns),align: 'center',  render: (text, record) => {
+                return <p className={changeAllTheme('darknessFont','brightFont')}>{record?.txns[time]?.buys + record?.txns[time]?.sells ? autoConvert(record?.txns[time]?.buys + record?.txns[time]?.sells) : 0}</p>
             }
         },
         {
-            title: featured.volume,align: 'center',  render: (text, record) => {
-                return <p className={changeTheme?'darknessFont':'brightFont'}>{record?.volume[time] ? autoConvert(record?.volume[time]) : 0}</p>
+            title: packageHtml(featured.volume),align: 'center',  render: (text, record) => {
+                return <p className={changeAllTheme('darknessFont','brightFont')}>{record?.volume[time] ? autoConvert(record?.volume[time]) : 0}</p>
             }
         },
         {
-            title: featured.liquidity,align: 'center',  render: (text, record) => {
-                return <p className={changeTheme?'darknessFont':'brightFont'}> {record?.liquidity?.usd ? autoConvert(record.liquidity.usd) : ''}</p>
+            title: packageHtml(featured.liquidity),align: 'center',  render: (text, record) => {
+                return <p className={changeAllTheme('darknessFont','brightFont')}> {record?.liquidity?.usd ? autoConvert(record.liquidity.usd) : ''}</p>
             }
         },
         {
-            title: featured.dex, align: 'center', render: (text, record) => {
+            title: packageHtml(featured.dex), align: 'center', render: (text, record) => {
                 return <Image src="/dex-uniswap.png" alt="" width={30} height={30} style={{borderRadius:'50%',display:'block',margin:'0 auto',height:'auto',width:'auto'}}/>
             }
         },
@@ -144,16 +150,16 @@ export default function Featured() {
 
     return (
         <div className={styled.featuredBox}>
-            <Card className={`${styled.featuredBoxCard} ${changeTheme?'darknessTwo':'brightTwo'}`} >
+            <Card className={`${styled.featuredBoxCard} ${changeAllTheme('darknessTwo','brightTwo')}`} >
                 <div className={styled.featuredBoxTop}>
                     <div style={{display: 'flex', alignItems: 'center'}}>
                         <Image src="/wallet.png" alt="" width={70}  height={70}/>
-                        <span style={{fontWeight: 'bold', fontSize: '26px'}} className={changeTheme?'darknessFont':'brightFont'}>{featured.featured}</span>
+                        <span style={{fontWeight: 'bold', fontSize: '26px'}} className={changeAllTheme('darknessFont','brightFont')}>{featured.featured}</span>
                     </div>
                     <Segmented options={['5m', '1h', '6h', '24h']} onChange={changSeg} defaultValue={'24h'}/>
 
                 </div>
-                <Table className={`anyTable ${changeTheme?'hotTableD':'hotTable'}`} columns={columns} rowKey={(record)=>record?.baseToken?.address+record?.quoteToken?.address} onRow={(record) => {
+                <Table className={`anyTable ${changeAllTheme('hotTableD','hotTable')}`} columns={columns} rowKey={(record)=>record?.baseToken?.address+record?.quoteToken?.address} onRow={(record) => {
                     return {
                         onClick: (event) => {
                             const data = record.pairAddress

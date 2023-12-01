@@ -7,7 +7,7 @@ import {
 } from "@heroicons/react/outline";
 // import SidebarRow from "./HelperComponents/SidebarRow";
 import dynamic from "next/dynamic";
-const SidebarRow = dynamic(() => import('./HelperComponents/SidebarRow'),)
+const SidebarRow = dynamic(() => import('./HelperComponents/SidebarRow'),{ ssr: false })
 import {changeLang} from "/utils/set";
 
 function Sidebar({user, topDist, maxWidth}) {

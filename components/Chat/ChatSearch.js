@@ -6,7 +6,8 @@ import React, {useState, useRef, useContext} from "react";
 import Link from "next/link";
 import { useClickAway } from "react-use";
 import baseUrl from "../../utils/baseUrl";
-import styled from '/styles/all.module.css';
+import styled from '/public/styles/all.module.css';
+import {changeLang} from "/utils/set";
 function ChatSearch({ setShowChatSearch, setChats, chats,user, }) {
   const social=changeLang('social')
   const [searchTerm, setSearchTerm] = useState("");

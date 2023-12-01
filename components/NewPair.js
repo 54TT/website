@@ -7,13 +7,13 @@ import dayjs from "dayjs";
 import Image from 'next/image'
 import {autoConvertNew,autoConvert} from '/utils/set'
 import {formatDecimal, sendGetRequestWithSensitiveData, getRelativeTimeDifference, formatDateTime} from './Utils';
-import styled from '/styles/all.module.css'
+import styled from '/public/styles/all.module.css'
 const client = new ApolloClient({
     uri: 'http://188.166.191.246:8000/subgraphs/name/dsb/uniswap', cache: new InMemoryCache(),
+
 });
 import {changeLang} from "/utils/set";
 import {CountContext} from "./Layout/Layout";
-
 export default function NewPair() {
     const newPair=changeLang('newPair')
     const {changeTheme} = useContext(CountContext);

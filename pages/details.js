@@ -1,11 +1,13 @@
-import React,{useState,useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {useRouter} from 'next/router';
-import style from '../styles/details.module.css'
+import style from '../public/styles/details.module.css'
 import {Table, Card, Segmented,Progress } from 'antd'
 import axios from 'axios';
 import Image from 'next/image'
+import {CountContext} from "../components/Layout/Layout";
 function Details() {
     const router = useRouter();
+    const { changeTheme,} = useContext(CountContext);
     const data = router.query
     const [columnsBol,setColumnsBol] = useState(false)
     const [featured, setFeatured] = useState({});
@@ -215,50 +217,50 @@ function Details() {
         }
     }
     return (
-            <div className={style['box']}>
-                {/*<div className={style['top']}>*/}
-                {/*    <div style={{display: 'flex', alignItems: 'center'}}>*/}
-                {/*        <p style={{backgroundColor:'black',color:'white',fontSize:'20px',width:'50px',lineHeight:'50px',textAlign:'center',borderRadius:'50%'}}>{featured?.baseToken?.symbol?.slice(0,1)}</p>*/}
-                {/*        <div style={{marginLeft: '15px'}}>*/}
-                {/*            <p style={{fontWeight: 'bold', fontSize: '20px'}}>{featured?.baseToken?.name}</p>*/}
-                {/*            <p style={{color: 'rgb(98,98,98)'}}><span*/}
-                {/*                style={{fontSize: '18px', color: 'black'}}>{featured?.baseToken?.symbol?featured.baseToken.symbol+'/':''}</span>{featured?.quoteToken?.symbol||''}</p>*/}
-                {/*        </div>*/}
-                {/*    </div>*/}
-                {/*    <div>*/}
-                {/*        <p style={{fontSize: '18px'}}>PLUR: <span*/}
-                {/*            style={{color: 'rgb(32,134,192)'}}>{featured?.baseToken?.address?featured.baseToken.address.slice(0,3)+'...'+featured.baseToken.address.slice(-4):''}</span></p>*/}
-                {/*        <p style={{fontSize: '18px'}}>PAIR: <span*/}
-                {/*            style={{color: 'rgb(32,134,192)'}}>{featured?.pairAddress?featured.pairAddress.slice(0,3)+'...'+featured.pairAddress.slice(-4):''}</span></p>*/}
-                {/*    </div>*/}
-                {/*    <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '20%'}}>*/}
-                {/*        <img src="/Star1.png" alt="" width={30}   height={30}/>*/}
-                {/*        <img src="/Website2.png" alt="" width={30}   height={30}/>*/}
-                {/*        <img src="/TwitterX.png" alt="" width={30}   height={30}/>*/}
-                {/*        <img src="/Telegram2.png" alt="" width={30}   height={30}/>*/}
-                {/*        <img src="/Ellipse15.png" alt="" width={30}   height={30}/>*/}
-                {/*        <img src="/etherscan.png" alt="" width={30}   height={30}/>*/}
-                {/*    </div>*/}
-                {/*    <p style={{*/}
-                {/*        backgroundColor: 'rgb(188,158,45)',*/}
-                {/*        padding: '10px',*/}
-                {/*        fontSize: '20px',*/}
-                {/*        fontWeight: 'bold',*/}
-                {/*        borderRadius: '6px'*/}
-                {/*    }}>{featured?.priceUsd?'$'+featured.priceUsd:''}</p>*/}
-                {/*    <div style={{*/}
-                {/*        display: 'flex', alignItems: 'end',*/}
-                {/*        flexDirection: 'column'*/}
-                {/*    }}>*/}
-                {/*        <p style={{color: 'rgb(98,98,98)', display: 'flex', justifyContent: 'center'}}><span style={{*/}
-                {/*            color: 'rgb(97,123,64)',*/}
-                {/*            letterSpacing: '2px',*/}
-                {/*            fontSize: '20px',*/}
-                {/*            fontWeight: 'bold'*/}
-                {/*        }}> {featured?.priceChange?.h24>0?'+'+featured.priceChange.h24+'%':''}</span> {featured?.priceChange?.h24?'24H':''}</p>*/}
-                {/*        <p style={{color: 'rgb(98,98,98)', textAlign: 'center'}}>{featured?.priceNative?featured.priceNative+'ETH':''}</p>*/}
-                {/*    </div>*/}
-                {/*</div>*/}
+            <div className={`${style['box']} ${changeTheme?'darknessTwo':'brightTwo'}`}>
+                {/*头部数据*/}
+                <div className={style['top']}>
+                    <div style={{display: 'flex', alignItems: 'center'}}>
+                        <p style={{backgroundColor:'black',color:'white',fontSize:'20px',width:'50px',lineHeight:'50px',textAlign:'center',borderRadius:'50%'}}>{featured?.baseToken?.symbol?.slice(0,1)}</p>
+                        <div style={{marginLeft: '15px'}}>
+                            <p style={{fontWeight: 'bold', fontSize: '20px'}} className={changeTheme?'darknessFont':'brightFont'}>{featured?.baseToken?.name}</p>
+                            <p style={{color: 'rgb(98,98,98)'}}><span
+                                style={{fontSize: '18px',}} className={changeTheme?'darknessFont':'brightFont'}>{featured?.baseToken?.symbol?featured.baseToken.symbol+'/':''}</span>{featured?.quoteToken?.symbol||''}</p>
+                        </div>
+                    </div>
+                    <div>
+                        <p style={{fontSize: '18px'}} className={changeTheme?'darknessFont':'brightFont'}>PLUR: <span
+                            style={{color: 'rgb(32,134,192)'}}>{featured?.baseToken?.address?featured.baseToken.address.slice(0,3)+'...'+featured.baseToken.address.slice(-4):''}</span></p>
+                        <p style={{fontSize: '18px'}} className={changeTheme?'darknessFont':'brightFont'}>PAIR: <span
+                            style={{color: 'rgb(32,134,192)'}}>{featured?.pairAddress?featured.pairAddress.slice(0,3)+'...'+featured.pairAddress.slice(-4):''}</span></p>
+                    </div>
+                    <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '20%'}}>
+                        <img src="/Star1.png" alt="" width={30}   height={30}/>
+                        <img src="/Website2.png" alt="" width={30}   height={30}/>
+                        <img src="/TwitterX.png" alt="" width={30}   height={30}/>
+                        <img src="/Telegram2.png" alt="" width={30}   height={30}/>
+                        <img src="/Ellipse15.png" alt="" width={30}   height={30}/>
+                        <img src="/etherscan.png" alt="" width={30}   height={30}/>
+                    </div>
+                    <p style={{
+                        padding: '10px',
+                        fontSize: '20px',
+                        fontWeight: 'bold',
+                        borderRadius: '6px'
+                    }} className={changeTheme?'darknessBack':'brightFBack'}>{featured?.priceUsd?'$'+featured.priceUsd:''}</p>
+                    <div style={{
+                        display: 'flex', alignItems: 'end',
+                        flexDirection: 'column'
+                    }}>
+                        <p style={{color: 'rgb(98,98,98)', display: 'flex', justifyContent: 'center'}}><span style={{
+                            color: 'rgb(97,123,64)',
+                            letterSpacing: '2px',
+                            fontSize: '20px',
+                            fontWeight: 'bold'
+                        }}> {featured?.priceChange?.h24>0?'+'+featured.priceChange.h24+'%':''}</span> {featured?.priceChange?.h24?'24H':''}</p>
+                        <p style={{color: 'rgb(98,98,98)', textAlign: 'center'}}>{featured?.priceNative?featured.priceNative+'ETH':''}</p>
+                    </div>
+                </div>
                 {/*<div className={style['bottom']}>*/}
                 {/*    <div style={{display:'flex',justifyContent:'space-between',marginBottom:'20px'}}>*/}
                 {/*        <div className={style['left']}>*/}

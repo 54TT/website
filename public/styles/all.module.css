@@ -203,7 +203,7 @@
 
 .bottomImg {
     margin: 0 auto;
-    width: 50%;
+    width: 45%;
 }
 
 .bottomSlign {
@@ -223,13 +223,8 @@
     display: flex;
     justify-content: center;
     padding: 15px 0;
-    margin-bottom: 20px;
     border-radius: 20px;
     transition: box-shadow 0.3s;
-}
-
-.bottomBoxLogo:hover {
-    box-shadow: 15px 15px 0 rgb(188, 158, 54)
 }
 
 .bottomImgs {
@@ -240,7 +235,7 @@
 }
 
 .bottomBot {
-    margin: 20px 0;
+    margin: 30px 0;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -460,8 +455,8 @@
 }
 
 .postCardBoxClick {
-    border-top: 1px solid lightgrey;
-    border-bottom: 1px solid lightgrey;
+    /*border-top: 1px solid lightgrey;*/
+    /*border-bottom: 1px solid lightgrey;*/
     margin-top: 10px;
 }
 

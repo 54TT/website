@@ -1,6 +1,6 @@
-import "../styles/tailwind.css";
-import "../styles/slick.css";
-import '../styles/theme.css'
+import "../public/styles/tailwind.css";
+import "../public/styles/slick.css";
+import '../public/styles/theme.css'
 import {SessionProvider} from "next-auth/react"
 import {configureChains, createClient, WagmiConfig, chain} from 'wagmi';
 import {publicProvider} from 'wagmi/providers/public';

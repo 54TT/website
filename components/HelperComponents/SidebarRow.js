@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import styled from '/styles/all.module.css'
+import styled from '/public/styles/all.module.css'
 
 function SidebarRow({ Icon, title, src, route,name }) {
   return (

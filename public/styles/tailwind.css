@@ -369,7 +369,7 @@ li.check:before {
     width: 34%;
     background-color: rgb(253, 213, 62);
     border-radius: 12px;
-    padding: 10px 8px;
+    padding: 10px;
     overflow-y: auto;
     transition: box-shadow 0.3s;
 }
@@ -393,22 +393,18 @@ li.check:before {
 /*sss*/
 .socialScrollD::-webkit-scrollbar {
     width: 10px;
-    background-color: rgb(59, 55, 71);
+    background-color: rgb(37, 30, 38);
 }
 
 /*定义滚动条轨道：内阴影+圆角*/
 .socialScrollD::-webkit-scrollbar-track {
-    background-color: rgb(59, 55, 71);
+    background-color: rgb(37, 30, 38);
 }
 
 /*定义滑块：内阴影+圆角*/
 .socialScrollD::-webkit-scrollbar-thumb {
     border-radius: 10px;
-    background-color: rgb(37, 30, 38);
-}
-
-.cardParams:hover {
-    box-shadow: 15px 15px 0 rgb(188, 158, 54)
+    background-color: rgb(59, 55, 71);
 }
 
 .homeTable {
@@ -420,11 +416,4 @@ li.check:before {
     border-radius: 12px;
     transition: box-shadow 0.3s;
 }
-
-.homeTable:hover {
-    box-shadow: 15px 15px 0 rgb(188, 158, 54)
-}
-
-
-
 

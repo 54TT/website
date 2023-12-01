@@ -11,8 +11,8 @@ import {ExclamationCircleIcon} from "@heroicons/react/outline";
 import {LoadingOutlined} from '@ant-design/icons'
 import dynamic from "next/dynamic";
 import {notification} from "antd";
-import styled from '/styles/all.module.css'
-const InfoBox = dynamic(() => import('./HelperComponents/InfoBox'),)
+import styled from '/public/styles/all.module.css'
+const InfoBox = dynamic(() => import('./HelperComponents/InfoBox'),{ ssr: false })
 
 function InputBox({user, setPosts, increaseSizeAnim,change}) {
     const inputRef = useRef(null);

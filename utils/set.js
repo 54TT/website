@@ -1,15 +1,14 @@
 import Router from "next/router";
-import {gql} from "graphql-tag";
-import {ApolloClient, InMemoryCache} from "@apollo/client";
-import {en} from '/language/en'
-import {tcn} from '/language/tcn'
-import {scn} from '/language/scn'
+import {en} from '/public/language/en'
+import {tcn} from '/public/language/tcn'
+import {scn} from '/public/language/scn'
 import {useContext} from "react";
 import {CountContext} from "../components/Layout/Layout";
+
 export const redirectUser = (ctx, location) => {
     if (ctx.req) {
         //if the user is on server side, since req and res inside ctx object are pressent only on server side
-        ctx.res.writeHead(302, { Location: location });
+        ctx.res.writeHead(302, {Location: location});
         ctx.res.end();
     } else {
         //if the user is on client side
@@ -23,22 +22,21 @@ export const dao = (name) => {
         var day = Math.floor((name / (24 * 3600)))
         var hour = Math.floor((name - (24 * 3600 * day)) / (3600))
         var min = Math.floor((name - (24 * 3600 * day) - (hour * 3600)) / (60))
-        var sin=Math.floor(name-(24*3600*day)-(hour*3600)-(min*60))
+        var sin = Math.floor(name - (24 * 3600 * day) - (hour * 3600) - (min * 60))
         const m = min.toString().length === 1 ? '0' + min : min
         // const d = day.toString().length === 1 ? '0' + day : day
         const h = hour.toString().length === 1 ? '0' + hour : hour
         const s = sin.toString().length === 1 ? '0' + sin : sin
-        if(day){
-            const data = Number(hour)+day*24
-            return   data + ':' + m+':'+s
-        }else {
-            return  h + ':' + m+':'+s
+        if (day) {
+            const data = Number(hour) + day * 24
+            return data + ':' + m + ':' + s
+        } else {
+            return h + ':' + m + ':' + s
         }
     } else {
         return '00:00:00'
     }
 }
-
 
 export const autoConvert = (number) => {
     if (Math.abs(number) >= 1000000) {
@@ -72,9 +70,8 @@ export const arrayUnique = (arr, name) => {
     }, [])
 }
 
-export  const changeLang=(name)=>{
-    const { changeFamily} = useContext(CountContext);
+export const changeLang = (name) => {
+    const {changeFamily,} = useContext(CountContext);
     const data = changeFamily === 'english' ? en : changeFamily === 'traditional' ? tcn : scn
-    return  data[name]
+    return data[name]
 }
-

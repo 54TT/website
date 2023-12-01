@@ -6,7 +6,7 @@ import {get} from "../utils/axios";
 import {GlobalOutlined, SendOutlined, TwitterOutlined} from "@ant-design/icons";
 import {dao} from '/utils/set'
 import baseUrl from "../utils/baseUrl";
-import styled from '/styles/all.module.css'
+import styled from '/public/styles/all.module.css'
 
 const {Countdown} = Statistic;
 import Image from 'next/image'
@@ -21,6 +21,12 @@ export default function Presale() {
     const [launchAll, setLaunchAll] = useState(0);
     const [launch, setLaunch] = useState([]);
     const [launchBol, setLaunchBol] = useState(true);
+    const changeAllTheme = (a, b) => {
+        return changeTheme ? a : b
+    }
+    const packageHtml = (name) => {
+        return <span className={changeAllTheme('darknessFont', 'brightFont')}>{name}</span>
+    }
     const hint = () => {
         notification.error({
             message: `Please note`, description: 'Error reported', placement: 'topLeft',
@@ -86,7 +92,7 @@ export default function Presale() {
             dataIndex: 'name', align: 'center', width: '25%',
             render: (text) => {
                 return <p
-                    className={`${styled.presaleBoxTableP} ${changeTheme ? 'darknessFont' : 'brightFont'}`}>{text}</p>
+                    className={`${styled.presaleBoxTableP} ${changeAllTheme( 'darknessFont' ,'brightFont')}`}>{text}</p>
             }
         },
         {
@@ -94,7 +100,7 @@ export default function Presale() {
             dataIndex: 'symbol', align: 'center',
             render: (text) => {
                 return <p
-                    className={`${styled.presaleBoxTableP} ${changeTheme ? 'darknessFont' : 'brightFont'}`}>{text}</p>
+                    className={`${styled.presaleBoxTableP} ${changeAllTheme('darknessFont' , 'brightFont')}`}>{text}</p>
             }
         },
         {
@@ -103,17 +109,17 @@ export default function Presale() {
             width: 200,
             render: (text, record) => {
                 return <div className={styled.presaleBoxTableImg}>
-                    <GlobalOutlined className={changeTheme ? 'darknessFont' : 'brightFont'}
+                    <GlobalOutlined className={changeAllTheme('darknessFont' ,'brightFont')}
                                     style={{cursor: 'pointer', fontSize: '20px'}} onClick={() => push(record, 'one')}/>
-                    <TwitterOutlined className={changeTheme ? 'darknessFont' : 'brightFont'}
+                    <TwitterOutlined className={changeAllTheme('darknessFont' ,'brightFont')}
                                      style={{cursor: 'pointer', fontSize: '20px'}} onClick={() => push(record, 'two')}/>
-                    <SendOutlined className={changeTheme ? 'darknessFont' : 'brightFont'}
+                    <SendOutlined className={changeAllTheme('darknessFont' ,'brightFont')}
                                   style={{cursor: 'pointer', fontSize: '20px'}} onClick={() => push(record, 'three')}/>
                 </div>
             }
         },
         {
-            title: <span className={changeTheme ? 'darknessFont' : 'brightFont'}>{presale.time}</span>,
+            title: packageHtml(presale.time) ,
             dataIndex: 'presale_time', align: 'center',
             sorter: {
                 compare: (a, b) => {
@@ -124,12 +130,11 @@ export default function Presale() {
             },
             render: (text, record) => {
                 if (text) {
-                    return <Countdown title="" className={changeTheme ? 'darknessFont' : 'brightFont'}
+                    return <Countdown title="" className={changeAllTheme('darknessFont' , 'brightFont')}
                                       value={getD(dayjs(text).isAfter(dayjs()) ? dayjs(text).diff(dayjs(), 'seconds') : '')}
                                       format="HH:mm:ss"/>
                 } else {
-                    return <p style={{textAlign: 'center'}}
-                              className={changeTheme ? 'darknessFont' : 'brightFont'}>00:00:00</p>
+                    return packageHtml('00:00:00')
                 }
             }
         },
@@ -153,18 +158,18 @@ export default function Presale() {
     }
     return (
         <div className={styled.launchBox}>
-            <Card className={`${styled.launchBoxCard} ${changeTheme?'darknessTwo':'brightTwo'}`}>
+            <Card className={`${styled.launchBoxCard} ${changeAllTheme('darknessTwo','brightTwo')}`}>
                 <div className={styled.launchBoxCardBox}>
                     <div style={{display: 'flex', alignItems: 'center'}}>
                         <Image src="/Group.png" alt="" width={70} height={70}/>
-                        <span style={{fontWeight: 'bold', fontSize: '26px'}} className={changeTheme ? 'darknessFont' : 'brightFont'}>{presale.presales}</span>
+                        <span style={{fontWeight: 'bold', fontSize: '26px'}} className={changeAllTheme('darknessFont' ,'brightFont')}>{presale.presales}</span>
                     </div>
                     <div className={styled.launchBoxFilter}>
                         <Pagination defaultCurrent={1} current={launchCurrent} showSizeChanger onChange={change}
                                     total={launchAll} pageSize={launchPageSize}/>
                     </div>
                 </div>
-                <Table className={`anyTable ${changeTheme ? 'hotTableD' : 'hotTable'}`} bordered={false}
+                <Table className={`anyTable ${changeAllTheme('hotTableD' , 'hotTable')}`} bordered={false}
                        columns={columns} loading={launchBol}
                        dataSource={launch} rowKey={(record) => record.symbol + record.address}
                        pagination={false} rowClassName={(record) => {

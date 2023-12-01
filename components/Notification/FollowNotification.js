@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import calculateTime from "../../utils/calculateTime";
 import Link from "next/link";
 import {CheckCircleIcon, UserAddIcon} from "@heroicons/react/solid";
-import styled from '/styles/all.module.css'
+import styled from '/public/styles/all.module.css'
 import {followUser, unfollowUser} from "../../utils/profileActions";
 
 function FollowNotification({notification, userFollowStats, userPar, chang, }) {
