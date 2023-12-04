@@ -105,3 +105,29 @@
     height: 1px;
     background-color: rgb(128, 128, 128);
 }
+
+
+
+
+
+/* 超小屏幕 */
+@media screen and (max-width: 768px) {
+    /* .isShowNode{
+        display: none;
+    } */
+}
+
+/* 小屏幕 */
+@media screen and (min-width: 768px) {
+  
+}
+
+/* 中型屏幕 平板 */
+@media screen and (min-width: 992px){
+  
+}
+
+/* 电脑屏幕 */
+@media screen and (min-width: 1200px){
+  
+}

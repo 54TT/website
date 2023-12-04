@@ -13,7 +13,8 @@ import {
     Card,
     Segmented,
     Skeleton,
-    Statistic, Carousel
+    Statistic, Carousel,
+    Row, Col
 } from 'antd'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
@@ -384,6 +385,7 @@ function Home() {
         }
     }
 
+
     return (<div className={styles['box']}>
         <div className={styles['boxPar']}>
             {/*左边*/}
@@ -393,7 +395,7 @@ function Home() {
                     {
                         params.map((item, index) => {
                             return <div key={index}
-                                        className={`cardParams ${styles.homeModule} ${!changeTheme && 'boxHover'}`}>
+                                        className={`cardParams ${ index === 0 ? styles.homeMarginBottom : ""} ${styles.homeModule} ${!changeTheme && 'boxHover'}`}>
                                 <Card className={`${styles.homeCard} ${changeAllTheme('darknessTwo', 'brightTwo')}`}>
                                     <ul className={styles['rightUl']}>
                                         <li>
@@ -469,7 +471,7 @@ function Home() {
                     className={`homeTable ${changeAllTheme('darknessTwo', 'brightTwo boxHover')} ${styles.homeCardBot}`}>
                     <div className={styles['dis']}>
                         <p style={{fontSize: '20px', fontWeight: 'bold'}}
-                           className={changeAllTheme('darknessFont', 'brightFont')}>{home.featured}</p>
+                        className={changeAllTheme('darknessFont', 'brightFont')}>{home.featured}</p>
                         <div className={styles['dis']}>
                             {/*时间选择*/}
                             <Segmented options={['5m', '1h', '6h', '24h']} onChange={changSeg} defaultValue={'24h'}/>
@@ -478,20 +480,22 @@ function Home() {
                             </Link>
                         </div>
                     </div>
-                    {/*表格*/}
-                    <Table columns={columns}
-                           rowKey={(record) => record?.baseToken?.address + record?.quoteToken?.address}
-                           loading={featuredBol}
-                           className={`${changeAllTheme('darkTable', 'tablesss')}  anyTable`} onRow={(record) => {
-                        return {
-                            onClick: (event) => {
-                                const data = record.pairAddress
-                                router.push(`/details?pairAddress=${data}`,)
-                            },
-                        };
-                    }}
-                           dataSource={featured.length > 5 ? featured.slice(0, 5) : featured}
-                           pagination={false} bordered={false}/>
+                    <div className={styles['homeTableBox']}>
+                        {/*表格*/}
+                        <Table columns={columns}
+                            rowKey={(record) => record?.baseToken?.address + record?.quoteToken?.address}
+                            loading={featuredBol}
+                            className={`${changeAllTheme('darkTable', 'tablesss')}  anyTable`} onRow={(record) => {
+                            return {
+                                onClick: (event) => {
+                                    const data = record.pairAddress
+                                    router.push(`/details?pairAddress=${data}`,)
+                                },
+                            };
+                        }}
+                            dataSource={featured.length > 5 ? featured.slice(0, 5) : featured}
+                            pagination={false} bordered={false}/>
+                    </div>
                 </div>
             </div>
             {/*右边*/}

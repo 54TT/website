@@ -393,89 +393,91 @@ const Header = () => {
     return (
         <div
             className={"top-0 w-full  z-30 transition-all headerClass"}>
-            <div className={styles['aaa']} style={{paddingLeft: '110px'}}>
-                <Marquee
-                    pauseOnHover={true}
-                    speed={30}
-                    gradientWidth={100}
-                    className={styles.marqueeBox}>
-                    {
-                        launch.length > 0 && launch.map((i, index) => {
-                            return <div key={index} className={`${styles.marquee} `}>
-                                <span className={changeTheme ? 'darknessFont' : 'brightFont'}>#{index + 1}</span>
-                                <p className={styles.marqueeName}>{i?.symbol?.slice(0, 1)}</p>
-                                <span className={changeTheme ? 'darknessFont' : 'brightFont'}>{i.symbol}</span>
-                            </div>
-                        })
-                    }
-                </Marquee>
-                <div className={styles.searchToken}>
-                    <p className={`${styles['search']} ${changeTheme ? 'darknessThree' : 'brightFore boxHover'}`}
-                       onClick={showSearch}>{header.search}</p>
-                    {showChatSearch && (
-                        <ChatSearch
-                            setShowChatSearch={setShowChatSearch}
-                            chats={chats}
-                            setChats={setChats}
-                            user={userPar}
-                        />
-                    )}
-                </div>
-                <div className={styles.login}>
-                    {/*切换字体*/}
-                    {/*<Select*/}
-                    {/*    style={{*/}
-                    {/*        width: 120,*/}
-                    {/*    }}*/}
-                    {/*    defaultValue={'english'}*/}
-                    {/*    onChange={handleChange}*/}
-                    {/*    options={[*/}
-                    {/*        {*/}
-                    {/*            value: 'chinese',*/}
-                    {/*            label: '中文简体',*/}
-                    {/*        },*/}
-                    {/*        {*/}
-                    {/*            value: 'traditional',*/}
-                    {/*            label: '中文繁体',*/}
-                    {/*        },*/}
-                    {/*        {*/}
-                    {/*            value: 'english',*/}
-                    {/*            label: 'English',*/}
-                    {/*        },*/}
-                    {/*    ]}*/}
-                    {/*/>*/}
-                    {/*添加代币*/}
-                    {/*<Button type={'primary'} className={styles['but']}*/}
-                    {/*        onClick={showDrawer}>{header.addCoin}</Button>*/}
-                    <div className={`${styles.eth} ${changeTheme ? 'darknessTwo' : 'brightTwo'}`}>
-                        <img src="/Ellipse27.png" alt="" width={30} style={{border: '50%', marginRight: '6px'}}/>
-                        <p className={changeTheme ? 'darknessFont' : 'brightFont'}>$:2028</p>
-                        <p style={{display: 'flex', alignItems: 'center', marginLeft: '8px'}}><img src="/GasStation.png"
-                                                                                                   width={20} alt=""/>
-                            <span className={changeTheme ? 'darknessFont' : 'brightFont'}>29</span>
-                        </p>
+            <div className="headerShowNode">
+                <div className={styles['aaa']} style={{paddingLeft: '110px'}}>
+                    <Marquee
+                        pauseOnHover={true}
+                        speed={30}
+                        gradientWidth={100}
+                        className={styles.marqueeBox}>
+                        {
+                            launch.length > 0 && launch.map((i, index) => {
+                                return <div key={index} className={`${styles.marquee} `}>
+                                    <span className={changeTheme ? 'darknessFont' : 'brightFont'}>#{index + 1}</span>
+                                    <p className={styles.marqueeName}>{i?.symbol?.slice(0, 1)}</p>
+                                    <span className={changeTheme ? 'darknessFont' : 'brightFont'}>{i.symbol}</span>
+                                </div>
+                            })
+                        }
+                    </Marquee>
+                    <div className={styles.searchToken}>
+                        <p className={`${styles['search']} ${changeTheme ? 'darknessThree' : 'brightFore boxHover'}`}
+                        onClick={showSearch}>{header.search}</p>
+                        {showChatSearch && (
+                            <ChatSearch
+                                setShowChatSearch={setShowChatSearch}
+                                chats={chats}
+                                setChats={setChats}
+                                user={userPar}
+                            />
+                        )}
                     </div>
-                    {
-                        no && address ? <div className={styles.loginBox}>
-                            <Link href={`/${userPar && userPar.address ? userPar.address : ''}`}>
-                                <img className={'loginImg'} width={35}
-                                     src={userPar && userPar.profilePicUrl ? userPar.profilePicUrl : '/Ellipse1.png'}
-                                     alt=""/>
-                            </Link>
-                            <Dropdown
-                                menu={{
-                                    items,
-                                }}
-                                placement="bottomLeft"
-                                arrow
-                            >
-                                <Button
-                                    className={`${styles.loginName} ${styles.but} ${changeTheme ? 'darknessThree' : 'brightFore boxHover'} `}>{userPar && userPar.username ? userPar.username.length > 5 ? userPar.username.slice(0, 5) + '...' : userPar.username : ''}</Button>
-                            </Dropdown>
-                        </div> : <Button
-                            className={`${styles['but']} ${styles.loginName} ${changeTheme ? 'darknessThree' : 'brightFore boxHover'}`}
-                            onClick={getMoney}>{header.login}</Button>
-                    }
+                    <div className={styles.login}>
+                        {/*切换字体*/}
+                        {/*<Select*/}
+                        {/*    style={{*/}
+                        {/*        width: 120,*/}
+                        {/*    }}*/}
+                        {/*    defaultValue={'english'}*/}
+                        {/*    onChange={handleChange}*/}
+                        {/*    options={[*/}
+                        {/*        {*/}
+                        {/*            value: 'chinese',*/}
+                        {/*            label: '中文简体',*/}
+                        {/*        },*/}
+                        {/*        {*/}
+                        {/*            value: 'traditional',*/}
+                        {/*            label: '中文繁体',*/}
+                        {/*        },*/}
+                        {/*        {*/}
+                        {/*            value: 'english',*/}
+                        {/*            label: 'English',*/}
+                        {/*        },*/}
+                        {/*    ]}*/}
+                        {/*/>*/}
+                        {/*添加代币*/}
+                        {/*<Button type={'primary'} className={styles['but']}*/}
+                        {/*        onClick={showDrawer}>{header.addCoin}</Button>*/}
+                        <div  className={`${styles.eth} ${changeTheme ? 'darknessTwo' : 'brightTwo'}`}>
+                            <img src="/Ellipse27.png" alt="" width={30} style={{border: '50%', marginRight: '6px'}}/>
+                            <p className={changeTheme ? 'darknessFont' : 'brightFont'}>$:2028</p>
+                            <p style={{display: 'flex', alignItems: 'center', marginLeft: '8px'}}><img src="/GasStation.png"
+                                                                                                    width={20} alt=""/>
+                                <span className={changeTheme ? 'darknessFont' : 'brightFont'}>29</span>
+                            </p>
+                        </div>
+                        {
+                            no && address ? <div className={styles.loginBox}>
+                                <Link href={`/${userPar && userPar.address ? userPar.address : ''}`}>
+                                    <img className={'loginImg'} width={35}
+                                        src={userPar && userPar.profilePicUrl ? userPar.profilePicUrl : '/Ellipse1.png'}
+                                        alt=""/>
+                                </Link>
+                                <Dropdown
+                                    menu={{
+                                        items,
+                                    }}
+                                    placement="bottomLeft"
+                                    arrow
+                                >
+                                    <Button
+                                        className={`${styles.loginName} ${styles.but} ${changeTheme ? 'darknessThree' : 'brightFore boxHover'} `}>{userPar && userPar.username ? userPar.username.length > 5 ? userPar.username.slice(0, 5) + '...' : userPar.username : ''}</Button>
+                                </Dropdown>
+                            </div> : <Button
+                                className={`${styles['but']} ${styles.loginName} ${changeTheme ? 'darknessThree' : 'brightFore boxHover'}`}
+                                onClick={getMoney}>{header.login}</Button>
+                        }
+                    </div>
                 </div>
             </div>
             <DrawerPage getMoney={getMoney}/>

@@ -124,11 +124,14 @@
     font-size: 20px;color: #2394D4;cursor: pointer;
 }
 .homeCardListBox{
-    display: flex;align-items: center;width: 30%;
+    display: flex;
+    align-items: center;
+    /* width: 30%; */
 }
 .homeCardIm{
     text-align: center;
     width: 30px;
+    min-width: 30px;
     line-height: 30px;
     border-radius: 50%;
     font-size: 16px;
@@ -176,3 +179,42 @@
 .homeRightTopName{
     font-size: 20px;font-weight: bold;
 }
+
+/* 2023-12-04 新增样式 */
+.homeTableBox{
+    overflow: auto;
+}
+
+
+/* 超小屏幕 */
+@media screen and (max-width: 768px) {
+    .boxPar, .homeTop{
+        flex-direction: column;
+    }
+    .box{
+        padding: 20px 20px 0 20px;
+    }
+    .boxPar > .left, .homeModule {
+        width: 100%;
+    }
+    .boxPar > .left, .homeMarginBottom{
+        margin-bottom: 35px;
+    }
+  }
+  
+  /* 小屏幕 */
+  @media screen and (min-width: 768px) {
+    
+  }
+  
+  /* 中型屏幕 平板 */
+  @media screen and (min-width: 992px){
+    
+  }
+  
+  /* 电脑屏幕 */
+  @media screen and (min-width: 1200px){
+    
+  }
+
+

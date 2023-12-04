@@ -102,3 +102,30 @@
 .boxHover:hover{
     box-shadow: 15px 15px 0 rgb(188, 158, 54);
 }
+
+
+
+
+
+
+/* 超小屏幕 */
+@media screen and (max-width: 768px) {
+    .drawerShowNode{
+        display: none;
+    }
+}
+
+/* 小屏幕 */
+@media screen and (min-width: 768px) {
+  
+}
+
+/* 中型屏幕 平板 */
+@media screen and (min-width: 992px){
+  
+}
+
+/* 电脑屏幕 */
+@media screen and (min-width: 1200px){
+  
+}
