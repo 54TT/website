@@ -200,6 +200,15 @@
     .boxPar > .left, .homeMarginBottom{
         margin-bottom: 35px;
     }
+    .homeCardFlexBox{
+        display: flex;
+        align-items: center;
+    }
+    .homeCardSymbol{
+        text-overflow: ellipsis;
+        overflow: hidden;
+        min-width: 90px;
+    }
   }
   
   /* 小屏幕 */

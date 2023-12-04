@@ -414,11 +414,11 @@ function Home() {
                                                         key={index}>
                                                         <div className={styles.homeCardListBox}>
                                                             <p className={styles.homeCardIm}>{i.symbol.slice(0, 1)}</p>
-                                                            <div style={{width: '78%'}}>
+                                                            <div style={{width: '78%'}} className={styles.homeCardFlexBox}>
                                                                 <Tooltip title={i.symbol}>
                                                                     <p className={`${styles.homeCardSymbol} ${changeAllTheme('darknessFont', 'brightFont')}`}>{i.symbol}</p>
                                                                 </Tooltip>
-                                                                <div className={styles['dis']} style={{
+                                                                <div className={`${styles['moblice-dis']} ${styles['dis']}`} style={{
                                                                     padding: '3px'
                                                                 }}>
                                                                     <img onClick={() => push(i, 'one')}

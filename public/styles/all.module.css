@@ -670,6 +670,24 @@
     .homeModule{
         width: 100%;
     }
+    .mobliceBottomBoxLogo{
+        display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        align-items: center;
+    }
+    .bottomTop{
+        width: auto;
+    }
+    .bottomImg{
+        min-width: 100px;
+    }
+    .mobliceBottomTop{
+        display: flex;
+    }
+    .bottomText{
+        margin-top: 20px;
+    }
   }
   
   /* 小屏幕 */

@@ -105,16 +105,27 @@
     height: 1px;
     background-color: rgb(128, 128, 128);
 }
-
+.moblic-ShowNode{
+    display: none;
+}
 
 
 
 
 /* 超小屏幕 */
 @media screen and (max-width: 768px) {
-    /* .isShowNode{
+    .headerShowNode{
         display: none;
-    } */
+    }
+    /* 导航栏样式 */
+    .moblic-ShowNode{
+        padding: 20px 20px;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        flex-wrap: nowrap;
+        align-items: center;
+    }
 }
 
 /* 小屏幕 */

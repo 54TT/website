@@ -391,304 +391,321 @@ const Header = () => {
         changeFont(value)
     }
     return (
-        <div
-            className={"top-0 w-full  z-30 transition-all headerClass"}>
-            <div className="headerShowNode">
-                <div className={styles['aaa']} style={{paddingLeft: '110px'}}>
-                    <Marquee
-                        pauseOnHover={true}
-                        speed={30}
-                        gradientWidth={100}
-                        className={styles.marqueeBox}>
-                        {
-                            launch.length > 0 && launch.map((i, index) => {
-                                return <div key={index} className={`${styles.marquee} `}>
-                                    <span className={changeTheme ? 'darknessFont' : 'brightFont'}>#{index + 1}</span>
-                                    <p className={styles.marqueeName}>{i?.symbol?.slice(0, 1)}</p>
-                                    <span className={changeTheme ? 'darknessFont' : 'brightFont'}>{i.symbol}</span>
-                                </div>
-                            })
-                        }
-                    </Marquee>
-                    <div className={styles.searchToken}>
-                        <p className={`${styles['search']} ${changeTheme ? 'darknessThree' : 'brightFore boxHover'}`}
-                        onClick={showSearch}>{header.search}</p>
-                        {showChatSearch && (
-                            <ChatSearch
-                                setShowChatSearch={setShowChatSearch}
-                                chats={chats}
-                                setChats={setChats}
-                                user={userPar}
-                            />
-                        )}
-                    </div>
-                    <div className={styles.login}>
-                        {/*切换字体*/}
-                        {/*<Select*/}
-                        {/*    style={{*/}
-                        {/*        width: 120,*/}
-                        {/*    }}*/}
-                        {/*    defaultValue={'english'}*/}
-                        {/*    onChange={handleChange}*/}
-                        {/*    options={[*/}
-                        {/*        {*/}
-                        {/*            value: 'chinese',*/}
-                        {/*            label: '中文简体',*/}
-                        {/*        },*/}
-                        {/*        {*/}
-                        {/*            value: 'traditional',*/}
-                        {/*            label: '中文繁体',*/}
-                        {/*        },*/}
-                        {/*        {*/}
-                        {/*            value: 'english',*/}
-                        {/*            label: 'English',*/}
-                        {/*        },*/}
-                        {/*    ]}*/}
-                        {/*/>*/}
-                        {/*添加代币*/}
-                        {/*<Button type={'primary'} className={styles['but']}*/}
-                        {/*        onClick={showDrawer}>{header.addCoin}</Button>*/}
-                        <div  className={`${styles.eth} ${changeTheme ? 'darknessTwo' : 'brightTwo'}`}>
-                            <img src="/Ellipse27.png" alt="" width={30} style={{border: '50%', marginRight: '6px'}}/>
-                            <p className={changeTheme ? 'darknessFont' : 'brightFont'}>$:2028</p>
-                            <p style={{display: 'flex', alignItems: 'center', marginLeft: '8px'}}><img src="/GasStation.png"
-                                                                                                    width={20} alt=""/>
-                                <span className={changeTheme ? 'darknessFont' : 'brightFont'}>29</span>
-                            </p>
+        <>
+            <div className={styles['headerShowNode']}>
+                <div className={"top-0 w-full  z-30 transition-all headerClass"}>
+                    <div className={styles['aaa']} style={{paddingLeft: '110px'}}>
+                        <Marquee
+                            pauseOnHover={true}
+                            speed={30}
+                            gradientWidth={100}
+                            className={styles.marqueeBox}>
+                            {
+                                launch.length > 0 && launch.map((i, index) => {
+                                    return <div key={index} className={`${styles.marquee} `}>
+                                        <span className={changeTheme ? 'darknessFont' : 'brightFont'}>#{index + 1}</span>
+                                        <p className={styles.marqueeName}>{i?.symbol?.slice(0, 1)}</p>
+                                        <span className={changeTheme ? 'darknessFont' : 'brightFont'}>{i.symbol}</span>
+                                    </div>
+                                })
+                            }
+                        </Marquee>
+                        <div className={styles.searchToken}>
+                            <p className={`${styles['search']} ${changeTheme ? 'darknessThree' : 'brightFore boxHover'}`}
+                            onClick={showSearch}>{header.search}</p>
+                            {showChatSearch && (
+                                <ChatSearch
+                                    setShowChatSearch={setShowChatSearch}
+                                    chats={chats}
+                                    setChats={setChats}
+                                    user={userPar}
+                                />
+                            )}
                         </div>
-                        {
-                            no && address ? <div className={styles.loginBox}>
-                                <Link href={`/${userPar && userPar.address ? userPar.address : ''}`}>
-                                    <img className={'loginImg'} width={35}
-                                        src={userPar && userPar.profilePicUrl ? userPar.profilePicUrl : '/Ellipse1.png'}
-                                        alt=""/>
-                                </Link>
-                                <Dropdown
-                                    menu={{
-                                        items,
-                                    }}
-                                    placement="bottomLeft"
-                                    arrow
-                                >
-                                    <Button
-                                        className={`${styles.loginName} ${styles.but} ${changeTheme ? 'darknessThree' : 'brightFore boxHover'} `}>{userPar && userPar.username ? userPar.username.length > 5 ? userPar.username.slice(0, 5) + '...' : userPar.username : ''}</Button>
-                                </Dropdown>
-                            </div> : <Button
-                                className={`${styles['but']} ${styles.loginName} ${changeTheme ? 'darknessThree' : 'brightFore boxHover'}`}
-                                onClick={getMoney}>{header.login}</Button>
-                        }
+                        <div className={styles.login}>
+                            {/*切换字体*/}
+                            {/*<Select*/}
+                            {/*    style={{*/}
+                            {/*        width: 120,*/}
+                            {/*    }}*/}
+                            {/*    defaultValue={'english'}*/}
+                            {/*    onChange={handleChange}*/}
+                            {/*    options={[*/}
+                            {/*        {*/}
+                            {/*            value: 'chinese',*/}
+                            {/*            label: '中文简体',*/}
+                            {/*        },*/}
+                            {/*        {*/}
+                            {/*            value: 'traditional',*/}
+                            {/*            label: '中文繁体',*/}
+                            {/*        },*/}
+                            {/*        {*/}
+                            {/*            value: 'english',*/}
+                            {/*            label: 'English',*/}
+                            {/*        },*/}
+                            {/*    ]}*/}
+                            {/*/>*/}
+                            {/*添加代币*/}
+                            {/*<Button type={'primary'} className={styles['but']}*/}
+                            {/*        onClick={showDrawer}>{header.addCoin}</Button>*/}
+                            <div  className={`${styles.eth} ${changeTheme ? 'darknessTwo' : 'brightTwo'}`}>
+                                <img src="/Ellipse27.png" alt="" width={30} style={{border: '50%', marginRight: '6px'}}/>
+                                <p className={changeTheme ? 'darknessFont' : 'brightFont'}>$:2028</p>
+                                <p style={{display: 'flex', alignItems: 'center', marginLeft: '8px'}}><img src="/GasStation.png"
+                                                                                                        width={20} alt=""/>
+                                    <span className={changeTheme ? 'darknessFont' : 'brightFont'}>29</span>
+                                </p>
+                            </div>
+                            {
+                                no && address ? <div className={styles.loginBox}>
+                                    <Link href={`/${userPar && userPar.address ? userPar.address : ''}`}>
+                                        <img className={'loginImg'} width={35}
+                                            src={userPar && userPar.profilePicUrl ? userPar.profilePicUrl : '/Ellipse1.png'}
+                                            alt=""/>
+                                    </Link>
+                                    <Dropdown
+                                        menu={{
+                                            items,
+                                        }}
+                                        placement="bottomLeft"
+                                        arrow
+                                    >
+                                        <Button
+                                            className={`${styles.loginName} ${styles.but} ${changeTheme ? 'darknessThree' : 'brightFore boxHover'} `}>{userPar && userPar.username ? userPar.username.length > 5 ? userPar.username.slice(0, 5) + '...' : userPar.username : ''}</Button>
+                                    </Dropdown>
+                                </div> : <Button
+                                    className={`${styles['but']} ${styles.loginName} ${changeTheme ? 'darknessThree' : 'brightFore boxHover'}`}
+                                    onClick={getMoney}>{header.login}</Button>
+                            }
+                        </div>
                     </div>
                 </div>
-            </div>
-            <DrawerPage getMoney={getMoney}/>
-            {/*</Suspense>*/}
-            <Drawer title="Basic Drawer" destroyOnClose={true} placement="right" onClose={onClose} open={open}>
-                <Form
-                    name="basic"
-                    form={form}
-                    onFinish={onFinish}
-                    onFinishFailed={onFinishFailed}
-                    autoComplete="off"
-                >
-                    <Form.Item
-                        label="Token"
-                        name="token"
-                        rules={[
+                <DrawerPage getMoney={getMoney}/>
+                {/*</Suspense>*/}
+                <Drawer title="Basic Drawer" destroyOnClose={true} placement="right" onClose={onClose} open={open}>
+                    <Form
+                        name="basic"
+                        form={form}
+                        onFinish={onFinish}
+                        onFinishFailed={onFinishFailed}
+                        autoComplete="off"
+                    >
+                        <Form.Item
+                            label="Token"
+                            name="token"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Please input your token!',
+                                },
+                            ]}
+                            labelCol={{
+                                span: 6,
+                            }}>
+                            <Input onChange={changeToken} ref={inputRef}
+                                style={tokenFormBol ? {borderColor: 'red'} : {}}/>
+                        </Form.Item>
+                        <div className={styles.addShow}>
                             {
-                                required: true,
-                                message: 'Please input your token!',
-                            },
-                        ]}
-                        labelCol={{
-                            span: 6,
+                                !openPresale ? <CaretRightFilled className={styles.addCur}
+                                                                onClick={hidePresale}/> :
+                                    <CaretDownFilled onClick={hidePresale}
+                                                    className={`${styles.addCur} ${styles.addCurMt5}`}/>
+                            }
+                            <p className={styles.addPresale} onClick={hidePresale}>presale</p>
+                            <p className={styles.lines}></p>
+                        </div>
+                        <div style={!openPresale ? {display: 'none'} : {}}>
+                            <Form.Item
+                                label="Time"
+                                name="presaleTime"
+                                labelCol={{
+                                    span: 6,
+                                }}
+                            >
+                                <DatePicker showTime onChange={(e, a) => onChangeDate('presale', e, a)}
+                                            style={{width: '100%'}}/>
+                            </Form.Item>
+                            <Form.Item
+                                label="Platform"
+                                name="presalePlatformId"
+                                labelCol={{
+                                    span: 8,
+                                }}
+                            >
+                                <Select
+                                    placeholder="Select a option and change input text above"
+                                    allowClear
+                                    style={{width: '100%'}}
+                                >
+                                    {
+                                        presalePlatform.length > 0 ? presalePlatform.map((i, index) => {
+                                            return <Option value={i.id} key={index}>
+                                                <div style={{display: 'flex', alignItems: 'center'}}>
+                                                    <img src={`${i.logo ? baseUrl + i.logo : '/Ellipse1.png'}`} alt=""
+                                                        width={20} height={20}/>
+                                                    <span>{i.name}</span>
+                                                </div>
+                                            </Option>
+                                        }) : null
+                                    }
+                                </Select>
+                            </Form.Item>
+                            <Form.Item
+                                label="Link"
+                                name="presaleLink"
+                                labelCol={{
+                                    span: 6,
+                                }}
+                            >
+                                <Input/>
+                            </Form.Item>
+                        </div>
+                        {/*launch*/}
+                        <div className={styles.addShow}>
+                            {
+                                !openLaunch ? <CaretRightFilled className={`${styles.addCur}`}
+                                                                onClick={hideLaunch}/> :
+                                    <CaretDownFilled onClick={hideLaunch}
+                                                    className={`${styles.addCur} ${styles.addCurMt5}`}/>
+                            }
+                            <p className={styles.addPresale} onClick={hideLaunch}>launch</p>
+                            <p className={styles.lines}></p>
+                        </div>
+                        <div style={!openLaunch ? {display: 'none'} : {}}>
+                            <Form.Item
+                                label="Time"
+                                name="launchTime"
+                                className={'bbb'}
+                                labelCol={{
+                                    span: 6,
+                                }}
+                            >
+                                <DatePicker showTime onChange={(e, a) => onChangeDate('launch', e, a)}
+                                            style={{width: '100%'}}/>
+                            </Form.Item>
+                            <Form.Item
+                                label="Platform"
+                                name="launchPlatformId"
+                                className={'bbb'}
+                                labelCol={{
+                                    span: 8,
+                                }}
+                            >
+                                <Select
+                                    placeholder="Select a option and change input text above"
+                                    allowClear
+                                    style={{width: '100%'}}
+                                >
+                                    {
+                                        launchPlatform.length > 0 ? launchPlatform.map((i, index) => {
+                                            return <Option value={i.id} key={index}>
+                                                <div style={{display: 'flex', alignItems: 'center'}}>
+                                                    <img src={`${i.logo ? baseUrl + i.logo : '/Ellipse1.png'}`} alt=""
+                                                        width={20} height={20}/>
+                                                    <span>{i.name}</span>
+                                                </div>
+                                            </Option>
+                                        }) : null
+                                    }
+                                </Select>
+                            </Form.Item>
+                            <Form.Item
+                                label="Link"
+                                name="launchLink"
+                                className={'bbb'}
+                                labelCol={{
+                                    span: 6,
+                                }}
+                            >
+                                <Input/>
+                            </Form.Item>
+                        </div>
+                        {/*link*/}
+                        <div className={styles.addShow}>
+                            {
+                                openLink ? <CaretRightFilled className={styles.addCur}
+                                                            onClick={hideLink}/> : <CaretDownFilled onClick={hideLink}
+                                                                                                    className={`${styles.addCur} ${styles.addCurMt5}`}/>
+                            }
+                            <p className={styles.addPresale} onClick={hideLink}>Link</p>
+                            <p className={styles.lines}></p>
+                        </div>
+                        <div style={openLink ? {display: 'none'} : {}}>
+                            <Form.Item
+                                label="Twitter"
+                                name="twitter"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Please input your twitter!',
+                                    },
+                                ]} labelCol={{
+                                span: 8,
+                            }}
+                            >
+                                <Input/>
+                            </Form.Item>
+                            <Form.Item
+                                label="Telegram"
+                                name="telegram"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Please input your telegram!',
+                                    },
+                                ]} labelCol={{
+                                span: 9,
+                            }}
+                            >
+                                <Input/>
+                            </Form.Item>
+                            <Form.Item
+                                label="Website"
+                                name="website"
+                                className={'bbb'}
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Please input your website!',
+                                    },
+                                ]} labelCol={{
+                                span: 8,
+                            }}
+                            >
+                                <Input/>
+                            </Form.Item>
+                        </div>
+                        <Form.Item wrapperCol={{
+                            offset: 8,
+                            span: 16,
                         }}>
-                        <Input onChange={changeToken} ref={inputRef}
-                               style={tokenFormBol ? {borderColor: 'red'} : {}}/>
-                    </Form.Item>
-                    <div className={styles.addShow}>
-                        {
-                            !openPresale ? <CaretRightFilled className={styles.addCur}
-                                                             onClick={hidePresale}/> :
-                                <CaretDownFilled onClick={hidePresale}
-                                                 className={`${styles.addCur} ${styles.addCurMt5}`}/>
-                        }
-                        <p className={styles.addPresale} onClick={hidePresale}>presale</p>
-                        <p className={styles.lines}></p>
-                    </div>
-                    <div style={!openPresale ? {display: 'none'} : {}}>
-                        <Form.Item
-                            label="Time"
-                            name="presaleTime"
-                            labelCol={{
-                                span: 6,
-                            }}
-                        >
-                            <DatePicker showTime onChange={(e, a) => onChangeDate('presale', e, a)}
-                                        style={{width: '100%'}}/>
+                            <Button type={'primary'} htmlType="submit">
+                                Submit
+                            </Button>
                         </Form.Item>
-                        <Form.Item
-                            label="Platform"
-                            name="presalePlatformId"
-                            labelCol={{
-                                span: 8,
-                            }}
-                        >
-                            <Select
-                                placeholder="Select a option and change input text above"
-                                allowClear
-                                style={{width: '100%'}}
-                            >
-                                {
-                                    presalePlatform.length > 0 ? presalePlatform.map((i, index) => {
-                                        return <Option value={i.id} key={index}>
-                                            <div style={{display: 'flex', alignItems: 'center'}}>
-                                                <img src={`${i.logo ? baseUrl + i.logo : '/Ellipse1.png'}`} alt=""
-                                                     width={20} height={20}/>
-                                                <span>{i.name}</span>
-                                            </div>
-                                        </Option>
-                                    }) : null
-                                }
-                            </Select>
-                        </Form.Item>
-                        <Form.Item
-                            label="Link"
-                            name="presaleLink"
-                            labelCol={{
-                                span: 6,
-                            }}
-                        >
-                            <Input/>
-                        </Form.Item>
-                    </div>
-                    {/*launch*/}
-                    <div className={styles.addShow}>
-                        {
-                            !openLaunch ? <CaretRightFilled className={`${styles.addCur}`}
-                                                            onClick={hideLaunch}/> :
-                                <CaretDownFilled onClick={hideLaunch}
-                                                 className={`${styles.addCur} ${styles.addCurMt5}`}/>
-                        }
-                        <p className={styles.addPresale} onClick={hideLaunch}>launch</p>
-                        <p className={styles.lines}></p>
-                    </div>
-                    <div style={!openLaunch ? {display: 'none'} : {}}>
-                        <Form.Item
-                            label="Time"
-                            name="launchTime"
-                            className={'bbb'}
-                            labelCol={{
-                                span: 6,
-                            }}
-                        >
-                            <DatePicker showTime onChange={(e, a) => onChangeDate('launch', e, a)}
-                                        style={{width: '100%'}}/>
-                        </Form.Item>
-                        <Form.Item
-                            label="Platform"
-                            name="launchPlatformId"
-                            className={'bbb'}
-                            labelCol={{
-                                span: 8,
-                            }}
-                        >
-                            <Select
-                                placeholder="Select a option and change input text above"
-                                allowClear
-                                style={{width: '100%'}}
-                            >
-                                {
-                                    launchPlatform.length > 0 ? launchPlatform.map((i, index) => {
-                                        return <Option value={i.id} key={index}>
-                                            <div style={{display: 'flex', alignItems: 'center'}}>
-                                                <img src={`${i.logo ? baseUrl + i.logo : '/Ellipse1.png'}`} alt=""
-                                                     width={20} height={20}/>
-                                                <span>{i.name}</span>
-                                            </div>
-                                        </Option>
-                                    }) : null
-                                }
-                            </Select>
-                        </Form.Item>
-                        <Form.Item
-                            label="Link"
-                            name="launchLink"
-                            className={'bbb'}
-                            labelCol={{
-                                span: 6,
-                            }}
-                        >
-                            <Input/>
-                        </Form.Item>
-                    </div>
-                    {/*link*/}
-                    <div className={styles.addShow}>
-                        {
-                            openLink ? <CaretRightFilled className={styles.addCur}
-                                                         onClick={hideLink}/> : <CaretDownFilled onClick={hideLink}
-                                                                                                 className={`${styles.addCur} ${styles.addCurMt5}`}/>
-                        }
-                        <p className={styles.addPresale} onClick={hideLink}>Link</p>
-                        <p className={styles.lines}></p>
-                    </div>
-                    <div style={openLink ? {display: 'none'} : {}}>
-                        <Form.Item
-                            label="Twitter"
-                            name="twitter"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Please input your twitter!',
-                                },
-                            ]} labelCol={{
-                            span: 8,
-                        }}
-                        >
-                            <Input/>
-                        </Form.Item>
-                        <Form.Item
-                            label="Telegram"
-                            name="telegram"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Please input your telegram!',
-                                },
-                            ]} labelCol={{
-                            span: 9,
-                        }}
-                        >
-                            <Input/>
-                        </Form.Item>
-                        <Form.Item
-                            label="Website"
-                            name="website"
-                            className={'bbb'}
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Please input your website!',
-                                },
-                            ]} labelCol={{
-                            span: 8,
-                        }}
-                        >
-                            <Input/>
-                        </Form.Item>
-                    </div>
-                    <Form.Item wrapperCol={{
-                        offset: 8,
-                        span: 16,
-                    }}>
-                        <Button type={'primary'} htmlType="submit">
-                            Submit
-                        </Button>
-                    </Form.Item>
-                </Form>
+                    </Form>
 
 
-            </Drawer>
-        </div>
+                </Drawer>
+            </div>
+
+            <div className={styles['moblic-ShowNode']}>
+                <div>1</div>
+                <div  className={`${styles.eth} ${changeTheme ? 'darknessTwo' : 'brightTwo'}`}>
+                    <img src="/Ellipse27.png" alt="" width={30} style={{border: '50%', marginRight: '6px'}}/>
+                    <p className={changeTheme ? 'darknessFont' : 'brightFont'}>$:2028</p>
+                    <p style={{display: 'flex', alignItems: 'center', marginLeft: '8px'}}><img src="/GasStation.png"
+                                                                                            width={20} alt=""/>
+                        <span className={changeTheme ? 'darknessFont' : 'brightFont'}>29</span>
+                    </p>
+                </div>
+                <div>3</div>
+            </div>
+        </>
+
+
+
     );
 };
 

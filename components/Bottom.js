@@ -9,8 +9,8 @@ function Bottom(props) {
     const bottom = changeLang('bottom')
     return (
         <div style={{marginTop: '35px'}}>
-            <div style={{marginBottom:"30px"}} className={`${styles.bottomBoxLogo} ${changeTheme ? 'darknessTwo' : 'brightTwo boxHover'}`}>
-                <div className={styles.bottomTop}>
+            <div style={{marginBottom:"30px"}} className={`${styles.mobliceBottomBoxLogo} ${styles.bottomBoxLogo} ${changeTheme ? 'darknessTwo' : 'brightTwo boxHover'}`}>
+                <div className={`${styles.mobliceBottomTop} ${styles.bottomTop}`}>
                     <div className={styles.bottomImg}>
                         <Image src="/video.png" alt="" width={100} height={100} style={{width: '100%'}}/>
                     </div>
