@@ -219,6 +219,10 @@
     .packageCs{
         flex-direction: column;
     }
+    .homeCardBot{
+        padding: 0 10px;
+        padding-top: 10px;
+    }
   }
   
   /* 小屏幕 */

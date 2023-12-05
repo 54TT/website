@@ -153,23 +153,17 @@ function Home() {
     }, {
         title: packageHtml(home.pair),
         align: 'center',
+        width: 100,
         render: (text, record) => {
             return <div style={{
                     display: 'flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'center',
-                    flexDirection: 'column', 
-                    width: '100px',
-                    textOverflow: 'ellipsis',
-                    overflow: 'clip'
+                    alignItems: 'flex-start', 
+                    flexDirection: 'column',
                 }}>
-                <div>
-                    {
-                        packageHtml(record?.baseToken?.symbol+'/')
-                    }
+                <div>{ packageHtml(record?.baseToken?.symbol+'/') }
                     <span style={{color: 'rgb(156,156,156)'}}>{record?.quoteToken?.symbol}</span>
                 </div>
-                { packageHtml(record?.quoteToken?.address) }
+                <div style={{width: '100px', textOverflow: 'ellipsis', overflow: 'hidden', wordWrap: 'normal'}}>{ packageHtml(record?.quoteToken?.address) }</div>
             </div>
         }
     },
@@ -222,13 +216,13 @@ function Home() {
             align: 'center',
             render: (text, record) => {
                 return <Image src="/dex-uniswap.png" alt="" width={30} height={30}
-                              style={{
-                                  borderRadius: '50%',
-                                  display: 'block',
-                                  margin: '0 auto',
-                                  height: 'auto',
-                                  width: 'auto'
-                              }}/>
+                    style={{
+                        borderRadius: '50%',
+                        display: 'block',
+                        margin: '0 auto',
+                        height: 'auto',
+                        width: 'auto'
+                    }}/>
             }
         },
     ]
@@ -485,7 +479,11 @@ function Home() {
                         className={changeAllTheme('darknessFont', 'brightFont')}>{home.featured}</p>
                         <div className={styles['dis']}>
                             {/*时间选择*/}
-                            <Segmented options={['5m', '1h', '6h', '24h']} onChange={changSeg} defaultValue={'24h'}/>
+                            <Segmented 
+                                options={['5m', '1h', '6h', '24h']} 
+                                onChange={changSeg} 
+                                defaultValue={'24h'}
+                            />
                             <Link href={'/featured'}>
                                 <p className={styles.homeFeaturedMore}>{home.more}></p>
                             </Link>
