@@ -23,6 +23,7 @@ import {ethers} from 'ethers'
 import {CountContext} from '/components/Layout/Layout';
 import Marquee from "react-fast-marquee";
 import {changeLang} from "/utils/set";
+import Image from 'next/image'
 
 const Header = () => {
     const router = useRouter()
@@ -390,6 +391,16 @@ const Header = () => {
     const handleChange = (value) => {
         changeFont(value)
     }
+
+    // 除了Home页面显示，其它页面不展示
+    const [isShowClass, setIsShowClass] = useState(Boolean)
+    useEffect(() => {
+        if(router.pathname  == '/'){
+            setIsShowClass(true)
+        }else{
+            setIsShowClass(false)
+        }
+    })
     return (
         <>
             <div className={styles['headerShowNode']}>
@@ -690,17 +701,57 @@ const Header = () => {
                 </Drawer>
             </div>
 
-            <div className={styles['moblic-ShowNode']}>
-                <div>1</div>
-                <div  className={`${styles.eth} ${changeTheme ? 'darknessTwo' : 'brightTwo'}`}>
-                    <img src="/Ellipse27.png" alt="" width={30} style={{border: '50%', marginRight: '6px'}}/>
-                    <p className={changeTheme ? 'darknessFont' : 'brightFont'}>$:2028</p>
-                    <p style={{display: 'flex', alignItems: 'center', marginLeft: '8px'}}><img src="/GasStation.png"
-                                                                                            width={20} alt=""/>
-                        <span className={changeTheme ? 'darknessFont' : 'brightFont'}>29</span>
-                    </p>
+            {/* 移动端适配导航 */}
+            <div className={`${styles.cardParams} ${changeTheme ? 'darknessTwo' : 'brightTwo'}`}>
+                <div className={styles['moblic-ShowNode']}>
+                    <div className={styles.mobliceMenuFlex}>
+                        <div className={`${styles.ethMobliceMg} ${styles.ethMoblice} ${changeTheme ? 'darkMode' : 'whiteMode'}`}>
+                            <Link href={'/'}>
+                                <Image src={'/GroupMoblice.svg'} alt="GroupMoblice" style={{marginLeft:'12px'}} width={20} height={20}/>
+                            </Link>
+                        </div>
+                        <div className={`${styles.ethMoblice} ${changeTheme ? 'darkMode' : 'whiteMode'}`}>
+                            <Link href={'/search'}>
+                                <Image src={'/Search.svg'} alt="Search" style={{marginLeft:'10px'}} width={20} height={20}/>
+                            </Link>
+                        </div>
+                    </div>
+                    <div  className={`${styles.ethMobliceCt} ${styles.eth} ${changeTheme ? 'darkMode' : 'whiteMode'}`}>
+                        <img src="/Ellipse27.png" alt="" width={40} style={{border: '50%', marginRight: '6px'}}/>
+                        <p className={changeTheme ? 'darknessFont' : 'brightFont'}>$:2028</p>
+                        <p style={{display: 'flex', alignItems: 'center', marginLeft: '8px'}}>
+                            <img src="/GasStation.png" width={20} alt=""/>
+                            <span className={changeTheme ? 'darknessFont' : 'brightFont'}>29</span>
+                        </p>
+                    </div>
+                    <div className={styles.mobliceMenuFlex}>
+                        <div className={`${styles.ethMobliceMg} ${styles.ethMoblice} ${changeTheme ? 'darkMode' : 'whiteMode'}`}>
+                            <Image src={'/WalletMoblice.svg'} alt="WalletMoblice" style={{marginLeft:'10px'}} width={20} height={20}/>
+                        </div>
+                        <div className={`${styles.ethMoblice} ${changeTheme ? 'darkMode' : 'whiteMode'}`}>
+                            <Image src={'/Menu.svg'} alt="Menu" style={{marginLeft:'10px'}} width={20} height={20}/>
+                        </div>
+                    </div>
                 </div>
-                <div>3</div>
+            </div>
+
+            {/* 滚动条播放 */}
+            <div className={`${ isShowClass ? styles.headerShowScrollNode : styles.headerHideScrollNode}`}>
+            <Marquee
+                pauseOnHover={true}
+                speed={30}
+                gradientWidth={100}
+                className={styles.marqueeBox}>
+                {
+                    launch.length > 0 && launch.map((i, index) => {
+                        return <div key={index} className={`${styles.marquee} `}>
+                            <span className={changeTheme ? 'darknessFont' : 'brightFont'}>#{index + 1}</span>
+                            <p className={styles.marqueeName}>{i?.symbol?.slice(0, 1)}</p>
+                            <span className={changeTheme ? 'darknessFont' : 'brightFont'}>{i.symbol}</span>
+                        </div>
+                    })
+                }
+            </Marquee>
             </div>
         </>
 

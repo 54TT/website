@@ -154,11 +154,22 @@ function Home() {
         title: packageHtml(home.pair),
         align: 'center',
         render: (text, record) => {
-            return <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-                {
-                    packageHtml(record?.baseToken?.symbol+'/')
-                }
-                <span style={{color: 'rgb(156,156,156)'}}>{record?.quoteToken?.symbol}</span>
+            return <div style={{
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center',
+                    flexDirection: 'column', 
+                    width: '100px',
+                    textOverflow: 'ellipsis',
+                    overflow: 'clip'
+                }}>
+                <div>
+                    {
+                        packageHtml(record?.baseToken?.symbol+'/')
+                    }
+                    <span style={{color: 'rgb(156,156,156)'}}>{record?.quoteToken?.symbol}</span>
+                </div>
+                { packageHtml(record?.quoteToken?.address) }
             </div>
         }
     },

@@ -25,6 +25,17 @@
     align-items: center;
     justify-content: space-between;
 }
+.ethMoblice{
+    width: 40px;
+    height: 40px;
+    color: rgb(156, 156, 156);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+}
+.ethMobliceMg{
+    margin-right: 6px;
+}
 
 .marqueeBox {
     width: 25% !important;
@@ -108,8 +119,9 @@
 .moblic-ShowNode{
     display: none;
 }
-
-
+.headerShowScrollNode, .headerHideScrollNode,.mobliceSearchToken{
+    display: none;
+}
 
 
 /* 超小屏幕 */
@@ -117,14 +129,41 @@
     .headerShowNode{
         display: none;
     }
+    .headerShowScrollNode{
+        display: block;
+        margin-top: 20px;
+    }
+    .marqueeBox{
+        width: 92% !important;
+    }
     /* 导航栏样式 */
     .moblic-ShowNode{
-        padding: 20px 20px;
         display: flex;
         flex-direction: row;
         justify-content: space-between;
-        flex-wrap: nowrap;
         align-items: center;
+    }
+    .mobliceMenuFlex{
+        display: flex;
+    }
+    .ethMobliceCt{
+        height: 40px;
+        border-radius: 50px;
+    }
+    .cardParams{
+        background-color: rgb(253, 213, 62);
+        padding: 10px;
+        overflow-y: auto;
+        transition: box-shadow 0.3s;
+    }
+    .whiteMode {
+        background-color: rgb(249, 181, 54);
+    }
+    .searchToken{
+        width: 90%;
+    }
+    .mobliceSearchToken{
+        display: block;
     }
 }
 

@@ -185,14 +185,13 @@
     overflow: auto;
 }
 
-
 /* 超小屏幕 */
 @media screen and (max-width: 768px) {
     .boxPar, .homeTop{
         flex-direction: column;
     }
     .box{
-        padding: 20px 20px 0 20px;
+        padding: 20px 4px 0 4px;
     }
     .boxPar > .left, .homeModule {
         width: 100%;
@@ -204,10 +203,21 @@
         display: flex;
         align-items: center;
     }
+    .dis{
+        min-width: 80px;
+        margin-top: 0;
+    }
+    .homeCardDate{
+        width: 24%;
+    }
     .homeCardSymbol{
         text-overflow: ellipsis;
         overflow: hidden;
-        min-width: 90px;
+        min-width: 80px;
+        max-width: 80px;
+    }
+    .packageCs{
+        flex-direction: column;
     }
   }
   
