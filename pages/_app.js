@@ -1,33 +1,32 @@
 import "../public/styles/tailwind.css";
 import "../public/styles/slick.css";
 import '../public/styles/theme.css'
-import {SessionProvider} from "next-auth/react"
-import {configureChains, createClient, WagmiConfig, chain} from 'wagmi';
-import {publicProvider} from 'wagmi/providers/public';
+// import {configureChains, createClient, WagmiConfig, chain} from 'wagmi';
+// import {publicProvider} from 'wagmi/providers/public';
+import {WagmiConfig, createConfig} from 'wagmi';
+import {mainnet, polygon, optimism, arbitrum} from 'wagmi/chains';
+import {ConnectKitProvider, getDefaultConfig} from 'hjt-connectkit';
 
 require('dotenv').config({path: '.env'})
-export const {chains, publicClient, webSocketPublicClient, provider} = configureChains(
-    [chain.mainnet, chain.polygon, chain.optimism, chain.arbitrum],
-    [
-        publicProvider()
-    ]
-);
-// const { connectors } = getDefaultWallets({
-//   appName: 'Dex Pert App',
-//   projectId: '91383724685e391bed500342fc272001',
-//   chains
-// });
-
-// const wagmiConfig = createConfig({
-//   autoConnect: true,
-//   connectors,
-//   publicClient,
-//   webSocketPublicClient
+// export const {chains, publicClient, webSocketPublicClient, provider} = configureChains(
+//     [chain.mainnet, chain.polygon, chain.optimism, chain.arbitrum],
+//     [
+//         publicProvider()
+//     ]
+// );
+// const client = createClient({
+//     autoConnect: true,
+//     provider,
 // })
-const client = createClient({
-    autoConnect: true,
-    provider,
-})
+const config = createConfig(
+    getDefaultConfig({
+        appName: 'ConnectKit Next.js demo',
+        //infuraId: process.env.NEXT_PUBLIC_INFURA_ID,
+        //alchemyId:  process.env.NEXT_PUBLIC_ALCHEMY_ID,
+        chains: [mainnet, polygon, optimism, arbitrum],
+        walletConnectProjectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID
+    })
+);
 import Layout from '/components/Layout/Layout'
 import Head from 'next/head';
 
@@ -37,13 +36,13 @@ function DexPert({Component, pageProps}) {
                 <link rel="shortcut icon" href="/avatar.png"/>
                 <title>My new cool app</title>
             </Head>
-                <WagmiConfig client={client}>
-                    {/*    <SessionProvider session={pageProps.session} refetchInterval={0}>*/}
+            <WagmiConfig config={config}>
+                <ConnectKitProvider debugMode>
                     <Layout>
                         <Component {...pageProps} />
                     </Layout>
-                    {/*</SessionProvider>*/}
-                </WagmiConfig>
+                </ConnectKitProvider>
+            </WagmiConfig>
         </>
     );
 }

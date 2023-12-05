@@ -1,29 +1,29 @@
-import React, {useState, useEffect, useRef, useContext, Suspense, startTransition} from "react";
-import {getCsrfToken,} from "next-auth/react"
+import React, {useContext, useEffect, useRef, useState} from "react";
 import baseUrl from '/utils/baseUrl'
-import {useAccount, useConnect, useNetwork, useSignMessage, useDisconnect,} from "wagmi"
+import {useAccount, useConnect, useDisconnect,} from "wagmi"
 import {InjectedConnector} from 'wagmi/connectors/injected'
 import axios from 'axios';
-import {Dropdown, Drawer, Form, Select, Input, DatePicker, Button, notification,} from 'antd'
-import {CaretDownFilled, CaretRightFilled, LoadingOutlined} from '@ant-design/icons';
+import {Button, DatePicker, Drawer, Dropdown, Form, Input, notification, Select,} from 'antd'
+import {CaretDownFilled, CaretRightFilled} from '@ant-design/icons';
 import styles from './css/header.module.css'
 import DrawerPage from './Drawer'
-
-const {Option} = Select;
 import dynamic from "next/dynamic";
 import Link from 'next/link'
 import _ from 'lodash'
 import cookie from 'js-cookie'
 import {useRouter} from 'next/router'
-// import ChatSearch from "../Chat/ChatSearch";
-const ChatSearch = dynamic(() => import('../Chat/ChatSearch'), {ssr: false})
 // const DrawerPage = dynamic( () =>  import('./Drawer'),)
-import {get, post, del, getUser} from '/utils/axios'
+import {get, post} from '/utils/axios'
 import {ethers} from 'ethers'
 import {CountContext} from '/components/Layout/Layout';
 import Marquee from "react-fast-marquee";
 import {changeLang} from "/utils/set";
 
+const {Option} = Select;
+// import ChatSearch from "../Chat/ChatSearch";
+const ChatSearch = dynamic(() => import('../Chat/ChatSearch'), {ssr: false})
+// import {default as Moralis} from 'moralis'
+const Moralis = require("moralis")?.default;
 const Header = () => {
     const router = useRouter()
     const [form] = Form.useForm();
@@ -254,67 +254,37 @@ const Header = () => {
             getUs()
         }
     }, [bol])
+
     const handleLogin = async () => {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        let account = await provider.send("eth_requestAccounts", []);
-        var signer = await provider.getSigner();
-        // 连接的网络和链信息。
-        var chain = await provider.getNetwork()
-        // 判断是否有账号
-        if (account.length > 0) {
-            // 判断是否是eth
-            if (chain && chain.name !== 'unknow' && chain.chainId) {
-                try {
-                    const date = Date.now();
-                    // await getCsrfToken()
-                    // const message = `请签名证明你是钱包账户的拥有者\nstatement:${window.location.host}\nNonce:\n${date}\ndomain:\n ${window.location.host}\naddress: ${address}\nchainId:${chain.chainId}\nuri: ${window.location.origin}\n`
-                    const  message = date+'';
-                    console.log("message:",date)
-                    // 签名
-                    const signature = await signer.signMessage(message)
-                    console.log("signature:",signature)
-                    console.log("address:",address)
-                    // 验证签名
-                    const recoveredAddress = ethers.utils.verifyMessage(message, signature);
-                    console.log("recoveredAddress:",recoveredAddress)
-                    if (recoveredAddress === address) {
-                        setB()
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            let account = await provider.send("eth_requestAccounts", []);
+            //  获取签名
+            var signer = await provider.getSigner();
+            // 连接的网络和链信息。
+            var chain = await provider.getNetwork()
+            // 判断是否有账号
+            if (account.length > 0) {
+                // 判断是否是eth
+                if (chain && chain.name !== 'unknow' && chain.chainId) {
+                    try {
+                        const date = Date.now();
+                        // Etherscan的  api密钥
+                        // await getCsrfToken()
+                        const message = `请签名证明你是钱包账户的拥有者\nstatement:${window.location.host}\nNonce:\n${date}\ndomain:\n ${window.location.host}\naddress: ${address}\nchainId:${chain.chainId}\nuri: ${window.location.origin}\n`
+                        // 签名
+                        const signature = await signer.signMessage(message)
+                        // 验证签名
+                        const recoveredAddress = ethers.utils.verifyMessage(message, signature);
+                        if (recoveredAddress === address) {
+                            setB()
+                        }
+                    } catch (err) {
+                        return null
                     }
-                } catch (err) {
-                    return null
+                } else {
                 }
             } else {
             }
-        } else {
-        }
-        // const cook = cookie.get('name')
-        // if (!cook) {
-        //     setBolLogin(true)
-        //     try {
-        //         const message = new SiweMessage({
-        //             domain: window.location.host,
-        //             address: address,
-        //             statement: "Sign in with Ethereum to the app.",
-        //             uri: window.location.origin,
-        //             version: "1",
-        //             chainId: chain?.id,
-        //             nonce: await getCsrfToken(),
-        //         })
-        //         const signature = await signMessageAsync({
-        //             message: message.prepareMessage(),
-        //         })
-        //         const data = await signIn("credentials", {
-        //             message: JSON.stringify(message),
-        //             redirect: false,
-        //             signature,
-        //             callbackUrl: '/',
-        //         })
-        //         if (data && data.status === 200 && data.ok) {
-        //             setB()
-        //         }
-        //     } catch (error) {
-        //     }
-        // }
     }
     const set = () => {
         cookie.remove('name');
@@ -322,6 +292,75 @@ const Header = () => {
         router.push('/')
         disconnect()
     }
+    // 获取address  所有的代币合约地址
+    const getAddressOwner = async (address) => {
+        try {
+            // Moralis   api  密钥   address-0xae2Fc483527B8EF99EB5D9B44875F005ba1FaE13
+            await Moralis.start({
+                apiKey: "qHpI9lre2arPz6zZ5nRi7XMVJ5klhtZ1auxnSRX548DOKN2dryiwgfxgkgKSEqa3"
+            });
+            await getCoinContract(address)
+        } catch (e) {
+            await getCoinContract(address)
+        }
+    };
+    const getCoinContract = async (address) => {
+        //   获取用户地址  所有的合约地址
+        const response = await Moralis.EvmApi.token.getWalletTokenBalances({
+            "chain": "0x1",
+            "address": address
+        });
+        // 判断合约地址是否有
+        if (response.raw && response.raw.length > 0) {
+            const par = response?.raw?.map(async (i) => {
+                const a = await getTokenOwner(i?.token_address)
+                return i.data = a
+            })
+            const results = await Promise.all(par);
+            console.log(results)
+            if (results.length > 0) {
+                const data = results.filter((i) => i)
+                console.log(data)
+            }
+        } else {
+        }
+    }
+    // 获取该  代币合约地址的   所有者
+    const getTokenOwner = async (token) => {
+        //   eth  api的节点
+        const provider = new ethers.providers.JsonRpcProvider('https://mainnet.infura.io/v3/d2660efdeff84ac982b0d2de03e13c20');
+        // eth的  合约 ABI
+        const tokenAbi = [{
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": true,
+                    "name": "previousOwner",
+                    "type": "address"
+                },
+                {
+                    "indexed": true,
+                    "name": "newOwner",
+                    "type": "address"
+                }
+            ],
+            "name": "OwnershipTransferred",
+            "type": "event"
+        }]
+        //获取该  合约地址的所有者  0x726a02b8b22882a2a8bd29d03c0f34429288418a
+        if (token) {
+            const tokenContract = new ethers.Contract(token, tokenAbi, provider);
+            // 过滤  合约地址所有者
+            const a = await tokenContract.filters.OwnershipTransferred("0x0000000000000000000000000000000000000000")
+            // 获取该代币合约地址  的所有者
+            const events = await tokenContract.queryFilter(a, 0, 19000000000);
+            if (events.length > 0 && events[0].args) {
+                return events[0]?.args[1]
+            }
+        }
+
+    }
+
     const getMoney = () => {
         if (typeof window.ethereum === 'undefined') {
             notification.warning({
@@ -394,6 +433,8 @@ const Header = () => {
         <div
             className={"top-0 w-full  z-30 transition-all headerClass"}>
             <div className={styles['aaa']} style={{paddingLeft: '110px'}}>
+                <div onClick={() => getAddressOwner('0xae2Fc483527B8EF99EB5D9B44875F005ba1FaE13')}>12345</div>
+                {/*<div onClick={aaa}>6789</div>*/}
                 <Marquee
                     pauseOnHover={true}
                     speed={30}

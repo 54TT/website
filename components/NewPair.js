@@ -3,14 +3,12 @@ import {Table, Pagination, Card} from 'antd'
 import _ from 'lodash'
 import {ApolloClient, InMemoryCache, useQuery} from "@apollo/client";
 import {gql} from "graphql-tag";
-import dayjs from "dayjs";
-import Image from 'next/image'
-import {autoConvertNew,autoConvert} from '/utils/set'
+import Image from 'next/image';
+import {autoConvertNew,autoConvert} from '/utils/set';
 import {formatDecimal, sendGetRequestWithSensitiveData, getRelativeTimeDifference, formatDateTime} from './Utils';
 import styled from '/public/styles/all.module.css'
 const client = new ApolloClient({
-    uri: 'http://188.166.191.246:8000/subgraphs/name/dsb/uniswap', cache: new InMemoryCache(),
-
+    uri: 'https://api.thegraph.com/subgraphs/name/levi0522/uniswap-v2', cache: new InMemoryCache(),
 });
 import {changeLang} from "/utils/set";
 import {CountContext} from "./Layout/Layout";

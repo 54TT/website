@@ -77,7 +77,6 @@ const Layout = ({children}) => {
                             {
                                 key: 'part-1',
                                 href: '#part-1',
-                                title: 'Part 1',
                             },
                         ]}
                     />

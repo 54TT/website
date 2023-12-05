@@ -34,12 +34,14 @@ import cook from 'js-cookie'
 import dynamic from "next/dynamic";
 import {CountContext} from "./Layout/Layout";
 import {arrayUnique} from '/utils/set'
+// import {ConnectKitButton, changeBack} from 'hjt-connectkit';
 
 const {Countdown} = Statistic;
 const PostCard = dynamic(() => import('./PostCard'), {ssr: false})
 const Bott = dynamic(() => import('./Bottom'), {ssr: false})
 import {changeLang} from "/utils/set";
 import {responseIterator} from "@apollo/client/link/http/responseIterator";
+
 
 function Home() {
     const router = useRouter();
@@ -155,7 +157,7 @@ function Home() {
         render: (text, record) => {
             return <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
                 {
-                    packageHtml(record?.baseToken?.symbol+'/')
+                    packageHtml(record?.baseToken?.symbol + '/')
                 }
                 <span style={{color: 'rgb(156,156,156)'}}>{record?.quoteToken?.symbol}</span>
             </div>
@@ -188,18 +190,18 @@ function Home() {
             title: packageHtml(home.txns),
             align: 'center',
             render: (text, record) => {
-                return  packageHtml((record?.txns[time]?.buys + record?.txns[time]?.sells) ? autoConvert(record?.txns[time]?.buys + record?.txns[time]?.sells) : 0)
+                return packageHtml((record?.txns[time]?.buys + record?.txns[time]?.sells) ? autoConvert(record?.txns[time]?.buys + record?.txns[time]?.sells) : 0)
             }
         },
         {
-            title:packageHtml(home.volume) ,
+            title: packageHtml(home.volume),
             align: 'center',
             render: (text, record) => {
-                return  packageHtml(record?.volume[time] ? autoConvert(record?.volume[time]) : 0)
+                return packageHtml(record?.volume[time] ? autoConvert(record?.volume[time]) : 0)
             }
         },
         {
-            title: packageHtml(home.liquidity) ,
+            title: packageHtml(home.liquidity),
             align: 'center',
             render: (text, record) => {
                 return packageHtml(record?.liquidity?.usd ? autoConvert(record.liquidity.usd) : 0)
@@ -386,6 +388,7 @@ function Home() {
 
     return (<div className={styles['box']}>
         <div className={styles['boxPar']}>
+            {/*<ConnectKitButton />*/}
             {/*左边*/}
             <div ref={refHeight} className={styles['left']}>
                 {/*上面*/}
@@ -448,7 +451,7 @@ function Home() {
                                                             className={styles.homeCardListImg}/>
                                                     </li>
                                                 }
-                                            }) : [] : [1, 2, 3,].map((i, index) => {
+                                            }) : [] : [1, 2, 3, 4].map((i, index) => {
                                                 return <li key={index}>
                                                     <div className={styles.homeCardModule}>
                                                         <Skeleton.Avatar active={true} size={'default'} shape={'circle'}
