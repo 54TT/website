@@ -196,6 +196,25 @@
 .moblicePairSubText{
     width: 100px;
 }
+.homeTableParentText{
+    width: 100px;
+}
+.homeTableParentMain{
+    width: 100%;
+    display: flex;
+    overflow: hidden;
+}
+.homeTablePrenSpan{
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.homeTableNextSpan{
+    display: block;
+    white-space: nowrap;
+}
+
 
 /* 超小屏幕 */
 @media screen and (max-width: 768px) {
