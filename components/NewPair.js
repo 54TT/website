@@ -179,7 +179,7 @@ export default function NewPair() {
                 </div>
                 <Table rowKey={(i) => i.id + i?.token0?.id + i?.token1?.id + i?.token0?.name}
                        className={`anyTable ${changeTheme ? 'hotTableD' : 'hotTable'}`}
-                       loading={loading} columns={columns} bordered={false} dataSource={tableParams}
+                       loading={loading} columns={columns} scroll={{x: 'max-content'}} bordered={false} dataSource={tableParams}
                        pagination={false}/>
             </Card>
             <p className={styled.launchBoxBot}>©DEXpert.io</p>

@@ -8,6 +8,11 @@
     align-items: center;
     margin-top: 5px;
 }
+.editDis{
+    min-width: 70px;
+    justify-content: space-around;
+}
+
 
 .ul > li {
     display: flex;
@@ -146,6 +151,9 @@
     line-height: 1;
     width: 30%;
 }
+.editHomeCardDate{
+    width: auto;
+}
 .homeCardSymbol{
     text-align: center;
     font-size: 16px;
@@ -154,6 +162,7 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     font-weight: bold;
+    min-width: 80px;
 }
 .homeCardListImg{
     border-radius: 50%;margin-right: 10px;
@@ -183,6 +192,9 @@
 /* 2023-12-04 新增样式 */
 .homeTableBox{
     overflow: auto;
+}
+.moblicePairSubText{
+    width: 100px;
 }
 
 /* 超小屏幕 */
@@ -227,7 +239,13 @@
   
   /* 小屏幕 */
   @media screen and (min-width: 768px) {
-    
+    .boxPar{
+        flex-direction: column;
+    }
+    .boxPar > .left{
+        width: auto;
+        margin-bottom: 35px;
+    }
   }
   
   /* 中型屏幕 平板 */
@@ -237,7 +255,14 @@
   
   /* 电脑屏幕 */
   @media screen and (min-width: 1200px){
-    
+    .boxPar > .left{
+        width: 64%;
+        margin-bottom: 0;
+    }
+    .boxPar{
+        flex-direction: row;
+        justify-content: space-between;
+    }
   }
 
 

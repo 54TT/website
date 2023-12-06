@@ -140,21 +140,25 @@ function Home() {
     }
     const [time, setTime] = useState('h24')
     const columns = [{
-        title: '', align: 'center', render: (text, record) => {
+        title: '', 
+        align: 'center',
+        fixed: 'left',
+        render: (text, record) => {
             return <p style={{
                 width: '30px',
                 backgroundColor: '#454545',
                 color: 'white',
                 lineHeight: '30px',
                 textAlign: 'center',
-                borderRadius: '50%', margin: '0 auto'
+                borderRadius: '50%', margin: '0 auto',
             }}>{record?.baseToken?.symbol?.slice(0, 1)}</p>
         }
     }, {
         title: packageHtml(home.pair),
         align: 'center',
-        width: 100,
+        fixed: 'left',
         render: (text, record) => {
+            console.log(record,'record')
             return <div style={{
                     display: 'flex', 
                     alignItems: 'flex-start', 
@@ -163,6 +167,9 @@ function Home() {
                 <div>{ packageHtml(record?.baseToken?.symbol+'/') }
                     <span style={{color: 'rgb(156,156,156)'}}>{record?.quoteToken?.symbol}</span>
                 </div>
+                {/* <div className="moblicePairSubText">
+                   
+                </div> */}
                 <div style={{width: '100px', textOverflow: 'ellipsis', overflow: 'hidden', wordWrap: 'normal'}}>{ packageHtml(record?.quoteToken?.address) }</div>
             </div>
         }
@@ -221,7 +228,7 @@ function Home() {
                         display: 'block',
                         margin: '0 auto',
                         height: 'auto',
-                        width: 'auto'
+                        width: 'auto',
                     }}/>
             }
         },
@@ -419,13 +426,11 @@ function Home() {
                                                         key={index}>
                                                         <div className={styles.homeCardListBox}>
                                                             <p className={styles.homeCardIm}>{i.symbol.slice(0, 1)}</p>
-                                                            <div style={{width: '78%'}} className={styles.homeCardFlexBox}>
+                                                            <div style={{width: '78%', display: 'flex', alignItems: 'center'}} className={styles.homeCardFlexBox}>
                                                                 <Tooltip title={i.symbol}>
                                                                     <p className={`${styles.homeCardSymbol} ${changeAllTheme('darknessFont', 'brightFont')}`}>{i.symbol}</p>
                                                                 </Tooltip>
-                                                                <div className={`${styles['moblice-dis']} ${styles['dis']}`} style={{
-                                                                    padding: '3px'
-                                                                }}>
+                                                                <div style={{marginTop: '0'}} className={`${styles['editDis']} ${styles['dis']}`} >
                                                                     <img onClick={() => push(i, 'one')}
                                                                          src={changeAllTheme('/Websitee.svg', "/Websiteaa.svg")}
                                                                          alt="" width={16}/>
@@ -438,7 +443,7 @@ function Home() {
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div className={styles.homeCardDate}>
+                                                        <div className={`${styles.homeCardDate} ${styles.editHomeCardDate}`}>
                                                             <img
                                                                 src={changeAllTheme("/icon _timer.svg", '/icon _time1.svg')}
                                                                 alt="" width={15}/>
@@ -492,6 +497,7 @@ function Home() {
                     <div className={styles['homeTableBox']}>
                         {/*表格*/}
                         <Table columns={columns}
+                            scroll={{x: 'max-content'}}
                             rowKey={(record) => record?.baseToken?.address + record?.quoteToken?.address}
                             loading={featuredBol}
                             className={`${changeAllTheme('darkTable', 'tablesss')}  anyTable`} onRow={(record) => {

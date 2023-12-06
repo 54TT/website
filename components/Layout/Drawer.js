@@ -91,31 +91,6 @@ const Drawer = ({getMoney}) => {
         changeBack(value)
         setValue(value)
     }
-    // 实时获取页面宽高
-    // const [height, setHeight] = useState(0);
-    // const [width, setWidth] = useState(0);
-    // const [isShowDisplay, setIsShowDisplay] = useState(Boolean)
-    // const resizeUpdate = (e) => {
-    //     let h = e.target.innerHeight;
-    //     let w = e.target.innerWidth;
-    //     setHeight(h);
-    //     setWidth(w)
-    // };
-    // useEffect(() => {
-    //     let h = window.innerHeight;
-    //     let w = window.innerWidth;
-    //     setHeight(h)
-    //     setWidth(w)
-    //     window.addEventListener('resize', resizeUpdate);
-    //     if(width <= 768){
-    //         setIsShowDisplay(true)
-    //     }else{
-    //         setIsShowDisplay(false)
-    //     }
-    //     return () => {
-    //         window.removeEventListener('resize', resizeUpdate);
-    //     }
-    // }, []);
     return (
         <div className="drawerShowNode">
             <div className={changeTheme?'darknessTwo':'brightTwo'} style={{position: 'relative'}}>
@@ -135,10 +110,11 @@ const Drawer = ({getMoney}) => {
                                         marginLeft:'10px'
                                     }}
                                 >
-                                    <Image src={'/logoTop.svg'} alt="logo" width={30} height={30}/>
+                                    {/* 源图片：logoTop */}
+                                    <Image src={'/logo.svg'} alt="logo" width={30} height={30}/>
                                 </ListItemIcon>
                                 <ListItemText primary={<div style={{width: '50%'}}>
-                                    <Image width={100} height={100} style={{width: '100%'}} src="/Vector.png" alt=""/></div>}
+                                    <Image width={100} height={100} style={{width: '100%'}} src="/Union.png" alt=""/></div>}
                                             sx={{opacity: openDrawer ? 1 : 0}}/>
                             </DrawerHeader>
                         </div>
@@ -159,7 +135,8 @@ const Drawer = ({getMoney}) => {
                                             justifyContent: 'center',
                                         }}
                                     >
-                                        <Image src={`/HomeLogo.svg`} alt="logo" width={32} height={32}/>
+                                         {/* 源图片：HomeLogo */}
+                                        <Image src={`/Vector.svg`} alt="logo" width={32} height={32}/>
                                     </ListItemIcon>
                                     <ListItemText primary={<span className={changeTheme?'darknessFont':'brightFont'}>{drawer.home}</span>} sx={{opacity: openDrawer ? 1 : 0}}/>
                                 </ListItemButton>
@@ -180,7 +157,8 @@ const Drawer = ({getMoney}) => {
                                             justifyContent: 'center',
                                         }}
                                     >
-                                        <Image src={`/ExchangeLogo.svg`} alt="logo" height={32} width={32}/>
+                                        {/* 源图片：ExchangeLogo */}
+                                        <Image src={`/icon_graph_.svg`} alt="logo" height={32} width={32}/>
                                     </ListItemIcon>
                                     <ListItemText primary={<span className={changeTheme?'darknessFont':'brightFont'}>{drawer.featured}</span>} sx={{opacity: openDrawer ? 1 : 0}}/>
                                 </ListItemButton>
@@ -201,7 +179,8 @@ const Drawer = ({getMoney}) => {
                                             justifyContent: 'center',
                                         }}
                                     >
-                                        <Image src={`/pre-saleLogo.svg`} alt="logo" height={32} width={32}/>
+                                        {/* 源图片：pre-saleLogo */}
+                                        <Image src={`/icon_rocket_.svg`} alt="logo" height={32} width={32}/>
                                     </ListItemIcon>
                                     <ListItemText primary={ <span className={changeTheme?'darknessFont':'brightFont'}>{drawer.presale}</span>} sx={{opacity: openDrawer ? 1 : 0}}/>
                                 </ListItemButton>
@@ -222,7 +201,8 @@ const Drawer = ({getMoney}) => {
                                             justifyContent: 'center',
                                         }}
                                     >
-                                        <Image src={`/pre-saleLogo.svg`} alt="logo" height={32} width={32}/>
+                                        {/* 源图片：pre-saleLogo */}
+                                        <Image src={`/icon_timer_.svg`} alt="logo" height={32} width={32}/>
                                     </ListItemIcon>
                                     <ListItemText primary={<span className={changeTheme?'darknessFont':'brightFont'}>{drawer.launch}</span>} sx={{opacity: openDrawer ? 1 : 0}}/>
                                 </ListItemButton>
@@ -243,7 +223,8 @@ const Drawer = ({getMoney}) => {
                                             justifyContent: 'center',
                                         }}
                                     >
-                                        <Image src={`/newpairsLogo.svg`} alt="logo" height={32} width={32}/>
+                                        {/* 源图片：newpairsLogo */}
+                                        <Image src={`/GroupJiuBa.svg`} alt="logo" height={32} width={32}/>
                                     </ListItemIcon>
                                     <ListItemText primary={<span className={changeTheme?'darknessFont':'brightFont'}>{drawer.newPair}</span>} sx={{opacity: openDrawer ? 1 : 0}}/>
                                 </ListItemButton>
@@ -264,7 +245,8 @@ const Drawer = ({getMoney}) => {
                                             justifyContent: 'center',
                                         }}
                                     >
-                                        <Image src={`/NewsLogo.svg`} alt="logo" width={32} height={32}/>
+                                        {/* 源图片：NewsLogo */}
+                                        <Image src={`/icon_newspaper_.svg`} alt="logo" width={32} height={32}/>
                                     </ListItemIcon>
                                     <ListItemText primary={<span className={changeTheme?'darknessFont':'brightFont'}>{drawer.community}</span>} sx={{opacity: openDrawer ? 1 : 0}}/>
                                 </ListItemButton>
@@ -284,8 +266,9 @@ const Drawer = ({getMoney}) => {
                                             mr: openDrawer ? 3 : 0,
                                             justifyContent: 'center',
                                         }}
-                                    >
-                                        <Image src={`/UserSettings.svg`} height={32} alt="logo" width={32}/>
+                                    > 
+                                    {/* 源图片：UserSettings */}
+                                        <Image src={`/icon_new_spaper_.svg`} height={32} alt="logo" width={32}/>
                                     </ListItemIcon>
                                     <ListItemText primary={<span className={changeTheme?'darknessFont':'brightFont'}>{drawer.user}</span>} sx={{opacity: openDrawer ? 1 : 0}}/>
                                 </ListItemButton>

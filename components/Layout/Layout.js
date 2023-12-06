@@ -68,7 +68,7 @@ const Layout = ({children}) => {
             <div id={'part-1'}>
                 <Header/>
                 <div
-                    style={router.pathname === '/' ? {} : router.pathname === '/statement' || router.pathname !== '/search' ? {marginLeft: '20px'} : {marginLeft: '90px'}}>
+                    style={router.pathname === '/' ? {} : router.pathname === '/statement' ? {marginLeft: '20px'} : {marginLeft: '90px'}}>
                     {children}
                 </div>
                 <div>

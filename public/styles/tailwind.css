@@ -427,7 +427,9 @@ li.check:before {
   
   /* 小屏幕 */
   @media screen and (min-width: 768px) {
-    
+    .cardParams{
+        width: 100%;
+    }
   }
   
   /* 中型屏幕 平板 */
@@ -437,7 +439,9 @@ li.check:before {
   
   /* 电脑屏幕 */
   @media screen and (min-width: 1200px){
-    
+    .cardParams{
+        width: 34%;
+    }
   }
 
 

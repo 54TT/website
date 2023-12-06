@@ -5,6 +5,7 @@ import styles from "../components/Layout/css/header.module.css";
 import { CountContext } from "../components/Layout/Layout";
 import cookie from "js-cookie";
 import { changeLang } from "/utils/set";
+import { notification } from 'antd'
 
 function Search() {
   const header = changeLang("header");
@@ -13,12 +14,28 @@ function Search() {
   });
   const { changeTheme } = useContext(CountContext);
 
+  const getMoney = () => {
+    if (typeof window.ethereum === 'undefined') {
+        notification.warning({
+            message: `warning`, description: 'Please install MetaMask! And refresh', placement: 'topLeft',
+            duration: 2
+        });
+    } else {
+        // if (!isConnected) {
+        //     connect()
+        // } else {
+        //     handleLogin()
+        // }
+    }
+}
+
+
   const [showChatSearch, setShowChatSearch] = useState(false);
   const showSearch = () => {
     if (cookie.get("name")) {
-      // setShowChatSearch(true)
+      setShowChatSearch(true)
     } else {
-      // getMoney()
+      getMoney()
     }
   };
   return (

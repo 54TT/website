@@ -701,21 +701,42 @@
         width: 100%;
         justify-content: space-around;
     }
+    .mobliceFeaturedBox, .launchBox{
+        margin-top: 20px;
+        margin-left: -86px;
+    }
+    .featuredBox,.launchBox{
+        margin-right: 4px;
+    }
+    .featuredBoxCard,.launchBoxCard{
+        min-width: auto;
+        overflow-x: auto;
+    }
   }
 
 /* 小屏幕 */
 @media screen and (min-width: 768px) {
+    .bottomImgs{
+        width: 100%;
+        justify-content: space-around;
+    }
     
 }
 
 /* 中型屏幕 平板 */
 @media screen and (min-width: 992px){
-
+    .bottomImgs{
+        width: 100%;
+        justify-content: space-around;
+    }
 }
 
 /* 电脑屏幕 */
 @media screen and (min-width: 1200px){
-
+    .bottomImgs{
+        width: 15%;
+        justify-content: space-around;
+    }
 }
 
 

@@ -8,6 +8,7 @@ import {Dropdown, Drawer, Form, Select, Input, DatePicker, Button, notification,
 import {CaretDownFilled, CaretRightFilled, LoadingOutlined} from '@ant-design/icons';
 import styles from './css/header.module.css'
 import DrawerPage from './Drawer'
+import {Switch } from 'antd'
 
 const {Option} = Select;
 import dynamic from "next/dynamic";
@@ -26,6 +27,9 @@ import {changeLang} from "/utils/set";
 import Image from 'next/image'
 
 const Header = () => {
+
+    const drawer = changeLang('drawer')
+
     const router = useRouter()
     const [form] = Form.useForm();
     const inputRef = useRef(null);
@@ -34,7 +38,7 @@ const Header = () => {
     const {connect} = useConnect({
         connector: new InjectedConnector(),
     });
-    const {bolName, changeBolLogin, changeShowData, changeFont, changeTheme} = useContext(CountContext);
+    const {bolName, changeBolLogin, changeShowData, changeFont, changeTheme, changeBack} = useContext(CountContext);
     const header = changeLang('header')
     const [open, setOpen] = useState(false);
     const [openPresale, setOpenPresale] = useState(false);
@@ -45,6 +49,13 @@ const Header = () => {
     const [tokenForm, setTokenForm] = useState({});
     const [timeForm, setTime] = useState({});
     const [tokenFormBol, setTokenFormBol] = useState(false);
+
+    const [value,setValue] =useState(false)
+    const changeThemes=(value)=>{
+        changeBack(value)
+        setValue(value)
+    }
+
     const changeToken = _.debounce((e) => {
         get('/getTokenNameAndSymbol', {
             tokenAddress: e?.target?.value ? e.target.value : ''
@@ -401,6 +412,16 @@ const Header = () => {
             setIsShowClass(false)
         }
     })
+
+    // 移动端点击显示菜单
+    const [ isShowMenuItem, setIsShowMenuItem ] = useState(false)
+    const openShowMenuItem = () => {
+        if(isShowMenuItem){
+            setIsShowMenuItem(false)
+        }else{
+            setIsShowMenuItem(true) 
+        }
+    }
     return (
         <>
             <div className={styles['headerShowNode']}>
@@ -728,8 +749,74 @@ const Header = () => {
                         <div className={`${styles.ethMobliceMg} ${styles.ethMoblice} ${changeTheme ? 'darkMode' : 'whiteMode'}`}>
                             <Image src={'/WalletMoblice.svg'} alt="WalletMoblice" style={{marginLeft:'10px'}} width={20} height={20}/>
                         </div>
-                        <div className={`${styles.ethMoblice} ${changeTheme ? 'darkMode' : 'whiteMode'}`}>
+                        <div className={`${styles.ethMoblice} ${changeTheme ? 'darkMode' : 'whiteMode'}`}  onClick={openShowMenuItem}>
                             <Image src={'/Menu.svg'} alt="Menu" style={{marginLeft:'10px'}} width={20} height={20}/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {/* 菜单Items */}
+            <div className={`${ isShowMenuItem ? styles.mobliceMentHideItemsBox : styles.mobliceMentItemsBox } ${changeTheme ? 'darknessTwo' : 'brightTwo'}`} >
+                <div style={{ display: 'flex', flexWrap: 'wrap'}}>
+                    <div className={`${styles.mobliceDpFlex}`}>
+                        <Link href={'/'}>
+                            <div className={`${styles.mobliceDpFlexs}`}>
+                                <Image src={`/Vector.svg`} alt="logo" width={32} height={32}/>
+                                <div className={changeTheme?'darknessFont':'brightFont'}>{drawer.home}</div>
+                            </div>
+                        </Link>
+                    </div>
+                    <div className={`${styles.mobliceDpFlex}`}>
+                        <Link href={'/featured'}>
+                            <div className={`${styles.mobliceDpFlexs}`}>
+                                <Image src={`/icon_graph_.svg`} alt="logo" height={32} width={32}/>
+                                <div className={changeTheme?'darknessFont':'brightFont'}>{drawer.featured}</div>
+                            </div>
+                        </Link>
+                    </div>
+                    <div className={`${styles.mobliceDpFlex}`}>
+                        <Link href={'/presale'}>
+                            <div className={`${styles.mobliceDpFlexs}`}>
+                                <Image src={`/icon_rocket_.svg`} alt="logo" height={32} width={32}/>
+                                <div className={changeTheme?'darknessFont':'brightFont'}>{drawer.presale}</div>
+                            </div>
+                        </Link>
+                    </div>
+                    <div className={`${styles.mobliceDpFlex}`}>
+                        <Link href={'/launch'}>
+                            <div className={`${styles.mobliceDpFlexs}`}>
+                                <Image src={`/icon_timer_.svg`} alt="logo" height={32} width={32}/>
+                                <div className={changeTheme?'darknessFont':'brightFont'}>{drawer.launch}</div>
+                            </div>
+                        </Link>
+                    </div>
+                    <div className={`${styles.mobliceDpFlex}`}>
+                        <Link href={'/newPair'}>
+                            <div className={`${styles.mobliceDpFlexs}`}>
+                                <Image src={`/GroupJiuBa.svg`} alt="logo" height={32} width={32}/>
+                                <div className={changeTheme?'darknessFont':'brightFont'}>{drawer.newPair}</div>
+                            </div>
+                        </Link>
+                    </div>
+                    <div className={`${styles.mobliceDpFlex}`}>
+                        <Link href={'/'}>
+                            <div className={`${styles.mobliceDpFlexs}`}>
+                                <Image src={`/icon_newspaper_.svg`} alt="logo" width={32} height={32}/>
+                                <div className={changeTheme?'darknessFont':'brightFont'}>{drawer.home}</div>
+                            </div>
+                        </Link>
+                    </div>
+                    <div className={`${styles.mobliceDpFlex}`}>
+                        <Link href={'/'}>
+                            <div className={`${styles.mobliceDpFlexs}`}>
+                                <Image src={`/icon_new_spaper_.svg`} height={32} alt="logo" width={32}/>
+                                <div className={changeTheme?'darknessFont':'brightFont'}>{drawer.home}</div>
+                            </div>
+                        </Link>
+                    </div>
+                    <div className={`${styles.mobliceDpFlex}`}>
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                            <Switch checked={value} className={changeTheme?'darknessOne':'brightOne'} onChange={changeThemes}/>
                         </div>
                     </div>
                 </div>
