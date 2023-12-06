@@ -1,11 +1,11 @@
 import React, {useEffect, useState, useRef, useContext} from "react";
 import styles from "../public/styles/home.module.css";
 import axios from 'axios';
-import {formatDecimal, sendGetRequestWithSensitiveData, getRelativeTimeDifference, formatDateTime} from './Utils';
+import {formatDecimal, getRelativeTimeDifference, formatDateTime} from './Utils';
 import {useRouter} from 'next/router';
-import {get, post, del, getUser} from '/utils/axios'
+import {get,  getUser} from '/utils/axios'
 import Link from 'next/link'
-import {dao, autoConvert,} from '/utils/set'
+import {autoConvert,} from '/utils/set'
 import Image from 'next/image'
 import {
     Tooltip,

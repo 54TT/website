@@ -1,5 +1,6 @@
 import React, {useContext, useEffect, useRef, useState} from "react";
 import baseUrl from '/utils/baseUrl'
+import hashUrl from '/utils/hashUrl'
 import {useAccount, useConnect, useDisconnect,} from "wagmi"
 import {InjectedConnector} from 'wagmi/connectors/injected'
 import axios from 'axios';
@@ -72,7 +73,9 @@ const Header = () => {
     useEffect(() => {
         if (cookie.get('name') && cookie.get('name') !== address && address) {
             cookie.set('name', address, {expires: 1})
-            router.push('/')
+            if (router.pathname !== '/') {
+                router.push('/')
+            }
             changeBolLogin()
             getUs()
         }
@@ -221,7 +224,7 @@ const Header = () => {
     };
     const [bol, setBol] = useState(false)
     const setB = () => {
-        setBol(!bol)
+        setBol(true)
     }
     const getUs = async () => {
         const data = await axios.get(baseUrl + "/api/user", {
@@ -252,44 +255,70 @@ const Header = () => {
     useEffect(() => {
         if (bol && address) {
             getUs()
+            setBol(false)
         }
     }, [bol])
-
+    // 登录
     const handleLogin = async () => {
-            const provider = new ethers.providers.Web3Provider(window.ethereum);
-            let account = await provider.send("eth_requestAccounts", []);
-            //  获取签名
-            var signer = await provider.getSigner();
-            // 连接的网络和链信息。
-            var chain = await provider.getNetwork()
-            // 判断是否有账号
-            if (account.length > 0) {
-                // 判断是否是eth
-                if (chain && chain.name !== 'unknow' && chain.chainId) {
-                    try {
-                        const date = Date.now();
-                        // Etherscan的  api密钥
-                        // await getCsrfToken()
-                        const message = `请签名证明你是钱包账户的拥有者\nstatement:${window.location.host}\nNonce:\n${date}\ndomain:\n ${window.location.host}\naddress: ${address}\nchainId:${chain.chainId}\nuri: ${window.location.origin}\n`
-                        // 签名
-                        const signature = await signer.signMessage(message)
-                        // 验证签名
-                        const recoveredAddress = ethers.utils.verifyMessage(message, signature);
-                        if (recoveredAddress === address) {
-                            setB()
-                        }
-                    } catch (err) {
-                        return null
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        // provider._isProvider   判断是否还有请求没有结束
+        // let account = await provider.send("eth_requestAccounts", []);
+        let account = []
+        // 连接的网络和链信息。
+        var chain = await provider.getNetwork()
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE', // 允许的请求方法
+                'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept' // 允许的请求头
+                // 其他 CORS 相关头部
+            }
+        };
+        // const res = await axios.post('http://188.166.191.246:8080/api/v1/token', {
+        //     address
+        // }, config)
+        // console.log(res)
+        var signer = null
+        // 获取签名
+        // var signer = await provider.getSigner();
+        try {
+            // 获取签名
+            signer = await provider.send('personal_sign', ['Message to sign', account[0]]);
+        } catch (err) {
+            return null
+        }
+        // 判断是否有账号
+        if (account.length > 0) {
+            // 判断是否是eth
+            if (chain && chain.name !== 'unknow' && chain.chainId) {
+                try {
+                    // Etherscan的  api密钥
+                    // await getCsrfToken()
+                    // const message = `请签名证明你是钱包账户的拥有者\nstatement:${window.location.host}\nNonce:\n${date}\ndomain:\n ${window.location.host}\naddress: ${address}\nchainId:${chain.chainId}\nuri: ${window.location.origin}\n`
+                    // 签名
+                    const message = '1701843584596-127.0.0.1:39544-fln2dx444x'
+                    const signature = await signer.signMessage(message)
+                    // 验证签名
+                    const recoveredAddress = ethers.utils.verifyMessage(message, signature);
+                    if (recoveredAddress === address) {
+                        setB()
+                        const data = await getAddressOwner(address)
                     }
-                } else {
+                } catch (err) {
+                    return null
                 }
             } else {
             }
+        } else {
+        }
     }
     const set = () => {
         cookie.remove('name');
         cookie.remove('user');
-        router.push('/')
+        if (router.pathname !== '/') {
+            router.push('/')
+        }
         disconnect()
     }
     // 获取address  所有的代币合约地址
@@ -299,9 +328,11 @@ const Header = () => {
             await Moralis.start({
                 apiKey: "qHpI9lre2arPz6zZ5nRi7XMVJ5klhtZ1auxnSRX548DOKN2dryiwgfxgkgKSEqa3"
             });
-            await getCoinContract(address)
+            const data = await getCoinContract(address)
+            console.log(data)
         } catch (e) {
-            await getCoinContract(address)
+            const data = await getCoinContract(address)
+            console.log(data)
         }
     };
     const getCoinContract = async (address) => {
@@ -317,12 +348,13 @@ const Header = () => {
                 return i.data = a
             })
             const results = await Promise.all(par);
-            console.log(results)
             if (results.length > 0) {
-                const data = results.filter((i) => i)
-                console.log(data)
+                return results.filter((i) => i)
+            } else {
+                return null
             }
         } else {
+            return null
         }
     }
     // 获取该  代币合约地址的   所有者
@@ -357,9 +389,17 @@ const Header = () => {
             if (events.length > 0 && events[0].args) {
                 return events[0]?.args[1]
             }
+        } else {
+            return null
         }
-
     }
+    const [connectBol, setConnectBol] = useState(false)
+    useEffect(() => {
+        if (connectBol && isConnected) {
+            handleLogin()
+            setConnectBol(false)
+        }
+    }, [isConnected])
 
     const getMoney = () => {
         if (typeof window.ethereum === 'undefined') {
@@ -370,6 +410,7 @@ const Header = () => {
         } else {
             if (!isConnected) {
                 connect()
+                setConnectBol(true)
             } else {
                 handleLogin()
             }
@@ -377,12 +418,12 @@ const Header = () => {
     }
     const [no, setNo] = useState(false)
     useEffect(() => {
-        if (cookie.get('user')) {
+        if (cookie.get('user') && address) {
             const data = JSON.parse(cookie.get('user'))
             setNo(true)
             setUserPar(data)
         } else {
-            router.push('/')
+            // router.push('/')
             setNo(false)
             setUserPar('')
         }
@@ -400,6 +441,14 @@ const Header = () => {
         },
         {
             key: '2',
+            label: (
+                <span>
+         Token settings
+          </span>
+            ),
+        },
+        {
+            key: '3',
             label: (
                 <span onClick={set}>
             Sign out
@@ -429,12 +478,21 @@ const Header = () => {
     const handleChange = (value) => {
         changeFont(value)
     }
+    const getGasPrice = () => {
+        const provider = new ethers.providers.JsonRpcProvider('https://mainnet.infura.io/v3/d2660efdeff84ac982b0d2de03e13c20');
+            // 获取当前 gas 价格
+        provider.getGasPrice().then((gasPrice) => {
+            console.log(gasPrice)
+            console.log(ethers.utils.formatEther(gasPrice), 'ETH'); // 将 wei 转换为 ETH，并打印到控制台
+        }).catch((err) => {
+            console.error('Failed to get gas price:', err);
+        });
+    }
     return (
         <div
             className={"top-0 w-full  z-30 transition-all headerClass"}>
             <div className={styles['aaa']} style={{paddingLeft: '110px'}}>
-                <div onClick={() => getAddressOwner('0xae2Fc483527B8EF99EB5D9B44875F005ba1FaE13')}>12345</div>
-                {/*<div onClick={aaa}>6789</div>*/}
+                {/*<div onClick={() => getAddressOwner('0xae2Fc483527B8EF99EB5D9B44875F005ba1FaE13')}>12345</div>*/}
                 <Marquee
                     pauseOnHover={true}
                     speed={30}

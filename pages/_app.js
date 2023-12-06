@@ -5,6 +5,7 @@ import '../public/styles/theme.css'
 // import {publicProvider} from 'wagmi/providers/public';
 import {WagmiConfig, createConfig} from 'wagmi';
 import {mainnet, polygon, optimism, arbitrum} from 'wagmi/chains';
+//   使用钱包依赖
 import {ConnectKitProvider, getDefaultConfig} from 'hjt-connectkit';
 
 require('dotenv').config({path: '.env'})
