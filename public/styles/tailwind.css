@@ -367,7 +367,6 @@ li.check:before {
 
 .cardParams {
     width: 34%;
-    background-color: rgb(253, 213, 62);
     border-radius: 12px;
     padding: 10px;
     overflow-y: auto;

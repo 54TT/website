@@ -25,7 +25,7 @@ export const tcn={
     header:{
         addCoin:'添加硬幣',
         login:'登入',
-        search:'按代碼、名稱、合約或代幣搜尋交易對'
+        search:'尋找你的代幣'
     },
     drawer:{
         home:'主頁',

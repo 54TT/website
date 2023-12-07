@@ -1,13 +1,14 @@
 import React, {useContext, useEffect, useRef, useState} from "react";
 import baseUrl from '/utils/baseUrl'
-import hashUrl from '/utils/hashUrl'
+import {request} from '/utils/hashUrl'
 import {useAccount, useConnect, useDisconnect,} from "wagmi"
 import {InjectedConnector} from 'wagmi/connectors/injected'
 import axios from 'axios';
 import {Button, DatePicker, Drawer, Dropdown, Form, Input, notification, Select,} from 'antd'
 import {CaretDownFilled, CaretRightFilled} from '@ant-design/icons';
 import styles from './css/header.module.css'
-import DrawerPage from './Drawer'
+import DrawerPage from './Drawer';
+import jwt from 'jsonwebtoken';
 import dynamic from "next/dynamic";
 import Link from 'next/link'
 import _ from 'lodash'
@@ -62,7 +63,7 @@ const Header = () => {
         })
     }, 1500)
     useEffect(() => {
-        if (cookie.get('user') && bolName && address) {
+        if (cookie.get('username') && bolName && address) {
             getUs()
         }
     }, [bolName])
@@ -81,7 +82,7 @@ const Header = () => {
         }
     }, [address])
     const showDrawer = () => {
-        if (cookie.get('name')) {
+        if (cookie.get('username')) {
             setOpen(true);
             get('/selectPresalePlatform', '').then(res => {
                 if (res && res.status === 200) {
@@ -197,6 +198,7 @@ const Header = () => {
     const [showChatSearch, setShowChatSearch] = useState(false);
     const [chats, setChats] = useState([]);
     const [userPar, setUserPar] = useState(null);
+    const [userBol, setUserBol] = useState(false);
     const getParams = async () => {
         const res = await axios.get(`${baseUrl}/api/chats`, {
             params: {userId: userPar?.id}
@@ -232,20 +234,23 @@ const Header = () => {
                 address
             }
         })
+        console.log(data)
         if (data?.data && data?.data?.user) {
             setUserPar(data?.data?.user)
             cookie.set('name', address, {expires: 1})
+            // 登录刷新   social
             changeShowData()
-            cookie.set('user', JSON.stringify(data?.data?.user), {expires: 1})
+            cookie.set('username', JSON.stringify(data?.data?.user), {expires: 1})
         } else {
             const {data} = await axios.get('https://api.ipify.org?format=json')
             if (data && data.ip) {
                 const ip = await axios.post(baseUrl + "/api/user", {
-                    address, ipV4Address: data.ip
+                    address, ipV4Address: data.ip, ipV6Address: data.ip
                 })
                 if (ip?.data && ip?.data?.user) {
                     setUserPar(ip?.data?.user)
-                    cookie.set('user', JSON.stringify(ip?.data?.user), {expires: 1})
+                    cookie.set('username', JSON.stringify(ip?.data?.user), {expires: 1})
+                    // 登录刷新   social
                     changeShowData()
                     cookie.set('name', address, {expires: 1})
                 }
@@ -262,49 +267,44 @@ const Header = () => {
     const handleLogin = async () => {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         // provider._isProvider   判断是否还有请求没有结束
-        // let account = await provider.send("eth_requestAccounts", []);
-        let account = []
+        let account = await provider.send("eth_requestAccounts", []);
+        // let account = []
         // 连接的网络和链信息。
         var chain = await provider.getNetwork()
-        const config = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE', // 允许的请求方法
-                'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept' // 允许的请求头
-                // 其他 CORS 相关头部
-            }
-        };
-        // const res = await axios.post('http://188.166.191.246:8080/api/v1/token', {
-        //     address
-        // }, config)
-        // console.log(res)
-        var signer = null
+        const {status, data} = await request('/api/v1/token', {address})
         // 获取签名
-        // var signer = await provider.getSigner();
-        try {
-            // 获取签名
-            signer = await provider.send('personal_sign', ['Message to sign', account[0]]);
-        } catch (err) {
-            return null
-        }
+        var signer = await provider.getSigner();
         // 判断是否有账号
-        if (account.length > 0) {
+        if (account.length > 0 && data && status === 200) {
             // 判断是否是eth
             if (chain && chain.name !== 'unknow' && chain.chainId) {
                 try {
-                    // Etherscan的  api密钥
-                    // await getCsrfToken()
                     // const message = `请签名证明你是钱包账户的拥有者\nstatement:${window.location.host}\nNonce:\n${date}\ndomain:\n ${window.location.host}\naddress: ${address}\nchainId:${chain.chainId}\nuri: ${window.location.origin}\n`
                     // 签名
-                    const message = '1701843584596-127.0.0.1:39544-fln2dx444x'
+                    const message = data?.nonce
                     const signature = await signer.signMessage(message)
                     // 验证签名
-                    const recoveredAddress = ethers.utils.verifyMessage(message, signature);
-                    if (recoveredAddress === address) {
-                        setB()
-                        const data = await getAddressOwner(address)
+                    // const recoveredAddress = ethers.utils.verifyMessage(message, signature);
+                    const res = await request('/api/v1/login', {
+                        signature: signature,
+                        addr: address,
+                        message
+                    })
+                    // const data = await getAddressOwner(address)
+                    if (res && res.data && res.data?.accessToken) {
+                        //   jwt  解析 token获取用户信息
+                        const decodedToken = jwt.decode(res.data?.accessToken);
+                        if (decodedToken && decodedToken.address) {
+                            cookie.set('token', res.data?.accessToken)
+                            cookie.set('name', address)
+                            cookie.set('username', JSON.stringify(decodedToken))
+                            setUserBol(!userBol)
+                        }
                     }
+                    // if (recoveredAddress === address) {
+                    //     setB()
+                    //     const data = await getAddressOwner(address)
+                    // }
                 } catch (err) {
                     return null
                 }
@@ -315,7 +315,7 @@ const Header = () => {
     }
     const set = () => {
         cookie.remove('name');
-        cookie.remove('user');
+        cookie.remove('username');
         if (router.pathname !== '/') {
             router.push('/')
         }
@@ -418,8 +418,8 @@ const Header = () => {
     }
     const [no, setNo] = useState(false)
     useEffect(() => {
-        if (cookie.get('user') && address) {
-            const data = JSON.parse(cookie.get('user'))
+        if (cookie.get('username') && address) {
+            const data = JSON.parse(cookie.get('username'))
             setNo(true)
             setUserPar(data)
         } else {
@@ -427,7 +427,7 @@ const Header = () => {
             setNo(false)
             setUserPar('')
         }
-    }, [cookie.get('name'), cookie.get('user')])
+    }, [cookie.get('name'), cookie.get('username'), userBol])
     const items = [
         {
             key: '1',
@@ -455,10 +455,18 @@ const Header = () => {
           </span>
             ),
         },
+        {
+            key: '4',
+            label: (
+                <span onClick={set}>
+           Add a coin
+          </span>
+            ),
+        },
     ];
     const [launch, setLaunch] = useState([])
     const showSearch = () => {
-        if (cookie.get('name')) {
+        if (cookie.get('username')) {
             setShowChatSearch(true)
         } else {
             getMoney()
@@ -478,12 +486,15 @@ const Header = () => {
     const handleChange = (value) => {
         changeFont(value)
     }
+    // 获取eth  gas和price
     const getGasPrice = () => {
+        console.log(1111111111)
         const provider = new ethers.providers.JsonRpcProvider('https://mainnet.infura.io/v3/d2660efdeff84ac982b0d2de03e13c20');
-            // 获取当前 gas 价格
+        // 获取当前 gas 价格
         provider.getGasPrice().then((gasPrice) => {
             console.log(gasPrice)
-            console.log(ethers.utils.formatEther(gasPrice), 'ETH'); // 将 wei 转换为 ETH，并打印到控制台
+            console.log(ethers.utils.formatEther(gasPrice), 'ETH');
+            console.log(ethers.utils.formatUnits(gasPrice, 'gwei')); // 将 wei 转换为 ETH，并打印到控制台
         }).catch((err) => {
             console.error('Failed to get gas price:', err);
         });
@@ -492,6 +503,7 @@ const Header = () => {
         <div
             className={"top-0 w-full  z-30 transition-all headerClass"}>
             <div className={styles['aaa']} style={{paddingLeft: '110px'}}>
+                <span onClick={getGasPrice}>1111111</span>
                 {/*<div onClick={() => getAddressOwner('0xae2Fc483527B8EF99EB5D9B44875F005ba1FaE13')}>12345</div>*/}
                 <Marquee
                     pauseOnHover={true}
@@ -569,7 +581,7 @@ const Header = () => {
                                 arrow
                             >
                                 <Button
-                                    className={`${styles.loginName} ${styles.but} ${changeTheme ? 'darknessThree' : 'brightFore boxHover'} `}>{userPar && userPar.username ? userPar.username.length > 5 ? userPar.username.slice(0, 5) + '...' : userPar.username : ''}</Button>
+                                    className={`${styles.loginName} ${styles.but} ${changeTheme ? 'darknessThree' : 'brightFore boxHover'} `}>{userPar && userPar.username ? userPar.username.length > 5 ? userPar.username.slice(0, 5) + '...' : userPar.username : userPar.address.slice(0, 5) + '...'}</Button>
                             </Dropdown>
                         </div> : <Button
                             className={`${styles['but']} ${styles.loginName} ${changeTheme ? 'darknessThree' : 'brightFore boxHover'}`}

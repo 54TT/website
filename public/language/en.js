@@ -24,7 +24,7 @@ export const en = {
     header: {
         addCoin: 'Add Coin',
         login: 'Login',
-        search: 'Search pair by symbol,name,contract or token'
+        search: 'Find your coins'
     },
     drawer: {
         home: 'Home',

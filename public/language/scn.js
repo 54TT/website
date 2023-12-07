@@ -26,7 +26,7 @@ export const scn={
     header:{
         addCoin:'添加硬币',
         login:'登录',
-        search:'按代码、名称、合约或代币搜索交易对'
+        search:'寻找你的代币'
     },
     drawer:{
         home:'主页',

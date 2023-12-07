@@ -40,9 +40,7 @@ const {Countdown} = Statistic;
 const PostCard = dynamic(() => import('./PostCard'), {ssr: false})
 const Bott = dynamic(() => import('./Bottom'), {ssr: false})
 import {changeLang} from "/utils/set";
-import {responseIterator} from "@apollo/client/link/http/responseIterator";
-
-
+// import {responseIterator} from "@apollo/client/link/http/responseIterator";
 function Home() {
     const router = useRouter();
     const {bolLogin, changeShowData, showData, changeBolLogin, changeTheme} = useContext(CountContext);
@@ -362,9 +360,9 @@ function Home() {
         change('scroll')
     }
     useEffect(() => {
-        if (cook.get('name') && userPa?.id) {
+        // if (cook.get('name') && userPa?.id) {
             getPost()
-        }
+        // }
     }, [postsDataCh, userPa]);
     const pushLink = (name) => {
         if (name.includes('http') || name.includes('https')) {
@@ -509,8 +507,9 @@ function Home() {
                            style={{fontSize: '20px', color: '#2394D4', cursor: 'pointer'}}>{home.more}></p>
                     </Link>
                 </div>
+                {/*cookBol ?*/}
                 {
-                    cookBol ? postsDataAdd?.length > 0 ? <InfiniteScroll
+                    postsDataAdd?.length > 0 ? <InfiniteScroll
                             hasMore={true}
                             next={changePage}
                             scrollableTarget="scrollableDiv"
@@ -535,9 +534,9 @@ function Home() {
                                 />
                             }) : ''}
                         </InfiniteScroll> : <div style={{textAlign: 'center', fontSize: '20px'}}
-                                                 className={changeAllTheme('darknessFont', 'brightFont')}>{home.noData}</div> :
-                        <div style={{textAlign: 'center', fontSize: '20px'}}
-                             className={changeAllTheme('darknessFont', 'brightFont')}>{home.sign}</div>
+                                                 className={changeAllTheme('darknessFont', 'brightFont')}>{home.noData}</div>
+                        // <div style={{textAlign: 'center', fontSize: '20px'}}
+                        //      className={changeAllTheme('darknessFont', 'brightFont')}>{home.sign}</div>
                 }
             </div>
         </div>
