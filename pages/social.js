@@ -162,29 +162,31 @@ function Index() {
 
     return (
         <>
-            <div className="min-h-screen"
-                 style={{backgroundColor: 'rgb(253,213,62)', marginRight: '20px', borderRadius: '10px'}}>
-                <main style={{display: 'flex'}}>
-                    <Sidebar user={userPar ? userPar : ''}/>
-                    <Feed
-                        user={userPar ? userPar : ''}
-                        postsData={postsDataAdd}
-                        errorLoading={errorLoading}
-                        change={change}
-                        changePage={changePage}
-                        increaseSizeAnim={{
-                            sizeIncDown: styles.increasesizereally,
-                            sizeIncUp: styles.sizeup,
-                        }}
-                    />
+            <div className={styles.mobliceSocialBox}>
+                <div className={`${styles.mobliceSocial} min-h-screen`}
+                    style={{backgroundColor: 'rgb(253,213,62)', marginRight: '20px', borderRadius: '10px'}}>
+                    <main style={{display: 'flex'}}>
+                        <Sidebar user={userPar ? userPar : ''}/>
+                        <Feed
+                            user={userPar ? userPar : ''}
+                            postsData={postsDataAdd}
+                            errorLoading={errorLoading}
+                            change={change}
+                            changePage={changePage}
+                            increaseSizeAnim={{
+                                sizeIncDown: styles.increasesizereally,
+                                sizeIncUp: styles.sizeup,
+                            }}
+                        />
 
-                    <RightSideColumn
-                        chatsData={chatsData}
-                        userFollowStats={postSession}
-                        change={change}
-                        user={userPar ? userPar : {}}
-                    />
-                </main>
+                        <RightSideColumn
+                            chatsData={chatsData}
+                            userFollowStats={postSession}
+                            change={change}
+                            user={userPar ? userPar : {}}
+                        />
+                    </main>
+                </div>
             </div>
         </>
     );

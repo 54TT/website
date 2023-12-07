@@ -265,6 +265,9 @@
         width: auto;
         margin-bottom: 35px;
     }
+    .homeModule{
+        overflow-x: hidden;
+    }
   }
   
   /* 中型屏幕 平板 */

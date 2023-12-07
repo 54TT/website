@@ -1,6 +1,7 @@
 import React, {useState, useEffect, useRef, useContext, Suspense, startTransition} from "react";
 import {getCsrfToken,} from "next-auth/react"
-import baseUrl from '/utils/baseUrl'
+// import baseUrl from '/utils/baseUrl'
+import baseUrl from "../../utils/baseUrl";
 import {useAccount, useConnect, useNetwork, useSignMessage, useDisconnect,} from "wagmi"
 import {InjectedConnector} from 'wagmi/connectors/injected'
 import axios from 'axios';
@@ -250,7 +251,7 @@ const Header = () => {
             const {data} = await axios.get('https://api.ipify.org?format=json')
             if (data && data.ip) {
                 const ip = await axios.post(baseUrl + "/api/user", {
-                    address, ipV4Address: data.ip
+                    address, ipV4Address: data.ip, ipV6Address: data.ip
                 })
                 if (ip?.data && ip?.data?.user) {
                     setUserPar(ip?.data?.user)
@@ -422,6 +423,21 @@ const Header = () => {
             setIsShowMenuItem(true) 
         }
     }
+    const push = () => {
+        if (cookie.get('name')) {
+            router.push('/social')
+        } else {
+            getMoney()
+        }
+    }
+    const pushPer = () => {
+        if (cookie.get('name')) {
+            const data = cookie.get('name')
+            router.push(`/${data}`)
+        } else {
+            getMoney()
+        }
+    }
     return (
         <>
             <div className={styles['headerShowNode']}>
@@ -482,7 +498,7 @@ const Header = () => {
                             {/*        onClick={showDrawer}>{header.addCoin}</Button>*/}
                             <div  className={`${styles.eth} ${changeTheme ? 'darknessTwo' : 'brightTwo'}`}>
                                 <img src="/Ellipse27.png" alt="" width={30} style={{border: '50%', marginRight: '6px'}}/>
-                                <p className={changeTheme ? 'darknessFont' : 'brightFont'}>$:2028</p>
+                                <p className={changeTheme ? 'darknessFont' : 'brightFont'}>$ 2028</p>
                                 <p style={{display: 'flex', alignItems: 'center', marginLeft: '8px'}}><img src="/GasStation.png"
                                                                                                         width={20} alt=""/>
                                     <span className={changeTheme ? 'darknessFont' : 'brightFont'}>29</span>
@@ -799,21 +815,22 @@ const Header = () => {
                         </Link>
                     </div>
                     <div className={`${styles.mobliceDpFlex}`}>
-                        <Link href={'/'}>
+                        <div onClick={push}>
                             <div className={`${styles.mobliceDpFlexs}`}>
                                 <Image src={`/icon_newspaper_.svg`} alt="logo" width={32} height={32}/>
-                                <div className={changeTheme?'darknessFont':'brightFont'}>{drawer.home}</div>
+                                <div className={changeTheme?'darknessFont':'brightFont'}>{drawer.community}</div>
                             </div>
-                        </Link>
+                        </div>
                     </div>
                     <div className={`${styles.mobliceDpFlex}`}>
-                        <Link href={'/'}>
+                        <div onClick={pushPer}>
                             <div className={`${styles.mobliceDpFlexs}`}>
                                 <Image src={`/icon_new_spaper_.svg`} height={32} alt="logo" width={32}/>
-                                <div className={changeTheme?'darknessFont':'brightFont'}>{drawer.home}</div>
+                                <div className={changeTheme?'darknessFont':'brightFont'}>{drawer.user}</div>
                             </div>
-                        </Link>
+                        </div>
                     </div>
+                    {/* 切换主题 */}
                     <div className={`${styles.mobliceDpFlex}`}>
                         <div style={{ display: 'flex', alignItems: 'center' }}>
                             <Switch checked={value} className={changeTheme?'darknessOne':'brightOne'} onChange={changeThemes}/>

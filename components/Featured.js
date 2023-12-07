@@ -47,12 +47,29 @@ export default function Featured() {
     const packageHtml=(name)=>{
         return <span className={changeAllTheme('darknessFont', 'brightFont')}>{name}</span>
     }
+    const packageEllipsisHtml = (name) => {
+        return (
+            <div className={styled.homeTableParentText}>
+                {name.length > 10 ? (
+                    <div className={styled.homeTableParentMain}>
+                        <span className={`${styled.homeTablePrenSpan} ${changeAllTheme('darknessFont', 'brightFont')}`}>{name.slice(0, -6)}</span>
+                        <span className={`${styled.homeTableNextSpan} ${changeAllTheme('darknessFont', 'brightFont')}`}>{name.slice(-6)}</span>
+                    </div>)
+                    : name
+                }
+            </div>
+        )
+    }
     const columns = [{
-        title: packageHtml(featured.pair),align: 'center',  render: (text, record) => {
+        title: packageHtml(featured.pair),
+        align: 'left',
+        fixed: 'left',
+        render: (text, record) => {
             return <div className={styled.featuredColumnsBox}>
                 <p className={styled.featuredColumns}>{record?.baseToken?.symbol?.slice(0, 1)}</p>
                 <div style={{lineHeight:'1'}}>
                     <p className={changeAllTheme('darknessFont','brightFont')}>{record?.baseToken?.symbol.length>7?record.baseToken.symbol.slice(0,4):record.baseToken.symbol}/<span style={{color:'#626262'}}>{record?.quoteToken?.symbol.length>7?record.quoteToken.symbol.slice(0,4):record.quoteToken.symbol}</span></p>
+                    <div>{ packageEllipsisHtml(record?.quoteToken?.address) }</div>
                 </div>
             </div>
         }
@@ -159,7 +176,12 @@ export default function Featured() {
                     <Segmented options={['5m', '1h', '6h', '24h']} onChange={changSeg} defaultValue={'24h'}/>
 
                 </div>
-                <Table className={`anyTable ${changeAllTheme('hotTableD','hotTable')}`} columns={columns} scroll={{x: 'max-content'}} rowKey={(record)=>record?.baseToken?.address+record?.quoteToken?.address} onRow={(record) => {
+                <Table 
+                    className={`anyTable ${changeAllTheme('hotTableD','hotTable')}`} 
+                    columns={columns} 
+                    scroll={{x: 'max-content'}} 
+                    rowKey={(record)=>record?.baseToken?.address+record?.quoteToken?.address} 
+                    onRow={(record) => {
                     return {
                         onClick: (event) => {
                             const data = record.pairAddress

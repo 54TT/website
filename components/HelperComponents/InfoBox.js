@@ -15,7 +15,7 @@ function InfoBox({ Icon, message, content, setError, marginTop }) {
         } `}
       >
         <Icon className="h-5" />
-        <p className="font-semibold text-lg">{message}</p>
+        <p className={`${styled.mobliceInfoBox} font-semibold text-lg`}>{message}</p>
       </div>
       <p className={`text-sm ml-3 ${setError ? "text-red-400" : ""}`}>
         {content}

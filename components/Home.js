@@ -179,7 +179,7 @@ function Home() {
                 <div>{packageHtml(record?.baseToken?.symbol + '/')}
                     <span style={{ color: 'rgb(156,156,156)' }}>{record?.quoteToken?.symbol}</span>
                 </div>
-                { packageEllipsisHtml(record?.quoteToken?.address) }
+                <div>{ packageEllipsisHtml(record?.quoteToken?.address) }</div>
             </div>
         }
     },

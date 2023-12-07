@@ -181,6 +181,7 @@
     .mobliceMentHideItemsBox{
         display: block;
         padding: 20px 0;
+        /* height: 100vh; */
     }
     .mobliceSearchToken{
         display: block;

@@ -90,9 +90,10 @@ export default function Presale() {
         {
             title: presale.token,
             dataIndex: 'name', align: 'center', width: '25%',
+            width: 100,
             render: (text) => {
                 return <p
-                    className={`${styled.presaleBoxTableP} ${changeAllTheme( 'darknessFont' ,'brightFont')}`}>{text}</p>
+                    className={`${styled.presaleBoxTableP} ${styled.moblicePresaleBoxTableP} ${changeAllTheme( 'darknessFont' ,'brightFont')}`}>{text}</p>
             }
         },
         {

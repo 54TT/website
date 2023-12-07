@@ -434,7 +434,8 @@
 .newPairTable {
     display: flex;
     align-items: start;
-    justify-content: start;
+    justify-content: space-between;
+
 }
 
 .newPairTableText {
@@ -656,26 +657,42 @@
     padding-top: 60px;
     background-color: rgb(253, 213, 62);
 }
+/* 文字中间省略，前后显示样式 */
+.homeTableParentText{
+    width: 100px;
+}
+.homeTableParentMain{
+    width: 100%;
+    display: flex;
+    overflow: hidden;
+}
+.homeTablePrenSpan{
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.homeTableNextSpan{
+    display: block;
+    white-space: nowrap;
+}
+
+
 
 /* 超小屏幕 */
 @media screen and (max-width: 768px) {
-    .boxPar{
+    .boxPar,.mobliceBottomBoxLogo{
         display: flex;
         flex-direction: column;
     }
-    .boxPar > .left {
+    .boxPar > .left, .homeModule {
         width: 100%;
     }
     .homeTop{
         display: flex;
         flex-direction: column;
     }
-    .homeModule{
-        width: 100%;
-    }
     .mobliceBottomBoxLogo{
-        display: flex;
-        flex-direction: column;
         flex-wrap: nowrap;
         align-items: center;
     }
@@ -712,6 +729,45 @@
         min-width: auto;
         overflow-x: auto;
     }
+    .featuredColumns{
+        min-width: 30px;
+    }
+    .newPairTableText{
+        margin-left: 0;
+    }
+    .newPairTable{
+        flex-direction: column;
+    }
+    .allMoblice{
+        margin-top: 20px;
+        margin-left: -86px;
+        margin-right: 4px;
+    }
+    .allMobliceW{
+        width: 100%;
+    }
+    .usernameBoxBot{
+        margin-top: 0;
+        padding-right: 20px;
+    }
+    .mobliceInfoBox{
+        width: 100%;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+    .usernameBoxUpdate,.usernameBoxUp{
+        width: 40px;
+        height: 40px;
+      }
+      .moblicePresaleBoxTableP{
+        width: 100px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        word-wrap: normal;
+      }
+      .presaleBoxTableP{
+        text-align: left;
+      }
   }
 
 /* 小屏幕 */
@@ -719,6 +775,15 @@
     .bottomImgs{
         width: 100%;
         justify-content: space-around;
+    }
+    .featuredColumns{
+        min-width: 30px;
+    }
+    .newPairTable{
+        flex-direction: column;
+    }
+    .newPairTableText{
+        margin-left: 0;
     }
     
 }

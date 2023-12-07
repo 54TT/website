@@ -3,6 +3,7 @@ import React, {useContext, useEffect, useState} from "react";
 import InfoBox from "../components/HelperComponents/InfoBox";
 import Sidebar from "../components/Sidebar";
 import baseUrl from "../utils/baseUrl";
+import styles from '/public/styles/allmedia.module.css'
 // import LikeNotification from "../components/Notification/LikeNotification";
 // import CommentNotification from "../components/Notification/CommentNotification";
 // import FollowNotification from "../components/Notification/FollowNotification";
@@ -65,67 +66,69 @@ function Notifications() {
         }
     }, [userPar, followStatsBol]);
     return (
-        <div style={{backgroundColor:'rgb(253,213,62)',marginRight:"20px",borderRadius:'10px'}}>
-            <main
-                className="flex"
-                style={{height: "calc(100vh - 4.5rem)"}}>
-                <Sidebar user={userPar} maxWidth={"250px"}/>
-                <div
-                    style={{
-                        fontFamily: "Inter",
-                        width: '50%',
-                        margin: '20px auto 0',
-                        overflowY: 'auto',
-                        borderRadius: '10px',
-                        padding: '20px',
-                        backgroundColor:'#B2DB7E'
-                    }}>
-                    <div className="flex items-center ml-2">
-                        <p style={{
-                            userSelect: 'none',
-                            fontSize: '20px',
-                            fontWeight: 'bold'
-                        }}>{social.notification} ·</p>
-                        <p style={{
-                            userSelect: 'none',
-                            fontSize: '20px'
-                        }} className="text-gray-500 ml-2">
-                            {notifications?.length}
-                        </p>
-                    </div>
-
-                    {notifications.length > 0 ? (
-                        <div style={{borderTop: "1px solid #efefef"}}>
-                            {notifications?.map((notification) =>{
-                                 return   <div key={notification.id}>
-                                        {notification.type === "newLike" &&
-                                            notification.post !== null && (
-                                                <LikeNotification notification={notification}/>
-                                            )}
-                                        {notification.type === "newComment" &&
-                                            notification.post !== null && (
-                                                <CommentNotification notification={notification}/>
-                                            )}
-                                        {notification.type === "newFollower" &&
-                                            notification.post !== null && (
-                                                <FollowNotification
-                                                    notification={notification}
-                                                    chang={chang}
-                                                    userFollowStats={userFollowStats}
-                                                    userPar={userPar}
-                                                />
-                                            )}
-                                    </div>
-                            })}
+        <div className={styles.allMobliceBox}>
+            <div className={styles.allMoblice} style={{ backgroundColor:'rgb(253,213,62)',marginRight:"20px",borderRadius:'10px'}}>
+                <main
+                    className="flex"
+                    style={{height: "calc(100vh - 4.5rem)"}}>
+                    <Sidebar user={userPar} maxWidth={"250px"}/>
+                    <div
+                        style={{
+                            fontFamily: "Inter",
+                            width: '50%',
+                            margin: '20px auto 0',
+                            overflowY: 'auto',
+                            borderRadius: '10px',
+                            padding: '20px',
+                            backgroundColor:'#B2DB7E'
+                        }}>
+                        <div className="flex items-center ml-2">
+                            <p style={{
+                                userSelect: 'none',
+                                fontSize: '20px',
+                                fontWeight: 'bold'
+                            }}>{social.notification} ·</p>
+                            <p style={{
+                                userSelect: 'none',
+                                fontSize: '20px'
+                            }} className="text-gray-500 ml-2">
+                                {notifications?.length}
+                            </p>
                         </div>
-                    ) : (
-                        <p className="text-md text-gray-500">
-                            {`${social.noti} ${userPar?.name}.`}
-                        </p>
-                    )}
-                </div>
-                <div className="w-10"></div>
-            </main>
+
+                        {notifications.length > 0 ? (
+                            <div style={{borderTop: "1px solid #efefef"}}>
+                                {notifications?.map((notification) =>{
+                                    return   <div key={notification.id}>
+                                            {notification.type === "newLike" &&
+                                                notification.post !== null && (
+                                                    <LikeNotification notification={notification}/>
+                                                )}
+                                            {notification.type === "newComment" &&
+                                                notification.post !== null && (
+                                                    <CommentNotification notification={notification}/>
+                                                )}
+                                            {notification.type === "newFollower" &&
+                                                notification.post !== null && (
+                                                    <FollowNotification
+                                                        notification={notification}
+                                                        chang={chang}
+                                                        userFollowStats={userFollowStats}
+                                                        userPar={userPar}
+                                                    />
+                                                )}
+                                        </div>
+                                })}
+                            </div>
+                        ) : (
+                            <p className="text-md text-gray-500">
+                                {`${social.noti} ${userPar?.name}.`}
+                            </p>
+                        )}
+                    </div>
+                    <div className="w-10"></div>
+                </main>
+            </div>
         </div>
     );
 }
