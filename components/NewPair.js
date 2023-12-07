@@ -8,9 +8,11 @@ import Image from 'next/image'
 import {autoConvertNew,autoConvert} from '/utils/set'
 import {formatDecimal, sendGetRequestWithSensitiveData, getRelativeTimeDifference, formatDateTime} from './Utils';
 import styled from '/public/styles/all.module.css'
+// const client = new ApolloClient({
+//     uri: 'http://188.166.191.246:8000/subgraphs/name/dsb/uniswap', cache: new InMemoryCache(),
+// });
 const client = new ApolloClient({
-    uri: 'http://188.166.191.246:8000/subgraphs/name/dsb/uniswap', cache: new InMemoryCache(),
-
+    uri: 'https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-v2-dev', cache: new InMemoryCache(),
 });
 import {changeLang} from "/utils/set";
 import {CountContext} from "./Layout/Layout";
@@ -96,15 +98,34 @@ export default function NewPair() {
         }
         return data
     }
+    const changeAllTheme = (a, b) => {
+        return changeTheme ? a : b
+    }
+    const packageEllipsisHtml = (name) => {
+        return (
+            <div className={styled.homeTableParentText}>
+                {name.length > 10 ? (
+                    <div className={styled.homeTableParentMain}>
+                        <span className={`${styled.homeTablePrenSpan} ${changeAllTheme('darknessFont', 'brightFont')}`}>{name.slice(0, -6)}</span>
+                        <span className={`${styled.homeTableNextSpan} ${changeAllTheme('darknessFont', 'brightFont')}`}>{name.slice(-6)}</span>
+                    </div>)
+                    : name
+                }
+            </div>
+        )
+    }
 
     const columns = [
         {
+            fixed: 'left',
             title: '', align: 'right', width: 30,
             render: (text, record) => {
+                console.log(record,'record')
                 return <p className={styled.launchTableP}>{record?.token0?.symbol?.slice(0, 1) || ''}</p>
             }
         },
         {
+            fixed: 'left',
             title: newPair?.pair,
             dataIndex: 'name',
             render: (text, record) => <div className={styled.newPairTable}>
@@ -112,6 +133,7 @@ export default function NewPair() {
                     style={{fontSize: '18px'}} className={changeTheme ? 'darknessFont' : 'brightFont'}>{record?.token0?.symbol ? record?.token0?.symbol.length > 7 ? record?.token0?.symbol.slice(0, 5) : record?.token0?.symbol + '/' : ''}</span><span
                     style={{color: 'rgb(98,98,98)'}}>{record?.token1?.symbol ? record?.token1?.symbol.length > 7 ? record?.token1?.symbol.slice(0, 5) : record?.token1?.symbol : ''}</span>
                 </p>
+                <div>{packageEllipsisHtml(record?.token1?.id)}</div>
             </div>,
         },
         {
