@@ -149,7 +149,7 @@ export default function Featured() {
     }
 
     return (
-        <div className={styled.featuredBox}>
+        <div className={`${styled.featuredBox} ${styled.mobliceFeaturedBox}`}>
             <Card className={`${styled.featuredBoxCard} ${changeAllTheme('darknessTwo','brightTwo')}`} >
                 <div className={styled.featuredBoxTop}>
                     <div style={{display: 'flex', alignItems: 'center'}}>
@@ -158,7 +158,7 @@ export default function Featured() {
                     </div>
                     <Segmented options={['5m', '1h', '6h', '24h']} onChange={changSeg} defaultValue={'24h'}/>
                 </div>
-                <Table className={`anyTable ${changeAllTheme('hotTableD','hotTable')}`} columns={columns} rowKey={(record)=>record?.baseToken?.address+record?.quoteToken?.address} onRow={(record) => {
+                <Table className={`anyTable ${changeAllTheme('hotTableD','hotTable')}`} columns={columns} scroll={{x: 'max-content'}} rowKey={(record)=>record?.baseToken?.address+record?.quoteToken?.address} onRow={(record) => {
                     return {
                         onClick: (event) => {
                             const data = record.pairAddress

@@ -4,11 +4,11 @@ import {request} from '/utils/hashUrl'
 import {useAccount, useConnect, useDisconnect,} from "wagmi"
 import {InjectedConnector} from 'wagmi/connectors/injected'
 import axios from 'axios';
-import {Button, DatePicker, Drawer, Dropdown, Form, Input, notification, Select,} from 'antd'
+import {Button, DatePicker, Drawer, Dropdown, Form, Input, notification, Select, Switch,} from 'antd'
 import {CaretDownFilled, CaretRightFilled} from '@ant-design/icons';
 import styles from './css/header.module.css'
-import DrawerPage from './Drawer';
 import jwt from 'jsonwebtoken';
+import DrawerPage from './Drawer'
 import dynamic from "next/dynamic";
 import Link from 'next/link'
 import _ from 'lodash'
@@ -20,6 +20,7 @@ import {ethers} from 'ethers'
 import {CountContext} from '/components/Layout/Layout';
 import Marquee from "react-fast-marquee";
 import {changeLang} from "/utils/set";
+import Image from 'next/image'
 
 const {Option} = Select;
 // import ChatSearch from "../Chat/ChatSearch";
@@ -27,6 +28,9 @@ const ChatSearch = dynamic(() => import('../Chat/ChatSearch'), {ssr: false})
 // import {default as Moralis} from 'moralis'
 const Moralis = require("moralis")?.default;
 const Header = () => {
+
+    const drawer = changeLang('drawer')
+
     const router = useRouter()
     const [form] = Form.useForm();
     const inputRef = useRef(null);
@@ -35,7 +39,7 @@ const Header = () => {
     const {connect} = useConnect({
         connector: new InjectedConnector(),
     });
-    const {bolName, changeBolLogin, changeShowData, changeFont, changeTheme} = useContext(CountContext);
+    const {bolName, changeBolLogin, changeShowData, changeFont, changeTheme, changeBack} = useContext(CountContext);
     const header = changeLang('header')
     const [open, setOpen] = useState(false);
     const [openPresale, setOpenPresale] = useState(false);
@@ -46,6 +50,13 @@ const Header = () => {
     const [tokenForm, setTokenForm] = useState({});
     const [timeForm, setTime] = useState({});
     const [tokenFormBol, setTokenFormBol] = useState(false);
+
+    const [value, setValue] = useState(false)
+    const changeThemes = (value) => {
+        changeBack(value)
+        setValue(value)
+    }
+
     const changeToken = _.debounce((e) => {
         get('/getTokenNameAndSymbol', {
             tokenAddress: e?.target?.value ? e.target.value : ''
@@ -234,7 +245,6 @@ const Header = () => {
                 address
             }
         })
-        console.log(data)
         if (data?.data && data?.data?.user) {
             setUserPar(data?.data?.user)
             cookie.set('name', address, {expires: 1})
@@ -313,6 +323,7 @@ const Header = () => {
         } else {
         }
     }
+
     const set = () => {
         cookie.remove('name');
         cookie.remove('username');
@@ -324,15 +335,13 @@ const Header = () => {
     // 获取address  所有的代币合约地址
     const getAddressOwner = async (address) => {
         try {
-            // Moralis   api  密钥   address-0xae2Fc483527B8EF99EB5D9B44875F005ba1FaE13
+            // Moralis   api  密钥   address-  0xae2Fc483527B8EF99EB5D9B44875F005ba1FaE13
             await Moralis.start({
                 apiKey: "qHpI9lre2arPz6zZ5nRi7XMVJ5klhtZ1auxnSRX548DOKN2dryiwgfxgkgKSEqa3"
             });
-            const data = await getCoinContract(address)
-            console.log(data)
+            return await getCoinContract(address)
         } catch (e) {
-            const data = await getCoinContract(address)
-            console.log(data)
+            return await getCoinContract(address)
         }
     };
     const getCoinContract = async (address) => {
@@ -393,6 +402,7 @@ const Header = () => {
             return null
         }
     }
+
     const [connectBol, setConnectBol] = useState(false)
     useEffect(() => {
         if (connectBol && isConnected) {
@@ -488,7 +498,6 @@ const Header = () => {
     }
     // 获取eth  gas和price
     const getGasPrice = () => {
-        console.log(1111111111)
         const provider = new ethers.providers.JsonRpcProvider('https://mainnet.infura.io/v3/d2660efdeff84ac982b0d2de03e13c20');
         // 获取当前 gas 价格
         provider.getGasPrice().then((gasPrice) => {
@@ -499,70 +508,354 @@ const Header = () => {
             console.error('Failed to get gas price:', err);
         });
     }
+    // 除了Home页面显示，其它页面不展示
+    const [isShowClass, setIsShowClass] = useState(Boolean)
+    useEffect(() => {
+        if (router.pathname == '/') {
+            setIsShowClass(true)
+        } else {
+            setIsShowClass(false)
+        }
+    })
+
+    // 移动端点击显示菜单
+    const [isShowMenuItem, setIsShowMenuItem] = useState(false)
+    const openShowMenuItem = () => {
+        if (isShowMenuItem) {
+            setIsShowMenuItem(false)
+        } else {
+            setIsShowMenuItem(true)
+        }
+    }
+    const ck=async ()=>{
+      const data = await  getAddressOwner('0xae2Fc483527B8EF99EB5D9B44875F005ba1FaE13')
+    }
     return (
-        <div
-            className={"top-0 w-full  z-30 transition-all headerClass"}>
-            <div className={styles['aaa']} style={{paddingLeft: '110px'}}>
-                <span onClick={getGasPrice}>1111111</span>
-                {/*<div onClick={() => getAddressOwner('0xae2Fc483527B8EF99EB5D9B44875F005ba1FaE13')}>12345</div>*/}
-                <Marquee
-                    pauseOnHover={true}
-                    speed={30}
-                    gradientWidth={100}
-                    className={styles.marqueeBox}>
-                    {
-                        launch.length > 0 && launch.map((i, index) => {
-                            return <div key={index} className={`${styles.marquee} `}>
-                                <span className={changeTheme ? 'darknessFont' : 'brightFont'}>#{index + 1}</span>
-                                <p className={styles.marqueeName}>{i?.symbol?.slice(0, 1)}</p>
-                                <span className={changeTheme ? 'darknessFont' : 'brightFont'}>{i.symbol}</span>
+        <>
+            <div className={styles['headerShowNode']}>
+                <div className={"top-0 w-full  z-30 transition-all headerClass"}>
+                    {/*<span onClick={ck}>11111111111</span>*/}
+                    <div className={styles['aaa']} style={{paddingLeft: '110px'}}>
+                        <Marquee
+                            pauseOnHover={true}
+                            speed={30}
+                            gradientWidth={100}
+                            className={styles.marqueeBox}>
+                            {
+                                launch.length > 0 && launch.map((i, index) => {
+                                    return <div key={index} className={`${styles.marquee} `}>
+                                        <span className={changeTheme ? 'darknessFont' : 'brightFont'}>#{index + 1}</span>
+                                        <p className={styles.marqueeName}>{i?.symbol?.slice(0, 1)}</p>
+                                        <span className={changeTheme ? 'darknessFont' : 'brightFont'}>{i.symbol}</span>
+                                    </div>
+                                })
+                            }
+                        </Marquee>
+                        <div className={styles.searchToken}>
+                            <p className={`${styles['search']} ${changeTheme ? 'darknessThree' : 'brightFore boxHover'}`}
+                               onClick={showSearch}>{header.search}</p>
+                            {showChatSearch && (
+                                <ChatSearch
+                                    setShowChatSearch={setShowChatSearch}
+                                    chats={chats}
+                                    setChats={setChats}
+                                    user={userPar}
+                                />
+                            )}
+                        </div>
+                        <div className={styles.login}>
+                            {/*切换字体*/}
+                            {/*<Select*/}
+                            {/*    style={{*/}
+                            {/*        width: 120,*/}
+                            {/*    }}*/}
+                            {/*    defaultValue={'english'}*/}
+                            {/*    onChange={handleChange}*/}
+                            {/*    options={[*/}
+                            {/*        {*/}
+                            {/*            value: 'chinese',*/}
+                            {/*            label: '中文简体',*/}
+                            {/*        },*/}
+                            {/*        {*/}
+                            {/*            value: 'traditional',*/}
+                            {/*            label: '中文繁体',*/}
+                            {/*        },*/}
+                            {/*        {*/}
+                            {/*            value: 'english',*/}
+                            {/*            label: 'English',*/}
+                            {/*        },*/}
+                            {/*    ]}*/}
+                            {/*/>*/}
+                            {/*添加代币*/}
+                            {/*<Button type={'primary'} className={styles['but']}*/}
+                            {/*        onClick={showDrawer}>{header.addCoin}</Button>*/}
+                            <div className={`${styles.eth} ${changeTheme ? 'darknessTwo' : 'brightTwo'}`}>
+                                <img src="/Ellipse27.png" alt="" width={30}
+                                     style={{border: '50%', marginRight: '6px'}}/>
+                                <p className={changeTheme ? 'darknessFont' : 'brightFont'}>$:2028</p>
+                                <p style={{display: 'flex', alignItems: 'center', marginLeft: '8px'}}><img
+                                    src="/GasStation.png"
+                                    width={20} alt=""/>
+                                    <span className={changeTheme ? 'darknessFont' : 'brightFont'}>29</span>
+                                </p>
                             </div>
-                        })
-                    }
-                </Marquee>
-                <div className={styles.searchToken}>
-                    <p className={`${styles['search']} ${changeTheme ? 'darknessThree' : 'brightFore boxHover'}`}
-                       onClick={showSearch}>{header.search}</p>
-                    {showChatSearch && (
-                        <ChatSearch
-                            setShowChatSearch={setShowChatSearch}
-                            chats={chats}
-                            setChats={setChats}
-                            user={userPar}
-                        />
-                    )}
+                            {
+                                no && address ? <div className={styles.loginBox}>
+                                    <Link href={`/${userPar && userPar.address ? userPar.address : ''}`}>
+                                        <img className={'loginImg'} width={35}
+                                             src={userPar && userPar.profilePicUrl ? userPar.profilePicUrl : '/Ellipse1.png'}
+                                             alt=""/>
+                                    </Link>
+                                    <Dropdown
+                                        menu={{
+                                            items,
+                                        }}
+                                        placement="bottomLeft"
+                                        arrow
+                                    >
+                                        <Button
+                                            className={`${styles.loginName} ${styles.but} ${changeTheme ? 'darknessThree' : 'brightFore boxHover'} `}>{userPar && userPar.username ? userPar.username.length > 5 ? userPar.username.slice(0, 5) + '...' : userPar.username : ''}</Button>
+                                    </Dropdown>
+                                </div> : <Button
+                                    className={`${styles['but']} ${styles.loginName} ${changeTheme ? 'darknessThree' : 'brightFore boxHover'}`}
+                                    onClick={getMoney}>{header.login}</Button>
+                            }
+                        </div>
+                    </div>
                 </div>
-                <div className={styles.login}>
-                    {/*切换字体*/}
-                    {/*<Select*/}
-                    {/*    style={{*/}
-                    {/*        width: 120,*/}
-                    {/*    }}*/}
-                    {/*    defaultValue={'english'}*/}
-                    {/*    onChange={handleChange}*/}
-                    {/*    options={[*/}
-                    {/*        {*/}
-                    {/*            value: 'chinese',*/}
-                    {/*            label: '中文简体',*/}
-                    {/*        },*/}
-                    {/*        {*/}
-                    {/*            value: 'traditional',*/}
-                    {/*            label: '中文繁体',*/}
-                    {/*        },*/}
-                    {/*        {*/}
-                    {/*            value: 'english',*/}
-                    {/*            label: 'English',*/}
-                    {/*        },*/}
-                    {/*    ]}*/}
-                    {/*/>*/}
-                    {/*添加代币*/}
-                    {/*<Button type={'primary'} className={styles['but']}*/}
-                    {/*        onClick={showDrawer}>{header.addCoin}</Button>*/}
-                    <div className={`${styles.eth} ${changeTheme ? 'darknessTwo' : 'brightTwo'}`}>
-                        <img src="/Ellipse27.png" alt="" width={30} style={{border: '50%', marginRight: '6px'}}/>
+                <DrawerPage getMoney={getMoney}/>
+                {/*</Suspense>*/}
+                <Drawer title="Basic Drawer" destroyOnClose={true} placement="right" onClose={onClose} open={open}>
+                    <Form
+                        name="basic"
+                        form={form}
+                        onFinish={onFinish}
+                        onFinishFailed={onFinishFailed}
+                        autoComplete="off"
+                    >
+                        <Form.Item
+                            label="Token"
+                            name="token"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Please input your token!',
+                                },
+                            ]}
+                            labelCol={{
+                                span: 6,
+                            }}>
+                            <Input onChange={changeToken} ref={inputRef}
+                                   style={tokenFormBol ? {borderColor: 'red'} : {}}/>
+                        </Form.Item>
+                        <div className={styles.addShow}>
+                            {
+                                !openPresale ? <CaretRightFilled className={styles.addCur}
+                                                                 onClick={hidePresale}/> :
+                                    <CaretDownFilled onClick={hidePresale}
+                                                     className={`${styles.addCur} ${styles.addCurMt5}`}/>
+                            }
+                            <p className={styles.addPresale} onClick={hidePresale}>presale</p>
+                            <p className={styles.lines}></p>
+                        </div>
+                        <div style={!openPresale ? {display: 'none'} : {}}>
+                            <Form.Item
+                                label="Time"
+                                name="presaleTime"
+                                labelCol={{
+                                    span: 6,
+                                }}
+                            >
+                                <DatePicker showTime onChange={(e, a) => onChangeDate('presale', e, a)}
+                                            style={{width: '100%'}}/>
+                            </Form.Item>
+                            <Form.Item
+                                label="Platform"
+                                name="presalePlatformId"
+                                labelCol={{
+                                    span: 8,
+                                }}
+                            >
+                                <Select
+                                    placeholder="Select a option and change input text above"
+                                    allowClear
+                                    style={{width: '100%'}}
+                                >
+                                    {
+                                        presalePlatform.length > 0 ? presalePlatform.map((i, index) => {
+                                            return <Option value={i.id} key={index}>
+                                                <div style={{display: 'flex', alignItems: 'center'}}>
+                                                    <img src={`${i.logo ? baseUrl + i.logo : '/Ellipse1.png'}`} alt=""
+                                                         width={20} height={20}/>
+                                                    <span>{i.name}</span>
+                                                </div>
+                                            </Option>
+                                        }) : null
+                                    }
+                                </Select>
+                            </Form.Item>
+                            <Form.Item
+                                label="Link"
+                                name="presaleLink"
+                                labelCol={{
+                                    span: 6,
+                                }}
+                            >
+                                <Input/>
+                            </Form.Item>
+                        </div>
+                        {/*launch*/}
+                        <div className={styles.addShow}>
+                            {
+                                !openLaunch ? <CaretRightFilled className={`${styles.addCur}`}
+                                                                onClick={hideLaunch}/> :
+                                    <CaretDownFilled onClick={hideLaunch}
+                                                     className={`${styles.addCur} ${styles.addCurMt5}`}/>
+                            }
+                            <p className={styles.addPresale} onClick={hideLaunch}>launch</p>
+                            <p className={styles.lines}></p>
+                        </div>
+                        <div style={!openLaunch ? {display: 'none'} : {}}>
+                            <Form.Item
+                                label="Time"
+                                name="launchTime"
+                                className={'bbb'}
+                                labelCol={{
+                                    span: 6,
+                                }}
+                            >
+                                <DatePicker showTime onChange={(e, a) => onChangeDate('launch', e, a)}
+                                            style={{width: '100%'}}/>
+                            </Form.Item>
+                            <Form.Item
+                                label="Platform"
+                                name="launchPlatformId"
+                                className={'bbb'}
+                                labelCol={{
+                                    span: 8,
+                                }}
+                            >
+                                <Select
+                                    placeholder="Select a option and change input text above"
+                                    allowClear
+                                    style={{width: '100%'}}
+                                >
+                                    {
+                                        launchPlatform.length > 0 ? launchPlatform.map((i, index) => {
+                                            return <Option value={i.id} key={index}>
+                                                <div style={{display: 'flex', alignItems: 'center'}}>
+                                                    <img src={`${i.logo ? baseUrl + i.logo : '/Ellipse1.png'}`} alt=""
+                                                         width={20} height={20}/>
+                                                    <span>{i.name}</span>
+                                                </div>
+                                            </Option>
+                                        }) : null
+                                    }
+                                </Select>
+                            </Form.Item>
+                            <Form.Item
+                                label="Link"
+                                name="launchLink"
+                                className={'bbb'}
+                                labelCol={{
+                                    span: 6,
+                                }}
+                            >
+                                <Input/>
+                            </Form.Item>
+                        </div>
+                        {/*link*/}
+                        <div className={styles.addShow}>
+                            {
+                                openLink ? <CaretRightFilled className={styles.addCur}
+                                                             onClick={hideLink}/> : <CaretDownFilled onClick={hideLink}
+                                                                                                     className={`${styles.addCur} ${styles.addCurMt5}`}/>
+                            }
+                            <p className={styles.addPresale} onClick={hideLink}>Link</p>
+                            <p className={styles.lines}></p>
+                        </div>
+                        <div style={openLink ? {display: 'none'} : {}}>
+                            <Form.Item
+                                label="Twitter"
+                                name="twitter"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Please input your twitter!',
+                                    },
+                                ]} labelCol={{
+                                span: 8,
+                            }}
+                            >
+                                <Input/>
+                            </Form.Item>
+                            <Form.Item
+                                label="Telegram"
+                                name="telegram"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Please input your telegram!',
+                                    },
+                                ]} labelCol={{
+                                span: 9,
+                            }}
+                            >
+                                <Input/>
+                            </Form.Item>
+                            <Form.Item
+                                label="Website"
+                                name="website"
+                                className={'bbb'}
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Please input your website!',
+                                    },
+                                ]} labelCol={{
+                                span: 8,
+                            }}
+                            >
+                                <Input/>
+                            </Form.Item>
+                        </div>
+                        <Form.Item wrapperCol={{
+                            offset: 8,
+                            span: 16,
+                        }}>
+                            <Button type={'primary'} htmlType="submit">
+                                Submit
+                            </Button>
+                        </Form.Item>
+                    </Form>
+
+
+                </Drawer>
+            </div>
+
+            {/* 移动端适配导航 */}
+            <div className={`${styles.cardParams} ${changeTheme ? 'darknessTwo' : 'brightTwo'}`}>
+                <div className={styles['moblic-ShowNode']}>
+                    <div className={styles.mobliceMenuFlex}>
+                        <div
+                            className={`${styles.ethMobliceMg} ${styles.ethMoblice} ${changeTheme ? 'darkMode' : 'whiteMode'}`}>
+                            <Link href={'/'}>
+                                <Image src={'/GroupMoblice.svg'} alt="GroupMoblice" style={{marginLeft: '12px'}}
+                                       width={20} height={20}/>
+                            </Link>
+                        </div>
+                        <div className={`${styles.ethMoblice} ${changeTheme ? 'darkMode' : 'whiteMode'}`}>
+                            <Link href={'/search'}>
+                                <Image src={'/Search.svg'} alt="Search" style={{marginLeft: '10px'}} width={20}
+                                       height={20}/>
+                            </Link>
+                        </div>
+                    </div>
+                    <div className={`${styles.ethMobliceCt} ${styles.eth} ${changeTheme ? 'darkMode' : 'whiteMode'}`}>
+                        <img src="/Ellipse27.png" alt="" width={40} style={{border: '50%', marginRight: '6px'}}/>
                         <p className={changeTheme ? 'darknessFont' : 'brightFont'}>$:2028</p>
-                        <p style={{display: 'flex', alignItems: 'center', marginLeft: '8px'}}><img src="/GasStation.png"
-                                                                                                   width={20} alt=""/>
+                        <p style={{display: 'flex', alignItems: 'center', marginLeft: '8px'}}>
+                            <img src="/GasStation.png" width={20} alt=""/>
                             <span className={changeTheme ? 'darknessFont' : 'brightFont'}>29</span>
                         </p>
                     </div>
@@ -587,217 +880,108 @@ const Header = () => {
                             className={`${styles['but']} ${styles.loginName} ${changeTheme ? 'darknessThree' : 'brightFore boxHover'}`}
                             onClick={getMoney}>{header.login}</Button>
                     }
+                    <div className={styles.mobliceMenuFlex}>
+                        <div
+                            className={`${styles.ethMobliceMg} ${styles.ethMoblice} ${changeTheme ? 'darkMode' : 'whiteMode'}`}>
+                            <Image src={'/WalletMoblice.svg'} alt="WalletMoblice" style={{marginLeft: '10px'}}
+                                   width={20} height={20}/>
+                        </div>
+                        <div className={`${styles.ethMoblice} ${changeTheme ? 'darkMode' : 'whiteMode'}`}
+                             onClick={openShowMenuItem}>
+                            <Image src={'/Menu.svg'} alt="Menu" style={{marginLeft: '10px'}} width={20} height={20}/>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <DrawerPage getMoney={getMoney}/>
-            {/*</Suspense>*/}
-            <Drawer title="Basic Drawer" destroyOnClose={true} placement="right" onClose={onClose} open={open}>
-                <Form
-                    name="basic"
-                    form={form}
-                    onFinish={onFinish}
-                    onFinishFailed={onFinishFailed}
-                    autoComplete="off"
-                >
-                    <Form.Item
-                        label="Token"
-                        name="token"
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Please input your token!',
-                            },
-                        ]}
-                        labelCol={{
-                            span: 6,
-                        }}>
-                        <Input onChange={changeToken} ref={inputRef}
-                               style={tokenFormBol ? {borderColor: 'red'} : {}}/>
-                    </Form.Item>
-                    <div className={styles.addShow}>
-                        {
-                            !openPresale ? <CaretRightFilled className={styles.addCur}
-                                                             onClick={hidePresale}/> :
-                                <CaretDownFilled onClick={hidePresale}
-                                                 className={`${styles.addCur} ${styles.addCurMt5}`}/>
-                        }
-                        <p className={styles.addPresale} onClick={hidePresale}>presale</p>
-                        <p className={styles.lines}></p>
+            {/* 菜单Items */}
+            <div
+                className={`${isShowMenuItem ? styles.mobliceMentHideItemsBox : styles.mobliceMentItemsBox} ${changeTheme ? 'darknessTwo' : 'brightTwo'}`}>
+                <div style={{display: 'flex', flexWrap: 'wrap'}}>
+                    <div className={`${styles.mobliceDpFlex}`}>
+                        <Link href={'/'}>
+                            <div className={`${styles.mobliceDpFlexs}`}>
+                                <Image src={`/Vector.svg`} alt="logo" width={32} height={32}/>
+                                <div className={changeTheme ? 'darknessFont' : 'brightFont'}>{drawer.home}</div>
+                            </div>
+                        </Link>
                     </div>
-                    <div style={!openPresale ? {display: 'none'} : {}}>
-                        <Form.Item
-                            label="Time"
-                            name="presaleTime"
-                            labelCol={{
-                                span: 6,
-                            }}
-                        >
-                            <DatePicker showTime onChange={(e, a) => onChangeDate('presale', e, a)}
-                                        style={{width: '100%'}}/>
-                        </Form.Item>
-                        <Form.Item
-                            label="Platform"
-                            name="presalePlatformId"
-                            labelCol={{
-                                span: 8,
-                            }}
-                        >
-                            <Select
-                                placeholder="Select a option and change input text above"
-                                allowClear
-                                style={{width: '100%'}}
-                            >
-                                {
-                                    presalePlatform.length > 0 ? presalePlatform.map((i, index) => {
-                                        return <Option value={i.id} key={index}>
-                                            <div style={{display: 'flex', alignItems: 'center'}}>
-                                                <img src={`${i.logo ? baseUrl + i.logo : '/Ellipse1.png'}`} alt=""
-                                                     width={20} height={20}/>
-                                                <span>{i.name}</span>
-                                            </div>
-                                        </Option>
-                                    }) : null
-                                }
-                            </Select>
-                        </Form.Item>
-                        <Form.Item
-                            label="Link"
-                            name="presaleLink"
-                            labelCol={{
-                                span: 6,
-                            }}
-                        >
-                            <Input/>
-                        </Form.Item>
+                    <div className={`${styles.mobliceDpFlex}`}>
+                        <Link href={'/featured'}>
+                            <div className={`${styles.mobliceDpFlexs}`}>
+                                <Image src={`/icon_graph_.svg`} alt="logo" height={32} width={32}/>
+                                <div className={changeTheme ? 'darknessFont' : 'brightFont'}>{drawer.featured}</div>
+                            </div>
+                        </Link>
                     </div>
-                    {/*launch*/}
-                    <div className={styles.addShow}>
-                        {
-                            !openLaunch ? <CaretRightFilled className={`${styles.addCur}`}
-                                                            onClick={hideLaunch}/> :
-                                <CaretDownFilled onClick={hideLaunch}
-                                                 className={`${styles.addCur} ${styles.addCurMt5}`}/>
-                        }
-                        <p className={styles.addPresale} onClick={hideLaunch}>launch</p>
-                        <p className={styles.lines}></p>
+                    <div className={`${styles.mobliceDpFlex}`}>
+                        <Link href={'/presale'}>
+                            <div className={`${styles.mobliceDpFlexs}`}>
+                                <Image src={`/icon_rocket_.svg`} alt="logo" height={32} width={32}/>
+                                <div className={changeTheme ? 'darknessFont' : 'brightFont'}>{drawer.presale}</div>
+                            </div>
+                        </Link>
                     </div>
-                    <div style={!openLaunch ? {display: 'none'} : {}}>
-                        <Form.Item
-                            label="Time"
-                            name="launchTime"
-                            className={'bbb'}
-                            labelCol={{
-                                span: 6,
-                            }}
-                        >
-                            <DatePicker showTime onChange={(e, a) => onChangeDate('launch', e, a)}
-                                        style={{width: '100%'}}/>
-                        </Form.Item>
-                        <Form.Item
-                            label="Platform"
-                            name="launchPlatformId"
-                            className={'bbb'}
-                            labelCol={{
-                                span: 8,
-                            }}
-                        >
-                            <Select
-                                placeholder="Select a option and change input text above"
-                                allowClear
-                                style={{width: '100%'}}
-                            >
-                                {
-                                    launchPlatform.length > 0 ? launchPlatform.map((i, index) => {
-                                        return <Option value={i.id} key={index}>
-                                            <div style={{display: 'flex', alignItems: 'center'}}>
-                                                <img src={`${i.logo ? baseUrl + i.logo : '/Ellipse1.png'}`} alt=""
-                                                     width={20} height={20}/>
-                                                <span>{i.name}</span>
-                                            </div>
-                                        </Option>
-                                    }) : null
-                                }
-                            </Select>
-                        </Form.Item>
-                        <Form.Item
-                            label="Link"
-                            name="launchLink"
-                            className={'bbb'}
-                            labelCol={{
-                                span: 6,
-                            }}
-                        >
-                            <Input/>
-                        </Form.Item>
+                    <div className={`${styles.mobliceDpFlex}`}>
+                        <Link href={'/launch'}>
+                            <div className={`${styles.mobliceDpFlexs}`}>
+                                <Image src={`/icon_timer_.svg`} alt="logo" height={32} width={32}/>
+                                <div className={changeTheme ? 'darknessFont' : 'brightFont'}>{drawer.launch}</div>
+                            </div>
+                        </Link>
                     </div>
-                    {/*link*/}
-                    <div className={styles.addShow}>
-                        {
-                            openLink ? <CaretRightFilled className={styles.addCur}
-                                                         onClick={hideLink}/> : <CaretDownFilled onClick={hideLink}
-                                                                                                 className={`${styles.addCur} ${styles.addCurMt5}`}/>
-                        }
-                        <p className={styles.addPresale} onClick={hideLink}>Link</p>
-                        <p className={styles.lines}></p>
+                    <div className={`${styles.mobliceDpFlex}`}>
+                        <Link href={'/newPair'}>
+                            <div className={`${styles.mobliceDpFlexs}`}>
+                                <Image src={`/GroupJiuBa.svg`} alt="logo" height={32} width={32}/>
+                                <div className={changeTheme ? 'darknessFont' : 'brightFont'}>{drawer.newPair}</div>
+                            </div>
+                        </Link>
                     </div>
-                    <div style={openLink ? {display: 'none'} : {}}>
-                        <Form.Item
-                            label="Twitter"
-                            name="twitter"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Please input your twitter!',
-                                },
-                            ]} labelCol={{
-                            span: 8,
-                        }}
-                        >
-                            <Input/>
-                        </Form.Item>
-                        <Form.Item
-                            label="Telegram"
-                            name="telegram"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Please input your telegram!',
-                                },
-                            ]} labelCol={{
-                            span: 9,
-                        }}
-                        >
-                            <Input/>
-                        </Form.Item>
-                        <Form.Item
-                            label="Website"
-                            name="website"
-                            className={'bbb'}
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Please input your website!',
-                                },
-                            ]} labelCol={{
-                            span: 8,
-                        }}
-                        >
-                            <Input/>
-                        </Form.Item>
+                    <div className={`${styles.mobliceDpFlex}`}>
+                        <Link href={'/'}>
+                            <div className={`${styles.mobliceDpFlexs}`}>
+                                <Image src={`/icon_newspaper_.svg`} alt="logo" width={32} height={32}/>
+                                <div className={changeTheme ? 'darknessFont' : 'brightFont'}>{drawer.home}</div>
+                            </div>
+                        </Link>
                     </div>
-                    <Form.Item wrapperCol={{
-                        offset: 8,
-                        span: 16,
-                    }}>
-                        <Button type={'primary'} htmlType="submit">
-                            Submit
-                        </Button>
-                    </Form.Item>
-                </Form>
+                    <div className={`${styles.mobliceDpFlex}`}>
+                        <Link href={'/'}>
+                            <div className={`${styles.mobliceDpFlexs}`}>
+                                <Image src={`/icon_new_spaper_.svg`} height={32} alt="logo" width={32}/>
+                                <div className={changeTheme ? 'darknessFont' : 'brightFont'}>{drawer.home}</div>
+                            </div>
+                        </Link>
+                    </div>
+                    <div className={`${styles.mobliceDpFlex}`}>
+                        <div style={{display: 'flex', alignItems: 'center'}}>
+                            <Switch checked={value} className={changeTheme ? 'darknessOne' : 'brightOne'}
+                                    onChange={changeThemes}/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {/* 滚动条播放 */}
+            <div className={`${isShowClass ? styles.headerShowScrollNode : styles.headerHideScrollNode}`}>
+                <Marquee
+                    pauseOnHover={true}
+                    speed={30}
+                    gradientWidth={100}
+                    className={styles.marqueeBox}>
+                    {
+                        launch.length > 0 && launch.map((i, index) => {
+                            return <div key={index} className={`${styles.marquee} `}>
+                                <span className={changeTheme ? 'darknessFont' : 'brightFont'}>#{index + 1}</span>
+                                <p className={styles.marqueeName}>{i?.symbol?.slice(0, 1)}</p>
+                                <span className={changeTheme ? 'darknessFont' : 'brightFont'}>{i.symbol}</span>
+                            </div>
+                        })
+                    }
+                </Marquee>
+            </div>
+        </>
 
 
-            </Drawer>
-        </div>
     );
 };
 

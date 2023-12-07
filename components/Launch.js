@@ -146,7 +146,7 @@ export default function Presale() {
         setLaunchPageSize(a)
     }
     return (
-        <div style={{marginRight:'20px'}}>
+        <div className={`${styled.mobliceFeaturedBox} ${styled.featuredBox}`}>
             <Card className={`${styled.launchBoxCard}  ${changeAllTheme('darknessTwo','brightTwo')}`} >
                 <div className={styled.launchBoxCardBox}>
                     <div style={{display: 'flex', alignItems: 'center'}}>
@@ -158,7 +158,7 @@ export default function Presale() {
                                     total={launchAll} pageSize={launchPageSize}/>
                     </div>
                 </div>
-                <Table className={`anyTable ${changeAllTheme('hotTableD' ,'hotTable')}`} bordered={false} columns={columns} loading={launchBol}
+                <Table className={`anyTable ${changeAllTheme('hotTableD' ,'hotTable')}`} scroll={{x: 'max-content'}} bordered={false} columns={columns} loading={launchBol}
                        dataSource={launchPro} rowKey={(record) => record.symbol + record.address}
                        pagination={false} rowClassName={(record) => {
                     return 'oneHave'

@@ -8,6 +8,11 @@
     align-items: center;
     margin-top: 5px;
 }
+.editDis{
+    min-width: 70px;
+    justify-content: space-around;
+}
+
 
 .ul > li {
     display: flex;
@@ -124,11 +129,14 @@
     font-size: 20px;color: #2394D4;cursor: pointer;
 }
 .homeCardListBox{
-    display: flex;align-items: center;width: 30%;
+    display: flex;
+    align-items: center;
+    /* width: 30%; */
 }
 .homeCardIm{
     text-align: center;
     width: 30px;
+    min-width: 30px;
     line-height: 30px;
     border-radius: 50%;
     font-size: 16px;
@@ -143,6 +151,9 @@
     line-height: 1;
     width: 30%;
 }
+.editHomeCardDate{
+    width: auto;
+}
 .homeCardSymbol{
     text-align: center;
     font-size: 16px;
@@ -151,6 +162,7 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     font-weight: bold;
+    min-width: 80px;
 }
 .homeCardListImg{
     border-radius: 50%;margin-right: 10px;
@@ -176,3 +188,100 @@
 .homeRightTopName{
     font-size: 20px;font-weight: bold;
 }
+
+/* 2023-12-04 新增样式 */
+.homeTableBox{
+    overflow: auto;
+}
+.moblicePairSubText{
+    width: 100px;
+}
+.homeTableParentText{
+    width: 100px;
+}
+.homeTableParentMain{
+    width: 100%;
+    display: flex;
+    overflow: hidden;
+}
+.homeTablePrenSpan{
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.homeTableNextSpan{
+    display: block;
+    white-space: nowrap;
+}
+
+
+/* 超小屏幕 */
+@media screen and (max-width: 768px) {
+    .boxPar, .homeTop{
+        flex-direction: column;
+    }
+    .box{
+        padding: 20px 4px 0 4px;
+    }
+    .boxPar > .left, .homeModule {
+        width: 100%;
+    }
+    .boxPar > .left, .homeMarginBottom{
+        margin-bottom: 35px;
+    }
+    .homeCardFlexBox{
+        display: flex;
+        align-items: center;
+    }
+    .dis{
+        min-width: 80px;
+        margin-top: 0;
+    }
+    .homeCardDate{
+        width: 24%;
+    }
+    .homeCardSymbol{
+        text-overflow: ellipsis;
+        overflow: hidden;
+        min-width: 80px;
+        max-width: 80px;
+    }
+    .packageCs{
+        flex-direction: column;
+    }
+    .homeCardBot{
+        padding: 0 10px;
+        padding-top: 10px;
+    }
+  }
+  
+  /* 小屏幕 */
+  @media screen and (min-width: 768px) {
+    .boxPar{
+        flex-direction: column;
+    }
+    .boxPar > .left{
+        width: auto;
+        margin-bottom: 35px;
+    }
+  }
+  
+  /* 中型屏幕 平板 */
+  @media screen and (min-width: 992px){
+    
+  }
+  
+  /* 电脑屏幕 */
+  @media screen and (min-width: 1200px){
+    .boxPar > .left{
+        width: 64%;
+        margin-bottom: 0;
+    }
+    .boxPar{
+        flex-direction: row;
+        justify-content: space-between;
+    }
+  }
+
+

@@ -171,6 +171,7 @@ export default function Presale() {
                 </div>
                 <Table className={`anyTable ${changeAllTheme('hotTableD' , 'hotTable')}`} bordered={false}
                        columns={columns} loading={launchBol}
+                       scroll={{x: 'max-content'}}
                        dataSource={launch} rowKey={(record) => record.symbol + record.address}
                        pagination={false} rowClassName={(record) => {
                     return 'oneHave'

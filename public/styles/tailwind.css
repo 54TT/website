@@ -416,3 +416,31 @@ li.check:before {
     transition: box-shadow 0.3s;
 }
 
+
+/* 超小屏幕 */
+@media screen and (max-width: 768px) {
+    .cardParams{
+        width: 100%;
+    }
+  }
+  
+  /* 小屏幕 */
+  @media screen and (min-width: 768px) {
+    .cardParams{
+        width: 100%;
+    }
+  }
+  
+  /* 中型屏幕 平板 */
+  @media screen and (min-width: 992px){
+    
+  }
+  
+  /* 电脑屏幕 */
+  @media screen and (min-width: 1200px){
+    .cardParams{
+        width: 34%;
+    }
+  }
+
+
