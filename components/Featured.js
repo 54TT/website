@@ -68,7 +68,7 @@ export default function Featured() {
             return <div className={styled.featuredColumnsBox}>
                 <p className={styled.featuredColumns}>{record?.baseToken?.symbol?.slice(0, 1)}</p>
                 <div style={{lineHeight:'1'}}>
-                    <p className={changeAllTheme('darknessFont','brightFont')}>{record?.baseToken?.symbol.length>7?record.baseToken.symbol.slice(0,4):record.baseToken.symbol}/<span style={{color:'#626262'}}>{record?.quoteToken?.symbol.length>7?record.quoteToken.symbol.slice(0,4):record.quoteToken.symbol}</span></p>
+                    <p className={changeAllTheme('darknessFont','brightFont')}>{record?.baseToken?.symbol.length>7?record.baseToken.symbol.slice(0,4):record.baseToken.symbol}/<span style={{color:'#9C9C9C'}}>{record?.quoteToken?.symbol.length>7?record.quoteToken.symbol.slice(0,4):record.quoteToken.symbol}</span></p>
                     <div>{ packageEllipsisHtml(record?.quoteToken?.address) }</div>
                 </div>
             </div>
@@ -173,7 +173,7 @@ export default function Featured() {
                         <Image src="/wallet.png" alt="" width={70}  height={70}/>
                         <span style={{fontWeight: 'bold', fontSize: '26px'}} className={changeAllTheme('darknessFont','brightFont')}>{featured.featured}</span>
                     </div>
-                    <Segmented options={['5m', '1h', '6h', '24h']} onChange={changSeg} defaultValue={'24h'}/>
+                    <Segmented options={['5m', '1h', '6h', '24h']} onChange={changSeg} defaultValue={'24h'} className={`${changeAllTheme('darkMode', 'whiteMode')}`} />
 
                 </div>
                 <Table 

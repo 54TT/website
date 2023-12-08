@@ -497,6 +497,7 @@ function Home() {
                                 options={['5m', '1h', '6h', '24h']}
                                 onChange={changSeg}
                                 defaultValue={'24h'}
+                                className={`${changeAllTheme('darkMode', 'whiteMode')}`}
                             />
                             <Link href={'/featured'}>
                                 <p className={styles.homeFeaturedMore}>{home.more}></p>

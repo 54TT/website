@@ -677,10 +677,21 @@
     white-space: nowrap;
 }
 
-
-
 /* 超小屏幕 */
 @media screen and (max-width: 768px) {
+    .launchBoxFilter{
+        margin-top: 20px;
+    }
+    .mobliceInfoBoxTop{
+        margin-right: 16px;
+    }
+    .mobliceNewPair{
+        margin-top: 20px;
+    }
+    .launchBoxCardBox{
+        align-items: flex-start;
+        flex-direction: column
+    }
     .boxPar,.mobliceBottomBoxLogo{
         display: flex;
         flex-direction: column;
@@ -747,7 +758,6 @@
         width: 100%;
     }
     .usernameBoxBot{
-        margin-top: 0;
         padding-right: 20px;
     }
     .mobliceInfoBox{

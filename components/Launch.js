@@ -6,6 +6,7 @@ import {GlobalOutlined, SendOutlined, TwitterOutlined} from "@ant-design/icons";
 import baseUrl from "../utils/baseUrl";
 const {Countdown} = Statistic;
 import styled from '/public/styles/all.module.css'
+import '/public/styles/scroll.module.css'
 import Image from 'next/image'
 import {changeLang} from "/utils/set";
 import {CountContext} from "./Layout/Layout";

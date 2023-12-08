@@ -196,8 +196,10 @@ export default function NewPair() {
                         <Image src="/gpsReceiving.png" alt="" height={70} width={70}/>
                         <span style={{fontWeight: 'bold', fontSize: '26px'}} className={changeTheme ? 'darknessFont' : 'brightFont'}>{newPair?.newPair}</span>
                     </div>
-                    <Pagination defaultCurrent={1} current={currentPage} onChange={chang} total={tableTotal}
-                                pageSize={rowsPerPage}/>
+                    <div className={styled.mobliceNewPair}>
+                        <Pagination defaultCurrent={1} current={currentPage} onChange={chang} total={tableTotal}
+                                    pageSize={rowsPerPage}/>
+                    </div>
                 </div>
                 <Table rowKey={(i) => i.id + i?.token0?.id + i?.token1?.id + i?.token0?.name}
                        className={`anyTable ${changeTheme ? 'hotTableD' : 'hotTable'}`}

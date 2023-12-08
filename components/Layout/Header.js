@@ -419,8 +419,12 @@ const Header = () => {
     const openShowMenuItem = () => {
         if(isShowMenuItem){
             setIsShowMenuItem(false)
+            const body = document.querySelector("body")
+            body.style.overflow = "auto"
         }else{
-            setIsShowMenuItem(true) 
+            setIsShowMenuItem(true)
+            const body = document.querySelector("body")
+            body.style.overflow = "hidden"
         }
     }
     const push = () => {
@@ -755,14 +759,14 @@ const Header = () => {
                     </div>
                     <div  className={`${styles.ethMobliceCt} ${styles.eth} ${changeTheme ? 'darkMode' : 'whiteMode'}`}>
                         <img src="/Ellipse27.png" alt="" width={40} style={{border: '50%', marginRight: '6px'}}/>
-                        <p className={changeTheme ? 'darknessFont' : 'brightFont'}>$:2028</p>
+                        <p className={changeTheme ? 'darknessFont' : 'brightFont'}>$ 2028</p>
                         <p style={{display: 'flex', alignItems: 'center', marginLeft: '8px'}}>
                             <img src="/GasStation.png" width={20} alt=""/>
                             <span className={changeTheme ? 'darknessFont' : 'brightFont'}>29</span>
                         </p>
                     </div>
                     <div className={styles.mobliceMenuFlex}>
-                        <div className={`${styles.ethMobliceMg} ${styles.ethMoblice} ${changeTheme ? 'darkMode' : 'whiteMode'}`}>
+                        <div className={`${styles.ethMobliceMg} ${styles.ethMoblice} ${changeTheme ? 'darkMode' : 'whiteMode'}`} onClick={getMoney}>
                             <Image src={'/WalletMoblice.svg'} alt="WalletMoblice" style={{marginLeft:'10px'}} width={20} height={20}/>
                         </div>
                         <div className={`${styles.ethMoblice} ${changeTheme ? 'darkMode' : 'whiteMode'}`}  onClick={openShowMenuItem}>
