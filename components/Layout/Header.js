@@ -21,15 +21,36 @@ import {CountContext} from '/components/Layout/Layout';
 import Marquee from "react-fast-marquee";
 import {changeLang} from "/utils/set";
 import Image from 'next/image'
+import {gql} from "graphql-tag";
+import {ApolloClient, InMemoryCache, useQuery} from "@apollo/client";
 
+const client = new ApolloClient({
+    uri: 'https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-v2-dev', cache: new InMemoryCache(),
+});
 const {Option} = Select;
 // import ChatSearch from "../Chat/ChatSearch";
 const ChatSearch = dynamic(() => import('../Chat/ChatSearch'), {ssr: false})
-// import {default as Moralis} from 'moralis'
 const Moralis = require("moralis")?.default;
 const Header = () => {
-
     const drawer = changeLang('drawer')
+    const GET_DATA = gql`query LiveNewPair {
+  bundles {
+    id
+    ethPrice
+  }
+}`
+    const [gas, setGas] = useState(0);
+    const {loading, error, data, refetch} = useQuery(GET_DATA, {client});
+    useEffect(() => {
+        // getGasPrice()
+        const interval = setInterval(() => {
+            refetch();
+            // getGasPrice()
+        }, 10000);
+        return () => {
+            clearInterval(interval);
+        }
+    }, [refetch])
 
     const router = useRouter()
     const [form] = Form.useForm();
@@ -56,7 +77,7 @@ const Header = () => {
         changeBack(value)
         setValue(value)
     }
-
+    // 验证token
     const changeToken = _.debounce((e) => {
         get('/getTokenNameAndSymbol', {
             tokenAddress: e?.target?.value ? e.target.value : ''
@@ -225,6 +246,8 @@ const Header = () => {
             getParams()
         }
     }, [userPar])
+
+    // 获取  时间
     const onChangeDate = (name, value, dateString) => {
         let data = _.clone(timeForm)
         if (name === 'launch') {
@@ -239,6 +262,7 @@ const Header = () => {
     const setB = () => {
         setBol(true)
     }
+    // 获取用户信息
     const getUs = async () => {
         const data = await axios.get(baseUrl + "/api/user", {
             params: {
@@ -281,7 +305,8 @@ const Header = () => {
         // let account = []
         // 连接的网络和链信息。
         var chain = await provider.getNetwork()
-        const {status, data} = await request('/api/v1/token', {address})
+        const {status, data} = await request('post', '/api/v1/token', {address})
+        console.log(data)
         // 获取签名
         var signer = await provider.getSigner();
         // 判断是否有账号
@@ -295,7 +320,7 @@ const Header = () => {
                     const signature = await signer.signMessage(message)
                     // 验证签名
                     // const recoveredAddress = ethers.utils.verifyMessage(message, signature);
-                    const res = await request('/api/v1/login', {
+                    const res = await request('post', '/api/v1/login', {
                         signature: signature,
                         addr: address,
                         message
@@ -324,6 +349,8 @@ const Header = () => {
         }
     }
 
+
+    // 退出
     const set = () => {
         cookie.remove('name');
         cookie.remove('username');
@@ -411,6 +438,8 @@ const Header = () => {
         }
     }, [isConnected])
 
+
+    // 判断是否下载metamask
     const getMoney = () => {
         if (typeof window.ethereum === 'undefined') {
             notification.warning({
@@ -438,6 +467,8 @@ const Header = () => {
             setUserPar('')
         }
     }, [cookie.get('name'), cookie.get('username'), userBol])
+
+    // 登录的下拉
     const items = [
         {
             key: '1',
@@ -475,6 +506,8 @@ const Header = () => {
         },
     ];
     const [launch, setLaunch] = useState([])
+
+    // 搜索
     const showSearch = () => {
         if (cookie.get('username')) {
             setShowChatSearch(true)
@@ -482,31 +515,37 @@ const Header = () => {
             getMoney()
         }
     }
+
     const getLaunch = async () => {
-        const res = await axios.get(baseUrl + '/queryLaunch', {
-            pageIndex: 0,
+        const res = await axios.get(baseUrl + '/api/v1/launch', {
+            pageIndex: 1,
             pageSize: 10
         })
         const {data: {data}} = res
         setLaunch(data && data.length > 0 ? data : [])
     }
     useEffect(() => {
-        getLaunch()
+        // getLaunch()
     }, [])
     const handleChange = (value) => {
         changeFont(value)
     }
     // 获取eth  gas和price
-    const getGasPrice = () => {
+    const getGasPrice = async () => {
         const provider = new ethers.providers.JsonRpcProvider('https://mainnet.infura.io/v3/d2660efdeff84ac982b0d2de03e13c20');
         // 获取当前 gas 价格
-        provider.getGasPrice().then((gasPrice) => {
-            console.log(gasPrice)
-            console.log(ethers.utils.formatEther(gasPrice), 'ETH');
-            console.log(ethers.utils.formatUnits(gasPrice, 'gwei')); // 将 wei 转换为 ETH，并打印到控制台
-        }).catch((err) => {
-            console.error('Failed to get gas price:', err);
-        });
+        const data = await provider.getGasPrice()
+        const gasPrice = ethers.utils.formatUnits(data, 'gwei')
+        setGas(gasPrice ? gasPrice : 0)
+        //     .then((gasPrice) => {
+        //     console.log(gasPrice)
+        //     // console.log(ethers.utils.formatEther(gasPrice), 'ETH');
+        //     console.log(data)
+        //     // setGas(data?data:0)
+        //     // console.log(ethers.utils.formatUnits(gasPrice, 'gwei')); // 将 wei 转换为 ETH，并打印到控制台
+        // }).catch((err) => {
+        //     console.error('Failed to get gas price:', err);
+        // });
     }
     // 除了Home页面显示，其它页面不展示
     const [isShowClass, setIsShowClass] = useState(Boolean)
@@ -527,14 +566,15 @@ const Header = () => {
             setIsShowMenuItem(true)
         }
     }
-    const ck=async ()=>{
-      const data = await  getAddressOwner('0xae2Fc483527B8EF99EB5D9B44875F005ba1FaE13')
+    const ck = async () => {
+        const data = await getAddressOwner('0xae2Fc483527B8EF99EB5D9B44875F005ba1FaE13')
+        console.log(data)
     }
     return (
         <>
             <div className={styles['headerShowNode']}>
                 <div className={"top-0 w-full  z-30 transition-all headerClass"}>
-                    {/*<span onClick={ck}>11111111111</span>*/}
+                    {/*<span onClick={getGasPrice}>11111111111</span>*/}
                     <div className={styles['aaa']} style={{paddingLeft: '110px'}}>
                         <Marquee
                             pauseOnHover={true}
@@ -592,11 +632,11 @@ const Header = () => {
                             <div className={`${styles.eth} ${changeTheme ? 'darknessTwo' : 'brightTwo'}`}>
                                 <img src="/Ellipse27.png" alt="" width={30}
                                      style={{border: '50%', marginRight: '6px'}}/>
-                                <p className={changeTheme ? 'darknessFont' : 'brightFont'}>$:2028</p>
+                                <p className={changeTheme ? 'darknessFont' : 'brightFont'}>${!loading && data?.bundles?.length > 0 ? Number(data.bundles[0]?.ethPrice).toFixed(2) : 0}</p>
                                 <p style={{display: 'flex', alignItems: 'center', marginLeft: '8px'}}><img
                                     src="/GasStation.png"
                                     width={20} alt=""/>
-                                    <span className={changeTheme ? 'darknessFont' : 'brightFont'}>29</span>
+                                    <span className={changeTheme ? 'darknessFont' : 'brightFont'}>{gas}</span>
                                 </p>
                             </div>
                             {
@@ -853,10 +893,10 @@ const Header = () => {
                     </div>
                     <div className={`${styles.ethMobliceCt} ${styles.eth} ${changeTheme ? 'darkMode' : 'whiteMode'}`}>
                         <img src="/Ellipse27.png" alt="" width={40} style={{border: '50%', marginRight: '6px'}}/>
-                        <p className={changeTheme ? 'darknessFont' : 'brightFont'}>$:2028</p>
+                        <p className={changeTheme ? 'darknessFont' : 'brightFont'}>${!loading && data?.bundles?.length > 0 ? Number(data.bundles[0]?.ethPrice).toFixed(2) : 0}</p>
                         <p style={{display: 'flex', alignItems: 'center', marginLeft: '8px'}}>
                             <img src="/GasStation.png" width={20} alt=""/>
-                            <span className={changeTheme ? 'darknessFont' : 'brightFont'}>29</span>
+                            <span className={changeTheme ? 'darknessFont' : 'brightFont'}>{gas}</span>
                         </p>
                     </div>
                     {

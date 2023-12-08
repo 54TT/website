@@ -13,14 +13,15 @@
 }
 
 .darknessThrees {
-    background-color: rgb(37,30,38) !important;
+    background-color: rgb(37, 30, 38) !important;
 }
 
 .darknessItem:hover {
-    background-color: rgb(53, 47, 74)!important;
+    background-color: rgb(53, 47, 74) !important;
 }
+
 .darknesDarkItem:hover {
-    background-color: rgb(59,55,71)!important;
+    background-color: rgb(59, 55, 71) !important;
 }
 
 
@@ -34,17 +35,18 @@
 }
 
 
-
 .darknessFont {
     color: rgb(243, 243, 243) !important;
 }
+
 .darknessFont .ant-statistic-content .ant-statistic-content-value {
     color: rgb(243, 243, 243) !important;
     font-size: 20px;
     margin-left: 4px;
 }
+
 .darknessBack {
-    background-color: rgb(44,37,69) !important;
+    background-color: rgb(44, 37, 69) !important;
     color: white;
 }
 
@@ -57,8 +59,9 @@
 .brightItem:hover {
     background-color: #DDF1E2;
 }
+
 .brightWhiteItem:hover {
-    background-color: rgb(128, 128, 128)!important;
+    background-color: rgb(128, 128, 128) !important;
 }
 
 .brightOne .ant-switch-handle::before {
@@ -86,6 +89,10 @@
     background-color: rgb(253, 213, 62) !important;
 }
 
+:where(.css-dev-only-do-not-override-1k3mfk2).ant-form-item .ant-form-item-label {
+    padding: 0 !important;
+}
+
 .brightThree {
     background-color: rgb(254, 239, 146) !important;
 }
@@ -95,7 +102,7 @@
 }
 
 .brightFBack {
-    background-color: rgb(188,158,45) !important;
+    background-color: rgb(188, 158, 45) !important;
 }
 
 .brightFont .ant-statistic-content .ant-statistic-content-value {
@@ -104,39 +111,39 @@
     margin-left: 4px;
 }
 
-.boxHover:hover{
+.boxHover:hover {
     box-shadow: 15px 15px 0 rgb(188, 158, 54);
 }
+
 /* 暗色 */
 .darkMode {
     background-color: rgb(37, 35, 42) !important;
 }
+
 /* 亮色 */
 .whiteMode {
     background-color: rgb(249, 181, 54);
 }
 
 
-
-
 /* 超小屏幕 */
 @media screen and (max-width: 768px) {
-    .drawerShowNode{
+    .drawerShowNode {
         display: none;
     }
 }
 
 /* 小屏幕 */
 @media screen and (min-width: 768px) {
-  
+
 }
 
 /* 中型屏幕 平板 */
-@media screen and (min-width: 992px){
-  
+@media screen and (min-width: 992px) {
+
 }
 
 /* 电脑屏幕 */
-@media screen and (min-width: 1200px){
-  
+@media screen and (min-width: 1200px) {
+
 }

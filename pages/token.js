@@ -1,9 +1,7 @@
 import React, {useState, useRef} from 'react';
 import {Card, Pagination, Segmented, Form, Input, Button} from "antd";
 import styles from '/public/styles/all.module.css'
-
 const {TextArea} = Input;
-
 function Token(props) {
     const [infoSow, setInfoShow] = useState(false)
     const [infoParams, setInfoParams] = useState(null)

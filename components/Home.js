@@ -365,7 +365,7 @@ function Home() {
             a = 0
         }
         const res = await axios.get(`${baseUrl}/api/posts`, {
-            params: { pageNumber: a, userId: userPa?.id },
+            params: { pageNumber: a},
         })
         if (res.status === 200) {
             setPostsDataBol(!postsDataBol)
@@ -403,8 +403,6 @@ function Home() {
             return 0
         }
     }
-
-
     return (<div className={styles['box']}>
         <div className={styles['boxPar']}>
             {/*<ConnectKitButton />*/}

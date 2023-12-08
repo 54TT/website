@@ -14,7 +14,6 @@ export  function get(url,params) {
 export  function post(url,params) {
     return request({method:'POST',data:params,url})
 }
-
 export  function put(url,params) {
     return request({method:'PUT',data:params,url})
 }

@@ -12,6 +12,7 @@ const {Countdown} = Statistic;
 import Image from 'next/image'
 import {changeLang} from "/utils/set";
 import {CountContext} from "./Layout/Layout";
+import {request} from "../utils/hashUrl";
 
 export default function Presale() {
     const presale = changeLang('presale')
@@ -33,32 +34,29 @@ export default function Presale() {
             duration: 2
         });
     }
-    const getParams = (url, params) => {
-        get(url, params).then((res) => {
-            if (res.status === 200) {
-                let {data, count} = res.data
-                setLaunch(data && data.length > 0 ? data : [])
-                setLaunchAll(count && count.length > 0 ? count[0].count : 0)
-                setLaunchBol(false)
-            }
-        }).catch(err => {
-            setLaunch([])
+    const getParams = async (url, params) => {
+        const res = await request('get', url, {params})
+        if (res.status === 200) {
+            let {presales} = res.data
+            setLaunch(presales && presales.length > 0 ? presales : [])
             setLaunchAll(0)
             setLaunchBol(false)
-            hint()
-        })
+        } else {
+            setLaunch([])
+            setLaunchAll(0)
+        }
     }
     const [diffTime, setDiffTime] = useState(null)
     const refSet = useRef(null)
+    // useEffect(() => {
+    //     refSet.current = setInterval(() => setDiffTime(diffTime - 1), 1000)
+    //     return () => {
+    //         clearInterval(refSet.current)
+    //     }
+    // }, [diffTime])
     useEffect(() => {
-        refSet.current = setInterval(() => setDiffTime(diffTime - 1), 1000)
-        return () => {
-            clearInterval(refSet.current)
-        }
-    }, [diffTime])
-    useEffect(() => {
-        getParams('/queryPresale', {
-            pageIndex: launchCurrent - 1,
+        getParams('/api/v1//presale', {
+            pageIndex: launchCurrent,
             pageSize: launchPageSize
         },)
     }, []);
@@ -78,13 +76,17 @@ export default function Presale() {
             return 0
         }
     }
-    const columns = [
+    const aaa =dayjs.unix(1702042567).format('YYYY-MM-DD HH:mm:ss')
+    const bbb =dayjs.unix(1702043228).format('YYYY-MM-DD HH:mm:ss')
+    console.log(aaa)
+    console.log(bbb)
+    const columns  = [
         {
             title: '',
             dataIndex: 'address', align: 'center',
             width: 30,
             render: (_, record) => {
-                return <p className={styled.presaleBoxTableText}>{record?.symbol?.slice(0, 1)}</p>
+                return <img src={record?.logo?record.logo:'/avatar.png'} alt="" width={30}/>
             }
         },
         {
@@ -92,7 +94,7 @@ export default function Presale() {
             dataIndex: 'name', align: 'center', width: '25%',
             render: (text) => {
                 return <p
-                    className={`${styled.presaleBoxTableP} ${changeAllTheme( 'darknessFont' ,'brightFont')}`}>{text}</p>
+                    className={`${styled.presaleBoxTableP} ${changeAllTheme('darknessFont', 'brightFont')}`}>{text}</p>
             }
         },
         {
@@ -100,7 +102,7 @@ export default function Presale() {
             dataIndex: 'symbol', align: 'center',
             render: (text) => {
                 return <p
-                    className={`${styled.presaleBoxTableP} ${changeAllTheme('darknessFont' , 'brightFont')}`}>{text}</p>
+                    className={`${styled.presaleBoxTableP} ${changeAllTheme('darknessFont', 'brightFont')}`}>{text}</p>
             }
         },
         {
@@ -109,29 +111,29 @@ export default function Presale() {
             width: 200,
             render: (text, record) => {
                 return <div className={styled.presaleBoxTableImg}>
-                    <GlobalOutlined className={changeAllTheme('darknessFont' ,'brightFont')}
+                    <GlobalOutlined className={changeAllTheme('darknessFont', 'brightFont')}
                                     style={{cursor: 'pointer', fontSize: '20px'}} onClick={() => push(record, 'one')}/>
-                    <TwitterOutlined className={changeAllTheme('darknessFont' ,'brightFont')}
+                    <TwitterOutlined className={changeAllTheme('darknessFont', 'brightFont')}
                                      style={{cursor: 'pointer', fontSize: '20px'}} onClick={() => push(record, 'two')}/>
-                    <SendOutlined className={changeAllTheme('darknessFont' ,'brightFont')}
+                    <SendOutlined className={changeAllTheme('darknessFont', 'brightFont')}
                                   style={{cursor: 'pointer', fontSize: '20px'}} onClick={() => push(record, 'three')}/>
                 </div>
             }
         },
         {
-            title: packageHtml(presale.time) ,
-            dataIndex: 'presale_time', align: 'center',
+            title: packageHtml(presale.time),
+            dataIndex: 'time', align: 'center',
             sorter: {
                 compare: (a, b) => {
-                    const data = a.presale_time ? dayjs(a.presale_time).format('YYYY-MM-DD HH:mm:ss') : 0
-                    const pa = b.presale_time ? dayjs(b.presale_time).format('YYYY-MM-DD HH:mm:ss') : 0
+                    const data = a.time ? dayjs.unix(a.time).format('YYYY-MM-DD HH:mm:ss') : 0
+                    const pa = b.time ? dayjs.unix(b.time).format('YYYY-MM-DD HH:mm:ss') : 0
                     return dayjs(pa).isBefore(data)
                 }
             },
             render: (text, record) => {
                 if (text) {
-                    return <Countdown title="" className={changeAllTheme('darknessFont' , 'brightFont')}
-                                      value={getD(dayjs(text).isAfter(dayjs()) ? dayjs(text).diff(dayjs(), 'seconds') : '')}
+                    return <Countdown title="" className={changeAllTheme('darknessFont', 'brightFont')}
+                                      value={getD(dayjs(dayjs.unix(text)).isAfter(dayjs()) ? dayjs(dayjs.unix(text)).diff(dayjs(), 'seconds') : '')}
                                       format="HH:mm:ss"/>
                 } else {
                     return packageHtml('00:00:00')
@@ -158,18 +160,19 @@ export default function Presale() {
     }
     return (
         <div className={styled.launchBox}>
-            <Card className={`${styled.launchBoxCard} ${changeAllTheme('darknessTwo','brightTwo')}`}>
+            <Card className={`${styled.launchBoxCard} ${changeAllTheme('darknessTwo', 'brightTwo')}`}>
                 <div className={styled.launchBoxCardBox}>
                     <div style={{display: 'flex', alignItems: 'center'}}>
                         <Image src="/Group.png" alt="" width={70} height={70}/>
-                        <span style={{fontWeight: 'bold', fontSize: '26px'}} className={changeAllTheme('darknessFont' ,'brightFont')}>{presale.presales}</span>
+                        <span style={{fontWeight: 'bold', fontSize: '26px'}}
+                              className={changeAllTheme('darknessFont', 'brightFont')}>{presale.presales}</span>
                     </div>
                     <div className={styled.launchBoxFilter}>
                         <Pagination defaultCurrent={1} current={launchCurrent} showSizeChanger onChange={change}
                                     total={launchAll} pageSize={launchPageSize}/>
                     </div>
                 </div>
-                <Table className={`anyTable ${changeAllTheme('hotTableD' , 'hotTable')}`} bordered={false}
+                <Table className={`anyTable ${changeAllTheme('hotTableD', 'hotTable')}`} bordered={false}
                        columns={columns} loading={launchBol}
                        scroll={{x: 'max-content'}}
                        dataSource={launch} rowKey={(record) => record.symbol + record.address}

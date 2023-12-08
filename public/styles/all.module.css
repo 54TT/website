@@ -656,6 +656,7 @@
     padding-top: 60px;
     background-color: rgb(253, 213, 62);
 }
+
 .coinBox {
     margin-right: 20px;
 }
@@ -676,7 +677,6 @@
 .coin {
     margin-right: 20px;
     padding: 20px;
-    height: 80vh;
     background-color: rgba(253, 213, 62);
 }
 
@@ -685,83 +685,111 @@
     align-items: center;
     margin-bottom: 10px;
 }
+
+.coinForm {
+    margin-bottom: 10px !important;
+}
+
+
+.lpDetail {
+    background-color: rgb(253, 213, 62);
+ border-radius: 10px;
+    margin-right: 20px;
+    padding: 40px;
+    display: flex;align-items: start;
+    justify-content: space-between;
+}
+
 /* 超小屏幕 */
 @media screen and (max-width: 768px) {
-    .boxPar{
+    .boxPar {
         display: flex;
         flex-direction: column;
     }
+
     .boxPar > .left {
         width: 100%;
     }
-    .homeTop{
+
+    .homeTop {
         display: flex;
         flex-direction: column;
     }
-    .homeModule{
+
+    .homeModule {
         width: 100%;
     }
-    .mobliceBottomBoxLogo{
+
+    .mobliceBottomBoxLogo {
         display: flex;
         flex-direction: column;
         flex-wrap: nowrap;
         align-items: center;
     }
-    .bottomTop{
+
+    .bottomTop {
         width: auto;
     }
-    .bottomImg{
+
+    .bottomImg {
         min-width: 100px;
     }
-    .mobliceBottomTop{
+
+    .mobliceBottomTop {
         display: flex;
         align-items: center;
     }
-    .bottomText{
+
+    .bottomText {
         margin-top: 20px;
         font-weight: 300;
         font-size: 14px;
     }
-    .drawerShowNode{
+
+    .drawerShowNode {
         display: none;
     }
-    .bottomImgs{
+
+    .bottomImgs {
         width: 100%;
         justify-content: space-around;
     }
-    .mobliceFeaturedBox, .launchBox{
+
+    .mobliceFeaturedBox, .launchBox {
         margin-top: 20px;
         margin-left: -86px;
     }
-    .featuredBox,.launchBox{
+
+    .featuredBox, .launchBox {
         margin-right: 4px;
     }
-    .featuredBoxCard,.launchBoxCard{
+
+    .featuredBoxCard, .launchBoxCard {
         min-width: auto;
         overflow-x: auto;
     }
-  }
+}
 
 /* 小屏幕 */
 @media screen and (min-width: 768px) {
-    .bottomImgs{
+    .bottomImgs {
         width: 100%;
         justify-content: space-around;
     }
-    
+
 }
 
 /* 中型屏幕 平板 */
-@media screen and (min-width: 992px){
-    .bottomImgs{
+@media screen and (min-width: 992px) {
+    .bottomImgs {
         width: 100%;
         justify-content: space-around;
     }
 }
 
 /* 电脑屏幕 */
-@media screen and (min-width: 1200px){
-    .bottomImgs{
+@media screen and (min-width: 1200px) {
+    .bottomImgs {
         width: 15%;
         justify-content: space-around;
     }
