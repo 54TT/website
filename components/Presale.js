@@ -37,7 +37,7 @@ export default function Presale() {
     const getParams = async (url, params) => {
         const res = await request('get', url, {params})
         if (res.status === 200) {
-            let {presales} = res.data
+            let {presales} = res?.data
             setLaunch(presales && presales.length > 0 ? presales : [])
             setLaunchAll(0)
             setLaunchBol(false)
@@ -91,10 +91,10 @@ export default function Presale() {
         },
         {
             title: presale.token,
-            dataIndex: 'name', align: 'center', width: '25%',
+            dataIndex: 'name', align: 'center',
+            width: 100,
             render: (text) => {
-                return <p
-                    className={`${styled.presaleBoxTableP} ${changeAllTheme('darknessFont', 'brightFont')}`}>{text}</p>
+                return <p className={`${styled.presaleBoxTableP} ${styled.moblicePresaleBoxTableP} ${changeAllTheme( 'darknessFont' ,'brightFont')}`}>{text}</p>
             }
         },
         {
@@ -175,7 +175,7 @@ export default function Presale() {
                 <Table className={`anyTable ${changeAllTheme('hotTableD', 'hotTable')}`} bordered={false}
                        columns={columns} loading={launchBol}
                        scroll={{x: 'max-content'}}
-                       dataSource={launch} rowKey={(record) => record.symbol + record.address}
+                       dataSource={launch} rowKey={(record) => record?.id}
                        pagination={false} rowClassName={(record) => {
                     return 'oneHave'
                 }}/>

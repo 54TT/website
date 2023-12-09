@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useContext} from "react";
 import axios from "axios";
 import Sidebar from "../components/Sidebar";
 import baseUrl from '/utils/baseUrl'
@@ -9,6 +9,7 @@ import _ from 'lodash'
 import dynamic from 'next/dynamic'
 import {getUser} from "../utils/axios";
 import cook from "js-cookie";
+import { CountContext } from '../components/Layout/Layout'
 // const Sidebar = dynamic(() => import('../components/Sidebar'));
 const Feed = dynamic(() => import('../components/Feed'), { ssr: false });
 const RightSideColumn = dynamic(() => import('../components/RightSideColumn'), { ssr: false });
@@ -159,32 +160,37 @@ function Index() {
             getUsers()
         }
     }, [userPar, changeBol])
-
+    const {  changeTheme } = useContext(CountContext);
+    const changeAllTheme = (a, b) => {
+        return changeTheme ? a : b
+    }
     return (
         <>
-            <div className="min-h-screen"
-                 style={{backgroundColor: 'rgb(253,213,62)', marginRight: '20px', borderRadius: '10px'}}>
-                <main style={{display: 'flex'}}>
-                    <Sidebar user={userPar ? userPar : ''}/>
-                    <Feed
-                        user={userPar ? userPar : ''}
-                        postsData={postsDataAdd}
-                        errorLoading={errorLoading}
-                        change={change}
-                        changePage={changePage}
-                        increaseSizeAnim={{
-                            sizeIncDown: styles.increasesizereally,
-                            sizeIncUp: styles.sizeup,
-                        }}
-                    />
+            <div className={styles.mobliceSocialBox}>
+                <div className={`min-h-screen ${changeAllTheme('darknessTwo', 'brightTwo')}`}
+                    style={{backgroundColor: 'rgb(253,213,62)', marginRight: '20px', borderRadius: '10px'}}>
+                    <main style={{display: 'flex'}}>
+                        <Sidebar user={userPar ? userPar : ''}/>
+                        <Feed
+                            user={userPar ? userPar : ''}
+                            postsData={postsDataAdd}
+                            errorLoading={errorLoading}
+                            change={change}
+                            changePage={changePage}
+                            increaseSizeAnim={{
+                                sizeIncDown: styles.increasesizereally,
+                                sizeIncUp: styles.sizeup,
+                            }}
+                        />
 
-                    <RightSideColumn
-                        chatsData={chatsData}
-                        userFollowStats={postSession}
-                        change={change}
-                        user={userPar ? userPar : {}}
-                    />
-                </main>
+                        <RightSideColumn
+                            chatsData={chatsData}
+                            userFollowStats={postSession}
+                            change={change}
+                            user={userPar ? userPar : {}}
+                        />
+                    </main>
+                </div>
             </div>
         </>
     );

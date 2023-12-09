@@ -96,6 +96,7 @@ const Header = () => {
     }, 1500)
     useEffect(() => {
         if (cookie.get('username') && bolName && address) {
+            console.log(33333333333)
             getUs()
         }
     }, [bolName])
@@ -104,11 +105,12 @@ const Header = () => {
         form.resetFields()
     };
     useEffect(() => {
-        if (cookie.get('name') && cookie.get('name') !== address && address) {
+        if (cookie.get('username') && cookie.get('name') !== address && address) {
             cookie.set('name', address, {expires: 1})
             if (router.pathname !== '/') {
                 router.push('/')
             }
+            console.log(111111111111111)
             changeBolLogin()
             getUs()
         }
@@ -230,6 +232,7 @@ const Header = () => {
     const [showChatSearch, setShowChatSearch] = useState(false);
     const [chats, setChats] = useState([]);
     const [userPar, setUserPar] = useState(null);
+    console.log(userPar)
     const [userBol, setUserBol] = useState(false);
     const getParams = async () => {
         const res = await axios.get(`${baseUrl}/api/chats`, {
@@ -293,6 +296,7 @@ const Header = () => {
     }
     useEffect(() => {
         if (bol && address) {
+            console.log(222222222222)
             getUs()
             setBol(false)
         }
@@ -306,7 +310,6 @@ const Header = () => {
         // 连接的网络和链信息。
         var chain = await provider.getNetwork()
         const {status, data} = await request('post', '/api/v1/token', {address})
-        console.log(data)
         // 获取签名
         var signer = await provider.getSigner();
         // 判断是否有账号
@@ -330,9 +333,9 @@ const Header = () => {
                         //   jwt  解析 token获取用户信息
                         const decodedToken = jwt.decode(res.data?.accessToken);
                         if (decodedToken && decodedToken.address) {
-                            cookie.set('token', res.data?.accessToken)
-                            cookie.set('name', address)
-                            cookie.set('username', JSON.stringify(decodedToken))
+                            cookie.set('token', res.data?.accessToken,{expires: 1})
+                            cookie.set('name', address,{expires: 1})
+                            cookie.set('username', JSON.stringify(decodedToken),{expires: 1})
                             setUserBol(!userBol)
                         }
                     }
@@ -515,17 +518,21 @@ const Header = () => {
             getMoney()
         }
     }
-
     const getLaunch = async () => {
-        const res = await axios.get(baseUrl + '/api/v1/launch', {
+        const params = {
             pageIndex: 1,
             pageSize: 10
-        })
-        const {data: {data}} = res
-        setLaunch(data && data.length > 0 ? data : [])
+        }
+        const res = await request('get','/api/v1/launch', {params})
+        if(res?.data&&res?.status===200){
+            const {data} = res
+            setLaunch(data?.launchs && data?.launchs.length > 0 ? data?.launchs : [])
+        }else {
+            setLaunch([])
+        }
     }
     useEffect(() => {
-        // getLaunch()
+        getLaunch()
     }, [])
     const handleChange = (value) => {
         changeFont(value)
@@ -562,8 +569,27 @@ const Header = () => {
     const openShowMenuItem = () => {
         if (isShowMenuItem) {
             setIsShowMenuItem(false)
-        } else {
+            const body = document.querySelector("body")
+            body.style.overflow = "auto"
+        }else{
             setIsShowMenuItem(true)
+            const body = document.querySelector("body")
+            body.style.overflow = "hidden"
+        }
+    }
+    const push = () => {
+        if (cookie.get('name')) {
+            router.push('/social')
+        } else {
+            getMoney()
+        }
+    }
+    const pushPer = () => {
+        if (cookie.get('name')) {
+            const data = cookie.get('name')
+            router.push(`/${data}`)
+        } else {
+            getMoney()
         }
     }
     const ck = async () => {
@@ -654,7 +680,7 @@ const Header = () => {
                                         arrow
                                     >
                                         <Button
-                                            className={`${styles.loginName} ${styles.but} ${changeTheme ? 'darknessThree' : 'brightFore boxHover'} `}>{userPar && userPar.username ? userPar.username.length > 5 ? userPar.username.slice(0, 5) + '...' : userPar.username : ''}</Button>
+                                            className={`${styles.loginName} ${styles.but} ${changeTheme ? 'darknessThree' : 'brightFore boxHover'} `}>{userPar && userPar.username ? userPar.username.length > 5 ? userPar.username.slice(0, 5) + '...' : userPar?.username : userPar?.address.slice(0, 5) + '...' }</Button>
                                     </Dropdown>
                                 </div> : <Button
                                     className={`${styles['but']} ${styles.loginName} ${changeTheme ? 'darknessThree' : 'brightFore boxHover'}`}
@@ -921,10 +947,8 @@ const Header = () => {
                             onClick={getMoney}>{header.login}</Button>
                     }
                     <div className={styles.mobliceMenuFlex}>
-                        <div
-                            className={`${styles.ethMobliceMg} ${styles.ethMoblice} ${changeTheme ? 'darkMode' : 'whiteMode'}`}>
-                            <Image src={'/WalletMoblice.svg'} alt="WalletMoblice" style={{marginLeft: '10px'}}
-                                   width={20} height={20}/>
+                        <div className={`${styles.ethMobliceMg} ${styles.ethMoblice} ${changeTheme ? 'darkMode' : 'whiteMode'}`} onClick={getMoney}>
+                            <Image src={'/WalletMoblice.svg'} alt="WalletMoblice" style={{marginLeft:'10px'}} width={20} height={20}/>
                         </div>
                         <div className={`${styles.ethMoblice} ${changeTheme ? 'darkMode' : 'whiteMode'}`}
                              onClick={openShowMenuItem}>
@@ -978,21 +1002,22 @@ const Header = () => {
                         </Link>
                     </div>
                     <div className={`${styles.mobliceDpFlex}`}>
-                        <Link href={'/'}>
+                        <div onClick={push}>
                             <div className={`${styles.mobliceDpFlexs}`}>
                                 <Image src={`/icon_newspaper_.svg`} alt="logo" width={32} height={32}/>
-                                <div className={changeTheme ? 'darknessFont' : 'brightFont'}>{drawer.home}</div>
+                                <div className={changeTheme?'darknessFont':'brightFont'}>{drawer.community}</div>
                             </div>
-                        </Link>
+                        </div>
                     </div>
                     <div className={`${styles.mobliceDpFlex}`}>
-                        <Link href={'/'}>
+                        <div onClick={pushPer}>
                             <div className={`${styles.mobliceDpFlexs}`}>
                                 <Image src={`/icon_new_spaper_.svg`} height={32} alt="logo" width={32}/>
-                                <div className={changeTheme ? 'darknessFont' : 'brightFont'}>{drawer.home}</div>
+                                <div className={changeTheme?'darknessFont':'brightFont'}>{drawer.user}</div>
                             </div>
-                        </Link>
+                        </div>
                     </div>
+                    {/* 切换主题 */}
                     <div className={`${styles.mobliceDpFlex}`}>
                         <div style={{display: 'flex', alignItems: 'center'}}>
                             <Switch checked={value} className={changeTheme ? 'darknessOne' : 'brightOne'}

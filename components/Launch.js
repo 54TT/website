@@ -7,6 +7,7 @@ import baseUrl from "../utils/baseUrl";
 
 const {Countdown} = Statistic;
 import styled from '/public/styles/all.module.css'
+import '/public/styles/scroll.module.css'
 import Image from 'next/image'
 import {request} from '/utils/hashUrl'
 import {changeLang} from "/utils/set";

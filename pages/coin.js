@@ -1,15 +1,16 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import styles from '/public/styles/all.module.css'
 import {Button, Popconfirm, Input, Select, Form, DatePicker} from 'antd'
 import baseUrl from "../utils/baseUrl";
 import {request} from "../utils/hashUrl";
-
 const {TextArea} = Input
 import dayjs from 'dayjs'
 import 'dayjs/locale/zh-cn';
 import cookie from "js-cookie";
+import {CountContext} from "../components/Layout/Layout";
 
 function Coin() {
+    const {changeTheme} = useContext(CountContext);
     const [form] = Form.useForm();
     const data = [{name: 'cat1', coin: 'CAT1'}, {name: 'cat2', coin: 'CAT2'}, {
         name: 'cat3',
@@ -90,7 +91,6 @@ function Coin() {
     const [chain, setChain] = useState([]);
     const [launchPlatform, setLaunchPlatform] = useState([]);
     const filePickerRef = useRef(null);
-
     //   获取图片
     const addImageFromDevice = (e) => {
         const {files} = e.target;
@@ -137,11 +137,6 @@ function Coin() {
         }
     }, []);
 
-    // 修改时间
-    const onChangeDate = (e, i, a) => {
-
-    }
-
     // 下拉的sli
     const selectAll = (data) => {
         return data.length > 0 ? data.map((i, index) => {
@@ -178,7 +173,7 @@ function Coin() {
                                     },
                                 ]}
                             >
-                                <Input style={{backgroundColor: 'rgb(254,239,146)'}}/>
+                                <Input className={changeTheme?'darknessTwo':'brightTT'}/>
                             </Form.Item>
                             <Form.Item
                                 label="Symbol"
@@ -191,7 +186,7 @@ function Coin() {
                                     },
                                 ]}
                             >
-                                <Input style={{backgroundColor: 'rgb(254,239,146)'}}/>
+                                <Input className={changeTheme?'darknessTwo':'brightTT'}/>
                             </Form.Item>
                             <Form.Item
                                 label="Description"
@@ -227,7 +222,7 @@ function Coin() {
                                 name="contractAddress"
                                 className={styles.coinForm}
                             >
-                                <Input style={{backgroundColor: 'rgb(254,239,146)'}}/>
+                                <Input className={changeTheme?'darknessTwo':'brightTT'}/>
                             </Form.Item>
                         </div>
                         <div style={{width: '46%'}}>
@@ -237,7 +232,7 @@ function Coin() {
                                 name="presaleTime"
                                 className={styles.coinForm}
                             >
-                                <DatePicker showTime onChange={(e, a) => onChangeDate('launch', e, a)}
+                                <DatePicker showTime
                                             style={{width: '100%', backgroundColor: 'rgb(254,239,146)'}}/>
                             </Form.Item>
                             <Form.Item
@@ -260,7 +255,7 @@ function Coin() {
                                 name="presaleLink"
                                 className={styles.coinForm}
                             >
-                                <Input style={{backgroundColor: 'rgb(254,239,146)'}}/>
+                                <Input className={changeTheme?'darknessTwo':'brightTT'}/>
                             </Form.Item>
                             <Form.Item
                                 label="Launch time"
@@ -273,7 +268,7 @@ function Coin() {
                                     },
                                 ]}
                             >
-                                <DatePicker showTime onChange={(e, a) => onChangeDate('launch', e, a)}
+                                <DatePicker showTime
                                             style={{width: '100%', backgroundColor: 'rgb(254,239,146)'}}/>
                             </Form.Item>
                             <Form.Item
@@ -302,7 +297,7 @@ function Coin() {
                                     },
                                 ]}
                             >
-                                <Input style={{backgroundColor: 'rgb(254,239,146)'}}/>
+                                <Input className={changeTheme?'darknessTwo':'brightTT'}/>
                             </Form.Item>
                         </div>
                     </div>
@@ -319,7 +314,7 @@ function Coin() {
                                 name="website"
                                 className={styles.coinForm}
                             >
-                                <Input style={{backgroundColor: 'rgb(254,239,146)'}}/>
+                                <Input className={changeTheme?'darknessTwo':'brightTT'}/>
                             </Form.Item>
                             <Form.Item
                                 label="Telegram link"
@@ -332,14 +327,14 @@ function Coin() {
                                     },
                                 ]}
                             >
-                                <Input style={{backgroundColor: 'rgb(254,239,146)'}}/>
+                                <Input className={changeTheme?'darknessTwo':'brightTT'}/>
                             </Form.Item>
                             <Form.Item
                                 label="Twitter link"
                                 name="twitter"
                                 className={styles.coinForm}
                             >
-                                <Input style={{backgroundColor: 'rgb(254,239,146)'}}/>
+                                <Input className={changeTheme?'darknessTwo':'brightTT'}/>
                             </Form.Item>
                         </div>
                         <div style={{width: '46%'}}>
@@ -354,7 +349,7 @@ function Coin() {
                                     },
                                 ]}
                             >
-                                <Input style={{backgroundColor: 'rgb(254,239,146)'}}/>
+                                <Input className={changeTheme?'darknessTwo':'brightTT'}/>
                             </Form.Item>
                             <Form.Item
                                 label="Project logo"
@@ -368,7 +363,7 @@ function Coin() {
                                 // ]}
                             >{
                                 imagePreview ? '' :
-                                    <Input readOnly style={{backgroundColor: 'rgb(254,239,146)', cursor: 'pointer'}}
+                                    <Input readOnly className={changeTheme?'darknessTwo':'brightTT'}
                                            onClick={() => filePickerRef.current.click()}/>
                             }
                                 <input
@@ -401,7 +396,7 @@ function Coin() {
                                 name="youtube"
                                 className={styles.coinForm}
                             >
-                                <Input style={{backgroundColor: 'rgb(254,239,146)'}}/>
+                                <Input className={changeTheme?'darknessTwo':'brightTT'}/>
                             </Form.Item>
 
                         </div>

@@ -75,68 +75,72 @@ function FollowersPage() {
         />);
     }
 
-    return (<div className={`h-screen ${styled.followersBox}`}>
-        <main className={styled.followersBoxMin}>
-            <Sidebar user={userPar} topDist={"0"} maxWidth={"250px"}/>
-            <div
-                className={styled.followersBoxData}>
-                <div className="flex items-center ml-2">
-                    <p className={styled.followersBoxName}>{social.followers} ·</p>
-                    <p style={{
-                        userSelect: 'none',
-                        fontSize: '20px'
-                    }} className="text-gray-500 ml-2">
-                        {followers?.length || 0}
-                    </p>
-                </div>
-                {followers.length > 0 ? (<div>
-                    {followers.map((fol) => {
-                        const isLoggedInUserFollowing = loggedUserFollowStats?.following?.length > 0 && loggedUserFollowStats?.following?.filter((loggedInUserFollowing) => loggedInUserFollowing?.user.id === fol?.user?.id).length > 0;
-                        return (<div
-                            className={styled.followersBoxFollow}
-                            key={fol?.user?.id}
-                        >
-                            <div className="flex items-center  ">
-                                <img src={fol?.user?.profilePicUrl || '/Ellipse1.png'} alt="userimg" width={40}
-                                     height={40}
-                                     style={{borderRadius: '50%'}}/>
-                                <Link href={`/${fol?.user?.username}`}>
-                                    <p className={`ml-2 ${styled.followersBoxLink}`}>
-                                        {fol?.user?.username.length > 10 ? fol.user.username.slice(0, 4) + '...' + fol.user.username.slice(-3) : fol?.user?.username}
-                                    </p>
-                                </Link>
+    return (
+        <div className={styled.allMoblice}>
+            <div className={`h-screen ${styled.followersBox} ${styled.allMobliceW}`}>
+                <main className={styled.followersBoxMin}>
+                    <Sidebar user={userPar} topDist={"0"} maxWidth={"250px"}/>
+                    <div
+                        className={styled.followersBoxData}>
+                        <div className="flex items-center ml-2">
+                            <p className={styled.followersBoxName}>{social.followers} ·</p>
+                            <p style={{
+                                userSelect: 'none',
+                                fontSize: '20px'
+                            }} className="text-gray-500 ml-2">
+                                {followers?.length || 0}
+                            </p>
+                        </div>
+                        {followers.length > 0 ? (<div>
+                            {followers.map((fol) => {
+                                const isLoggedInUserFollowing = loggedUserFollowStats?.following?.length > 0 && loggedUserFollowStats?.following?.filter((loggedInUserFollowing) => loggedInUserFollowing?.user.id === fol?.user?.id).length > 0;
+                                return (<div
+                                    className={styled.followersBoxFollow}
+                                    key={fol?.user?.id}
+                                >
+                                    <div className="flex items-center  ">
+                                        <img src={fol?.user?.profilePicUrl || '/Ellipse1.png'} alt="userimg" width={40}
+                                            height={40}
+                                            style={{borderRadius: '50%'}}/>
+                                        <Link href={`/${fol?.user?.username}`}>
+                                            <p className={`ml-2 ${styled.followersBoxLink}`}>
+                                                {fol?.user?.username.length > 10 ? fol.user.username.slice(0, 4) + '...' + fol.user.username.slice(-3) : fol?.user?.username}
+                                            </p>
+                                        </Link>
 
-                            </div>
-                            {fol?.user?.id !== userPar?.id ? (<>
-                                {isLoggedInUserFollowing ? (<div className={styled.followersBoxFoll}
-                                                                 onClick={async () => {
-                                                                     const data = await unfollowUser(fol?.user?.id, setLoggedUserFollowStats, userPar?.id);
-                                                                     if (data && data.status === 200) {
-                                                                         change()
-                                                                     }
-                                                                 }}
-                                >
-                                    <CheckCircleIcon className="h-6"/>
-                                </div>) : (<div className={styled.followersBoxFoll}
-                                                onClick={async () => {
-                                                    const data = await followUser(fol?.user?.id, setLoggedUserFollowStats, userPar?.id);
-                                                    if (data && data.status === 200) {
-                                                        change()
-                                                    }
-                                                }}
-                                >
-                                    <UserAddIcon className="h-6"/>
-                                </div>)}
-                            </>) : (<></>)}
-                        </div>);
-                    })}
-                </div>) : router?.query?.userId === userPar?.id ? (<p className="text-md text-gray-500">
-                    {social.followerGet}
-                </p>) : (<p className="text-md text-gray-500">{social.followerNo}</p>)}
+                                    </div>
+                                    {fol?.user?.id !== userPar?.id ? (<>
+                                        {isLoggedInUserFollowing ? (<div className={styled.followersBoxFoll}
+                                                                        onClick={async () => {
+                                                                            const data = await unfollowUser(fol?.user?.id, setLoggedUserFollowStats, userPar?.id);
+                                                                            if (data && data.status === 200) {
+                                                                                change()
+                                                                            }
+                                                                        }}
+                                        >
+                                            <CheckCircleIcon className="h-6"/>
+                                        </div>) : (<div className={styled.followersBoxFoll}
+                                                        onClick={async () => {
+                                                            const data = await followUser(fol?.user?.id, setLoggedUserFollowStats, userPar?.id);
+                                                            if (data && data.status === 200) {
+                                                                change()
+                                                            }
+                                                        }}
+                                        >
+                                            <UserAddIcon className="h-6"/>
+                                        </div>)}
+                                    </>) : (<></>)}
+                                </div>);
+                            })}
+                        </div>) : router?.query?.userId === userPar?.id ? (<p className="text-md text-gray-500">
+                            {social.followerGet}
+                        </p>) : (<p className="text-md text-gray-500">{social.followerNo}</p>)}
+                    </div>
+                    <div className="w-10"></div>
+                </main>
             </div>
-            <div className="w-10"></div>
-        </main>
-    </div>);
+        </div>
+    );
 }
 
 export default FollowersPage;

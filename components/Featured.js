@@ -48,8 +48,24 @@ export default function Featured() {
     const packageHtml = (name) => {
         return <span className={changeAllTheme('darknessFont', 'brightFont')}>{name}</span>
     }
+    const packageEllipsisHtml = (name) => {
+        return (
+            <div className={styled.homeTableParentText}>
+                {name.length > 10 ? (
+                        <div className={styled.homeTableParentMain}>
+                            <span
+                                className={`${styled.homeTablePrenSpan} ${changeAllTheme('darknessFont', 'brightFont')}`}>{name.slice(0, -6)}</span>
+                            <span
+                                className={`${styled.homeTableNextSpan} ${changeAllTheme('darknessFont', 'brightFont')}`}>{name.slice(-6)}</span>
+                        </div>)
+                    : name
+                }
+            </div>
+        )
+    }
     const columns = [{
-        title: packageHtml(featured.pair), align: 'center', render: (text, record) => {
+        title: packageHtml(featured.pair), align: 'left',
+        fixed: 'left', render: (text, record) => {
             const data = JSON.parse(record?.apiData)
             return <div className={styled.featuredColumnsBox}>
                 <p className={styled.featuredColumns}>{data?.baseToken?.symbol?.slice(0, 1)}</p>
@@ -137,6 +153,10 @@ export default function Featured() {
             setFeaturedBol(false)
             setTableParams(data && data.featureds && data.featureds.length > 0 ? data.featureds : [])
             setFeaturedAll(0)
+        }else {
+            setFeaturedBol(false)
+            setTableParams([])
+            setFeaturedAll(0)
         }
     }
     useEffect(() => {
@@ -144,7 +164,6 @@ export default function Featured() {
             pageIndex: featuredCurrent,
             pageSize: featuredPageSize
         })
-
         ref.current = setInterval(() => getParams('/api/v1/feature', {
             pageIndex: featuredCurrent,
             pageSize: featuredPageSize
@@ -152,8 +171,6 @@ export default function Featured() {
         return () => {
             clearInterval(ref.current)
         }
-
-
     }, [featuredPageSize, featuredCurrent]);
     const changePag = (e, a) => {
         setFeaturedBol(true)
@@ -170,7 +187,8 @@ export default function Featured() {
                         <span style={{fontWeight: 'bold', fontSize: '26px'}}
                               className={changeAllTheme('darknessFont', 'brightFont')}>{featured.featured}</span>
                     </div>
-                    <Segmented options={['5m', '1h', '6h', '24h']} onChange={changSeg} defaultValue={'24h'}/>
+                    <Segmented options={['5m', '1h', '6h', '24h']} onChange={changSeg} defaultValue={'24h'}
+                               className={`${changeAllTheme('darkMode', 'whiteMode')}`}/>
                 </div>
                 <Table className={`anyTable ${changeAllTheme('hotTableD', 'hotTable')}`} columns={columns}
                        scroll={{x: 'max-content'}}

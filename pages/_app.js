@@ -8,7 +8,6 @@ import {ConfigProvider} from 'antd'
 import {mainnet, polygon, optimism, arbitrum} from 'wagmi/chains';
 //   使用钱包依赖
 import {ConnectKitProvider, getDefaultConfig} from 'hjt-connectkit';
-
 require('dotenv').config({path: '.env'})
 // export const {chains, publicClient, webSocketPublicClient, provider} = configureChains(
 //     [chain.mainnet, chain.polygon, chain.optimism, chain.arbitrum],
@@ -16,10 +15,7 @@ require('dotenv').config({path: '.env'})
 //         publicProvider()
 //     ]
 // );
-// const client = createClient({
-//     autoConnect: true,
-//     provider,
-// })
+
 const config = createConfig(
     getDefaultConfig({
         appName: 'ConnectKit Next.js demo',
@@ -29,24 +25,36 @@ const config = createConfig(
         // walletConnectProjectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID
     })
 );
+// const client = createClient({
+//     autoConnect: true,
+//         provider,
+// })
+
 import Layout from '/components/Layout/Layout'
 import Head from 'next/head';
+import React, { useContext } from "react";
 
 function DexPert({Component, pageProps}) {
-    return (<>
+     return (
+        <>
             <Head>
                 <link rel="shortcut icon" href="/avatar.png"/>
                 <title>My new cool app</title>
             </Head>
             <WagmiConfig config={config}>
                 <ConnectKitProvider debugMode>
-                    <ConfigProvider theme={{
-                        components: {
-                            Select: {
-                                selectorBg: 'rgb(254, 239, 146)'
-                            },
-                        },
-                    }}>
+                    <ConfigProvider
+                        theme={{
+                            components:{
+                                Select: {
+                                    selectorBg: 'rgb(254, 239, 146)'
+                                },
+                                Segmented:{
+                                    itemSelectedBg: "rgb(253, 213, 62)",
+                                }
+                            }
+                        }}
+                    >
                         <Layout>
                             <Component {...pageProps} />
                         </Layout>

@@ -5,9 +5,9 @@ import styled from '/public/styles/all.module.css'
 function InfoBox({ Icon, message, content, setError, marginTop }) {
   return (
     <div
-      className={`${styled.infoBoxTop} ${
+      className={`${styled.infoBoxTop} ${styled.mobliceInfoBoxTop} ${
         marginTop ? "mt-0" : "mt-7"
-      }  p-3 rounded-xl shadow-md`}
+      }  p-3 rounded-xl shadow-md`} 
     >
       <div
         className={`flex space-x-1 ml-1.5 items-center ${
@@ -15,7 +15,7 @@ function InfoBox({ Icon, message, content, setError, marginTop }) {
         } `}
       >
         <Icon className="h-5" />
-        <p className="font-semibold text-lg">{message}</p>
+        <p className={`${styled.mobliceInfoBox} font-semibold text-lg`}>{message}</p>
       </div>
       <p className={`text-sm ml-3 ${setError ? "text-red-400" : ""}`}>
         {content}

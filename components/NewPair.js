@@ -30,10 +30,6 @@ export default function NewPair() {
     id
     pairCount
   }
-  bundles {
-    id
-    ethPrice
-  }
   pairs(first: ${rowsPerPage}, skip: ${(currentPage - 1) * 10}, orderBy: createdAtTimestamp, orderDirection: desc) {
     id
     reserveETH  
@@ -61,6 +57,7 @@ export default function NewPair() {
     const [tableParams, setTableParams] = useState([]);
     const [tableTotal, setTableTotal] = useState(0);
     const {loading, error, data, refetch} = useQuery(GET_DATA, {client});
+    console.log(data)
     useEffect(() => {
         if (!loading) {
             if (data && data?.pairs.length > 0) {
@@ -209,8 +206,10 @@ export default function NewPair() {
                         <span style={{fontWeight: 'bold', fontSize: '26px'}}
                               className={changeTheme ? 'darknessFont' : 'brightFont'}>{newPair?.newPair}</span>
                     </div>
-                    <Pagination defaultCurrent={1} current={currentPage} onChange={chang} total={tableTotal}
-                                pageSize={rowsPerPage} showTitle={false} simple={true}/>
+                    <div className={styled.mobliceNewPair}>
+                        <Pagination defaultCurrent={1} showTitle={false} simple={true} current={currentPage} onChange={chang} total={tableTotal}
+                                    pageSize={rowsPerPage}/>
+                    </div>
                 </div>
                 <Table rowKey={(i) => i.id + i?.token0?.id + i?.token1?.id + i?.token0?.name}
                        className={`anyTable ${changeTheme ? 'hotTableD' : 'hotTable'}`}
@@ -218,7 +217,8 @@ export default function NewPair() {
                            return {
                                onClick: (event) => {
                                    const data = record?.id
-                                   router.push(`/details?pairAddress=${data}`,)
+                                   console.log(record)
+                                   // router.push(`/details?pairAddress=${data}`,)
                                },
                            };
                        }}

@@ -1,0 +1,11 @@
+.ant-table-tbody::-webkit-scrollbar{
+  height: 5px;
+  background-color: rgb(249, 188, 54);
+}
+.ant-table-tbody::-webkit-scrollbar-track{
+  background-color: rgb(249, 188, 54);
+}
+.ant-table-tbody::-webkit-scrollbar-thumb{
+  border-radius: 10px;
+  background-color: rgb(253, 213, 62);
+}

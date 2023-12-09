@@ -1,9 +1,9 @@
-import React, { useEffect, useState, useRef, useContext } from "react";
+import React, {useEffect, useState, useRef, useContext} from "react";
 import styles from "../public/styles/home.module.css";
 import axios from 'axios';
 import {formatDecimal, getRelativeTimeDifference, formatDateTime} from './Utils';
 import {useRouter} from 'next/router';
-import {get,  getUser} from '/utils/axios'
+import {get, getUser} from '/utils/axios'
 import Link from 'next/link'
 import {autoConvert,} from '/utils/set'
 import Image from 'next/image'
@@ -40,9 +40,11 @@ const {Countdown} = Statistic;
 const PostCard = dynamic(() => import('./PostCard'), {ssr: false})
 const Bott = dynamic(() => import('./Bottom'), {ssr: false})
 import {changeLang} from "/utils/set";
+import {request} from "../utils/hashUrl";
+
 function Home() {
     const router = useRouter();
-    const { bolLogin, changeShowData, showData, changeBolLogin, changeTheme } = useContext(CountContext);
+    const {bolLogin, changeShowData, showData, changeBolLogin, changeTheme} = useContext(CountContext);
     const home = changeLang('home')
     const [cookBol, setCook] = useState(false);
     useEffect(() => {
@@ -66,13 +68,13 @@ function Home() {
         }
     }, [showData])
     const getUs = async () => {
-        const a = cook.get('name')
-        const { data: { user }, status } = await getUser(a)
-        if (user && status === 200) {
-            setUserPa(user)
-        } else {
-            setUserPa('')
-        }
+        // const a = cook.get('name')
+        // const {data: {user}, status} = await getUser(a)
+        // if (user && status === 200) {
+        //     setUserPa(user)
+        // } else {
+        //     setUserPa('')
+        // }
     }
     const [userPa, setUserPa] = useState(null);
     const [launch, setLaunch] = useState([]);
@@ -90,11 +92,13 @@ function Home() {
     const packageEllipsisHtml = (name) => {
         return (
             <div className={styles.homeTableParentText}>
-                {name.length > 10 ? (
-                    <div className={styles.homeTableParentMain}>
-                        <span className={`${styles.homeTablePrenSpan} ${changeAllTheme('darknessFont', 'brightFont')}`}>{name.slice(0, -6)}</span>
-                        <span className={`${styles.homeTableNextSpan} ${changeAllTheme('darknessFont', 'brightFont')}`}>{name.slice(-6)}</span>
-                    </div>)
+                {name?.length > 10 ? (
+                        <div className={styles.homeTableParentMain}>
+                            <span
+                                className={`${styles.homeTablePrenSpan} ${changeAllTheme('darknessFont', 'brightFont')}`}>{name.slice(0, -6)}</span>
+                            <span
+                                className={`${styles.homeTableNextSpan} ${changeAllTheme('darknessFont', 'brightFont')}`}>{name.slice(-6)}</span>
+                        </div>)
                     : name
                 }
             </div>
@@ -104,50 +108,47 @@ function Home() {
         data: presale,
         bol: presaleBol,
         name: home.presale
-    }, { data: launch, bol: launchBol, name: home.launch }]
-    const getParams = (url, params, name) => {
-        get(url, params).then(async (res) => {
-            if (res.status === 200) {
-                let data = res.data
-                if (name === 'featured') {
-                    if (data && data.data.length > 0) {
-                        const pairArray = data.data.map(item => item.pairAddress).join(",");
-                        const pairInfosResponse = await axios.get(`https://api.dexscreener.com/latest/dex/pairs/ethereum/${pairArray}`);
-                        if (pairInfosResponse.status === 200) {
-                            setFeaturedBol(false)
-                            setFeatured(pairInfosResponse.data?.pairs.length > 0 ? pairInfosResponse.data?.pairs : [])
-                        } else {
-                            setFeaturedBol(false)
-                            setFeatured([])
-                        }
-                    } else {
-                        setFeaturedBol(false)
-                        setFeatured([])
-                    }
-                } else if (name === 'launch') {
-                    setLaunchBol(true)
-                    const { data: { data } } = res
-                    setLaunch(data && data.length > 0 ? data : [])
-                } else if (name === 'presale') {
-                    setPresaleBol(true)
-                    const { data: { data } } = res
-                    setPresale(data && data.length > 0 ? data : [])
-                }
-            }
-        }).catch(err => {
-            if (name === 'launch') {
+    }, {data: launch, bol: launchBol, name: home.launch}]
+
+    const axiosPackage = () => {
+
+    }
+    const getParams = async (url, params, name) => {
+        if (name === 'launch') {
+            const res = await request('get', url, {params})
+            if (res?.data && res?.status === 200) {
+                const {data} = res
+                setLaunchBol(true)
+                setLaunch(data?.launchs?.length > 0 ? data.launchs : [])
+            } else {
                 setLaunchBol(true)
                 setLaunch([])
             }
-            if (name === 'presale') {
+        }
+        if (name === 'presale') {
+            const res = await request('get', url, {params})
+            if (res?.data && res?.status === 200) {
+                const {data} = res
+                setPresaleBol(true)
+                setPresale(data?.presales?.length > 0 ? data.presales : [])
+            } else {
                 setPresaleBol(true)
                 setPresale([])
             }
-            if (name === 'featured') {
+        }
+        if (name === 'featured') {
+            const res = await request('get', url, {params})
+            if (res?.data && res?.status === 200) {
+                const {data} = res
+                setFeaturedBol(false)
+                setFeatured(data?.featureds?.length > 0 ? data.featureds : [])
+            } else {
+
                 setFeaturedBol(false)
                 setFeatured([])
             }
-        })
+
+        }
     }
     const [time, setTime] = useState('h24')
     const columns = [{
@@ -155,6 +156,7 @@ function Home() {
         align: 'center',
         fixed: 'left',
         render: (text, record) => {
+            const item = JSON.parse(record?.apiData)
             return <p style={{
                 width: '30px',
                 backgroundColor: '#454545',
@@ -162,101 +164,106 @@ function Home() {
                 lineHeight: '30px',
                 textAlign: 'center',
                 borderRadius: '50%', margin: '0 auto',
-            }}>{record?.baseToken?.symbol?.slice(0, 1)}</p>
+            }}>{item?.baseToken?.symbol?.slice(0, 1)}</p>
         }
     }, {
         title: packageHtml(home.pair),
         align: 'center',
         fixed: 'left',
         render: (text, record) => {
+            const item = JSON.parse(record?.apiData)
             return <div style={{
                 display: 'flex',
                 alignItems: 'flex-start',
                 flexDirection: 'column',
             }}>
-                <div>{packageHtml(record?.baseToken?.symbol + '/')}
-                    <span style={{ color: 'rgb(156,156,156)' }}>{record?.quoteToken?.symbol}</span>
+                <div>{packageHtml(item?.baseToken?.symbol + '/')}
+                    <span style={{color: 'rgb(156,156,156)'}}>{item?.quoteToken?.symbol}</span>
                 </div>
-                { packageEllipsisHtml(record?.quoteToken?.address) }
+                <div>{packageEllipsisHtml(item?.quoteToken?.address)}</div>
             </div>
         }
     },
-    {
-        title: packageHtml(home.price),
-        align: 'center',
-        render: (text, record) => {
-            return packageHtml(record?.priceUsd ? formatDecimal(record?.priceUsd, 3) : '')
-        }
-    },
-    {
-        title: packageHtml(home.createTime),
-        align: 'center',
-        render: (text, record) => {
-            const data = record.pairCreatedAt.toString().length > 10 ? Number(record.pairCreatedAt.toString().slice(0, 10)) : record.pairCreatedAt
-            return packageHtml(record?.pairCreatedAt ? getRelativeTimeDifference(formatDateTime(data)) : '')
-        }
-    },
-    {
-        title: packageHtml('% ' + time),
-        align: 'center',
-        render: (text, record) => {
-            return <p
-                style={{ color: changeTheme ? record?.priceChange[time] > 0 ? 'rgb(97,123,64)' : 'rgb(209,68,68)' : record?.priceChange[time] > 0 ? 'green' : 'red' }}>{record?.priceChange[time] ? record.priceChange[time] : 0}</p>
-        }
-    },
-    {
-        title: packageHtml(home.txns),
-        align: 'center',
-        render: (text, record) => {
-            return packageHtml((record?.txns[time]?.buys + record?.txns[time]?.sells) ? autoConvert(record?.txns[time]?.buys + record?.txns[time]?.sells) : 0)
-        }
-    },
-    {
-        title: packageHtml(home.volume),
-        align: 'center',
-        render: (text, record) => {
-            return packageHtml(record?.volume[time] ? autoConvert(record?.volume[time]) : 0)
-        }
-    },
-    {
-        title: packageHtml(home.liquidity),
-        align: 'center',
-        render: (text, record) => {
-            return packageHtml(record?.liquidity?.usd ? autoConvert(record.liquidity.usd) : 0)
-        }
-    },
-    {
-        title: packageHtml(home.dex),
-        align: 'center',
-        render: (text, record) => {
-            return <Image src="/dex-uniswap.png" alt="" width={30} height={30}
-                style={{
-                    borderRadius: '50%',
-                    display: 'block',
-                    margin: '0 auto',
-                    height: 'auto',
-                    width: 'auto',
-                }} />
-        }
-    },
+        {
+            title: packageHtml(home.price),
+            align: 'center',
+            render: (text, record) => {
+                const item = JSON.parse(record?.apiData)
+                return packageHtml(item?.priceUsd ? formatDecimal(item?.priceUsd, 3) : '')
+            }
+        },
+        {
+            title: packageHtml(home.createTime),
+            align: 'center',
+            render: (text, record) => {
+                const item = JSON.parse(record?.apiData)
+                const data = item.pairCreatedAt.toString().length > 10 ? Number(item.pairCreatedAt.toString().slice(0, 10)) : item.pairCreatedAt
+                return packageHtml(item?.pairCreatedAt ? getRelativeTimeDifference(formatDateTime(data)) : '')
+            }
+        },
+        {
+            title: packageHtml('% ' + time),
+            align: 'center',
+            render: (text, record) => {
+                const item = JSON.parse(record?.apiData)
+                return <p
+                    style={{color: changeTheme ? item?.priceChange[time] > 0 ? 'rgb(97,123,64)' : 'rgb(209,68,68)' : item?.priceChange[time] > 0 ? 'green' : 'red'}}>{item?.priceChange[time] ? item.priceChange[time] : 0}</p>
+            }
+        },
+        {
+            title: packageHtml(home.txns),
+            align: 'center',
+            render: (text, record) => {
+                const item = JSON.parse(record?.apiData)
+                return packageHtml((item?.txns[time]?.buys + item?.txns[time]?.sells) ? autoConvert(item?.txns[time]?.buys + item?.txns[time]?.sells) : 0)
+            }
+        },
+        {
+            title: packageHtml(home.volume),
+            align: 'center',
+            render: (text, record) => {
+                const item = JSON.parse(record?.apiData)
+                return packageHtml(item?.volume[time] ? autoConvert(item?.volume[time]) : 0)
+            }
+        },
+        {
+            title: packageHtml(home.liquidity),
+            align: 'center',
+            render: (text, record) => {
+                const item = JSON.parse(record?.apiData)
+                return packageHtml(item?.liquidity?.usd ? autoConvert(item.liquidity.usd) : 0)
+            }
+        },
+        {
+            title: packageHtml(home.dex),
+            align: 'center',
+            render: (text, record) => {
+                const item = JSON.parse(record?.apiData)
+                return <Image src="/dex-uniswap.png" alt="" width={30} height={30}
+                              style={{
+                                  borderRadius: '50%',
+                                  display: 'block',
+                                  margin: '0 auto',
+                                  height: 'auto',
+                                  width: 'auto',
+                              }}/>
+            }
+        },
     ]
     useEffect(() => {
-        gets()
-        getParams('/queryLaunch', {
-            pageIndex: 0,
+        getParams('/api/v1/launch', {
+            pageIndex: 1,
             pageSize: 10
         }, 'launch')
-        getParams('/queryPresale', {
-            pageIndex: 0,
+        getParams('/api/v1/presale', {
+            pageIndex: 1,
             pageSize: 10
         }, 'presale')
-    }, []);
-    const gets = () => {
-        getParams('/queryFeatured', {
-            pageIndex: 0,
+        getParams('/api/v1/feature', {
+            pageIndex: 1,
             pageSize: 10
         }, 'featured')
-    }
+    }, []);
     const push = (i, name) => {
         switch (name) {
             case 'one':
@@ -364,8 +371,10 @@ function Home() {
             setPageNumber(0)
             a = 0
         }
+        // const res = await request('get', url, {params})
+
         const res = await axios.get(`${baseUrl}/api/posts`, {
-            params: { pageNumber: a},
+            params: {pageNumber: a},
         })
         if (res.status === 200) {
             setPostsDataBol(!postsDataBol)
@@ -380,9 +389,7 @@ function Home() {
         change('scroll')
     }
     useEffect(() => {
-        // if (cook.get('name') && userPa?.id) {
-            getPost()
-        // }
+        //     getPost()
     }, [postsDataCh, userPa]);
     const pushLink = (name) => {
         if (name.includes('http') || name.includes('https')) {
@@ -413,7 +420,7 @@ function Home() {
                     {
                         params.map((item, index) => {
                             return <div key={index}
-                                className={`cardParams ${index === 0 ? styles.homeMarginBottom : ""} ${styles.homeModule} ${!changeTheme && 'boxHover'}`}>
+                                        className={`cardParams ${index === 0 ? styles.homeMarginBottom : ""} ${styles.homeModule} ${!changeTheme && 'boxHover'}`}>
                                 <Card className={`${styles.homeCard} ${changeAllTheme('darknessTwo', 'brightTwo')}`}>
                                     <ul className={styles['rightUl']}>
                                         <li>
@@ -432,46 +439,52 @@ function Home() {
                                                         key={index}>
                                                         <div className={styles.homeCardListBox}>
                                                             <p className={styles.homeCardIm}>{i.symbol.slice(0, 1)}</p>
-                                                            <div style={{ width: '78%', display: 'flex', alignItems: 'center' }} className={styles.homeCardFlexBox}>
+                                                            <div style={{
+                                                                width: '78%',
+                                                                display: 'flex',
+                                                                alignItems: 'center'
+                                                            }} className={styles.homeCardFlexBox}>
                                                                 <Tooltip title={i.symbol}>
                                                                     <p className={`${styles.homeCardSymbol} ${changeAllTheme('darknessFont', 'brightFont')}`}>{i.symbol}</p>
                                                                 </Tooltip>
-                                                                <div style={{ marginTop: '0' }} className={`${styles['editDis']} ${styles['dis']}`} >
+                                                                <div style={{marginTop: '0'}}
+                                                                     className={`${styles['editDis']} ${styles['dis']}`}>
                                                                     <img onClick={() => push(i, 'one')}
-                                                                        src={changeAllTheme('/Websitee.svg', "/Websiteaa.svg")}
-                                                                        alt="" width={16} />
+                                                                         src={changeAllTheme('/Websitee.svg', "/Websiteaa.svg")}
+                                                                         alt="" width={16}/>
                                                                     <img onClick={() => push(i, 'two')}
-                                                                        src={changeAllTheme('/TwitterX22.svg', "/TwitterX11.svg")}
-                                                                        alt="" width={18} />
+                                                                         src={changeAllTheme('/TwitterX22.svg', "/TwitterX11.svg")}
+                                                                         alt="" width={18}/>
                                                                     <img onClick={() => push(i, 'three')}
-                                                                        src={changeAllTheme("/Telegramss.svg", 'Telegram11.svg')}
-                                                                        alt="" width={20} />
+                                                                         src={changeAllTheme("/Telegramss.svg", 'Telegram11.svg')}
+                                                                         alt="" width={20}/>
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div className={`${styles.homeCardDate} ${styles.editHomeCardDate}`}>
+                                                        <div
+                                                            className={`${styles.homeCardDate} ${styles.editHomeCardDate}`}>
                                                             <img
                                                                 src={changeAllTheme("/icon _timer.svg", '/icon _time1.svg')}
-                                                                alt="" width={15} />
+                                                                alt="" width={15}/>
                                                             <Countdown title=""
-                                                                className={changeAllTheme('darknessFont', 'brightFont')}
-                                                                value={getD(dayjs(i.presale_time ? i.presale_time : i.launch_time).isAfter(dayjs()) ? dayjs(i.presale_time ? i.presale_time : i.launch_time).diff(dayjs(), 'seconds') : '')}
-                                                                format="HH:mm:ss" />
+                                                                       className={changeAllTheme('darknessFont', 'brightFont')}
+                                                                       value={getD(dayjs(i.presale_time ? i.presale_time : i.launch_time).isAfter(dayjs()) ? dayjs(i.presale_time ? i.presale_time : i.launch_time).diff(dayjs(), 'seconds') : '')}
+                                                                       format="HH:mm:ss"/>
                                                         </div>
                                                         <img
                                                             src={`${baseUrl}${i?.presale_platform_logo ? i.presale_platform_logo : i.launch_platform_logo}`}
                                                             onClick={() => pushLink(i?.presale_link ? i.presale_link : i.launch_link)}
                                                             alt=""
                                                             width={'30px'} height={'30px'}
-                                                            className={styles.homeCardListImg} />
+                                                            className={styles.homeCardListImg}/>
                                                     </li>
                                                 }
                                             }) : [] : [1, 2, 3, 4].map((i, index) => {
                                                 return <li key={index}>
                                                     <div className={styles.homeCardModule}>
                                                         <Skeleton.Avatar active={true} size={'default'} shape={'circle'}
-                                                            style={{ marginRight: '15px' }} />
-                                                        <Skeleton.Input active={true} size={'default'} block={true} />
+                                                                         style={{marginRight: '15px'}}/>
+                                                        <Skeleton.Input active={true} size={'default'} block={true}/>
                                                     </div>
                                                 </li>
                                             })
@@ -486,14 +499,15 @@ function Home() {
                 <div
                     className={`homeTable ${changeAllTheme('darknessTwo', 'brightTwo boxHover')} ${styles.homeCardBot}`}>
                     <div className={styles['dis']}>
-                        <p style={{ fontSize: '20px', fontWeight: 'bold' }}
-                            className={changeAllTheme('darknessFont', 'brightFont')}>{home.featured}</p>
+                        <p style={{fontSize: '20px', fontWeight: 'bold'}}
+                           className={changeAllTheme('darknessFont', 'brightFont')}>{home.featured}</p>
                         <div className={styles['dis']}>
                             {/*时间选择*/}
                             <Segmented
                                 options={['5m', '1h', '6h', '24h']}
                                 onChange={changSeg}
                                 defaultValue={'24h'}
+                                className={`${changeAllTheme('darkMode', 'whiteMode')}`}
                             />
                             <Link href={'/featured'}>
                                 <p className={styles.homeFeaturedMore}>{home.more}></p>
@@ -503,19 +517,19 @@ function Home() {
                     <div className={styles['homeTableBox']}>
                         {/*表格*/}
                         <Table columns={columns}
-                            scroll={{ x: 'max-content' }}
-                            rowKey={(record) => record?.baseToken?.address + record?.quoteToken?.address}
-                            loading={featuredBol}
-                            className={`${changeAllTheme('darkTable', 'tablesss')}  anyTable`} onRow={(record) => {
-                                return {
-                                    onClick: (event) => {
-                                        const data = record.pairAddress
-                                        router.push(`/details?pairAddress=${data}`,)
-                                    },
-                                };
-                            }}
-                            dataSource={featured.length > 5 ? featured.slice(0, 5) : featured}
-                            pagination={false} bordered={false} />
+                               scroll={{x: 'max-content'}}
+                               rowKey={(record) => record?.id}
+                               loading={featuredBol}
+                               className={`${changeAllTheme('darkTable', 'tablesss')}  anyTable`} onRow={(record) => {
+                            return {
+                                onClick: (event) => {
+                                    const data = record.pair
+                                    router.push(`/details?pairAddress=${data}`,)
+                                },
+                            };
+                        }}
+                               dataSource={featured?.length > 5 ? featured.slice(0, 5) : featured}
+                               pagination={false} bordered={false}/>
                     </div>
                 </div>
             </div>
@@ -523,48 +537,48 @@ function Home() {
             <div
                 className={`cardParams ${changeAllTheme('socialScrollD darknessThrees', 'socialScroll brightTwo boxHover')}`}
                 id="scrollableDiv"
-                style={{ height: `${refHeight?.current?.scrollHeight || 0}px` }}>
+                style={{height: `${refHeight?.current?.scrollHeight || 0}px`}}>
                 <div className={styles.homeRightTop}>
                     <p className={`${styles.homeRightTopName} ${changeAllTheme('darknessFont', 'brightFont')}`}>{home.social}</p>
                     <Link href={'/social'}>
                         <p onClick={pushSocial}
-                            style={{ fontSize: '20px', color: '#2394D4', cursor: 'pointer' }}>{home.more}></p>
+                           style={{fontSize: '20px', color: '#2394D4', cursor: 'pointer'}}>{home.more}></p>
                     </Link>
                 </div>
                 {/*cookBol ?*/}
                 {
                     postsDataAdd?.length > 0 ? <InfiniteScroll
-                            hasMore={true}
-                            next={changePage}
-                            scrollableTarget="scrollableDiv"
-                            endMessage={
-                                <p style={{textAlign: 'center'}}>
-                                    <b>Yay! You have seen it all</b>
-                                </p>
-                            }
-                            loader={null}
-                            dataLength={postsDataAdd.length}
-                        >
-                            {postsDataAdd && postsDataAdd?.length > 0 ? postsDataAdd.map((post, index) => {
-                                const isLiked =
-                                    post.likes && post.likes.length > 0 &&
-                                    post.likes.filter((like) => like?.user?.id === userPa?.id).length > 0;
-                                return <PostCard
-                                    change={change}
-                                    liked={isLiked}
-                                    key={post.id}
-                                    post={post}
-                                    user={userPa}
-                                />
-                            }) : ''}
-                        </InfiniteScroll> : <div style={{textAlign: 'center', fontSize: '20px'}}
-                                                 className={changeAllTheme('darknessFont', 'brightFont')}>{home.noData}</div>
-                        // <div style={{textAlign: 'center', fontSize: '20px'}}
-                        //      className={changeAllTheme('darknessFont', 'brightFont')}>{home.sign}</div>
+                        hasMore={true}
+                        next={changePage}
+                        scrollableTarget="scrollableDiv"
+                        endMessage={
+                            <p style={{textAlign: 'center'}}>
+                                <b>Yay! You have seen it all</b>
+                            </p>
+                        }
+                        loader={null}
+                        dataLength={postsDataAdd.length}
+                    >
+                        {postsDataAdd && postsDataAdd?.length > 0 ? postsDataAdd.map((post, index) => {
+                            const isLiked =
+                                post.likes && post.likes.length > 0 &&
+                                post.likes.filter((like) => like?.user?.id === userPa?.id).length > 0;
+                            return <PostCard
+                                change={change}
+                                liked={isLiked}
+                                key={post.id}
+                                post={post}
+                                user={userPa}
+                            />
+                        }) : ''}
+                    </InfiniteScroll> : <div style={{textAlign: 'center', fontSize: '20px'}}
+                                             className={changeAllTheme('darknessFont', 'brightFont')}>{home.noData}</div>
+                    // <div style={{textAlign: 'center', fontSize: '20px'}}
+                    //      className={changeAllTheme('darknessFont', 'brightFont')}>{home.sign}</div>
                 }
             </div>
         </div>
-        <Bott />
+        <Bott/>
     </div>);
 }
 

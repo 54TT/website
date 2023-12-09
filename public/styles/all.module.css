@@ -434,7 +434,8 @@
 .newPairTable {
     display: flex;
     align-items: start;
-    justify-content: start;
+    justify-content: space-between;
+
 }
 
 .newPairTableText {
@@ -657,8 +658,34 @@
     background-color: rgb(253, 213, 62);
 }
 
+/* 文字中间省略，前后显示样式 */
+.homeTableParentText {
+    width: 100px;
+}
+
+.homeTableParentMain {
+    width: 100%;
+    display: flex;
+    overflow: hidden;
+}
+
+.homeTablePrenSpan {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.homeTableNextSpan {
+    display: block;
+    white-space: nowrap;
+}
+
 .coinBox {
     margin-right: 20px;
+    background-color: rgb(253,213,52);
+    border-radius: 10px;
+    padding: 10px;
 }
 
 .coinBoxTop {
@@ -672,7 +699,15 @@
     align-items: center;
     margin-left: 10px;
 }
-
+.coinBoxInfo{
+    font-size: 18px;
+    font-weight: bold;
+    margin-right: 10px;
+    cursor: pointer;
+}
+.coinBoxForm{
+    display: flex;align-items: center; justify-content: space-between;flex-wrap:wrap;
+}
 
 .coin {
     margin-right: 20px;
@@ -693,21 +728,93 @@
 
 .lpDetail {
     background-color: rgb(253, 213, 62);
- border-radius: 10px;
+    border-radius: 10px;
     margin-right: 20px;
     padding: 40px;
-    display: flex;align-items: start;
+    display: flex;
     justify-content: space-between;
 }
+.lpDetailRight{
+    width: 80%;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: rgb(249,181,54);
+    display:flex;align-items:center;flex-direction:column;
+}
+.lpDetailRightImg{
+    width: 30px;
+    margin-bottom: 5px;
+}
 
+.lpDetailLeftBack{
+    padding: 10px 20px;
+    background-color: rgb(249,181,54);
+    font-weight: bold;
+    font-size: 20px;
+    border-radius: 15px;
+}
+
+.lpDetailLefP{
+    font-size: 18px; font-weight: bold; text-align: center;
+}
+.lpDetailLefPT{
+    font-size: 20px; text-align: center;
+}
+.lpDetailLeft {
+    width: 70%;
+}
+.lpDetailLeftTop{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+.lpDetailLeftBot{
+    background-color: rgb(249,181,54); padding: 20px;
+    border-radius: 10px;
+}
+
+.lpDetailR{
+    width: 24%;
+    justify-content: space-between;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.lpDetailRightP{
+    color:#2294D4;text-align:center;line-height:1;
+}
 /* 超小屏幕 */
 @media screen and (max-width: 768px) {
-    .boxPar {
+    /*.boxPar {*/
+    /*    display: flex;*/
+    /*    flex-direction: column;*/
+    /*}*/
+    /*.boxPar > .left {*/
+    .launchBoxFilter {
+        margin-top: 20px;
+    }
+
+    .mobliceInfoBoxTop {
+        margin-right: 16px;
+    }
+
+    .mobliceNewPair {
+        margin-top: 20px;
+    }
+
+    .launchBoxCardBox {
+        align-items: flex-start;
+        flex-direction: column
+    }
+
+    .boxPar, .mobliceBottomBoxLogo {
         display: flex;
         flex-direction: column;
     }
 
-    .boxPar > .left {
+    .boxPar > .left, .homeModule {
         width: 100%;
     }
 
@@ -716,13 +823,13 @@
         flex-direction: column;
     }
 
-    .homeModule {
-        width: 100%;
-    }
-
+    /*.homeModule {*/
+    /*    width: 100%;*/
+    /*}*/
+    /*.mobliceBottomBoxLogo {*/
+    /*    display: flex;*/
+    /*    flex-direction: column;*/
     .mobliceBottomBoxLogo {
-        display: flex;
-        flex-direction: column;
         flex-wrap: nowrap;
         align-items: center;
     }
@@ -768,6 +875,54 @@
         min-width: auto;
         overflow-x: auto;
     }
+
+    .featuredColumns {
+        min-width: 30px;
+    }
+
+    .newPairTableText {
+        margin-left: 0;
+    }
+
+    .newPairTable {
+        flex-direction: column;
+    }
+
+    .allMoblice {
+        margin-top: 20px;
+        margin-left: -86px;
+        margin-right: 4px;
+    }
+
+    .allMobliceW {
+        width: 100%;
+    }
+
+    .usernameBoxBot {
+        padding-right: 20px;
+    }
+
+    .mobliceInfoBox {
+        width: 100%;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+
+    .usernameBoxUpdate, .usernameBoxUp {
+        width: 40px;
+        height: 40px;
+    }
+
+    .moblicePresaleBoxTableP {
+        width: 100px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        word-wrap: normal;
+    }
+
+    .presaleBoxTableP {
+        text-align: left;
+    }
 }
 
 /* 小屏幕 */
@@ -777,6 +932,17 @@
         justify-content: space-around;
     }
 
+    .featuredColumns {
+        min-width: 30px;
+    }
+
+    .newPairTable {
+        flex-direction: column;
+    }
+
+    .newPairTableText {
+        margin-left: 0;
+    }
 }
 
 /* 中型屏幕 平板 */

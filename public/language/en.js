@@ -28,12 +28,12 @@ export const en = {
     },
     drawer: {
         home: 'Home',
-        featured: 'Featured',
-        presale: 'Live New Pairs',
-        launch: 'Launch',
-        newPair: 'Presale',
-        community: 'Information',
-        user: 'Chat'
+        featured: 'Featured Pairs',
+        presale: 'Presales',
+        launch: 'Launching Soon Tokens',
+        newPair: 'Live New Pairs',
+        community: 'DEXpert Community',
+        user: 'User Chat'
     },
     home: {
         presale: 'Presale',

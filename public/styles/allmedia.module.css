@@ -1,0 +1,28 @@
+/* 超小屏幕 */
+@media screen and (max-width: 768px) {
+  .allMobliceBox{
+    margin: 20px 4px 0 -86px;
+  }
+  .allMoblice{
+    width: 100%;
+  }
+  .mobliceEditInput{
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+/* 小屏幕 */
+@media screen and (min-width: 768px) {
+
+}
+
+/* 中型屏幕 平板 */
+@media screen and (min-width: 992px){
+}
+
+/* 电脑屏幕 */
+@media screen and (min-width: 1200px){
+
+}
