@@ -679,6 +679,9 @@
 
 /* 超小屏幕 */
 @media screen and (max-width: 768px) {
+    .mobliceImage{
+        display: none;
+    }
     .launchBoxFilter{
         margin-top: 20px;
     }

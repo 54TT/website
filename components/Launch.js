@@ -151,7 +151,7 @@ export default function Presale() {
             <Card className={`${styled.launchBoxCard}  ${changeAllTheme('darknessTwo','brightTwo')}`} >
                 <div className={styled.launchBoxCardBox}>
                     <div style={{display: 'flex', alignItems: 'center'}}>
-                        <img src="/Group.png" alt="" width={70} height={70}/>
+                        <img src="/Group.png" alt="" width={70} height={70} className={styled.mobliceImage}/>
                         <span style={{fontWeight: 'bold', fontSize: '26px'}} className={changeAllTheme('darknessFont' ,'brightFont')}> {launch.launch}</span>
                     </div>
                     <div className={styled.launchBoxFilter}>
@@ -159,7 +159,7 @@ export default function Presale() {
                                     total={launchAll} pageSize={launchPageSize}/>
                     </div>
                 </div>
-                <Table className={`anyTable ${changeAllTheme('hotTableD' ,'hotTable')}`} scroll={{x: 'max-content'}} bordered={false} columns={columns} loading={launchBol}
+                <Table className={` ${changeAllTheme('hotTableD' ,'hotTable')}`} scroll={{x: 'max-content'}} bordered={false} columns={columns} loading={launchBol}
                        dataSource={launchPro} rowKey={(record) => record.symbol + record.address}
                        pagination={false} rowClassName={(record) => {
                     return 'oneHave'

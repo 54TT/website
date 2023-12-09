@@ -193,7 +193,7 @@ export default function NewPair() {
             <Card className={`${styled.launchBoxCard} ${changeTheme?'darknessTwo':'brightTwo'}`}>
                 <div className={styled.launchBoxCardBox}>
                     <div style={{display: 'flex', alignItems: 'center'}}>
-                        <Image src="/gpsReceiving.png" alt="" height={70} width={70}/>
+                        <Image src="/gpsReceiving.png" alt="" height={70} width={70} className={styled.mobliceImage}/>
                         <span style={{fontWeight: 'bold', fontSize: '26px'}} className={changeTheme ? 'darknessFont' : 'brightFont'}>{newPair?.newPair}</span>
                     </div>
                     <div className={styled.mobliceNewPair}>

@@ -162,7 +162,7 @@ export default function Presale() {
             <Card className={`${styled.launchBoxCard} ${changeAllTheme('darknessTwo','brightTwo')}`}>
                 <div className={styled.launchBoxCardBox}>
                     <div style={{display: 'flex', alignItems: 'center'}}>
-                        <Image src="/Group.png" alt="" width={70} height={70}/>
+                        <Image src="/Group.png" alt="" width={70} height={70} className={styled.mobliceImage} />
                         <span style={{fontWeight: 'bold', fontSize: '26px'}} className={changeAllTheme('darknessFont' ,'brightFont')}>{presale.presales}</span>
                     </div>
                     <div className={styled.launchBoxFilter}>

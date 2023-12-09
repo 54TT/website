@@ -170,16 +170,16 @@ export default function Featured() {
             <Card className={`${styled.featuredBoxCard} ${changeAllTheme('darknessTwo','brightTwo')}`} >
                 <div className={styled.featuredBoxTop}>
                     <div style={{display: 'flex', alignItems: 'center'}}>
-                        <Image src="/wallet.png" alt="" width={70}  height={70}/>
+                        <Image src="/wallet.png" alt="" width={70}  height={70} className={styled.mobliceImage} />
                         <span style={{fontWeight: 'bold', fontSize: '26px'}} className={changeAllTheme('darknessFont','brightFont')}>{featured.featured}</span>
                     </div>
                     <Segmented options={['5m', '1h', '6h', '24h']} onChange={changSeg} defaultValue={'24h'} className={`${changeAllTheme('darkMode', 'whiteMode')}`} />
 
                 </div>
                 <Table 
-                    className={`anyTable ${changeAllTheme('hotTableD','hotTable')}`} 
+                    className={`${changeAllTheme('hotTableD','hotTable')}`} 
                     columns={columns} 
-                    scroll={{x: 'max-content'}} 
+                    scroll={{x: 'max-content'}}
                     rowKey={(record)=>record?.baseToken?.address+record?.quoteToken?.address} 
                     onRow={(record) => {
                     return {

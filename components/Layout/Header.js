@@ -437,10 +437,20 @@ const Header = () => {
     const pushPer = () => {
         if (cookie.get('name')) {
             const data = cookie.get('name')
-            router.push(`/${data}`)
+                        router.push(`/${data}`)
         } else {
             getMoney()
         }
+    }
+    const strategy = {
+        "one": function(){return router.push('/')},
+        "two": function(){return router.push('/featured')},
+        "three": function(){return router.push('/presale')},
+        "four": function(){return router.push('/launch')},
+        "five": function(){return router.push('/newPair')}
+    }
+    const pushOnclick = (level) => {
+        return strategy[level]
     }
     return (
         <>
@@ -779,44 +789,44 @@ const Header = () => {
             <div className={`${ isShowMenuItem ? styles.mobliceMentHideItemsBox : styles.mobliceMentItemsBox } ${changeTheme ? 'darknessTwo' : 'brightTwo'}`} >
                 <div style={{ display: 'flex', flexWrap: 'wrap'}}>
                     <div className={`${styles.mobliceDpFlex}`}>
-                        <Link href={'/'}>
+                        <div onClick={pushOnclick('one')}>
                             <div className={`${styles.mobliceDpFlexs}`}>
                                 <Image src={`/Vector.svg`} alt="logo" width={32} height={32}/>
                                 <div className={changeTheme?'darknessFont':'brightFont'}>{drawer.home}</div>
                             </div>
-                        </Link>
+                        </div>
                     </div>
                     <div className={`${styles.mobliceDpFlex}`}>
-                        <Link href={'/featured'}>
+                        <div onClick={pushOnclick('two')}>
                             <div className={`${styles.mobliceDpFlexs}`}>
                                 <Image src={`/icon_graph_.svg`} alt="logo" height={32} width={32}/>
                                 <div className={changeTheme?'darknessFont':'brightFont'}>{drawer.featured}</div>
                             </div>
-                        </Link>
+                        </div>
                     </div>
                     <div className={`${styles.mobliceDpFlex}`}>
-                        <Link href={'/presale'}>
+                        <div onClick={pushOnclick('three')}>
                             <div className={`${styles.mobliceDpFlexs}`}>
                                 <Image src={`/icon_rocket_.svg`} alt="logo" height={32} width={32}/>
                                 <div className={changeTheme?'darknessFont':'brightFont'}>{drawer.presale}</div>
                             </div>
-                        </Link>
+                        </div>
                     </div>
                     <div className={`${styles.mobliceDpFlex}`}>
-                        <Link href={'/launch'}>
+                        <div onClick={pushOnclick('four')}>
                             <div className={`${styles.mobliceDpFlexs}`}>
                                 <Image src={`/icon_timer_.svg`} alt="logo" height={32} width={32}/>
                                 <div className={changeTheme?'darknessFont':'brightFont'}>{drawer.launch}</div>
                             </div>
-                        </Link>
+                        </div>
                     </div>
                     <div className={`${styles.mobliceDpFlex}`}>
-                        <Link href={'/newPair'}>
+                        <div onClick={pushOnclick('five')}>
                             <div className={`${styles.mobliceDpFlexs}`}>
                                 <Image src={`/GroupJiuBa.svg`} alt="logo" height={32} width={32}/>
                                 <div className={changeTheme?'darknessFont':'brightFont'}>{drawer.newPair}</div>
                             </div>
-                        </Link>
+                        </div>
                     </div>
                     <div className={`${styles.mobliceDpFlex}`}>
                         <div onClick={push}>
