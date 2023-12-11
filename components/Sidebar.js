@@ -9,16 +9,17 @@ import {
 import dynamic from "next/dynamic";
 const SidebarRow = dynamic(() => import('./HelperComponents/SidebarRow'),{ ssr: false })
 import {changeLang} from "/utils/set";
+import styles from '../public/styles/social.module.css'
 
 function Sidebar({user, topDist, maxWidth}) {
     const social=changeLang('social')
     return (
         <div
-            className={
-                maxWidth
-                    ? `p-2 max-w-[400px] xl:min-w-[230px]   xl:ml-6`
-                    : `p-2 max-w-[600px] xl:min-w-[300px]  xl:ml-6`
-            }
+            className={`${maxWidth
+                ? `p-2 max-w-[400px] xl:min-w-[230px]   xl:ml-6`
+                : `p-2 max-w-[600px] xl:min-w-[300px]  xl:ml-6`}
+                ${styles.mobliceSidebar}
+            `}
             style={{
                 alignSelf: "flex-start",
                 fontFamily: "Inter",

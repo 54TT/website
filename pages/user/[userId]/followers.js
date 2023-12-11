@@ -74,10 +74,33 @@ function FollowersPage() {
             content={`There was an error while fetching the users this user has followed`}
         />);
     }
+    // 获取屏幕
+    const [winHeight, setHeight] = useState();
+    const isAndroid = () => {
+        console.log(window.navigator.userAgent, "nav");
+        const u = window?.navigator?.userAgent;
+        if (u.indexOf("Android") > -1 || u.indexOf("iPhone") > -1) return true;
+        return false;
+    };
+    useEffect(() => {
+        if (isAndroid()) {
+        setHeight(window.innerHeight - 180);
+        } else {
+        setHeight("auto");
+        }
+    });
+
+
+
+
 
     return (
         <div className={styled.allMoblice}>
-            <div className={`h-screen ${styled.followersBox} ${styled.allMobliceW}`}>
+            <div 
+                className={`h-screen ${styled.followersBox} ${styled.allMobliceW}`}
+                style={{ height: winHeight, minHeight: winHeight }}
+                
+            >
                 <main className={styled.followersBoxMin}>
                     <Sidebar user={userPar} topDist={"0"} maxWidth={"250px"}/>
                     <div

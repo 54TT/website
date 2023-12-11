@@ -231,9 +231,31 @@ function ChatsPage() {
 
         }
     }
+    // 获取屏幕
+    const [winHeight, setHeight] = useState();
+    const isAndroid = () => {
+        console.log(window.navigator.userAgent, "nav");
+        const u = window?.navigator?.userAgent;
+        if (u.indexOf("Android") > -1 || u.indexOf("iPhone") > -1) return true;
+        return false;
+    };
+    useEffect(() => {
+        if (isAndroid()) {
+        setHeight(window.innerHeight - 180);
+        } else {
+        setHeight("auto");
+        }
+    });
+
+
+
+
+
     return (
         <div className={styles.allMobliceBox}>
-            <div className={styles.allMoblice} style={{backgroundColor: 'rgb(253,213,62)', marginRight: '20px', borderRadius: '10px',}}>
+            <div 
+                className={styles.allMoblice} 
+                style={{backgroundColor: 'rgb(253,213,62)', marginRight: '20px', borderRadius: '10px', height: winHeight, minHeight: winHeight}}>
                 <main className="flex" style={{height: "calc(100vh - 4.5rem)"}}>
                     <Sidebar user={userPar} maxWidth={"250px"}/>
                     <div style={{backgroundColor: 'rgba(201,201,201,0.7)'}}

@@ -122,6 +122,9 @@
 .fadeinlol {
   animation: fadeinagain 1.32s ease-out;
 }
+.mobliceMinH_Scree{
+  /* margin-right: 20px; */
+}
 
 /* .fadeout {
   opacity: 0;
@@ -131,9 +134,24 @@
 /* 超小屏幕 */
 @media screen and (max-width: 768px) {
   .mobliceSocialBox{
-    margin-top: 20px;
-    margin-left: -84px;
-    margin-right: 4px;
+    margin: 20px 4px 50px -84px;
+    /* height: 100vh;
+    overflow: auto; */
+  }
+  .mobliceMain{
+    flex-direction: column-reverse;
+  }
+  .mobliceSidebar{
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    padding: 0;
+  }
+  .mobliceMinH_Scree{
+    margin-right: 0;
+    overflow: hidden;
   }
 }
 
