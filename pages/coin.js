@@ -7,8 +7,7 @@ const {TextArea} = Input
 import dayjs from 'dayjs'
 import 'dayjs/locale/zh-cn';
 import cookie from "js-cookie";
-import {CountContext} from "../components/Layout/Layout";
-
+import {CountContext} from '/components/Layout/Layout';
 function Coin() {
     const {changeTheme} = useContext(CountContext);
     const [form] = Form.useForm();
@@ -150,7 +149,8 @@ function Coin() {
         }) : null
     }
     return (
-        <div className={styles.coin}>
+        //
+        <div className={`${styles.coin} ${changeTheme?'darknessTwo': 'brightTwo'}`}>
             {
                 infoSow ? <Form
                     name="basic"
@@ -161,7 +161,7 @@ function Coin() {
                 >
                     <div style={{display: 'flex', alignItems: 'start', justifyContent: 'space-between'}}>
                         <div style={{width: '46%'}}>
-                            <p style={{fontSize: '20px', fontWeight: 'bold'}}>Coin info</p>
+                            <p style={{fontSize: '20px', fontWeight: 'bold'}} className={changeTheme?'fontW':'fontB'}>Coin info</p>
                             <Form.Item
                                 label="Name"
                                 name="name"
@@ -226,7 +226,7 @@ function Coin() {
                             </Form.Item>
                         </div>
                         <div style={{width: '46%'}}>
-                            <p style={{fontSize: '20px', fontWeight: 'bold'}}>Presale&Launch</p>
+                            <p style={{fontSize: '20px', fontWeight: 'bold'}} className={changeTheme?'fontW':'fontB'}>Presale&Launch</p>
                             <Form.Item
                                 label="Presale time(UTC)"
                                 name="presaleTime"
@@ -442,7 +442,7 @@ function Coin() {
                             </div>
                         })
                     }
-                    <Button style={{backgroundColor: 'rgb(254,239,146)'}} onClick={() => {
+                    <Button className={changeTheme?'darknessThree':'brightFore'}   onClick={() => {
                         form.resetFields()
                         setInfoShow(true)
                         setImagePreview(null)

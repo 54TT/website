@@ -11,7 +11,7 @@ import '/public/styles/scroll.module.css'
 import Image from 'next/image'
 import {request} from '/utils/hashUrl'
 import {changeLang} from "/utils/set";
-import {CountContext} from "./Layout/Layout";
+import {CountContext} from '/components/Layout/Layout';
 
 export default function Presale() {
     const launch = changeLang('launch')
@@ -31,7 +31,7 @@ export default function Presale() {
         return changeTheme ? a : b
     }
     const getParams = async (url, params) => {
-        const res = await request('get', url, {params})
+        const res = await request('get', url, params)
         if (res.status === 200) {
             let {launchs} = res.data
             setLaunch(launchs && launchs.length > 0 ? launchs : [])

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 
 import dynamic from "next/dynamic";
 import styles from "../components/Layout/css/header.module.css";
-import { CountContext } from "../components/Layout/Layout";
+import { CountContext } from '/components/Layout/Layout';
 import cookie from "js-cookie";
 import { changeLang } from "/utils/set";
 import { notification } from 'antd'

@@ -69,7 +69,8 @@ export const scn={
         symbol:'代币符号',
         social:'社会信息',
         time:'预售时间',
-        platform:'平台',
+        platform:'平台图标',
+        PlatformName:'平台名称',
         dex:'图标'
     },
     launch:{
@@ -78,7 +79,8 @@ export const scn={
         symbol:'代币符号',
         social:'社会信息',
         time:'发射时间',
-        platform:'平台',
+        platform:'平台图标',
+        PlatformName:'平台名称',
         dex:'图标'
     },
     newPair:{

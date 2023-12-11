@@ -11,15 +11,15 @@ import Link from 'next/link'
 import cookie from "js-cookie";
 import Image from 'next/image'
 import {changeLang} from "/utils/set";
-import {Switch } from 'antd'
-import {CountContext} from "./Layout";
+import {Switch} from 'antd'
+import {CountContext} from '/components/Layout/Layout';
 
 const Drawer = ({getMoney}) => {
-    const { changeBack,changeTheme,} = useContext(CountContext);
+    const {changeBack, changeTheme,} = useContext(CountContext);
     const router = useRouter();
     const drawerWidth = 300;
     const drawer = changeLang('drawer')
-    const [value,setValue] =useState(false)
+    const [value, setValue] = useState(false)
     const openedMixin = (theme) => ({
         width: drawerWidth,
         transition: theme.transitions.create('width', {
@@ -87,13 +87,13 @@ const Drawer = ({getMoney}) => {
             getMoney()
         }
     }
-    const changeThemes=(value)=>{
+    const changeThemes = (value) => {
         changeBack(value)
         setValue(value)
     }
     return (
-        <div className="drawerShowNode">
-            <div className={changeTheme?'darknessTwo':'brightTwo'} style={{position: 'relative'}}>
+        <div className={`drawerShowNode ${changeTheme ? 'socialScrollD' : 'socialScroll'}`}>
+            <div className={changeTheme ? 'darknessTwo' : 'brightTwo'} style={{position: 'relative'}}>
                 <Drawer variant="permanent" open={openDrawer} onMouseEnter={handleDrawerOpen}
                         onMouseLeave={handleDrawerClose}>
                     <Link href={'/statement'}>
@@ -107,20 +107,22 @@ const Drawer = ({getMoney}) => {
                                         minWidth: 0,
                                         mr: openDrawer ? 3 : 0,
                                         justifyContent: 'center',
-                                        marginLeft:'10px'
+                                        marginLeft: '10px'
                                     }}
                                 >
                                     {/* 源图片：logoTop */}
                                     <Image src={'/logo.svg'} alt="logo" width={30} height={30}/>
                                 </ListItemIcon>
                                 <ListItemText primary={<div style={{width: '50%'}}>
-                                    <Image width={100} height={100} style={{width: '100%'}} src="/Union.png" alt=""/></div>}
-                                            sx={{opacity: openDrawer ? 1 : 0}}/>
+                                    <Image width={100} height={100} style={{width: '100%'}} src="/Union.png" alt=""/>
+                                </div>}
+                                              sx={{opacity: openDrawer ? 1 : 0}}/>
                             </DrawerHeader>
                         </div>
                     </Link>
                     <List>
-                        <ListItem key="Home" disablePadding sx={{display: 'block',}} className={changeTheme?'darknessItem':'brightItem'}>
+                        <ListItem key="Home" disablePadding sx={{display: 'block',}}
+                                  className={changeTheme ? 'darknessItem' : 'brightItem'}>
                             <Link href={'/'}>
                                 <ListItemButton
                                     sx={{
@@ -135,14 +137,17 @@ const Drawer = ({getMoney}) => {
                                             justifyContent: 'center',
                                         }}
                                     >
-                                         {/* 源图片：HomeLogo */}
+                                        {/* 源图片：HomeLogo */}
                                         <Image src={`/Vector.svg`} alt="logo" width={28} height={28}/>
                                     </ListItemIcon>
-                                    <ListItemText primary={<span className={changeTheme?'darknessFont':'brightFont'}>{drawer.home}</span>} sx={{opacity: openDrawer ? 1 : 0}}/>
+                                    <ListItemText primary={<span
+                                        className={changeTheme ? 'darknessFont' : 'brightFont'}>{drawer.home}</span>}
+                                                  sx={{opacity: openDrawer ? 1 : 0}}/>
                                 </ListItemButton>
                             </Link>
                         </ListItem>
-                        <ListItem key="Featured Pairs" disablePadding sx={{display: 'block'}} className={changeTheme?'darknessItem':'brightItem'}>
+                        <ListItem key="Featured Pairs" disablePadding sx={{display: 'block'}}
+                                  className={changeTheme ? 'darknessItem' : 'brightItem'}>
                             <Link href={'/featured'}>
                                 <ListItemButton
                                     sx={{
@@ -160,11 +165,14 @@ const Drawer = ({getMoney}) => {
                                         {/* 源图片：ExchangeLogo */}
                                         <Image src={`/icon_graph_.svg`} alt="logo" height={28} width={28}/>
                                     </ListItemIcon>
-                                    <ListItemText primary={<span className={changeTheme?'darknessFont':'brightFont'}>{drawer.featured}</span>} sx={{opacity: openDrawer ? 1 : 0}}/>
+                                    <ListItemText primary={<span
+                                        className={changeTheme ? 'darknessFont' : 'brightFont'}>{drawer.featured}</span>}
+                                                  sx={{opacity: openDrawer ? 1 : 0}}/>
                                 </ListItemButton>
                             </Link>
                         </ListItem>
-                        <ListItem key="Presales" disablePadding sx={{display: 'block'}} className={changeTheme?'darknessItem':'brightItem'}>
+                        <ListItem key="Presales" disablePadding sx={{display: 'block'}}
+                                  className={changeTheme ? 'darknessItem' : 'brightItem'}>
                             <Link href={'/presale'}>
                                 <ListItemButton
                                     sx={{
@@ -182,11 +190,14 @@ const Drawer = ({getMoney}) => {
                                         {/* 源图片：pre-saleLogo */}
                                         <Image src={`/icon_rocket_.svg`} alt="logo" height={28} width={28}/>
                                     </ListItemIcon>
-                                    <ListItemText primary={ <span className={changeTheme?'darknessFont':'brightFont'}>{drawer.presale}</span>} sx={{opacity: openDrawer ? 1 : 0}}/>
+                                    <ListItemText primary={<span
+                                        className={changeTheme ? 'darknessFont' : 'brightFont'}>{drawer.presale}</span>}
+                                                  sx={{opacity: openDrawer ? 1 : 0}}/>
                                 </ListItemButton>
                             </Link>
                         </ListItem>
-                        <ListItem key="Launching Soon Tokens" disablePadding sx={{display: 'block'}} className={changeTheme?'darknessItem':'brightItem'}>
+                        <ListItem key="Launching Soon Tokens" disablePadding sx={{display: 'block'}}
+                                  className={changeTheme ? 'darknessItem' : 'brightItem'}>
                             <Link href={'/launch'}>
                                 <ListItemButton
                                     sx={{
@@ -204,11 +215,14 @@ const Drawer = ({getMoney}) => {
                                         {/* 源图片：pre-saleLogo */}
                                         <Image src={`/icon_timer_.svg`} alt="logo" height={28} width={28}/>
                                     </ListItemIcon>
-                                    <ListItemText primary={<span className={changeTheme?'darknessFont':'brightFont'}>{drawer.launch}</span>} sx={{opacity: openDrawer ? 1 : 0}}/>
+                                    <ListItemText primary={<span
+                                        className={changeTheme ? 'darknessFont' : 'brightFont'}>{drawer.launch}</span>}
+                                                  sx={{opacity: openDrawer ? 1 : 0}}/>
                                 </ListItemButton>
                             </Link>
                         </ListItem>
-                        <ListItem key="Live New Pairs" disablePadding sx={{display: 'block'}} className={changeTheme?'darknessItem':'brightItem'}>
+                        <ListItem key="Live New Pairs" disablePadding sx={{display: 'block'}}
+                                  className={changeTheme ? 'darknessItem' : 'brightItem'}>
                             <Link href={'/newPair'}>
                                 <ListItemButton
                                     sx={{
@@ -226,11 +240,14 @@ const Drawer = ({getMoney}) => {
                                         {/* 源图片：newpairsLogo */}
                                         <Image src={`/GroupJiuBa.svg`} alt="logo" height={28} width={28}/>
                                     </ListItemIcon>
-                                    <ListItemText primary={<span className={changeTheme?'darknessFont':'brightFont'}>{drawer.newPair}</span>} sx={{opacity: openDrawer ? 1 : 0}}/>
+                                    <ListItemText primary={<span
+                                        className={changeTheme ? 'darknessFont' : 'brightFont'}>{drawer.newPair}</span>}
+                                                  sx={{opacity: openDrawer ? 1 : 0}}/>
                                 </ListItemButton>
                             </Link>
                         </ListItem>
-                        <ListItem key="DEXpert Community" disablePadding sx={{display: 'block'}} className={changeTheme?'darknessItem':'brightItem'}>
+                        <ListItem key="DEXpert Community" disablePadding sx={{display: 'block'}}
+                                  className={changeTheme ? 'darknessItem' : 'brightItem'}>
                             <div onClick={push}>
                                 <ListItemButton
                                     sx={{
@@ -248,11 +265,14 @@ const Drawer = ({getMoney}) => {
                                         {/* 源图片：NewsLogo */}
                                         <Image src={`/icon_newspaper_.svg`} alt="logo" width={28} height={28}/>
                                     </ListItemIcon>
-                                    <ListItemText primary={<span className={changeTheme?'darknessFont':'brightFont'}>{drawer.community}</span>} sx={{opacity: openDrawer ? 1 : 0}}/>
+                                    <ListItemText primary={<span
+                                        className={changeTheme ? 'darknessFont' : 'brightFont'}>{drawer.community}</span>}
+                                                  sx={{opacity: openDrawer ? 1 : 0}}/>
                                 </ListItemButton>
                             </div>
                         </ListItem>
-                        <ListItem key="User Profile" disablePadding sx={{display: 'block'}} className={changeTheme?'darknessItem':'brightItem'}>
+                        <ListItem key="User Profile" disablePadding sx={{display: 'block'}}
+                                  className={changeTheme ? 'darknessItem' : 'brightItem'}>
                             <div onClick={pushPer}>
                                 <ListItemButton
                                     sx={{
@@ -266,17 +286,20 @@ const Drawer = ({getMoney}) => {
                                             mr: openDrawer ? 3 : 0,
                                             justifyContent: 'center',
                                         }}
-                                    > 
-                                    {/* 源图片：UserSettings */}
+                                    >
+                                        {/* 源图片：UserSettings */}
                                         <Image src={`/icon_new_spaper_.svg`} height={28} alt="logo" width={28}/>
                                     </ListItemIcon>
-                                    <ListItemText primary={<span className={changeTheme?'darknessFont':'brightFont'}>{drawer.user}</span>} sx={{opacity: openDrawer ? 1 : 0}}/>
+                                    <ListItemText primary={<span
+                                        className={changeTheme ? 'darknessFont' : 'brightFont'}>{drawer.user}</span>}
+                                                  sx={{opacity: openDrawer ? 1 : 0}}/>
                                 </ListItemButton>
                             </div>
                         </ListItem>
                     </List>
                     <div style={{position: 'absolute', bottom: '20px', left: '8px'}}>
-                        <Switch checked={value} className={changeTheme?'darknessOne':'brightOne'} onChange={changeThemes}/>
+                        <Switch checked={value} className={changeTheme ? 'darknessOne' : 'brightOne'}
+                                onChange={changeThemes}/>
                     </div>
                 </Drawer>
             </div>

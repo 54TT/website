@@ -20,6 +20,7 @@ import styles from '/public/styles/allmedia.module.css'
 const ChatSearch = dynamic(() => import('../components/Chat/ChatSearch'),{ ssr: false });
 const Chat = dynamic(() => import('../components/Chat/Chat'),{ ssr: false });
 import {changeLang} from "/utils/set";
+import {request} from "../utils/hashUrl";
 
 function ChatsPage() {
     const social=changeLang('social')
@@ -28,12 +29,13 @@ function ChatsPage() {
     const [userPar, setUserPar] = useState({});
     const getUs = async () => {
         const a = cook.get('name')
-        const {data: {user}, status} = await getUser(a)
-        if (status === 200 && user) {
-            setUserPar(user)
-        } else {
-            setUserPar('')
-        }
+        const data = await request('get', "/api/v1/userinfo",'')
+        // const {data: {user}, status} = await getUser(a)
+        // if (status === 200 && user) {
+        //     setUserPar(user)
+        // } else {
+        //     setUserPar('')
+        // }
     }
     useEffect(() => {
         if (cook.get('name')) {

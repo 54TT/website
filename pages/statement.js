@@ -3,7 +3,7 @@ import Bott from '/components/Bottom'
 import style from '/public/styles/home.module.css'
 import Image from 'next/image'
 import {changeLang} from "/utils/set";
-import {CountContext} from "../components/Layout/Layout";
+import {CountContext} from '/components/Layout/Layout'
 
 function Statement() {
     const {changeTheme} = useContext(CountContext);

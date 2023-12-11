@@ -29,7 +29,6 @@ const config = createConfig(
 //     autoConnect: true,
 //         provider,
 // })
-
 import Layout from '/components/Layout/Layout'
 import Head from 'next/head';
 import React, { useContext } from "react";
@@ -43,22 +42,9 @@ function DexPert({Component, pageProps}) {
             </Head>
             <WagmiConfig config={config}>
                 <ConnectKitProvider debugMode>
-                    <ConfigProvider
-                        theme={{
-                            components:{
-                                Select: {
-                                    selectorBg: 'rgb(254, 239, 146)'
-                                },
-                                Segmented:{
-                                    itemSelectedBg: "rgb(253, 213, 62)",
-                                }
-                            }
-                        }}
-                    >
                         <Layout>
                             <Component {...pageProps} />
                         </Layout>
-                    </ConfigProvider>
                 </ConnectKitProvider>
             </WagmiConfig>
         </>

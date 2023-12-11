@@ -11,7 +11,7 @@ import styled from '/public/styles/all.module.css'
 const {Countdown} = Statistic;
 import Image from 'next/image'
 import {changeLang} from "/utils/set";
-import {CountContext} from "./Layout/Layout";
+import {CountContext} from '/components/Layout/Layout';
 import {request} from "../utils/hashUrl";
 
 export default function Presale() {
@@ -35,8 +35,8 @@ export default function Presale() {
         });
     }
     const getParams = async (url, params) => {
-        const res = await request('get', url, {params})
-        if (res.status === 200) {
+        const res = await request('get', url, params)
+        if (res&&res?.status === 200) {
             let {presales} = res?.data
             setLaunch(presales && presales.length > 0 ? presales : [])
             setLaunchAll(0)
@@ -46,14 +46,6 @@ export default function Presale() {
             setLaunchAll(0)
         }
     }
-    const [diffTime, setDiffTime] = useState(null)
-    const refSet = useRef(null)
-    // useEffect(() => {
-    //     refSet.current = setInterval(() => setDiffTime(diffTime - 1), 1000)
-    //     return () => {
-    //         clearInterval(refSet.current)
-    //     }
-    // }, [diffTime])
     useEffect(() => {
         getParams('/api/v1//presale', {
             pageIndex: launchCurrent,
@@ -76,10 +68,6 @@ export default function Presale() {
             return 0
         }
     }
-    const aaa =dayjs.unix(1702042567).format('YYYY-MM-DD HH:mm:ss')
-    const bbb =dayjs.unix(1702043228).format('YYYY-MM-DD HH:mm:ss')
-    console.log(aaa)
-    console.log(bbb)
     const columns  = [
         {
             title: '',
@@ -142,9 +130,9 @@ export default function Presale() {
         },
         {
             title: presale.platform,
-            dataIndex: 'presale_platform_logo', align: 'center',
+            dataIndex: 'platformLogo', align: 'center',
             render: (text) => {
-                return <img src={baseUrl + text} alt="" width={'30px'} className={styled.presaleBoxTableImgs}/>
+                return <img src={text} alt="" width={'30px'} className={styled.presaleBoxTableImgs}/>
             }
         },
         {

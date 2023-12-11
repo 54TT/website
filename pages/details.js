@@ -4,7 +4,7 @@ import style from '../public/styles/details.module.css'
 import {Table, Card, Segmented,Progress } from 'antd'
 import axios from 'axios';
 import Image from 'next/image'
-import {CountContext} from "../components/Layout/Layout";
+import {CountContext} from '/components/Layout/Layout';
 function Details() {
     const router = useRouter();
     const { changeTheme,} = useContext(CountContext);

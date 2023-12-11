@@ -23,6 +23,7 @@ import {changeLang} from "/utils/set";
 import Image from 'next/image'
 import {gql} from "graphql-tag";
 import {ApolloClient, InMemoryCache, useQuery} from "@apollo/client";
+import dayjs from "dayjs";
 
 const client = new ApolloClient({
     uri: 'https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-v2-dev', cache: new InMemoryCache(),
@@ -60,7 +61,15 @@ const Header = () => {
     const {connect} = useConnect({
         connector: new InjectedConnector(),
     });
-    const {bolName, changeBolLogin, changeShowData, changeFont, changeTheme, changeBack} = useContext(CountContext);
+    const {
+        bolName,
+        changeBolLogin,
+        changeShowData,
+        changeBolName,
+        changeFont,
+        changeTheme,
+        changeBack
+    } = useContext(CountContext);
     const header = changeLang('header')
     const [open, setOpen] = useState(false);
     const [openPresale, setOpenPresale] = useState(false);
@@ -94,25 +103,26 @@ const Header = () => {
             setTokenFormBol(false)
         })
     }, 1500)
+    //修改用户
     useEffect(() => {
-        if (cookie.get('username') && bolName && address) {
-            console.log(33333333333)
+        if (bolName) {
             getUs()
+            changeBolName(false)
         }
     }, [bolName])
     const onClose = () => {
         setOpen(false);
         form.resetFields()
     };
+
     useEffect(() => {
+        // 切换钱包
         if (cookie.get('username') && cookie.get('name') !== address && address) {
-            cookie.set('name', address, {expires: 1})
             if (router.pathname !== '/') {
                 router.push('/')
             }
-            console.log(111111111111111)
+            handleLogin()
             changeBolLogin()
-            getUs()
         }
     }, [address])
     const showDrawer = () => {
@@ -142,8 +152,7 @@ const Header = () => {
     };
     const onFinishFailed = (a) => {
         notification.warning({
-            message: `warning`, description: 'Please enter complete data!', placement: 'topLeft',
-            duration: 2
+            message: `warning`, description: 'Please enter complete data!', placement: 'topLeft', duration: 2
         });
     }
     const onFinish = (values) => {
@@ -166,8 +175,7 @@ const Header = () => {
             } else if (!timeForm.presale || !values.presalePlatformId || !values.presaleLink) {
                 bol = true
                 notification.warning({
-                    message: `warning`, description: 'Presale please enter complete!', placement: 'topLeft',
-                    duration: 2
+                    message: `warning`, description: 'Presale please enter complete!', placement: 'topLeft', duration: 2
                 });
             } else {
                 presale.presaleTime = timeForm?.presale;
@@ -178,8 +186,7 @@ const Header = () => {
             } else if (!timeForm.launch || !values.launchPlatformId || !values.launchLink) {
                 bol = true
                 notification.warning({
-                    message: `warning`, description: 'Launch please enter complete!', placement: 'topLeft',
-                    duration: 2
+                    message: `warning`, description: 'Launch please enter complete!', placement: 'topLeft', duration: 2
                 });
             } else {
                 launch.launchTime = timeForm?.launch;
@@ -190,14 +197,14 @@ const Header = () => {
             var arrLaunch = Object.keys(launch);
             if (arrPresale.length === 0 && arrLaunch.length === 0 && !bol) {
                 notification.warning({
-                    message: `warning`, description: 'Presale or Launch please enter complete!', placement: 'topLeft',
+                    message: `warning`,
+                    description: 'Presale or Launch please enter complete!',
+                    placement: 'topLeft',
                     duration: 2
                 });
             } else if (!bol) {
                 const data = {
-                    token,
-                    presale: arrPresale.length === 0 ? '' : presale,
-                    launch: arrLaunch.length === 0 ? '' : launch
+                    token, presale: arrPresale.length === 0 ? '' : presale, launch: arrLaunch.length === 0 ? '' : launch
                 }
                 post('/addPresaleAndLaunch', data).then(res => {
                     if (res && res.data?.success) {
@@ -207,13 +214,17 @@ const Header = () => {
                         setOpen(false);
                     } else {
                         notification.warning({
-                            message: `warning`, description: 'add failed,Please try again', placement: 'topLeft',
+                            message: `warning`,
+                            description: 'add failed,Please try again',
+                            placement: 'topLeft',
                             duration: 2
                         });
                     }
                 }).catch(err => {
                     notification.warning({
-                        message: `warning`, description: 'add failed,Please try again', placement: 'topLeft',
+                        message: `warning`,
+                        description: 'add failed,Please try again',
+                        placement: 'topLeft',
                         duration: 2
                     });
                 })
@@ -232,8 +243,8 @@ const Header = () => {
     const [showChatSearch, setShowChatSearch] = useState(false);
     const [chats, setChats] = useState([]);
     const [userPar, setUserPar] = useState(null);
-    console.log(userPar)
     const [userBol, setUserBol] = useState(false);
+    // 获取聊天用户
     const getParams = async () => {
         const res = await axios.get(`${baseUrl}/api/chats`, {
             params: {userId: userPar?.id}
@@ -261,94 +272,85 @@ const Header = () => {
             setTime(data)
         }
     };
-    const [bol, setBol] = useState(false)
-    const setB = () => {
-        setBol(true)
-    }
     // 获取用户信息
     const getUs = async () => {
-        const data = await axios.get(baseUrl + "/api/user", {
-            params: {
-                address
-            }
-        })
-        if (data?.data && data?.data?.user) {
-            setUserPar(data?.data?.user)
-            cookie.set('name', address, {expires: 1})
-            // 登录刷新   social
-            changeShowData()
-            cookie.set('username', JSON.stringify(data?.data?.user), {expires: 1})
-        } else {
-            const {data} = await axios.get('https://api.ipify.org?format=json')
-            if (data && data.ip) {
-                const ip = await axios.post(baseUrl + "/api/user", {
-                    address, ipV4Address: data.ip, ipV6Address: data.ip
-                })
-                if (ip?.data && ip?.data?.user) {
-                    setUserPar(ip?.data?.user)
-                    cookie.set('username', JSON.stringify(ip?.data?.user), {expires: 1})
-                    // 登录刷新   social
-                    changeShowData()
-                    cookie.set('name', address, {expires: 1})
-                }
-            }
+        const data = await request('get', "/api/v1/userinfo",'')
+        if (data && data?.status === 200) {
+            setUserPar(data?.data?.data)
+            // cookie.set('username', JSON.stringify(data?.data?.data), {expires: 1})
         }
+        // if (data?.data && data?.data?.user) {
+        //     setUserPar(data?.data?.user)
+        //     cookie.set('name', address, {expires: 1})
+        //     // 登录刷新   social
+        //     changeShowData()
+        //     cookie.set('username', JSON.stringify(data?.data?.user), {expires: 1})
+        // } else {
+        //     const {data} = await axios.get('https://api.ipify.org?format=json')
+        //     if (data && data.ip) {
+        //         const ip = await axios.post(baseUrl + "/api/user", {
+        //             address, ipV4Address: data.ip, ipV6Address: data.ip
+        //         })
+        //         if (ip?.data && ip?.data?.user) {
+        //             setUserPar(ip?.data?.user)
+        //             cookie.set('username', JSON.stringify(ip?.data?.user), {expires: 1})
+        //             // 登录刷新   social
+        //             changeShowData()
+        //             cookie.set('name', address, {expires: 1})
+        //         }
+        //     }
+        // }
     }
-    useEffect(() => {
-        if (bol && address) {
-            console.log(222222222222)
-            getUs()
-            setBol(false)
-        }
-    }, [bol])
-    // 登录
     const handleLogin = async () => {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         // provider._isProvider   判断是否还有请求没有结束
         let account = await provider.send("eth_requestAccounts", []);
-        // let account = []
         // 连接的网络和链信息。
         var chain = await provider.getNetwork()
-        const {status, data} = await request('post', '/api/v1/token', {address})
+        const token = await request('post', '/api/v1/token', {address})
         // 获取签名
         var signer = await provider.getSigner();
+        // const signature = await signer.signMessage('你好')
         // 判断是否有账号
-        if (account.length > 0 && data && status === 200) {
+        if (account.length > 0 && token && token?.data && token?.status === 200) {
             // 判断是否是eth
             if (chain && chain.name !== 'unknow' && chain.chainId) {
                 try {
                     // const message = `请签名证明你是钱包账户的拥有者\nstatement:${window.location.host}\nNonce:\n${date}\ndomain:\n ${window.location.host}\naddress: ${address}\nchainId:${chain.chainId}\nuri: ${window.location.origin}\n`
                     // 签名
-                    const message = data?.nonce
+                    const message = token?.data?.nonce
                     const signature = await signer.signMessage(message)
                     // 验证签名
                     // const recoveredAddress = ethers.utils.verifyMessage(message, signature);
                     const res = await request('post', '/api/v1/login', {
-                        signature: signature,
-                        addr: address,
-                        message
+                        signature: signature, addr: address, message
                     })
-                    // const data = await getAddressOwner(address)
                     if (res && res.data && res.data?.accessToken) {
                         //   jwt  解析 token获取用户信息
                         const decodedToken = jwt.decode(res.data?.accessToken);
                         if (decodedToken && decodedToken.address) {
-                            cookie.set('token', res.data?.accessToken,{expires: 1})
-                            cookie.set('name', address,{expires: 1})
-                            cookie.set('username', JSON.stringify(decodedToken),{expires: 1})
+                            cookie.set('token', res.data?.accessToken, {expires: 1})
+                            cookie.set('name', address, {expires: 1})
+                            cookie.set('username', JSON.stringify(decodedToken), {expires: 1})
                             setUserBol(!userBol)
                         }
                     }
-                    // if (recoveredAddress === address) {
-                    //     setB()
-                    //     const data = await getAddressOwner(address)
-                    // }
                 } catch (err) {
                     return null
                 }
             } else {
+                notification.warning({
+                    description: 'Please select eth!',
+                    placement: 'topLeft',
+                    duration: 2
+                });
             }
         } else {
+            notification.warning({
+                description: 'Please log in or connect to your account!',
+                placement: 'topLeft',
+                duration: 2
+            });
         }
     }
 
@@ -377,8 +379,7 @@ const Header = () => {
     const getCoinContract = async (address) => {
         //   获取用户地址  所有的合约地址
         const response = await Moralis.EvmApi.token.getWalletTokenBalances({
-            "chain": "0x1",
-            "address": address
+            "chain": "0x1", "address": address
         });
         // 判断合约地址是否有
         if (response.raw && response.raw.length > 0) {
@@ -402,21 +403,11 @@ const Header = () => {
         const provider = new ethers.providers.JsonRpcProvider('https://mainnet.infura.io/v3/d2660efdeff84ac982b0d2de03e13c20');
         // eth的  合约 ABI
         const tokenAbi = [{
-            "anonymous": false,
-            "inputs": [
-                {
-                    "indexed": true,
-                    "name": "previousOwner",
-                    "type": "address"
-                },
-                {
-                    "indexed": true,
-                    "name": "newOwner",
-                    "type": "address"
-                }
-            ],
-            "name": "OwnershipTransferred",
-            "type": "event"
+            "anonymous": false, "inputs": [{
+                "indexed": true, "name": "previousOwner", "type": "address"
+            }, {
+                "indexed": true, "name": "newOwner", "type": "address"
+            }], "name": "OwnershipTransferred", "type": "event"
         }]
         //获取该  合约地址的所有者  0x726a02b8b22882a2a8bd29d03c0f34429288418a
         if (token) {
@@ -446,7 +437,9 @@ const Header = () => {
     const getMoney = () => {
         if (typeof window.ethereum === 'undefined') {
             notification.warning({
-                message: `warning`, description: 'Please install MetaMask! And refresh', placement: 'topLeft',
+                message: `warning`,
+                description: 'Please install MetaMask! And refresh',
+                placement: 'topLeft',
                 duration: 2
             });
         } else {
@@ -460,10 +453,23 @@ const Header = () => {
     }
     const [no, setNo] = useState(false)
     useEffect(() => {
-        if (cookie.get('username') && address) {
-            const data = JSON.parse(cookie.get('username'))
-            setNo(true)
-            setUserPar(data)
+        const token = cookie.get('username')
+        if (token && token != 'undefined') {
+            const data = JSON.parse(token)
+            if (data && data?.exp && dayjs(dayjs.unix(data?.exp)).isAfter(dayjs())) {
+                setNo(true)
+                setUserPar(data)
+            } else {
+                set()
+                notification.warning({
+                    message: `warning`,
+                    description: 'Login expired, please log in again!',
+                    placement: 'topLeft',
+                    duration: 2
+                });
+                setNo(false)
+                setUserPar('')
+            }
         } else {
             // router.push('/')
             setNo(false)
@@ -472,44 +478,28 @@ const Header = () => {
     }, [cookie.get('name'), cookie.get('username'), userBol])
 
     // 登录的下拉
-    const items = [
-        {
-            key: '1',
-            label: (
-                <Link href={`/${userPar && userPar.address ? userPar.address : ''}`}>
+    const items = [{
+        key: '1', label: (<Link href={`/${userPar && userPar.address ? userPar.address : ''}`}>
                        <span>
       Personal
     </span>
-                </Link>
-            ),
-        },
-        {
-            key: '2',
-            label: (
-                <span>
-         Token settings
-          </span>
-            ),
-        },
-        {
-            key: '3',
-            label: (
-                <span onClick={set}>
+        </Link>),
+    }, {
+        key: '2', label: (<Link href={'/token'}>
+                       <span>
+     Token settings
+    </span>
+        </Link>),
+    }, {
+        key: '3', label: (<span onClick={set}>
             Sign out
-          </span>
-            ),
-        },
-        {
-            key: '4',
-            label: (
-                <span onClick={set}>
+          </span>),
+    }, {
+        key: '4', label: (<Link href={'/coin'}><span>
            Add a coin
-          </span>
-            ),
-        },
-    ];
+          </span> </Link>),
+    },];
     const [launch, setLaunch] = useState([])
-
     // 搜索
     const showSearch = () => {
         if (cookie.get('username')) {
@@ -520,14 +510,13 @@ const Header = () => {
     }
     const getLaunch = async () => {
         const params = {
-            pageIndex: 1,
-            pageSize: 10
+            pageIndex: 1, pageSize: 10
         }
-        const res = await request('get','/api/v1/launch', {params})
-        if(res?.data&&res?.status===200){
+        const res = await request('get', '/api/v1/launch', params)
+        if (res?.data && res?.status === 200) {
             const {data} = res
             setLaunch(data?.launchs && data?.launchs.length > 0 ? data?.launchs : [])
-        }else {
+        } else {
             setLaunch([])
         }
     }
@@ -544,15 +533,6 @@ const Header = () => {
         const data = await provider.getGasPrice()
         const gasPrice = ethers.utils.formatUnits(data, 'gwei')
         setGas(gasPrice ? gasPrice : 0)
-        //     .then((gasPrice) => {
-        //     console.log(gasPrice)
-        //     // console.log(ethers.utils.formatEther(gasPrice), 'ETH');
-        //     console.log(data)
-        //     // setGas(data?data:0)
-        //     // console.log(ethers.utils.formatUnits(gasPrice, 'gwei')); // 将 wei 转换为 ETH，并打印到控制台
-        // }).catch((err) => {
-        //     console.error('Failed to get gas price:', err);
-        // });
     }
     // 除了Home页面显示，其它页面不展示
     const [isShowClass, setIsShowClass] = useState(Boolean)
@@ -571,7 +551,7 @@ const Header = () => {
             setIsShowMenuItem(false)
             const body = document.querySelector("body")
             body.style.overflow = "auto"
-        }else{
+        } else {
             setIsShowMenuItem(true)
             const body = document.querySelector("body")
             body.style.overflow = "hidden"
@@ -594,10 +574,8 @@ const Header = () => {
     }
     const ck = async () => {
         const data = await getAddressOwner('0xae2Fc483527B8EF99EB5D9B44875F005ba1FaE13')
-        console.log(data)
     }
-    return (
-        <>
+    return (<>
             <div className={styles['headerShowNode']}>
                 <div className={"top-0 w-full  z-30 transition-all headerClass"}>
                     {/*<span onClick={getGasPrice}>11111111111</span>*/}
@@ -607,27 +585,23 @@ const Header = () => {
                             speed={30}
                             gradientWidth={100}
                             className={styles.marqueeBox}>
-                            {
-                                launch.length > 0 && launch.map((i, index) => {
-                                    return <div key={index} className={`${styles.marquee} `}>
-                                        <span className={changeTheme ? 'darknessFont' : 'brightFont'}>#{index + 1}</span>
-                                        <p className={styles.marqueeName}>{i?.symbol?.slice(0, 1)}</p>
-                                        <span className={changeTheme ? 'darknessFont' : 'brightFont'}>{i.symbol}</span>
-                                    </div>
-                                })
-                            }
+                            {launch.length > 0 && launch.map((i, index) => {
+                                return <div key={index} className={`${styles.marquee} `}>
+                                    <span className={changeTheme ? 'darknessFont' : 'brightFont'}>#{index + 1}</span>
+                                    <p className={styles.marqueeName}>{i?.symbol?.slice(0, 1)}</p>
+                                    <span className={changeTheme ? 'darknessFont' : 'brightFont'}>{i.symbol}</span>
+                                </div>
+                            })}
                         </Marquee>
                         <div className={styles.searchToken}>
                             <p className={`${styles['search']} ${changeTheme ? 'darknessThree' : 'brightFore boxHover'}`}
                                onClick={showSearch}>{header.search}</p>
-                            {showChatSearch && (
-                                <ChatSearch
-                                    setShowChatSearch={setShowChatSearch}
-                                    chats={chats}
-                                    setChats={setChats}
-                                    user={userPar}
-                                />
-                            )}
+                            {showChatSearch && (<ChatSearch
+                                setShowChatSearch={setShowChatSearch}
+                                chats={chats}
+                                setChats={setChats}
+                                user={userPar}
+                            />)}
                         </div>
                         <div className={styles.login}>
                             {/*切换字体*/}
@@ -665,27 +639,25 @@ const Header = () => {
                                     <span className={changeTheme ? 'darknessFont' : 'brightFont'}>{gas}</span>
                                 </p>
                             </div>
-                            {
-                                no && address ? <div className={styles.loginBox}>
-                                    <Link href={`/${userPar && userPar.address ? userPar.address : ''}`}>
-                                        <img className={'loginImg'} width={35}
-                                             src={userPar && userPar.profilePicUrl ? userPar.profilePicUrl : '/Ellipse1.png'}
-                                             alt=""/>
-                                    </Link>
-                                    <Dropdown
-                                        menu={{
-                                            items,
-                                        }}
-                                        placement="bottomLeft"
-                                        arrow
-                                    >
-                                        <Button
-                                            className={`${styles.loginName} ${styles.but} ${changeTheme ? 'darknessThree' : 'brightFore boxHover'} `}>{userPar && userPar.username ? userPar.username.length > 5 ? userPar.username.slice(0, 5) + '...' : userPar?.username : userPar?.address.slice(0, 5) + '...' }</Button>
-                                    </Dropdown>
-                                </div> : <Button
-                                    className={`${styles['but']} ${styles.loginName} ${changeTheme ? 'darknessThree' : 'brightFore boxHover'}`}
-                                    onClick={getMoney}>{header.login}</Button>
-                            }
+                            {no ? <div className={styles.loginBox}>
+                                <Link href={`/${userPar && userPar.address ? userPar.address : ''}`}>
+                                    <img className={'loginImg'} width={35}
+                                         src={userPar && userPar.profilePicUrl ? userPar.profilePicUrl : '/Ellipse1.png'}
+                                         alt=""/>
+                                </Link>
+                                <Dropdown
+                                    menu={{
+                                        items,
+                                    }}
+                                    placement="bottomLeft"
+                                    arrow
+                                >
+                                    <Button
+                                        className={`${styles.loginName} ${styles.but} ${changeTheme ? 'darknessThree' : 'brightFore boxHover'} `}>{userPar && userPar.username ? userPar.username.length > 5 ? userPar.username.slice(0, 5) + '...' : userPar?.username : userPar?.address.slice(0, 5) + '...'}</Button>
+                                </Dropdown>
+                            </div> : <Button
+                                className={`${styles['but']} ${styles.loginName} ${changeTheme ? 'darknessThree' : 'brightFore boxHover'}`}
+                                onClick={getMoney}>{header.login}</Button>}
                         </div>
                     </div>
                 </div>
@@ -702,12 +674,9 @@ const Header = () => {
                         <Form.Item
                             label="Token"
                             name="token"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Please input your token!',
-                                },
-                            ]}
+                            rules={[{
+                                required: true, message: 'Please input your token!',
+                            },]}
                             labelCol={{
                                 span: 6,
                             }}>
@@ -715,12 +684,10 @@ const Header = () => {
                                    style={tokenFormBol ? {borderColor: 'red'} : {}}/>
                         </Form.Item>
                         <div className={styles.addShow}>
-                            {
-                                !openPresale ? <CaretRightFilled className={styles.addCur}
-                                                                 onClick={hidePresale}/> :
-                                    <CaretDownFilled onClick={hidePresale}
-                                                     className={`${styles.addCur} ${styles.addCurMt5}`}/>
-                            }
+                            {!openPresale ? <CaretRightFilled className={styles.addCur}
+                                                              onClick={hidePresale}/> :
+                                <CaretDownFilled onClick={hidePresale}
+                                                 className={`${styles.addCur} ${styles.addCurMt5}`}/>}
                             <p className={styles.addPresale} onClick={hidePresale}>presale</p>
                             <p className={styles.lines}></p>
                         </div>
@@ -747,17 +714,15 @@ const Header = () => {
                                     allowClear
                                     style={{width: '100%'}}
                                 >
-                                    {
-                                        presalePlatform.length > 0 ? presalePlatform.map((i, index) => {
-                                            return <Option value={i.id} key={index}>
-                                                <div style={{display: 'flex', alignItems: 'center'}}>
-                                                    <img src={`${i.logo ? baseUrl + i.logo : '/Ellipse1.png'}`} alt=""
-                                                         width={20} height={20}/>
-                                                    <span>{i.name}</span>
-                                                </div>
-                                            </Option>
-                                        }) : null
-                                    }
+                                    {presalePlatform.length > 0 ? presalePlatform.map((i, index) => {
+                                        return <Option value={i.id} key={index}>
+                                            <div style={{display: 'flex', alignItems: 'center'}}>
+                                                <img src={`${i.logo ? baseUrl + i.logo : '/Ellipse1.png'}`} alt=""
+                                                     width={20} height={20}/>
+                                                <span>{i.name}</span>
+                                            </div>
+                                        </Option>
+                                    }) : null}
                                 </Select>
                             </Form.Item>
                             <Form.Item
@@ -772,12 +737,10 @@ const Header = () => {
                         </div>
                         {/*launch*/}
                         <div className={styles.addShow}>
-                            {
-                                !openLaunch ? <CaretRightFilled className={`${styles.addCur}`}
-                                                                onClick={hideLaunch}/> :
-                                    <CaretDownFilled onClick={hideLaunch}
-                                                     className={`${styles.addCur} ${styles.addCurMt5}`}/>
-                            }
+                            {!openLaunch ? <CaretRightFilled className={`${styles.addCur}`}
+                                                             onClick={hideLaunch}/> :
+                                <CaretDownFilled onClick={hideLaunch}
+                                                 className={`${styles.addCur} ${styles.addCurMt5}`}/>}
                             <p className={styles.addPresale} onClick={hideLaunch}>launch</p>
                             <p className={styles.lines}></p>
                         </div>
@@ -806,17 +769,15 @@ const Header = () => {
                                     allowClear
                                     style={{width: '100%'}}
                                 >
-                                    {
-                                        launchPlatform.length > 0 ? launchPlatform.map((i, index) => {
-                                            return <Option value={i.id} key={index}>
-                                                <div style={{display: 'flex', alignItems: 'center'}}>
-                                                    <img src={`${i.logo ? baseUrl + i.logo : '/Ellipse1.png'}`} alt=""
-                                                         width={20} height={20}/>
-                                                    <span>{i.name}</span>
-                                                </div>
-                                            </Option>
-                                        }) : null
-                                    }
+                                    {launchPlatform.length > 0 ? launchPlatform.map((i, index) => {
+                                        return <Option value={i.id} key={index}>
+                                            <div style={{display: 'flex', alignItems: 'center'}}>
+                                                <img src={`${i.logo ? baseUrl + i.logo : '/Ellipse1.png'}`} alt=""
+                                                     width={20} height={20}/>
+                                                <span>{i.name}</span>
+                                            </div>
+                                        </Option>
+                                    }) : null}
                                 </Select>
                             </Form.Item>
                             <Form.Item
@@ -832,11 +793,9 @@ const Header = () => {
                         </div>
                         {/*link*/}
                         <div className={styles.addShow}>
-                            {
-                                openLink ? <CaretRightFilled className={styles.addCur}
-                                                             onClick={hideLink}/> : <CaretDownFilled onClick={hideLink}
-                                                                                                     className={`${styles.addCur} ${styles.addCurMt5}`}/>
-                            }
+                            {openLink ? <CaretRightFilled className={styles.addCur}
+                                                          onClick={hideLink}/> : <CaretDownFilled onClick={hideLink}
+                                                                                                  className={`${styles.addCur} ${styles.addCurMt5}`}/>}
                             <p className={styles.addPresale} onClick={hideLink}>Link</p>
                             <p className={styles.lines}></p>
                         </div>
@@ -844,12 +803,9 @@ const Header = () => {
                             <Form.Item
                                 label="Twitter"
                                 name="twitter"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Please input your twitter!',
-                                    },
-                                ]} labelCol={{
+                                rules={[{
+                                    required: true, message: 'Please input your twitter!',
+                                },]} labelCol={{
                                 span: 8,
                             }}
                             >
@@ -858,12 +814,9 @@ const Header = () => {
                             <Form.Item
                                 label="Telegram"
                                 name="telegram"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Please input your telegram!',
-                                    },
-                                ]} labelCol={{
+                                rules={[{
+                                    required: true, message: 'Please input your telegram!',
+                                },]} labelCol={{
                                 span: 9,
                             }}
                             >
@@ -873,12 +826,9 @@ const Header = () => {
                                 label="Website"
                                 name="website"
                                 className={'bbb'}
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Please input your website!',
-                                    },
-                                ]} labelCol={{
+                                rules={[{
+                                    required: true, message: 'Please input your website!',
+                                },]} labelCol={{
                                 span: 8,
                             }}
                             >
@@ -886,8 +836,7 @@ const Header = () => {
                             </Form.Item>
                         </div>
                         <Form.Item wrapperCol={{
-                            offset: 8,
-                            span: 16,
+                            offset: 8, span: 16,
                         }}>
                             <Button type={'primary'} htmlType="submit">
                                 Submit
@@ -925,30 +874,31 @@ const Header = () => {
                             <span className={changeTheme ? 'darknessFont' : 'brightFont'}>{gas}</span>
                         </p>
                     </div>
-                    {
-                        no && address ? <div className={styles.loginBox}>
-                            <Link href={`/${userPar && userPar.address ? userPar.address : ''}`}>
-                                <img className={'loginImg'} width={35}
-                                     src={userPar && userPar.profilePicUrl ? userPar.profilePicUrl : '/Ellipse1.png'}
-                                     alt=""/>
-                            </Link>
-                            <Dropdown
-                                menu={{
-                                    items,
-                                }}
-                                placement="bottomLeft"
-                                arrow
-                            >
-                                <Button
-                                    className={`${styles.loginName} ${styles.but} ${changeTheme ? 'darknessThree' : 'brightFore boxHover'} `}>{userPar && userPar.username ? userPar.username.length > 5 ? userPar.username.slice(0, 5) + '...' : userPar.username : userPar.address.slice(0, 5) + '...'}</Button>
-                            </Dropdown>
-                        </div> : <Button
-                            className={`${styles['but']} ${styles.loginName} ${changeTheme ? 'darknessThree' : 'brightFore boxHover'}`}
-                            onClick={getMoney}>{header.login}</Button>
-                    }
+                    {no && address ? <div className={styles.loginBox}>
+                        <Link href={`/${userPar && userPar.address ? userPar.address : ''}`}>
+                            <img className={'loginImg'} width={35}
+                                 src={userPar && userPar.profilePicUrl ? userPar.profilePicUrl : '/Ellipse1.png'}
+                                 alt=""/>
+                        </Link>
+                        <Dropdown
+                            menu={{
+                                items,
+                            }}
+                            placement="bottomLeft"
+                            arrow
+                        >
+                            <Button
+                                className={`${styles.loginName} ${styles.but} ${changeTheme ? 'darknessThree' : 'brightFore boxHover'} `}>{userPar && userPar.username ? userPar.username.length > 5 ? userPar.username.slice(0, 5) + '...' : userPar.username : userPar.address.slice(0, 5) + '...'}</Button>
+                        </Dropdown>
+                    </div> : <Button
+                        className={`${styles['but']} ${styles.loginName} ${changeTheme ? 'darknessThree' : 'brightFore boxHover'}`}
+                        onClick={getMoney}>{header.login}</Button>}
                     <div className={styles.mobliceMenuFlex}>
-                        <div className={`${styles.ethMobliceMg} ${styles.ethMoblice} ${changeTheme ? 'darkMode' : 'whiteMode'}`} onClick={getMoney}>
-                            <Image src={'/WalletMoblice.svg'} alt="WalletMoblice" style={{marginLeft:'10px'}} width={20} height={20}/>
+                        <div
+                            className={`${styles.ethMobliceMg} ${styles.ethMoblice} ${changeTheme ? 'darkMode' : 'whiteMode'}`}
+                            onClick={getMoney}>
+                            <Image src={'/WalletMoblice.svg'} alt="WalletMoblice" style={{marginLeft: '10px'}}
+                                   width={20} height={20}/>
                         </div>
                         <div className={`${styles.ethMoblice} ${changeTheme ? 'darkMode' : 'whiteMode'}`}
                              onClick={openShowMenuItem}>
@@ -1005,7 +955,7 @@ const Header = () => {
                         <div onClick={push}>
                             <div className={`${styles.mobliceDpFlexs}`}>
                                 <Image src={`/icon_newspaper_.svg`} alt="logo" width={32} height={32}/>
-                                <div className={changeTheme?'darknessFont':'brightFont'}>{drawer.community}</div>
+                                <div className={changeTheme ? 'darknessFont' : 'brightFont'}>{drawer.community}</div>
                             </div>
                         </div>
                     </div>
@@ -1013,7 +963,7 @@ const Header = () => {
                         <div onClick={pushPer}>
                             <div className={`${styles.mobliceDpFlexs}`}>
                                 <Image src={`/icon_new_spaper_.svg`} height={32} alt="logo" width={32}/>
-                                <div className={changeTheme?'darknessFont':'brightFont'}>{drawer.user}</div>
+                                <div className={changeTheme ? 'darknessFont' : 'brightFont'}>{drawer.user}</div>
                             </div>
                         </div>
                     </div>
@@ -1033,15 +983,13 @@ const Header = () => {
                     speed={30}
                     gradientWidth={100}
                     className={styles.marqueeBox}>
-                    {
-                        launch.length > 0 && launch.map((i, index) => {
-                            return <div key={index} className={`${styles.marquee} `}>
-                                <span className={changeTheme ? 'darknessFont' : 'brightFont'}>#{index + 1}</span>
-                                <p className={styles.marqueeName}>{i?.symbol?.slice(0, 1)}</p>
-                                <span className={changeTheme ? 'darknessFont' : 'brightFont'}>{i.symbol}</span>
-                            </div>
-                        })
-                    }
+                    {launch.length > 0 && launch.map((i, index) => {
+                        return <div key={index} className={`${styles.marquee} `}>
+                            <span className={changeTheme ? 'darknessFont' : 'brightFont'}>#{index + 1}</span>
+                            <p className={styles.marqueeName}>{i?.symbol?.slice(0, 1)}</p>
+                            <span className={changeTheme ? 'darknessFont' : 'brightFont'}>{i.symbol}</span>
+                        </div>
+                    })}
                 </Marquee>
             </div>
         </>

@@ -67,7 +67,8 @@ export const en = {
         symbol: 'Token symbol',
         social: 'Social Info',
         time: 'Presale time',
-        platform: 'Platform',
+        platform: 'PlatformLogo',
+        platformName: 'PlatformName',
         dex: 'DEX'
     },
     launch: {
@@ -76,7 +77,8 @@ export const en = {
         symbol: 'Token symbol',
         social: 'Social Info',
         time: 'Launch time',
-        platform: 'Platform',
+        platform: 'PlatformLogo',
+        PlatformName: 'PlatformName',
         dex: 'DEX'
     },
     newPair: {

@@ -3,7 +3,7 @@ import {en} from '/public/language/en'
 import {tcn} from '/public/language/tcn'
 import {scn} from '/public/language/scn'
 import {useContext} from "react";
-import {CountContext} from "../components/Layout/Layout";
+import {CountContext} from '/components/Layout/Layout'
 
 export const redirectUser = (ctx, location) => {
     if (ctx.req) {

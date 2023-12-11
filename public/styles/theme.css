@@ -34,7 +34,9 @@
     background-color: rgb(53, 47, 74) !important;
 }
 
-
+.darknessThree>span {
+    color: rgb(138,138,138);
+}
 .darknessFont {
     color: rgb(243, 243, 243) !important;
 }
@@ -47,6 +49,14 @@
 
 .darknessBack {
     background-color: rgb(44, 37, 69) !important;
+    color: white;
+}
+
+.fontB{
+    color: black;
+}
+
+.fontW{
     color: white;
 }
 

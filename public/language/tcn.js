@@ -68,7 +68,8 @@ export const tcn={
         symbol:'代幣符號',
         social:'社會資訊',
         time:'預售時間',
-        platform:'平臺',
+        platform:'平臺圖標',
+        PlatformName:'平臺名稱',
         dex:'圖標'
     },
     launch:{

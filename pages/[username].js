@@ -46,8 +46,10 @@ const FollowerUsers = dynamic(
   { ssr: false }
 );
 import { getUser } from "/utils/axios";
-import { CountContext } from "../components/Layout/Layout";
+import { CountContext } from '/components/Layout/Layout';
 import styled from "/public/styles/all.module.css";
+import {request} from "../utils/hashUrl";
+import cookie from "js-cookie";
 function ProfilePage() {
   const { changeBolName } = useContext(CountContext);
   const coverImageRef = useRef(null);
@@ -67,24 +69,25 @@ function ProfilePage() {
   const [editProfile, setEditProfile] = useState(false);
   const [editInput, setEditInput] = useState("");
   const [editInputBol, setEditInputBol] = useState(false);
-  const getUs = async () => {
-    const a = cook.get("name");
-    const {
-      data: { user, userFollowStats },
-    } = await getUser(a);
-    setUser(user);
-    setUserFollowStats(userFollowStats);
-  };
-  useEffect(() => {
-    if (cook.get("name")) {
-      getUs();
+  const getUser=async ()=>{
+    const data = await request('get', "/api/v1/userinfo", '');
+    const params =JSON.parse( cookie.get('username'))
+    if(data&&data.status===200){
+      setEditInput(data?.data?.data.username?data?.data?.data.username:data?.data?.data.address)
+      setUser({...data?.data?.data,id:params.uid})
     }
-  }, [cook.get("name")]);
+  }
+    useEffect(() => {
+    if (cook.get("username")&&cook.get("username")!='undefined') {
+      getUser()
+    }
+  }, [cook.get("username")]);
   const changeImg = () => {
     setLoadingBol(!loadingBol);
   };
   const router = useRouter();
   const params = router.query;
+
   const [posts, setPosts] = useState([]);
   const [followBol, setFollowBol] = useState(false);
   const isLoggedInUserFollowing =
@@ -125,7 +128,7 @@ function ProfilePage() {
         setError,
         user?.id
       );
-      changeBolName();
+      changeBolName(true);
       await getPosts();
       setLoadingProfilePic(false);
     }
@@ -160,17 +163,11 @@ function ProfilePage() {
     }
   }, [loadingBol]);
   const getPosts = async () => {
-    try {
-      const res = await axios.get(
-        `${baseUrl}/api/profile/posts/${params?.username}`
-      );
-      if (res.status === 200) {
-        setPosts(res.data);
-      } else {
-        setPosts([]);
-      }
-    } catch (error) {
-      setPosts([]);
+      const res = await request('post','/api/v1/post/list',{uid:user.id,page:1})
+    if(res&&res?.data){
+      setPosts(res.data.posts)
+    }else {
+      setPosts([])
     }
   };
   const getProfile = async () => {
@@ -189,13 +186,13 @@ function ProfilePage() {
   };
   const [changeBol, setChangeBol] = useState(true);
   useEffect(() => {
-    if (params && params.username) {
+    if (user && user.id) {
       getProfile();
       getPosts();
     }
-  }, [params]);
+  }, [user]);
   useEffect(() => {
-    if (params && params.username) {
+    if (user && user.id) {
       getPosts();
     }
   }, [changeBol]);
@@ -203,43 +200,50 @@ function ProfilePage() {
     setChangeBol(!changeBol);
   };
   const setName = async () => {
-    if (editInputBol) {
+    // if (editInputBol) {
       if (editInput) {
-        const data = await axios.post(baseUrl + "/api/user/updateUserName", {
-          userName: editInput,
-          userId: profile.user_id,
+        const data = await request('post', "/api/v1/userinfo", {
+          user:{
+            username: editInput,
+          }
         });
-        if (
-          data.status === 200 &&
-          data?.data?.updateUserNameResult?.changedRows
-        ) {
-          changeBolName();
-          await getPosts();
-          setEditInput(editInput);
-          setEditProfile(false);
+        if(data&&data?.status===200&&data?.data?.code===200){
+          setEditProfile(false)
+          changeBolName(true);
+        }else {
+          setEditProfile(false)
         }
+        // if (
+        //   data.status === 200 &&
+        //   data?.data?.updateUserNameResult?.changedRows
+        // ) {
+        //
+        //   await getPosts();
+        //   setEditInput(editInput);
+        //   setEditProfile(false);
+        // }
       } else {
         setEditInput(profile?.name);
         setEditProfile(false);
       }
-    } else {
-      notification.error({
-        message: `Please note`,
-        description: "The name is repeated, please re-enter it. ",
-        placement: "topLeft",
-      });
-    }
+    // } else {
+    //   notification.error({
+    //     message: `Please note`,
+    //     description: "The name is repeated, please re-enter it. ",
+    //     placement: "topLeft",
+    //   });
+    // }
   };
   const changeIn = async (e) => {
     setEditInput(e.target.value);
-    if (e.target.value) {
-      const data = await axios.get(baseUrl + "/api/user/isUpdateUserName", {
-        params: { userName: e.target.value },
-      });
-      if (data.status === 200) {
-        setEditInputBol(data?.data?.flag);
-      }
-    }
+    // if (e.target.value) {
+    //   const data = await axios.get(baseUrl + "/api/user/isUpdateUserName", {
+    //     params: { userName: e.target.value },
+    //   });
+    //   if (data.status === 200) {
+    //     setEditInputBol(data?.data?.flag);
+    //   }
+    // }
   };
   return (
     <>
@@ -304,6 +308,7 @@ function ProfilePage() {
                   {editInput}
                 </p>
               )}
+              {/*提交按钮*/}
               {editProfile ? (
                 <div
                   style={{
@@ -314,7 +319,10 @@ function ProfilePage() {
                 >
                   <CloseOutlined
                     style={{ fontSize: "20px", fontWeight: "bold" }}
-                    onClick={() => setEditProfile(false)}
+                    onClick={() => {
+                      setEditProfile(false)
+                      setEditInput(user.username?user.username:user.address)
+                    }}
                   />{" "}
                   <CheckOutlined
                     style={{

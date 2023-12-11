@@ -1,6 +1,6 @@
 import React, {createContext, useState, useEffect} from "react";
 import Header from "./Header";
-import {FloatButton} from 'antd';
+import {ConfigProvider, FloatButton} from 'antd';
 import {useRouter} from "next/router";
 import {Anchor} from 'antd'
 import cookie from 'js-cookie'
@@ -9,7 +9,6 @@ import dynamic from "next/dynamic";
 export const CountContext = createContext(null);
 const Layout = ({children}) => {
     const router = useRouter()
-
     // 修改name
     const [bolName, setBol] = useState(false)
 
@@ -33,8 +32,8 @@ const Layout = ({children}) => {
     const changeShowData = () => {
         setShowData(!showData)
     }
-    const changeBolName = () => {
-        setBol(!bolName)
+    const changeBolName = (name) => {
+        setBol(name)
     }
     const changeBolLogin = () => {
         setBolLogin(!bolLogin)
@@ -50,7 +49,6 @@ const Layout = ({children}) => {
             body.classList.remove('darkMode');
             body.classList.add('whiteMode');
         }
-
     }, [changeTheme])
     return (
         <CountContext.Provider value={{
@@ -65,24 +63,37 @@ const Layout = ({children}) => {
             changeBolLogin,
             bolLogin
         }}>
-            <div id={'part-1'}>
-                <Header/>
-                <div
-                    style={router.pathname === '/' ? {} : router.pathname === '/statement' ? {marginLeft: '20px'} : {marginLeft: '90px'}}>
-                    {children}
+            <ConfigProvider
+                theme={{
+                    components: {
+                        Select: {
+                            selectorBg: changeTheme ? 'rgb(53,47,74)' : 'rgb(254,239,146)'
+                        },
+                        Segmented: {
+                            itemSelectedBg:'rgb(253,213,62)',
+                        }
+                    }
+                }}
+            >
+                <div id={'part-1'}>
+                    <Header/>
+                    <div
+                        style={router.pathname === '/' ? {} : router.pathname === '/statement' ? {marginLeft: '20px'} : {marginLeft: '90px'}}>
+                        {children}
+                    </div>
+                    <div>
+                        <Anchor
+                            items={[
+                                {
+                                    key: 'part-1',
+                                    href: '#part-1',
+                                },
+                            ]}
+                        />
+                    </div>
+                    <FloatButton.BackTop/>
                 </div>
-                <div>
-                    <Anchor
-                        items={[
-                            {
-                                key: 'part-1',
-                                href: '#part-1',
-                            },
-                        ]}
-                    />
-                </div>
-                <FloatButton.BackTop/>
-            </div>
+            </ConfigProvider>
         </CountContext.Provider>
     )
 };

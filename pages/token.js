@@ -1,7 +1,7 @@
 import React, {useState, useRef, useContext} from 'react';
 import {Card, Pagination, Segmented, Form, Input, Button, Popconfirm} from "antd";
 import styles from '/public/styles/all.module.css'
-import {CountContext} from "../components/Layout/Layout";
+import {CountContext} from '/components/Layout/Layout'
 
 const {TextArea} = Input;
 

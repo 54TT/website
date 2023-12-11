@@ -9,7 +9,7 @@ import _ from 'lodash'
 import dynamic from 'next/dynamic'
 import {getUser} from "../utils/axios";
 import cook from "js-cookie";
-import { CountContext } from '../components/Layout/Layout'
+import { CountContext } from '/components/Layout/Layout'
 // const Sidebar = dynamic(() => import('../components/Sidebar'));
 const Feed = dynamic(() => import('../components/Feed'), { ssr: false });
 const RightSideColumn = dynamic(() => import('../components/RightSideColumn'), { ssr: false });
@@ -97,7 +97,7 @@ function Index() {
     }
     useEffect(() => {
         if (cook.get('name')) {
-            getUs()
+            // getUs()
         }
     }, [cook.get('name')]);
     const change = (name, id) => {

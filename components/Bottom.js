@@ -1,7 +1,7 @@
 import React, {useContext} from 'react';
 import styles from "/public/styles/all.module.css";
 import Image from 'next/image'
-import {CountContext} from "./Layout/Layout";
+import {CountContext} from '/components/Layout/Layout';
 import {changeLang} from "/utils/set";
 
 function Bottom(props) {

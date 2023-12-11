@@ -33,7 +33,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import Marquee from 'react-fast-marquee'
 import cook from 'js-cookie'
 import dynamic from "next/dynamic";
-import {CountContext} from "./Layout/Layout";
+import {CountContext} from '/components/Layout/Layout';
 import {arrayUnique} from '/utils/set'
 // import {ConnectKitButton, changeBack} from 'hjt-connectkit';
 const {Countdown} = Statistic;
@@ -46,36 +46,12 @@ function Home() {
     const router = useRouter();
     const {bolLogin, changeShowData, showData, changeBolLogin, changeTheme} = useContext(CountContext);
     const home = changeLang('home')
-    const [cookBol, setCook] = useState(false);
-    useEffect(() => {
-        if (cook.get('name')) {
-            setCook(true)
-            getUs()
-        } else {
-            setCook(false)
-        }
-    }, [cook.get('name')])
     const refHeight = useRef(null)
     useEffect(() => {
-        if (bolLogin && cook.get('name')) {
-            setUserPa(cook.get('name'))
+        if (cook.get('username')&&cook.get('username')!='undefined') {
+            setUserPa(JSON.parse(cook.get('username')))
         }
-    }, [bolLogin]);
-    useEffect(() => {
-        if (showData) {
-            getPost()
-            changeShowData()
-        }
-    }, [showData])
-    const getUs = async () => {
-        // const a = cook.get('name')
-        // const {data: {user}, status} = await getUser(a)
-        // if (user && status === 200) {
-        //     setUserPa(user)
-        // } else {
-        //     setUserPa('')
-        // }
-    }
+    }, [bolLogin,showData]);
     const [userPa, setUserPa] = useState(null);
     const [launch, setLaunch] = useState([]);
     const [launchBol, setLaunchBol] = useState(false);
@@ -110,12 +86,9 @@ function Home() {
         name: home.presale
     }, {data: launch, bol: launchBol, name: home.launch}]
 
-    const axiosPackage = () => {
-
-    }
     const getParams = async (url, params, name) => {
         if (name === 'launch') {
-            const res = await request('get', url, {params})
+            const res = await request('get', url, params)
             if (res?.data && res?.status === 200) {
                 const {data} = res
                 setLaunchBol(true)
@@ -126,7 +99,7 @@ function Home() {
             }
         }
         if (name === 'presale') {
-            const res = await request('get', url, {params})
+            const res = await request('get', url, params)
             if (res?.data && res?.status === 200) {
                 const {data} = res
                 setPresaleBol(true)
@@ -137,7 +110,7 @@ function Home() {
             }
         }
         if (name === 'featured') {
-            const res = await request('get', url, {params})
+            const res = await request('get', url, params)
             if (res?.data && res?.status === 200) {
                 const {data} = res
                 setFeaturedBol(false)
@@ -294,7 +267,7 @@ function Home() {
     }
     const [postsData, setPostsData] = useState([])
     const [postsDataAdd, setPostsDataAdd] = useState([])
-    const [pageNumber, setPageNumber] = useState(0)
+    const [pageNumber, setPageNumber] = useState(1)
     const [postsDataBol, setPostsDataBol] = useState(false)
     const [postsDataCh, setPostsDataCh] = useState(false)
     // 滚动
@@ -368,17 +341,14 @@ function Home() {
     const getPost = async () => {
         let a = _.cloneDeep(pageNumber)
         if (bolLogin) {
-            setPageNumber(0)
-            a = 0
+            setPageNumber(1)
+            a = 1
         }
-        // const res = await request('get', url, {params})
-
-        const res = await axios.get(`${baseUrl}/api/posts`, {
-            params: {pageNumber: a},
-        })
-        if (res.status === 200) {
+        const res = await request('post', '/api/v1/post/public', {page: a.toString()})
+        if (res && res?.status === 200) {
             setPostsDataBol(!postsDataBol)
-            setPostsData(res.data)
+            const {data} = res
+            setPostsData(data && data?.posts?.length > 0 ? data.posts : [])
         } else {
             setPostsDataBol(!postsDataBol)
             setPostsData([])
@@ -389,8 +359,8 @@ function Home() {
         change('scroll')
     }
     useEffect(() => {
-        //     getPost()
-    }, [postsDataCh, userPa]);
+        getPost()
+    }, [postsDataCh]);
     const pushLink = (name) => {
         if (name.includes('http') || name.includes('https')) {
             window.open(name)
@@ -468,12 +438,12 @@ function Home() {
                                                                 alt="" width={15}/>
                                                             <Countdown title=""
                                                                        className={changeAllTheme('darknessFont', 'brightFont')}
-                                                                       value={getD(dayjs(i.presale_time ? i.presale_time : i.launch_time).isAfter(dayjs()) ? dayjs(i.presale_time ? i.presale_time : i.launch_time).diff(dayjs(), 'seconds') : '')}
+                                                                       value={getD(dayjs.unix(i?.time).isAfter(dayjs()) ? dayjs.unix(i?.time ? i.time : '').diff(dayjs(), 'seconds') : '')}
                                                                        format="HH:mm:ss"/>
                                                         </div>
                                                         <img
-                                                            src={`${baseUrl}${i?.presale_platform_logo ? i.presale_platform_logo : i.launch_platform_logo}`}
-                                                            onClick={() => pushLink(i?.presale_link ? i.presale_link : i.launch_link)}
+                                                            src={`${i?.platformLogo ? i.platformLogo : ''}`}
+                                                            onClick={() => pushLink(i?.link ? i.link : '')}
                                                             alt=""
                                                             width={'30px'} height={'30px'}
                                                             className={styles.homeCardListImg}/>
@@ -560,13 +530,13 @@ function Home() {
                         dataLength={postsDataAdd.length}
                     >
                         {postsDataAdd && postsDataAdd?.length > 0 ? postsDataAdd.map((post, index) => {
-                            const isLiked =
-                                post.likes && post.likes.length > 0 &&
-                                post.likes.filter((like) => like?.user?.id === userPa?.id).length > 0;
+                            // const isLiked =
+                            //     post.likes && post.likes.length > 0 &&
+                            //     post.likes.filter((like) => like?.user?.id === userPa?.id).length > 0;
                             return <PostCard
                                 change={change}
-                                liked={isLiked}
-                                key={post.id}
+                                liked={false}
+                                key={post?.postId}
                                 post={post}
                                 user={userPa}
                             />

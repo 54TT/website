@@ -69,7 +69,7 @@ function CommentComponent({ comment, postId,change, user, setComments }) {
               className="text-gray-500 font-light text-sm"
               style={{ textDecoration: "none" }}
             >
-              {calculateTime(comment.date, true)}
+              {comment?.createdAt}
             </span>
           </div>
 
@@ -77,10 +77,10 @@ function CommentComponent({ comment, postId,change, user, setComments }) {
             className="text-gray-800 font-light"
             style={{ fontSize: "10px" }}
           >
-            {comment.text}
+            {comment?.content}
           </p>
         </div>
-        {isHovering && comment.user.id === user.id ? (
+        {isHovering && comment?.user?.id === user?.id ? (
           <div className={styled.commentCommentHov}>
             <div
               className={`flex justify-center items-center ${styled.commentCommentOpen}`}

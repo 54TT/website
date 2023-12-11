@@ -712,7 +712,7 @@
 .coin {
     margin-right: 20px;
     padding: 20px;
-    background-color: rgba(253, 213, 62);
+    border-radius: 10px;
 }
 
 .coinList {

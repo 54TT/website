@@ -8,7 +8,7 @@ import {useRouter} from 'next/router'
 import {autoConvert, changeLang} from '/utils/set'
 import styled from '/public/styles/all.module.css'
 import Image from 'next/image'
-import {CountContext} from "./Layout/Layout";
+import {CountContext} from '/components/Layout/Layout';
 import {request} from "../utils/hashUrl";
 
 export default function Featured() {
@@ -147,7 +147,7 @@ export default function Featured() {
         },
     ]
     const getParams = async (url, params) => {
-        const res = await request('get', url, {params})
+        const res = await request('get', url, params)
         if (res && res.status === 200) {
             const {data} = res
             setFeaturedBol(false)

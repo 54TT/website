@@ -1,10 +1,11 @@
 import axios from 'axios'
 import baseUrl from '/utils/baseUrl'
+import cookie from "js-cookie";
 var request = axios.create({
     baseURL: baseUrl,
     headers:{
         'Content-Type':'application/json',
-        'token':''
+        'Authorization':  cookie.get('token')
     }
 })
 
@@ -49,7 +50,6 @@ export  function del(url,params) {
 //     } catch (error) {
 //     }
 // }
-
 export  const getUser=async (params)=>{
     return await axios.get(baseUrl + "/api/user", {
         params: {

@@ -15,7 +15,7 @@ const client = new ApolloClient({
     uri: 'https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-v2-dev', cache: new InMemoryCache(),
 });
 import {changeLang} from "/utils/set";
-import {CountContext} from "./Layout/Layout";
+import {CountContext} from '/components/Layout/Layout';
 import {useRouter} from "next/router";
 
 export default function NewPair() {
@@ -57,7 +57,6 @@ export default function NewPair() {
     const [tableParams, setTableParams] = useState([]);
     const [tableTotal, setTableTotal] = useState(0);
     const {loading, error, data, refetch} = useQuery(GET_DATA, {client});
-    console.log(data)
     useEffect(() => {
         if (!loading) {
             if (data && data?.pairs.length > 0) {
@@ -217,8 +216,7 @@ export default function NewPair() {
                            return {
                                onClick: (event) => {
                                    const data = record?.id
-                                   console.log(record)
-                                   // router.push(`/details?pairAddress=${data}`,)
+                                   router.push(`/details?pairAddress=${data}`,)
                                },
                            };
                        }}
