@@ -135,8 +135,6 @@
 @media screen and (max-width: 768px) {
   .mobliceSocialBox{
     margin: 20px 4px 50px -84px;
-    /* height: 100vh;
-    overflow: auto; */
   }
   .mobliceMain{
     flex-direction: column-reverse;
@@ -144,14 +142,17 @@
   .mobliceSidebar{
     position: fixed;
     bottom: 0;
+    max-width: 100%;
+    background-color: rgb(253, 213, 62);
     width: 100%;
     display: flex;
+    margin-left: -4px;
     justify-content: space-around;
     padding: 0;
   }
   .mobliceMinH_Scree{
     margin-right: 0;
-    overflow: hidden;
+    overflow: auto;
   }
 }
 

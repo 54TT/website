@@ -428,26 +428,28 @@ const Header = () => {
         }
     }
     const push = () => {
-        if (cookie.get('name')) {
-            router.push('/social')
-        } else {
-            getMoney()
-        }
-    }
+      if (cookie.get("name")) {
+        openShowMenuItem();
+        router.push("/social");
+      } else {
+        getMoney();
+      }
+    };
     const pushPer = () => {
-        if (cookie.get('name')) {
-            const data = cookie.get('name')
-                        router.push(`/${data}`)
-        } else {
-            getMoney()
-        }
-    }
+      if (cookie.get("name")) {
+        const data = cookie.get("name");
+        openShowMenuItem();
+        router.push(`/${data}`);
+      } else {
+        getMoney();
+      }
+    };
     const strategy = {
-        "one": function(){return router.push('/')},
-        "two": function(){return router.push('/featured')},
-        "three": function(){return router.push('/presale')},
-        "four": function(){return router.push('/launch')},
-        "five": function(){return router.push('/newPair')}
+        "one": function(){ openShowMenuItem(); return router.push('/')},
+        "two": function(){openShowMenuItem(); return router.push('/featured')},
+        "three": function(){openShowMenuItem(); return router.push('/presale')},
+        "four": function(){openShowMenuItem(); return router.push('/launch')},
+        "five": function(){openShowMenuItem(); return router.push('/newPair')}
     }
     const pushOnclick = (level) => {
         return strategy[level]

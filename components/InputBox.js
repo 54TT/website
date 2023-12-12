@@ -1,4 +1,4 @@
-import React, {useRef, useState, useEffect} from "react";
+import React, {useRef, useState, useEffect, useContext} from "react";
 import {CameraIcon, ChevronUpIcon} from "@heroicons/react/solid";
 import {ArrowSmRightIcon} from "@heroicons/react/solid";
 import {XIcon} from "@heroicons/react/solid";
@@ -13,8 +13,10 @@ import dynamic from "next/dynamic";
 import {notification} from "antd";
 import styled from '/public/styles/all.module.css'
 const InfoBox = dynamic(() => import('./HelperComponents/InfoBox'),{ ssr: false })
+import { CountContext } from "./Layout/Layout";
 
 function InputBox({user, setPosts, increaseSizeAnim,change}) {
+    const { changeTheme } = useContext(CountContext);
     const inputRef = useRef(null);
     const buttonRef = useRef(null);
     const filePickerRef = useRef(null);
@@ -127,6 +129,9 @@ function InputBox({user, setPosts, increaseSizeAnim,change}) {
             buttonRef.current.click();
         }
     };
+    const changeAllTheme = (a, b) => {
+        return changeTheme ? a : b
+    }
 
     return (
         <>

@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from "react";
+import styled from '../public/styles/allmedia.module.css'
 // import InputBox from "./InputBox";
 import {EmojiSadIcon} from "@heroicons/react/outline";
 // import InfoBox from "./HelperComponents/InfoBox";
@@ -22,7 +23,7 @@ function Feed({user, postsData, errorLoading,change,changePage, increaseSizeAnim
     const [posts, setPosts] = useState([]);
     return (
         <>
-            <div className="flex-grow h-full pt-6 mr-5 md:ml-auto  scrollbar-hide">
+            <div className={`flex-grow h-full pt-6 mr-5 md:ml-auto  scrollbar-hide ${styled.mobliceRight}`}>
                 <div className="mx-auto max-w-md md:max-w-lg lg:max-w-2xl">
                     <InputBox
                         user={user}

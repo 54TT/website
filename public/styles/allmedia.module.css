@@ -3,6 +3,14 @@
 }
 /* 超小屏幕 */
 @media screen and (max-width: 768px) {
+  .mobliceNonoFlex{
+    flex-wrap: nowrap;
+    flex-direction: column;
+  }
+  .allMobliceH{
+    padding-top: 0;
+    height: 100%;width: 100%;
+  }
   .allMobliceBox{
     margin: 20px 4px 0 -86px;
   }
@@ -16,6 +24,9 @@
   }
   .mobliceNotifications{
     height: auto;
+  }
+  .mobliceRight{
+    margin-right: 0;
   }
 }
 

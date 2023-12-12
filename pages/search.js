@@ -38,6 +38,16 @@ function Search() {
       getMoney()
     }
   };
+  const menuItem = [
+    {id: '1', key: 'DEDE', value: 'WTTH'},
+    {id: '2', key: 'DEDE', value: 'WTTH'},
+    {id: '3', key: 'DEDE', value: 'WTTH'},
+    {id: '4', key: 'DEDE', value: 'WTTH'},
+    {id: '5', key: 'DEDE', value: 'WTTH'}
+  ]
+  const changeAllTheme = (a, b) => {
+    return changeTheme ? a : b;
+  };
   return (
     <>
       <div className={styles.mobliceSearchToken}>
@@ -59,6 +69,22 @@ function Search() {
                 user={userPar}
               />
             )}
+          </div>
+        </div>
+        <div style={{marginLeft: '-70px', marginTop: '20px'}}>
+          <div style={{display: 'flex', alignItems: 'center'}}>
+            <img src="/icon_graph_moblice.svg" alt="zhexiantu"/>
+            <p className={changeTheme?'darknessFont':'brightFont'} style={{ marginLeft: '10px' }}>Featured:</p>
+          </div>
+          <div style={{ marginTop: '10px' }}>
+            { menuItem.map((item, index) => {
+              return (
+                <div key={index} style={{ display: 'flex'}}>
+                  <p className={`${changeAllTheme('darknessFont', 'brightFont')}`}>{item.key} / </p>
+                  <span style={{ color: 'rgb(156, 156, 156)' }}>{item.value}</span>
+                </div>
+              )
+            }) }
           </div>
         </div>
       </div>
