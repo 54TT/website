@@ -7,7 +7,6 @@ import styles from "../public/styles/social.module.css";
 // import RightSideColumn from "../components/RightSideColumn";
 import _ from 'lodash'
 import dynamic from 'next/dynamic'
-import {getUser} from "../utils/axios";
 import cook from "js-cookie";
 import { CountContext } from '/components/Layout/Layout'
 // const Sidebar = dynamic(() => import('../components/Sidebar'));
@@ -17,16 +16,19 @@ import {arrayUnique} from '/utils/set'
 import {request} from "../utils/hashUrl";
 import cookie from "js-cookie";
 function Index() {
+    // 推文
     const [postsData, setPostsData] = useState([])
     const [postsDataAdd, setPostsDataAdd] = useState([])
     const [postsDataBol, setPostsDataBol] = useState(false)
     const [postSession, setPostSession] = useState({})
     const [errorLoading, setErrorLoading] = useState(false)
     const [chatsData, setChatsData] = useState([])
+    //  重新获取用户接口
     const [changeBol, setChangeBol] = useState(true)
-    const [pageNumber, setPageNumber] = useState(0)
+    // 推文的page
+    const [pageNumber, setPageNumber] = useState(1)
+    // 用户信息
     const [userPar, setUserPar] = useState(null)
-
     // 是否滚动
     const [scrollBol, setScrollBol] = useState(false)
 
@@ -90,12 +92,12 @@ function Index() {
         }
     }, [postsDataBol])
     const getUs = async () => {
-        const data = await request('get', "/api/v1/userinfo",'')
         const params =JSON.parse( cookie.get('username'))
+        const data = await request('get', "/api/v1/userinfo/"+params?.uid,)
         if (data&&data?.status === 200) {
             const user = data?.data?.data
             if(user){
-                setUserPar({...user,id:params?.uid})
+                setUserPar(user)
             }else {
                 setUserPar(null)
             }
@@ -133,22 +135,20 @@ function Index() {
     const getParams = async () => {
         let a = _.cloneDeep(pageNumber)
         if (sendBol) {
-            a = 0
+            a = 1
         }
-        const res = await axios.get(`${baseUrl}/api/posts`, {
-            params: {pageNumber: a, userId: userPar?.id},
-        });
-        if (res.status === 200) {
+        const res = await request('post',`/api/v1/post/public`, {page: a});
+        if (res&&res?.status === 200) {
             setPostsDataBol(!postsDataBol)
-            setPostsData(res.data)
+            setPostsData(res?.data?.posts)
         } else {
             setPostsDataBol(!postsDataBol)
             setPostsData([])
         }
-        const chatRes = await axios.get(`${baseUrl}/api/chats`, {
-            params: {userId: userPar?.id},
-        });
-        setChatsData(chatRes && chatRes?.data.length > 0 ? chatRes.data : [])
+        // const chatRes = await axios.get(`${baseUrl}/api/chats`, {
+        //     params: {userId: userPar?.id},
+        // });
+        // setChatsData(chatRes && chatRes?.data.length > 0 ? chatRes.data : [])
     }
     const getUsers = async () => {
         const res = await axios.get(`${baseUrl}/api/user/userFollowStats`, {
@@ -159,13 +159,13 @@ function Index() {
         }
     }
     useEffect(() => {
-        if (userPar && userPar.id) {
+        if (userPar && userPar?.uid) {
             if (!likeBol) {
                 getParams()
             } else {
                 setLikeBol(false)
             }
-            getUsers()
+            // getUsers()
         }
     }, [userPar, changeBol])
     const {  changeTheme } = useContext(CountContext);
@@ -176,7 +176,7 @@ function Index() {
         <>
             <div className={styles.mobliceSocialBox}>
                 <div className={`min-h-screen ${changeAllTheme('darknessTwo', 'brightTwo')}`}
-                    style={{backgroundColor: 'rgb(253,213,62)', marginRight: '20px', borderRadius: '10px'}}>
+                     style={{backgroundColor: 'rgb(253,213,62)', marginRight: '20px', borderRadius: '10px'}}>
                     <main style={{display: 'flex'}}>
                         <Sidebar user={userPar ? userPar : ''}/>
                         <Feed
@@ -190,7 +190,6 @@ function Index() {
                                 sizeIncUp: styles.sizeup,
                             }}
                         />
-
                         <RightSideColumn
                             chatsData={chatsData}
                             userFollowStats={postSession}

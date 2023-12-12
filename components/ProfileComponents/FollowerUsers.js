@@ -6,28 +6,27 @@ import baseUrl from '/utils/baseUrl'
 import Link from 'next/link'
 import styled from '/public/styles/all.module.css'
 import {changeLang} from "/utils/set";
+import {request} from "../../utils/hashUrl";
 
-function FollowerUsers({profile, userFollowStats, user}) {
+function FollowerUsers({profile, userFollowStats,isUserOnOwnAccount, user}) {
     const username=changeLang('username')
     const [followers, setFollowers] = useState([]);
     const getFollowers = async () => {
         try {
-            const res = await axios.get(
-                `${baseUrl}/api/profile/followers/${profile.user_id}`,
-                {
-                    headers: {Authorization: cookie.get("token")},
-                }
-            );
-            setFollowers(res.data);
+            const res = await request('post','/api/v1/followee/list',{uid:user?.uid,page:1});
+            if(res&&res?.data){
+                setFollowers(res.data.followerList)
+            }
+            (res.data);
         } catch (error) {
             setFollowers([])
         }
     };
     useEffect(() => {
-        if (profile && profile.user_id) {
+        if (user && user?.uid) {
             getFollowers();
         }
-    }, [profile]); //this runs on first component render
+    }, [user]); //this runs on first component render
 
     return (
         <div
@@ -47,9 +46,8 @@ function FollowerUsers({profile, userFollowStats, user}) {
             {followers && followers.length > 0 ? followers.length : "0"}
           </span>
                 </div>
-
                 {followers && followers.length > 0 && (
-                    <Link href={`/user/${profile?.user_id}/followers`}>
+                    <Link href={`/user/${user?.uid}/followers`}>
                         <p className="text-md font-normal cursor-pointer select-none text-purple-400 hover:underline">
                             {username.viewAll}
                         </p>
@@ -60,27 +58,27 @@ function FollowerUsers({profile, userFollowStats, user}) {
             {followers && followers.length > 0 ? (
                 <div className={styled.followerUserBox}>
                     {followers.map((fol, i) => i < 5 && (
-                        <Link href={`/${fol?.user?.address}`} key={fol?.user?.id}>
+                        <Link href={`/${fol?.uid}`} key={fol?.uid}>
                             <div
                                 className="mb-5 cursor-pointer"
                                 style={{width: '100%'}}
                             >
-                                <img src={fol?.user?.profilePicUrl||'/Ellipse1.png'} alt="userprof"   width={50}
+                                <img src={fol?.avatar||'/Ellipse1.png'} alt="userprof"   width={50}
                                        height={50}/>
-                                <Link href={`/${fol?.user?.address}`}>
+                                <Link href={`/${fol?.uid}`}>
                                 <p className={styled.followerUserName}>
-                                    {fol?.user?.username.slice(0, 6)}
+                                    {fol?.username?fol.username:fol.address}
                                 </p>
                                 </Link>
                             </div>
                         </Link>
                     ))}
                 </div>
-            ) : profile?.user_id === user?.id ? (
+            ) : isUserOnOwnAccount? (
                 <p className="text-md text-gray-500">{username.noFollowers}
                 </p>
             ) : (
-                <p className="text-md text-gray-500">{`${profile?.name} ${username.otherNoFollowers}`}</p>
+                <p className="text-md text-gray-500">{`${user?.username?user?.username:user?.address} ${username.otherNoFollowers}`}</p>
             )}
         </div>
     );

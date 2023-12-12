@@ -18,6 +18,7 @@ function Feed({user, postsData, errorLoading,change,changePage, increaseSizeAnim
         }
     }, [postsData])
     const [posts, setPosts] = useState([]);
+    console.log(posts)
     return (
         <>
             <div className="flex-grow h-full pt-6 mr-5 md:ml-auto  scrollbar-hide">
@@ -55,7 +56,7 @@ function Feed({user, postsData, errorLoading,change,changePage, increaseSizeAnim
                                     return <PostCard
                                         change={change}
                                         liked={isLiked}
-                                        key={post.id}
+                                        key={post.postId}
                                         post={post}
                                         user={user}
                                     />

@@ -12,6 +12,7 @@ import {LoadingOutlined} from '@ant-design/icons'
 import dynamic from "next/dynamic";
 import {notification} from "antd";
 import styled from '/public/styles/all.module.css'
+import {request} from "../utils/hashUrl";
 const InfoBox = dynamic(() => import('./HelperComponents/InfoBox'),{ ssr: false })
 function InputBox({user, setPosts, increaseSizeAnim,change}) {
     const inputRef = useRef(null);
@@ -22,16 +23,11 @@ function InputBox({user, setPosts, increaseSizeAnim,change}) {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
     const [textareaEnabled, setTextareaEnabled] = useState(false);
-    const [newPost, setNewPost] = useState({
-        postText: "",
-        location: "",
-    });
-
-    const {postText, location} = newPost;
+    const [newPost, setNewPost] = useState('');
 
     const handleChange = (e) => {
         const {name, value} = e.target;
-        setNewPost((prev) => ({...prev, [name]: value}));
+        setNewPost(value);
     };
 
     const addImageFromDevice = (e) => {
@@ -51,24 +47,19 @@ function InputBox({user, setPosts, increaseSizeAnim,change}) {
                 return setError("Error uploading image");
             }
         }
-        if(newPost.postText){
-            const data =   await submitNewPost(
-                user?.id, newPost.postText,
-                newPost.location,
-                picUrl,
-                setPosts,
-                setNewPost,
-                setError,
-            );
-            if(data&&data.status===200){
+        if(newPost){
+            const data = await request('post', "/api/v1/post/publish",{uid:user?.uid,address:user?.address,post:{content:newPost}})
+            if(data&&data?.status===200){
                 change('send')
                 setImage(null);
                 setImagePreview(null);
                 setLoading(false);
+                setNewPost('')
             }else {
                 setImage(null);
                 setImagePreview(null);
                 setLoading(false);
+                setNewPost('')
             }
         }else{
             notification.warning({
@@ -138,7 +129,7 @@ function InputBox({user, setPosts, increaseSizeAnim,change}) {
                                        style={{borderRadius: '50%'}} height={50} width={50}/>
                                 <div>
                                     <p style={{marginBottom: 0, fontWeight: "600"}}>
-                                        {user.username}
+                                        {user?.username?user.username:user.address.slice(0,5)}
                                     </p>
                                     <div className="flex text-gray-500 text-sm space-x-1 items-center">
                                         <GlobalOutlined style={{fontSize: "18px"}}/>
@@ -152,12 +143,12 @@ function InputBox({user, setPosts, increaseSizeAnim,change}) {
                                 >
                                     <textarea
                                         name="postText"
-                                        value={postText}
+                                        value={newPost}
                                         rows="4"
                                         style={{width:'100%',resize: 'none'}}
                                         onChange={handleChange}
                                         className={`outline-none  bg-transparent font-light text-md placeholder-gray-400 text-lg `}
-                                        placeholder={`What's on your mind, ${user.name}?`}
+                                        placeholder={`What's on your mind, ${user?.username?user.username:user.address.slice(0,5)}?`}
                                         onKeyDown={onEnterPress}
                                     ></textarea>
                                     <ChevronUpIcon
@@ -200,11 +191,11 @@ function InputBox({user, setPosts, increaseSizeAnim,change}) {
                                     >
                                         <input
                                             name="postText"
-                                            value={postText}
+                                            value={newPost}
                                             onChange={handleChange}
                                             className="outline-none w-full bg-transparent font-light text-md placeholder-gray-400 text-lg"
                                             type="text"
-                                            placeholder={user ? `What's on your mind, ${user.name}?` : "What's on your mind?"}
+                                            placeholder={user ? `What's on your mind, ${user?.username?user.username:user.address.slice(0,5)}?` : "What's on your mind?"}
                                         ></input>
                                         <ChevronDownIcon
                                             className="h-7 w-7 cursor-pointer text-gray-500"

@@ -11,7 +11,9 @@ import axios from "axios";
 import {followUser, unfollowUser} from "../utils/profileActions";
 import {useRouter} from "next/router";
 import dayjs from "dayjs";
+import {request} from "../utils/hashUrl";
 function RightSideColumn({user, chatsData, userFollowStats,change}) {
+    console.log(user)
     const social = changeLang('social')
     const [bol, setBol] = useState(false)
     const chang = () => {
@@ -21,34 +23,40 @@ function RightSideColumn({user, chatsData, userFollowStats,change}) {
     const [loggedInUserFollowStats, setLoggedInUserFollowStats] =
         useState([]);
     useEffect(() => {
-        // getUsersToFollow();
         if (userFollowStats&&userFollowStats.following&&userFollowStats.following.length > 0) {
             setLoggedInUserFollowStats(userFollowStats.following)
         } else {
             setLoggedInUserFollowStats([])
         }
-    }, [bol,userFollowStats])
+    }, [userFollowStats])
+
+
+    useEffect(()=>{
+        getUsersToFollow();
+    },[bol])
+
+
     const [usersToFollow, setUsersToFollow] = useState([]);
     const getUsersToFollow = async () => {
         try {
-            const res = await axios.get(
-                `${baseUrl}/api/profile/home/youMayLikeToFollow`,
-            );
-            if (res && res.data) {
-                setUsersToFollow(res.data);
-            } else {
-                setUsersToFollow([]);
+            const res = await request('get','/api/v1/user/public',{page:1});
+            if(res&&res?.status===200){
+                console.log(res?.data?.userList)
+                setUsersToFollow(res?.data?.userList)
+            }else {
+                setUsersToFollow([])
             }
         } catch (error) {
             setUsersToFollow([]);
         }
     };
 
+
+
     return (
         <div
             className="hidden  p-2 lg:block max-w-[300px] lg:min-w-[290px] xl:min-w-[300px] sticky xl:mr-8"
-            style={{alignSelf: "flex-start"}}
-        >
+            style={{alignSelf: "flex-start"}}>
             <p className={styled.rightSideColumnName}>{social.who}</p>
             {usersToFollow && usersToFollow.length > 0 && Array.isArray(usersToFollow) ? (
                 usersToFollow.map((fol) => {
@@ -59,20 +67,19 @@ function RightSideColumn({user, chatsData, userFollowStats,change}) {
                                 loggedInUserFollowing?.user?.id === fol?.id
                         ).length > 0 || '';
                     return (
-                        <div  className={'rightSideCard'} key={fol.id}>
-                            {fol?.id !== user?.id && (
+                        <div  className={'rightSideCard'} key={fol.uid}>
+                            {Number(fol?.uid) !== Number(user?.uid) && (
                                 <div
-                                    key={fol.id}
-                                    className="flex justify-between items-center p-4 rounded-lg"
-                                >
+                                    key={fol.uid}
+                                    className="flex justify-between items-center p-4 rounded-lg">
                                     <div className="flex items-center">
-                                        <img src={fol?.profilePicUrl ? fol.profilePicUrl : '/Ellipse1.png'} width={40} height={40}
+                                        <img src={fol?.avatar ? fol.avatar : '/Ellipse1.png'} width={40} height={40}
                                              style={{ borderRadius: '50%'}}   alt="userimg"/>
                                         <div>
                                             <Link href={`/${fol?.username}`}>
                                             <p
                                                 className="ml-3 cursor-pointer hover:underline">
-                                                {fol?.username.length > 7 ? fol.username.slice(0, 3) + '...' + fol.username.slice('-3') : fol.name}
+                                                {fol?.username.length > 7 ? fol.username.slice(0, 3) + '...' + fol.username.slice('-3') : fol.username}
                                             </p>
                                             </Link>
                                             {
@@ -80,23 +87,18 @@ function RightSideColumn({user, chatsData, userFollowStats,change}) {
                                                    className="ml-3">{fol?.followers ? fol?.followers.length : 0} followers</p>}
                                         </div>
                                     </div>
-                                    {fol?.id !== user?.id ? (
+                                    {Number(fol?.uid) !== Number(user?.uid) ? (
                                         <>
-                                            {/*关注*/}
+                                            {/*是否关注*/}
                                             {isLoggedInUserFollowing ? (
                                                 <div className={styled.rightSideColumnClick}
                                                     onClick={async () => {
-                                                        const data = await unfollowUser(
-                                                            fol.id,
-                                                            '',
-                                                            user?.id
-                                                        );
-                                                        if (data && data.status === 200) {
+                                                        const  data = await request('post', "/api/v1/unfollow", {userId:fol.uid})
+                                                        if(data&&data?.status===200&&data?.data?.code===200){
                                                             chang()
                                                             change('like')
                                                         }
-                                                    }}
-                                                >
+                                                    }}>
                                                     <CheckCircleIcon className="h-6"/>
                                                 </div>
                                             ) : (
@@ -107,12 +109,9 @@ function RightSideColumn({user, chatsData, userFollowStats,change}) {
                                                     backgroundColor: 'rgba(139, 92, 246)',
                                                     color: 'white'}}
                                                     onClick={async () => {
-                                                        const data = await followUser(
-                                                            fol.id,
-                                                            '',
-                                                            user?.id
-                                                        );
-                                                        if (data && data.status === 200) {
+                                                        console.log(fol.uid)
+                                                        const  data = await request('post', "/api/v1/follow", {userId:fol.uid})
+                                                        if(data&&data?.status===200&&data?.data?.code===200){
                                                             chang()
                                                             change('like')
                                                         }

@@ -7,32 +7,30 @@ import {LoadingOutlined} from '@ant-design/icons'
 import Link from 'next/link'
 import styled from '/public/styles/all.module.css'
 import {changeLang} from "/utils/set";
+import {request} from "../../utils/hashUrl";
 
-function FollowingUsers({profile, userFollowStats, user}) {
+function FollowingUsers({userFollowStats,isUserOnOwnAccount, user}) {
     const username=changeLang('username')
     const [following, setFollowing] = useState([]);
+    console.log(following)
     const [loading, setLoading] = useState(false);
     const getFollowing = async () => {
         setLoading(true);
         try {
-            const res = await axios.get(
-                `${baseUrl}/api/profile/following/${profile.user_id}`,
-                {
-                    headers: {Authorization: cookie.get("token")},
-                }
-            );
-
-            setFollowing(res.data);
+            const res = await request('post','/api/v1/follower/list',{uid:user?.uid,page:1});
+            if(res&&res?.status===200){
+                setFollowing(res?.data?.followeeList)
+            }
         } catch (error) {
         }
         setLoading(false);
     };
 
     useEffect(() => {
-        if (profile && profile.user_id) {
+        if (user && user.uid) {
             getFollowing();
         }
-    }, [profile]); //this runs on first component render
+    }, [user]); //this runs on first component render
 
     return (
         <div
@@ -53,7 +51,7 @@ function FollowingUsers({profile, userFollowStats, user}) {
           </span>
                 </div>
                 {following && following.length > 0 && (
-                    <Link href={`/user/${profile?.user_id}/following`}>
+                    <Link href={`/user/${user?.uid}/following`}>
                         <p
                             className="text-md font-normal cursor-pointer select-none text-purple-400 hover:underline"
                         >
@@ -69,27 +67,27 @@ function FollowingUsers({profile, userFollowStats, user}) {
                     {following && following.length > 0 ? (
                         <div className={styled.followerUserBox}>
                             {following.map((fol, index) => index < 5 && (
-                                <Link href={`/${fol?.user?.address}`}  key={fol?.user?.id}>
+                                <Link href={`/${fol?.uid}`}  key={fol?.uid}>
                                     <div
                                         className="mb-5 cursor-pointer"
                                         style={{width: '100%'}}>
-                                        <img src={fol?.user?.profilePicUrl||'/Ellipse1.png'} alt="userprof"   width={50}
+                                        <img src={fol?.avatar||'/Ellipse1.png'} alt="userprof"   width={50}
                                                height={50}/>
-                                        <Link href={`/${fol?.user?.address}`}>
+                                        <Link href={`/${fol?.uid}`}>
                                             <p className={styled.followerUserName}>
-                                                {fol?.user?.username.slice(0, 6)}
+                                                {fol?.username?fol?.username:fol?.address}
                                             </p>
                                         </Link>
                                     </div>
                                 </Link>
                             ))}
                         </div>
-                    ) : profile?.user_id === user?.id ? (
+                    ) : isUserOnOwnAccount? (
                         <p className="text-md text-gray-500">
                             {username.noFollowing}
                         </p>
                     ) : (
-                        <p className="text-md text-gray-500">{`${profile?.name} ${username.otherNoFollowing}`}</p>
+                        <p className="text-md text-gray-500">{`${user?.username?user?.username:user?.address} ${username.otherNoFollowing}`}</p>
                     )}
                 </>
             )}

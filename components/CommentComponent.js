@@ -9,17 +9,19 @@ import dynamic from "next/dynamic";
 import styled from '/public/styles/all.module.css'
 const ReusableDialog = dynamic(() => import('./ReusableDialog'),{ ssr: false })
 import Link from  'next/link'
+import {request} from "../utils/hashUrl";
 const notifyCommentDelete = () =>{
   notification.success({
     message: `Comment deleted successfully!`, placement: 'topLeft',
     duration:2
   });
 }
-function CommentComponent({ comment, postId,change, user, setComments }) {
+function CommentComponent({ comment, postId,change, user, setComments ,changComment}) {
   const router = useRouter();
   const [isHovering, setIsHovering] = useState(false);
   const [open, setOpen] = useState(false);
-
+  // 删除评论  id
+  const [commentId, setCommentId] = useState(null)
   const handleMouseOver = () => {
     setIsHovering(true);
   };
@@ -28,8 +30,9 @@ function CommentComponent({ comment, postId,change, user, setComments }) {
     setIsHovering(false);
   };
 
-  const handleClickOpen = () => {
+  const handleClickOpen = (id) => {
     setOpen(true);
+    setCommentId(id)
   };
 
   const handleClose = () => {
@@ -37,14 +40,19 @@ function CommentComponent({ comment, postId,change, user, setComments }) {
   };
 
   const handleAgree = async () => {
-    await deleteComment(postId, comment.id, setComments, notifyCommentDelete,handleClose,user?.id,change);
+    const res = await request('delete', '/api/v1/post/comment/'+commentId, '')
+    if(res&&res?.status===200&&res?.data?.code===200){
+      changComment(commentId)
+      setCommentId(null)
+      handleClose();
+    }
   };
   const handleDisagree = () => {
     handleClose();
   };
 
   return (
-    <div className="flex items-start pl-5 pr-3 mt-3">
+    <div className="flex items-start pl-5 pr-3 mt-3" style={{overflowY:'auto'}}>
       <img  alt={''}   height={50} width={50}
         src={comment?.user?.profilePicUrl?comment.user.profilePicUrl:'/Ellipse1.png'}
         className={`mr - 2 ${styled.commentCommentImg}`}
@@ -80,18 +88,12 @@ function CommentComponent({ comment, postId,change, user, setComments }) {
             {comment?.content}
           </p>
         </div>
+        {/*是否显示删除按钮*/}
         {isHovering && comment?.user?.id === user?.id ? (
           <div className={styled.commentCommentHov}>
-            <div
-              className={`flex justify-center items-center ${styled.commentCommentOpen}`}
-              onClick={() => {
-                handleClickOpen();
-              }}
-            >
-              <MinusCircleIcon
-                style={{ height: "18px", width: "18px" }}
-                className="text-gray-500"
-              />
+            <div className={`flex justify-center items-center ${styled.commentCommentOpen}`}
+              onClick={() => handleClickOpen(comment?.id)}>
+              <MinusCircleIcon style={{ height: "18px", width: "18px" }} className="text-gray-500"/>
             </div>
           </div>
         ) : (

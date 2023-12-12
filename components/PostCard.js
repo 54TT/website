@@ -18,6 +18,7 @@ const {TextArea} = Input
 import dayjs from 'dayjs'
 import {CountContext} from '/components/Layout/Layout';
 import {request} from "../utils/hashUrl";
+import {arrayUnique} from "../utils/set";
 
 const notify = () => {
     notification.success({
@@ -30,6 +31,58 @@ function PostCard({post, user, change, liked}) {
     const {changeTheme} = useContext(CountContext);
     // 评论
     const [comments, setComments] = useState([]);
+    const [commentsAdd, setCommentsAdd] = useState([]);
+    const [commentBol, setCommentBol] = useState(false);
+    // 评论数
+    const [commentNum, setCommentNum] = useState(0);
+
+    // 删除评论  id
+    const [commentId, setCommentId] = useState(null);
+
+    const changComment = (id) => {
+        setCommentId(id)
+    }
+    useEffect(() => {
+        if (commentId) {
+            const data = [...commentsAdd]
+            const params = data.filter((i) => i.id !== commentId)
+            setCommentsAdd(params)
+            setCommentId(null)
+        }
+    }, [commentId])
+    // 评论页码
+    const [commentPage, setCommentPage] = useState(1);
+
+    // 判断是评论还是加载更多
+    const [commentStatus, setCommentStatus] = useState('');
+
+    useEffect(() => {
+        if (commentBol) {
+            if (comments.length > 0) {
+                console.log(commentStatus)
+                console.log(comments)
+                if (commentStatus === 'many') {
+                    const data = [...commentsAdd.concat(comments)]
+                    let aa = arrayUnique(data, 'id')
+                    setCommentsAdd(aa)
+                } else if (commentStatus === 'enter') {
+                    const data = [...comments.concat(commentsAdd)]
+                    let aa = arrayUnique(data, 'id')
+                    setCommentsAdd(aa)
+                } else {
+                    setCommentsAdd(comments)
+                }
+            }
+            setCommentBol(false)
+        }
+    }, [commentBol]);
+    useEffect(() => {
+        if (post && post?.commentNum) {
+            setCommentNum(post?.commentNum)
+        } else {
+            setCommentNum(0)
+        }
+    }, [post])
     // 发送的信息
     const [commentText, setCommentText] = useState("");
     // 展示评论
@@ -37,20 +90,26 @@ function PostCard({post, user, change, liked}) {
     // 提交评论按钮
     const buttonRef = useRef(null);
     const [open, setOpen] = useState(false);
+    const aaaa = () => {
+        console.log()
+    }
     // 发送评论
     const createComment = async (e) => {
         e.preventDefault();
-        // await postComment(post.id, user, commentText, setComments, setCommentText);
         const res = await request('post', '/api/v1/post/comment', {postId: post?.postId, content: commentText})
-        if (res &&res?.data&&res?.status===200&& res?.data?.code && res?.data?.code === 200) {
+        if (res && res?.data && res?.status === 200 && res?.data?.code && res?.data?.code === 200) {
             setCommentText('')
             const newComment = {
-                id: 9,
-                // user,
+                id: dayjs().valueOf(),
+                user,
                 content: commentText,
                 createdAt: dayjs().format('YYYY-MM-DD HH:mm:ss'),
             };
-            setComments((prev) => [newComment, ...prev]);
+            const dat = [newComment, ...comments]
+            setCommentStatus('enter')
+            setComments(dat)
+            setCommentBol(true)
+            setCommentNum((res) => Number(res) + 1)
             // const res = await request('post', '/api/v1/post/comment/list', {postId:  post?.postId, page: 1})
             // if (res && res?.status === 200 && res?.data && res?.data?.comments) {
             //     setComments(res?.data?.comments)
@@ -80,26 +139,32 @@ function PostCard({post, user, change, liked}) {
     };
 
     const handleAgree = async () => {
-        const data = await deletePost(post?.id, setComments, notify, user.id);
-        if (data && data.status === 200) {
-            setOpen(false);
-            change('click', post?.id);
-        }
+        // const data = await deletePost(post?.id, setComments, notify, user.id);
+        const res = await request('delete', '/api/v1/post/' + post?.postId, '')
+        console.log(res)
+        // if (data && data.status === 200) {
+        //     setOpen(false);
+        //     change('click', post?.id);
+        // }
     };
     const handleDisagree = () => {
         handleClose();
     };
-    const getComments = async (id) => {
-        if (showComments) {
-            setShowComments((prev) => !prev)
+    const getComments = async (page) => {
+        const res = await request('post', '/api/v1/post/comment/list', {postId: post?.postId, page: page})
+        if (res && res?.status === 200 && res?.data && res?.data?.comments) {
+            setComments(res?.data?.comments)
+            setCommentBol(true)
         } else {
-            const res = await request('post', '/api/v1/post/comment/list', {postId: id, page: 1})
-            if (res && res?.status === 200 && res?.data && res?.data?.comments) {
-                setComments(res?.data?.comments)
-            } else {
-                setComments([])
-            }
-            setShowComments((prev) => !prev)
+            setCommentBol(true)
+            setComments([])
+        }
+    }
+    const clickPush = () => {
+        if (Number(commentNum) > commentsAdd.length) {
+            setCommentStatus('many')
+            setCommentPage(commentPage + 1)
+            getComments(commentPage + 1)
         }
     }
     return (
@@ -109,7 +174,7 @@ function PostCard({post, user, change, liked}) {
             <div className="p-4">
                 <div className="flex space-x-3 items-center ml-2 relative">
                     <img height={50} width={50} style={{borderRadius: '50%'}}
-                         src={post && post?.user?.profilePicUrl ? post.user.profilePicUrl : '/Ellipse1.png'}
+                         src={post && post?.user?.avatar ? post.user.avatar : '/Ellipse1.png'}
                          alt="userimg"/>
                     <div>
                         <Link href={`/${post?.user?.address ? post.user.address : ''}`}>
@@ -117,7 +182,7 @@ function PostCard({post, user, change, liked}) {
                                 cursor: 'pointer',
                                 fontSize: '20px'
                             }} className={changeTheme ? 'darknessFont' : 'brightFont'}>
-                                {post?.user?.username ? post?.user?.username.length > 10 ? post.user.username.slice(0, 8) : post.user.username : ''}
+                                {post?.user?.username ? post?.user?.username.length > 10 ? post.user.username.slice(0, 8) : post.user.username : post.user.address}
                             </div>
                         </Link>
                         <p
@@ -139,7 +204,7 @@ function PostCard({post, user, change, liked}) {
                         handleDisagree={handleDisagree}
                     />
                     {/*删除按钮*/}
-                    {post?.user_id === user?.id && (
+                    {post?.user?.uid === user?.uid && (
                         <div style={{
                             borderRadius: '50%',
                             cursor: 'pointer'
@@ -147,8 +212,7 @@ function PostCard({post, user, change, liked}) {
                              onClick={() => {
                                  handleClickOpen();
                              }}
-                             className="flex justify-center items-center absolute top-0 right-2"
-                        >
+                             className="flex justify-center items-center absolute top-0 right-2">
                             <MinusCircleIcon
                                 style={{height: "18px", width: "18px"}}
                                 className="text-gray-500"
@@ -161,7 +225,8 @@ function PostCard({post, user, change, liked}) {
             <div style={{marginLeft: '20px'}}
                  className={changeTheme ? 'darknessFont' : 'brightFont'}>{post?.content || ''}</div>
             {/*图片*/}
-            {post && post.picUrl ? <img src={post.picUrl || ''} alt={''} style={{width: '100%',}}/> : ''}
+            {post && post?.imageList && post?.imageList.length > 0 ?
+                <img src={post?.imageList[0] || ''} alt={''} style={{width: '100%',}}/> : ''}
             {/*几条聊天*/}
             <div style={{marginTop: "10px"}} className="ml-5 mr-5">
                 <div className="flex justify-between w-full">
@@ -177,9 +242,19 @@ function PostCard({post, user, change, liked}) {
                         </p>
                     </div>
                     <p
-                        onClick={() => getComments(post.postId)}
+                        onClick={() => {
+                            if (!showComments) {
+                                getComments(1)
+                            } else {
+                                setCommentsAdd([])
+                                setComments([])
+                                setCommentStatus('')
+                                setCommentPage(1)
+                            }
+                            setShowComments(!showComments)
+                        }}
                         className="text-gray-500 cursor-pointer hover:underline font-light select-none"
-                    >{`${comments ? comments.length : 0}   comments`}</p>
+                    >{`${commentNum}   comments`}</p>
                 </div>
             </div>
             {/*点赞*/}
@@ -261,17 +336,27 @@ function PostCard({post, user, change, liked}) {
                             ></button>
                         </form>
                     </div>
-                    {comments && comments.length > 0 &&
-                        comments.map((comment) => (
-                            <CommentComponent
-                                key={comment.id}
-                                change={change}
-                                comment={comment}
-                                postId={post.id}
-                                user={user}
-                                setComments={setComments}
-                            />
-                        ))}
+
+                    {commentsAdd && commentsAdd.length > 0 && (<div style={{height: '200px', overflowY: 'auto'}}>
+                        {
+                            commentsAdd.map((comment) => (
+                                <CommentComponent
+                                    key={comment.id}
+                                    change={change}
+                                    changComment={changComment}
+                                    comment={comment}
+                                    postId={post?.postId}
+                                    user={user}
+                                    setComments={setComments}
+                                />
+                            ))
+                        }
+                        {
+                            Number(commentNum) > commentsAdd.length &&
+                            <p style={{textAlign: 'center', cursor: 'pointer'}} onClick={clickPush}>加载更多</p>
+                        }
+                    </div>)}
+
                 </div>
             )}
         </div>

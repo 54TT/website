@@ -3,7 +3,6 @@ import axios from 'axios';
 import {formatDateTime, formatDecimal, getRelativeTimeDifference} from './Utils';
 import dayjs from 'dayjs';
 import {Card, Pagination, Segmented, Table} from "antd";
-import {get} from "../utils/axios";
 import {useRouter} from 'next/router'
 import {autoConvert, changeLang} from '/utils/set'
 import styled from '/public/styles/all.module.css'
@@ -183,9 +182,8 @@ export default function Featured() {
             <Card className={`${styled.featuredBoxCard} ${changeAllTheme('darknessTwo', 'brightTwo')}`}>
                 <div className={styled.featuredBoxTop}>
                     <div style={{display: 'flex', alignItems: 'center'}}>
-                        <Image src="/wallet.png" alt="" width={70} height={70}/>
-                        <span style={{fontWeight: 'bold', fontSize: '26px'}}
-                              className={changeAllTheme('darknessFont', 'brightFont')}>{featured.featured}</span>
+                        <Image src="/wallet.png" alt="" width={70}  height={70} className={styled.mobliceImage} />
+                        <span style={{fontWeight: 'bold', fontSize: '26px'}} className={changeAllTheme('darknessFont','brightFont')}>{featured.featured}</span>
                     </div>
                     <Segmented options={['5m', '1h', '6h', '24h']} onChange={changSeg} defaultValue={'24h'}
                                className={`${changeAllTheme('darkMode', 'whiteMode')}`}/>

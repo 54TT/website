@@ -1,7 +1,6 @@
 import React, {useContext, useEffect, useRef, useState} from "react";
 import dayjs from 'dayjs';
 import {notification, Pagination, Table, Card, Statistic} from "antd";
-import {get} from "../utils/axios";
 import {GlobalOutlined, SendOutlined, TwitterOutlined} from "@ant-design/icons";
 import baseUrl from "../utils/baseUrl";
 
@@ -156,9 +155,8 @@ export default function Presale() {
             <Card className={`${styled.launchBoxCard}  ${changeAllTheme('darknessTwo', 'brightTwo')}`}>
                 <div className={styled.launchBoxCardBox}>
                     <div style={{display: 'flex', alignItems: 'center'}}>
-                        <img src="/Group.png" alt="" width={70} height={70}/>
-                        <span style={{fontWeight: 'bold', fontSize: '26px'}}
-                              className={changeAllTheme('darknessFont', 'brightFont')}> {launch.launch}</span>
+                        <img src="/Group.png" alt="" width={70} height={70} className={styled.mobliceImage}/>
+                        <span style={{fontWeight: 'bold', fontSize: '26px'}} className={changeAllTheme('darknessFont' ,'brightFont')}> {launch.launch}</span>
                     </div>
                     <div className={styled.launchBoxFilter}>
                         <Pagination defaultCurrent={1} current={launchCurrent} showSizeChanger onChange={change}

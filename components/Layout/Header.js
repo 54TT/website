@@ -15,7 +15,6 @@ import _ from 'lodash'
 import cookie from 'js-cookie'
 import {useRouter} from 'next/router'
 // const DrawerPage = dynamic( () =>  import('./Drawer'),)
-import {get, post} from '/utils/axios'
 import {ethers} from 'ethers'
 import {CountContext} from '/components/Layout/Layout';
 import Marquee from "react-fast-marquee";
@@ -71,38 +70,12 @@ const Header = () => {
         changeBack
     } = useContext(CountContext);
     const header = changeLang('header')
-    const [open, setOpen] = useState(false);
-    const [openPresale, setOpenPresale] = useState(false);
-    const [openLaunch, setOpenLaunch] = useState(false);
-    const [openLink, setOpenLink] = useState(false);
-    const [presalePlatform, setPresalePlatform] = useState([]);
-    const [launchPlatform, setLaunchPlatform] = useState([]);
-    const [tokenForm, setTokenForm] = useState({});
     const [timeForm, setTime] = useState({});
-    const [tokenFormBol, setTokenFormBol] = useState(false);
-
     const [value, setValue] = useState(false)
     const changeThemes = (value) => {
         changeBack(value)
         setValue(value)
     }
-    // 验证token
-    const changeToken = _.debounce((e) => {
-        get('/getTokenNameAndSymbol', {
-            tokenAddress: e?.target?.value ? e.target.value : ''
-        }).then(res => {
-            if (res.status === 200 && res?.data?.symbol) {
-                setTokenForm(res.data)
-                setTokenFormBol(false)
-            } else {
-                setTokenForm([])
-                setTokenFormBol(false)
-            }
-        }).catch(err => {
-            setTokenForm([])
-            setTokenFormBol(false)
-        })
-    }, 1500)
     //修改用户
     useEffect(() => {
         if (bolName) {
@@ -110,11 +83,6 @@ const Header = () => {
             changeBolName(false)
         }
     }, [bolName])
-    const onClose = () => {
-        setOpen(false);
-        form.resetFields()
-    };
-
     useEffect(() => {
         // 切换钱包
         if (cookie.get('username') && cookie.get('name') !== address && address) {
@@ -125,121 +93,6 @@ const Header = () => {
             changeBolLogin()
         }
     }, [address])
-    const showDrawer = () => {
-        if (cookie.get('username')) {
-            setOpen(true);
-            get('/selectPresalePlatform', '').then(res => {
-                if (res && res.status === 200) {
-                    setPresalePlatform(res.data ? res.data : [])
-                } else {
-                    setPresalePlatform([])
-                }
-            }).catch(err => {
-                setPresalePlatform([])
-            })
-            get('/selectLaunchPlatform', '').then(res => {
-                if (res && res.status === 200) {
-                    setLaunchPlatform(res.data ? res.data : [])
-                } else {
-                    setLaunchPlatform([])
-                }
-            }).catch(err => {
-                setLaunchPlatform([])
-            })
-        } else {
-            setLaunchPlatform([])
-        }
-    };
-    const onFinishFailed = (a) => {
-        notification.warning({
-            message: `warning`, description: 'Please enter complete data!', placement: 'topLeft', duration: 2
-        });
-    }
-    const onFinish = (values) => {
-        if (tokenFormBol) {
-            inputRef.current.focus({
-                cursor: 'all',
-            });
-        } else {
-            const token = {
-                ...tokenForm,
-                address: values.token,
-                twitter: values.twitter,
-                website: values.website,
-                telegram: values.telegram
-            }
-            let presale = {}
-            let launch = {}
-            let bol = false
-            if (!timeForm.presale && !values.presalePlatformId && !values.presaleLink) {
-            } else if (!timeForm.presale || !values.presalePlatformId || !values.presaleLink) {
-                bol = true
-                notification.warning({
-                    message: `warning`, description: 'Presale please enter complete!', placement: 'topLeft', duration: 2
-                });
-            } else {
-                presale.presaleTime = timeForm?.presale;
-                presale.presalePlatformId = values?.presalePlatformId;
-                presale.presaleLink = values?.presaleLink;
-            }
-            if (!timeForm.launch && !values.launchPlatformId && !values.launchLink) {
-            } else if (!timeForm.launch || !values.launchPlatformId || !values.launchLink) {
-                bol = true
-                notification.warning({
-                    message: `warning`, description: 'Launch please enter complete!', placement: 'topLeft', duration: 2
-                });
-            } else {
-                launch.launchTime = timeForm?.launch;
-                launch.launchPlatformId = values?.launchPlatformId;
-                launch.launchLink = values?.launchLink;
-            }
-            var arrPresale = Object.keys(presale);
-            var arrLaunch = Object.keys(launch);
-            if (arrPresale.length === 0 && arrLaunch.length === 0 && !bol) {
-                notification.warning({
-                    message: `warning`,
-                    description: 'Presale or Launch please enter complete!',
-                    placement: 'topLeft',
-                    duration: 2
-                });
-            } else if (!bol) {
-                const data = {
-                    token, presale: arrPresale.length === 0 ? '' : presale, launch: arrLaunch.length === 0 ? '' : launch
-                }
-                post('/addPresaleAndLaunch', data).then(res => {
-                    if (res && res.data?.success) {
-                        form.resetFields()
-                        setTokenForm({})
-                        setTime({})
-                        setOpen(false);
-                    } else {
-                        notification.warning({
-                            message: `warning`,
-                            description: 'add failed,Please try again',
-                            placement: 'topLeft',
-                            duration: 2
-                        });
-                    }
-                }).catch(err => {
-                    notification.warning({
-                        message: `warning`,
-                        description: 'add failed,Please try again',
-                        placement: 'topLeft',
-                        duration: 2
-                    });
-                })
-            }
-        }
-    };
-    const hidePresale = () => {
-        setOpenPresale(!openPresale)
-    }
-    const hideLaunch = () => {
-        setOpenLaunch(!openLaunch)
-    }
-    const hideLink = () => {
-        setOpenLink(!openLink)
-    }
     const [showChatSearch, setShowChatSearch] = useState(false);
     const [chats, setChats] = useState([]);
     const [userPar, setUserPar] = useState(null);
@@ -257,7 +110,7 @@ const Header = () => {
     }
     useEffect(() => {
         if (userPar && userPar.id) {
-            getParams()
+            // getParams()
         }
     }, [userPar])
 
@@ -274,34 +127,13 @@ const Header = () => {
     };
     // 获取用户信息
     const getUs = async () => {
-        const data = await request('get', "/api/v1/userinfo",'')
-        const params =JSON.parse( cookie.get('username'))
+        const params =JSON.parse(cookie.get('username'))
+        const data = await request('get', "/api/v1/userinfo/"+params?.uid,'')
         if (data && data?.status === 200) {
             const user = data?.data?.data
             setUserPar({...user,id:params?.uid})
             // cookie.set('username', JSON.stringify(data?.data?.data), {expires: 1})
         }
-        // if (data?.data && data?.data?.user) {
-        //     setUserPar(data?.data?.user)
-        //     cookie.set('name', address, {expires: 1})
-        //     // 登录刷新   social
-        //     changeShowData()
-        //     cookie.set('username', JSON.stringify(data?.data?.user), {expires: 1})
-        // } else {
-        //     const {data} = await axios.get('https://api.ipify.org?format=json')
-        //     if (data && data.ip) {
-        //         const ip = await axios.post(baseUrl + "/api/user", {
-        //             address, ipV4Address: data.ip, ipV6Address: data.ip
-        //         })
-        //         if (ip?.data && ip?.data?.user) {
-        //             setUserPar(ip?.data?.user)
-        //             cookie.set('username', JSON.stringify(ip?.data?.user), {expires: 1})
-        //             // 登录刷新   social
-        //             changeShowData()
-        //             cookie.set('name', address, {expires: 1})
-        //         }
-        //     }
-        // }
     }
     const handleLogin = async () => {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -361,6 +193,7 @@ const Header = () => {
     const set = () => {
         cookie.remove('name');
         cookie.remove('username');
+        cookie.remove('token');
         if (router.pathname !== '/') {
             router.push('/')
         }
@@ -481,7 +314,7 @@ const Header = () => {
 
     // 登录的下拉
     const items = [{
-        key: '1', label: (<Link href={`/${userPar && userPar.address ? userPar.address : ''}`}>
+        key: '1', label: (<Link href={`/${userPar && userPar.uid ? userPar.uid : ''}`}>
                        <span>
       Personal
     </span>
@@ -569,7 +402,7 @@ const Header = () => {
     const pushPer = () => {
         if (cookie.get('name')) {
             const data = cookie.get('name')
-            router.push(`/${data}`)
+                        router.push(`/${data}`)
         } else {
             getMoney()
         }
@@ -577,7 +410,18 @@ const Header = () => {
     const ck = async () => {
         const data = await getAddressOwner('0xae2Fc483527B8EF99EB5D9B44875F005ba1FaE13')
     }
-    return (<>
+    const strategy = {
+        "one": function(){return router.push('/')},
+        "two": function(){return router.push('/featured')},
+        "three": function(){return router.push('/presale')},
+        "four": function(){return router.push('/launch')},
+        "five": function(){return router.push('/newPair')}
+    }
+    const pushOnclick = (level) => {
+        return strategy[level]
+    }
+    return (
+        <>
             <div className={styles['headerShowNode']}>
                 <div className={"top-0 w-full  z-30 transition-all headerClass"}>
                     {/*<span onClick={getGasPrice}>11111111111</span>*/}
@@ -642,7 +486,7 @@ const Header = () => {
                                 </p>
                             </div>
                             {no ? <div className={styles.loginBox}>
-                                <Link href={`/${userPar && userPar.address ? userPar.address : ''}`}>
+                                <Link href={`/${userPar && userPar.uid ? userPar.uid : ''}`}>
                                     <img className={'loginImg'} width={35}
                                          src={userPar && userPar.profilePicUrl ? userPar.profilePicUrl : '/Ellipse1.png'}
                                          alt=""/>
@@ -665,189 +509,6 @@ const Header = () => {
                 </div>
                 <DrawerPage getMoney={getMoney}/>
                 {/*</Suspense>*/}
-                <Drawer title="Basic Drawer" destroyOnClose={true} placement="right" onClose={onClose} open={open}>
-                    <Form
-                        name="basic"
-                        form={form}
-                        onFinish={onFinish}
-                        onFinishFailed={onFinishFailed}
-                        autoComplete="off"
-                    >
-                        <Form.Item
-                            label="Token"
-                            name="token"
-                            rules={[{
-                                required: true, message: 'Please input your token!',
-                            },]}
-                            labelCol={{
-                                span: 6,
-                            }}>
-                            <Input onChange={changeToken} ref={inputRef}
-                                   style={tokenFormBol ? {borderColor: 'red'} : {}}/>
-                        </Form.Item>
-                        <div className={styles.addShow}>
-                            {!openPresale ? <CaretRightFilled className={styles.addCur}
-                                                              onClick={hidePresale}/> :
-                                <CaretDownFilled onClick={hidePresale}
-                                                 className={`${styles.addCur} ${styles.addCurMt5}`}/>}
-                            <p className={styles.addPresale} onClick={hidePresale}>presale</p>
-                            <p className={styles.lines}></p>
-                        </div>
-                        <div style={!openPresale ? {display: 'none'} : {}}>
-                            <Form.Item
-                                label="Time"
-                                name="presaleTime"
-                                labelCol={{
-                                    span: 6,
-                                }}
-                            >
-                                <DatePicker showTime onChange={(e, a) => onChangeDate('presale', e, a)}
-                                            style={{width: '100%'}}/>
-                            </Form.Item>
-                            <Form.Item
-                                label="Platform"
-                                name="presalePlatformId"
-                                labelCol={{
-                                    span: 8,
-                                }}
-                            >
-                                <Select
-                                    placeholder="Select a option and change input text above"
-                                    allowClear
-                                    style={{width: '100%'}}
-                                >
-                                    {presalePlatform.length > 0 ? presalePlatform.map((i, index) => {
-                                        return <Option value={i.id} key={index}>
-                                            <div style={{display: 'flex', alignItems: 'center'}}>
-                                                <img src={`${i.logo ? baseUrl + i.logo : '/Ellipse1.png'}`} alt=""
-                                                     width={20} height={20}/>
-                                                <span>{i.name}</span>
-                                            </div>
-                                        </Option>
-                                    }) : null}
-                                </Select>
-                            </Form.Item>
-                            <Form.Item
-                                label="Link"
-                                name="presaleLink"
-                                labelCol={{
-                                    span: 6,
-                                }}
-                            >
-                                <Input/>
-                            </Form.Item>
-                        </div>
-                        {/*launch*/}
-                        <div className={styles.addShow}>
-                            {!openLaunch ? <CaretRightFilled className={`${styles.addCur}`}
-                                                             onClick={hideLaunch}/> :
-                                <CaretDownFilled onClick={hideLaunch}
-                                                 className={`${styles.addCur} ${styles.addCurMt5}`}/>}
-                            <p className={styles.addPresale} onClick={hideLaunch}>launch</p>
-                            <p className={styles.lines}></p>
-                        </div>
-                        <div style={!openLaunch ? {display: 'none'} : {}}>
-                            <Form.Item
-                                label="Time"
-                                name="launchTime"
-                                className={'bbb'}
-                                labelCol={{
-                                    span: 6,
-                                }}
-                            >
-                                <DatePicker showTime onChange={(e, a) => onChangeDate('launch', e, a)}
-                                            style={{width: '100%'}}/>
-                            </Form.Item>
-                            <Form.Item
-                                label="Platform"
-                                name="launchPlatformId"
-                                className={'bbb'}
-                                labelCol={{
-                                    span: 8,
-                                }}
-                            >
-                                <Select
-                                    placeholder="Select a option and change input text above"
-                                    allowClear
-                                    style={{width: '100%'}}
-                                >
-                                    {launchPlatform.length > 0 ? launchPlatform.map((i, index) => {
-                                        return <Option value={i.id} key={index}>
-                                            <div style={{display: 'flex', alignItems: 'center'}}>
-                                                <img src={`${i.logo ? baseUrl + i.logo : '/Ellipse1.png'}`} alt=""
-                                                     width={20} height={20}/>
-                                                <span>{i.name}</span>
-                                            </div>
-                                        </Option>
-                                    }) : null}
-                                </Select>
-                            </Form.Item>
-                            <Form.Item
-                                label="Link"
-                                name="launchLink"
-                                className={'bbb'}
-                                labelCol={{
-                                    span: 6,
-                                }}
-                            >
-                                <Input/>
-                            </Form.Item>
-                        </div>
-                        {/*link*/}
-                        <div className={styles.addShow}>
-                            {openLink ? <CaretRightFilled className={styles.addCur}
-                                                          onClick={hideLink}/> : <CaretDownFilled onClick={hideLink}
-                                                                                                  className={`${styles.addCur} ${styles.addCurMt5}`}/>}
-                            <p className={styles.addPresale} onClick={hideLink}>Link</p>
-                            <p className={styles.lines}></p>
-                        </div>
-                        <div style={openLink ? {display: 'none'} : {}}>
-                            <Form.Item
-                                label="Twitter"
-                                name="twitter"
-                                rules={[{
-                                    required: true, message: 'Please input your twitter!',
-                                },]} labelCol={{
-                                span: 8,
-                            }}
-                            >
-                                <Input/>
-                            </Form.Item>
-                            <Form.Item
-                                label="Telegram"
-                                name="telegram"
-                                rules={[{
-                                    required: true, message: 'Please input your telegram!',
-                                },]} labelCol={{
-                                span: 9,
-                            }}
-                            >
-                                <Input/>
-                            </Form.Item>
-                            <Form.Item
-                                label="Website"
-                                name="website"
-                                className={'bbb'}
-                                rules={[{
-                                    required: true, message: 'Please input your website!',
-                                },]} labelCol={{
-                                span: 8,
-                            }}
-                            >
-                                <Input/>
-                            </Form.Item>
-                        </div>
-                        <Form.Item wrapperCol={{
-                            offset: 8, span: 16,
-                        }}>
-                            <Button type={'primary'} htmlType="submit">
-                                Submit
-                            </Button>
-                        </Form.Item>
-                    </Form>
-
-
-                </Drawer>
             </div>
 
             {/* 移动端适配导航 */}
@@ -914,44 +575,44 @@ const Header = () => {
                 className={`${isShowMenuItem ? styles.mobliceMentHideItemsBox : styles.mobliceMentItemsBox} ${changeTheme ? 'darknessTwo' : 'brightTwo'}`}>
                 <div style={{display: 'flex', flexWrap: 'wrap'}}>
                     <div className={`${styles.mobliceDpFlex}`}>
-                        <Link href={'/'}>
+                        <div onClick={pushOnclick('one')}>
                             <div className={`${styles.mobliceDpFlexs}`}>
                                 <Image src={`/Vector.svg`} alt="logo" width={32} height={32}/>
                                 <div className={changeTheme ? 'darknessFont' : 'brightFont'}>{drawer.home}</div>
                             </div>
-                        </Link>
+                        </div>
                     </div>
                     <div className={`${styles.mobliceDpFlex}`}>
-                        <Link href={'/featured'}>
+                        <div onClick={pushOnclick('two')}>
                             <div className={`${styles.mobliceDpFlexs}`}>
                                 <Image src={`/icon_graph_.svg`} alt="logo" height={32} width={32}/>
                                 <div className={changeTheme ? 'darknessFont' : 'brightFont'}>{drawer.featured}</div>
                             </div>
-                        </Link>
+                        </div>
                     </div>
                     <div className={`${styles.mobliceDpFlex}`}>
-                        <Link href={'/presale'}>
+                        <div onClick={pushOnclick('three')}>
                             <div className={`${styles.mobliceDpFlexs}`}>
                                 <Image src={`/icon_rocket_.svg`} alt="logo" height={32} width={32}/>
                                 <div className={changeTheme ? 'darknessFont' : 'brightFont'}>{drawer.presale}</div>
                             </div>
-                        </Link>
+                        </div>
                     </div>
                     <div className={`${styles.mobliceDpFlex}`}>
-                        <Link href={'/launch'}>
+                        <div onClick={pushOnclick('four')}>
                             <div className={`${styles.mobliceDpFlexs}`}>
                                 <Image src={`/icon_timer_.svg`} alt="logo" height={32} width={32}/>
                                 <div className={changeTheme ? 'darknessFont' : 'brightFont'}>{drawer.launch}</div>
                             </div>
-                        </Link>
+                        </div>
                     </div>
                     <div className={`${styles.mobliceDpFlex}`}>
-                        <Link href={'/newPair'}>
+                        <div onClick={pushOnclick('five')}>
                             <div className={`${styles.mobliceDpFlexs}`}>
                                 <Image src={`/GroupJiuBa.svg`} alt="logo" height={32} width={32}/>
                                 <div className={changeTheme ? 'darknessFont' : 'brightFont'}>{drawer.newPair}</div>
                             </div>
-                        </Link>
+                        </div>
                     </div>
                     <div className={`${styles.mobliceDpFlex}`}>
                         <div onClick={push}>

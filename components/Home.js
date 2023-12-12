@@ -3,7 +3,6 @@ import styles from "../public/styles/home.module.css";
 import axios from 'axios';
 import {formatDecimal, getRelativeTimeDifference, formatDateTime} from './Utils';
 import {useRouter} from 'next/router';
-import {get, getUser} from '/utils/axios'
 import Link from 'next/link'
 import {autoConvert,} from '/utils/set'
 import Image from 'next/image'
@@ -41,15 +40,30 @@ const PostCard = dynamic(() => import('./PostCard'), {ssr: false})
 const Bott = dynamic(() => import('./Bottom'), {ssr: false})
 import {changeLang} from "/utils/set";
 import {request} from "../utils/hashUrl";
+import cookie from "js-cookie";
 
 function Home() {
     const router = useRouter();
     const {bolLogin, changeShowData, showData, changeBolLogin, changeTheme} = useContext(CountContext);
     const home = changeLang('home')
     const refHeight = useRef(null)
+    const getUs = async () => {
+        const params =JSON.parse( cookie.get('username'))
+        const data = await request('get', "/api/v1/userinfo/"+params?.uid,)
+        if (data&&data?.status === 200) {
+            const user = data?.data?.data
+            if(user){
+                setUserPa(user)
+            }else {
+                setUserPa(null)
+            }
+        } else {
+            setUserPa(null)
+        }
+    }
     useEffect(() => {
         if (cook.get('username')&&cook.get('username')!='undefined') {
-            setUserPa(JSON.parse(cook.get('username')))
+            getUs()
         }
     }, [bolLogin,showData]);
     const [userPa, setUserPa] = useState(null);

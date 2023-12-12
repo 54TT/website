@@ -1,7 +1,6 @@
 import axios from "axios";
 import cookie from "js-cookie";
 import dayjs from 'dayjs'
-import baseUrl from "./baseUrl";
 
 const requestA = axios.create({
     baseURL: 'http://188.166.191.246:8080',
@@ -36,8 +35,8 @@ export const request = async (method, url, data) => {
         if (params && params?.exp && dayjs(dayjs.unix(params?.exp)).isAfter(dayjs())) {
             return await requestA({
                 method,
-                params: method === 'get' ? data : '',
-                data: method === 'get' ? '' : data,
+                params: method === 'get' ? data : method === 'delete' ? undefined : '',
+                data: method === 'get' ? '' : method === 'delete' ? undefined : data,
                 url
             })
         } else {
@@ -46,9 +45,10 @@ export const request = async (method, url, data) => {
     } else {
         return await requestA({
             method,
-            params: method === 'get' ? data : '',
-            data: method === 'get' ? '' : data,
+            params: method === 'get' ? data : method === 'delete' ? undefined : '',
+            data: method === 'get' ? '' : method === 'delete' ? undefined : data,
             url
         })
     }
 }
+

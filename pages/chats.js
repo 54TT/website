@@ -12,7 +12,6 @@ import {LoadingOutlined} from '@ant-design/icons'
 import {AppleOutlined,} from '@ant-design/icons'
 import Link from 'next/link';
 import dynamic from 'next/dynamic'
-import {getUser} from "../utils/axios";
 import cook from "js-cookie";
 import styles from '/public/styles/allmedia.module.css'
 
@@ -21,15 +20,19 @@ const ChatSearch = dynamic(() => import('../components/Chat/ChatSearch'),{ ssr: 
 const Chat = dynamic(() => import('../components/Chat/Chat'),{ ssr: false });
 import {changeLang} from "/utils/set";
 import {request} from "../utils/hashUrl";
-
+import cookie from "js-cookie";
 function ChatsPage() {
     const social=changeLang('social')
-
     const [chats, setChats] = useState([]);
     const [userPar, setUserPar] = useState({});
     const getUs = async () => {
-        const a = cook.get('name')
-        const data = await request('get', "/api/v1/userinfo",'')
+        const params =JSON.parse( cookie.get('username'))
+        const data = await request('get', "/api/v1/userinfo/"+params?.uid,'')
+        if(data&&data?.status===200){
+            setUserPar(data?.data?.data)
+        }else {
+            setUserPar('')
+        }
         // const {data: {user}, status} = await getUser(a)
         // if (status === 200 && user) {
         //     setUserPar(user)
@@ -52,9 +55,9 @@ function ChatsPage() {
         profilePicUrl: "",
     });
     const getParams = async () => {
-        if (userPar && userPar.id) {
+        if (userPar && userPar.uid) {
             const res = await axios.get(`${baseUrl}/api/chats`, {
-                params: {userId: userPar?.id}
+                params: {userId: userPar?.uid}
             });
             if (res.status === 200) {
                 setChats(res.data)
@@ -65,7 +68,7 @@ function ChatsPage() {
     }
     const [takeOver, setTakeOver] = useState(false)
     useEffect(() => {
-        getParams()
+        // getParams()
     }, [userPar, takeOver])
     const openChatId = useRef("");
     const [showChatSearch, setShowChatSearch] = useState(false);
@@ -77,8 +80,8 @@ function ChatsPage() {
         if (!socket.current) {
             socket.current = io(baseUrl); //establishing connection with server;
         }
-        if (socket.current && userPar && userPar?.id) {
-            socket.current.emit("join", {userId: userPar?.id});
+        if (socket.current && userPar && userPar?.uid) {
+            socket.current.emit("join", {userId: userPar?.uid});
             socket.current.on("connectedUsers", ({users}) => {
                 setConnectedUsers(users);
             });
@@ -93,15 +96,15 @@ function ChatsPage() {
                 shallow: true,
             });
         }
-        if (userPar && userPar.id) {
+        if (userPar && userPar.uid) {
             postPar();
         }
     }, [userPar]);
     useEffect(() => {
-        if (userPar && userPar.id && router.query.chat) {
+        if (userPar && userPar.uid && router.query.chat) {
             const loadTexts = () => {
                 socket?.current.emit("loadTexts", {
-                    userId: userPar.id,
+                    userId: userPar.uid,
                     textsWith: router.query.chat,
                 });
                 socket?.current.on("textsLoaded", ({chat, textsWithDetails}) => {
@@ -132,9 +135,9 @@ function ChatsPage() {
         e.preventDefault();
         if (text) {
             if (socket.current) {
-                if (userPar && userPar.id) {
+                if (userPar && userPar.uid) {
                     socket?.current.emit("sendNewText", {
-                        userId: userPar.id,
+                        userId: userPar.uid,
                         userToTextId: openChatId?.current,
                         text,
                     });
@@ -227,15 +230,37 @@ function ChatsPage() {
         try {
             await axios.post(
                 `${baseUrl}/api/chats`,
-                {userId: userPar.id}
+                {userId: userPar.uid}
             );
         } catch (error) {
 
         }
     }
+    // 获取屏幕
+    const [winHeight, setHeight] = useState();
+    const isAndroid = () => {
+        console.log(window.navigator.userAgent, "nav");
+        const u = window?.navigator?.userAgent;
+        if (u.indexOf("Android") > -1 || u.indexOf("iPhone") > -1) return true;
+        return false;
+    };
+    useEffect(() => {
+        if (isAndroid()) {
+        setHeight(window.innerHeight - 180);
+        } else {
+        setHeight("auto");
+        }
+    });
+
+
+
+
+
     return (
         <div className={styles.allMobliceBox}>
-            <div className={styles.allMoblice} style={{backgroundColor: 'rgb(253,213,62)', marginRight: '20px', borderRadius: '10px',}}>
+            <div 
+                className={styles.allMoblice} 
+                style={{backgroundColor: 'rgb(253,213,62)', marginRight: '20px', borderRadius: '10px', height: winHeight, minHeight: winHeight}}>
                 <main className="flex" style={{height: "calc(100vh - 4.5rem)"}}>
                     <Sidebar user={userPar} maxWidth={"250px"}/>
                     <div style={{backgroundColor: 'rgba(201,201,201,0.7)'}}

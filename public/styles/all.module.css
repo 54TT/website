@@ -787,12 +787,13 @@
 }
 /* 超小屏幕 */
 @media screen and (max-width: 768px) {
-    /*.boxPar {*/
-    /*    display: flex;*/
-    /*    flex-direction: column;*/
-    /*}*/
-    /*.boxPar > .left {*/
-    .launchBoxFilter {
+    .followersBoxMin{
+        height: auto;
+    }
+    .mobliceImage{
+        display: none;
+    }
+    .launchBoxFilter{
         margin-top: 20px;
     }
 

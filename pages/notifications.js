@@ -8,16 +8,17 @@ import styles from '/public/styles/allmedia.module.css'
 // import CommentNotification from "../components/Notification/CommentNotification";
 // import FollowNotification from "../components/Notification/FollowNotification";
 import dynamic from 'next/dynamic'
-import {getUser} from "/utils/axios";
 import cook from "js-cookie";
 // const Sidebar = dynamic(() => import('../components/Sidebar'));
-const LikeNotification = dynamic(() => import('../components/Notification/LikeNotification'),{ ssr: false });
-const CommentNotification = dynamic(() => import('../components/Notification/CommentNotification'),{ ssr: false });
-const FollowNotification = dynamic(() => import('../components/Notification/FollowNotification'),{ ssr: false });
+const LikeNotification = dynamic(() => import('../components/Notification/LikeNotification'), {ssr: false});
+const CommentNotification = dynamic(() => import('../components/Notification/CommentNotification'), {ssr: false});
+const FollowNotification = dynamic(() => import('../components/Notification/FollowNotification'), {ssr: false});
 import {changeLang} from "/utils/set";
+import cookie from "js-cookie";
+import {request} from "../utils/hashUrl";
 
 function Notifications() {
-    const social=changeLang('social')
+    const social = changeLang('social')
     const [notifications, setNotifications] = useState([])
     const [userPar, setUserPar] = useState(null)
     const [followStatsBol, setFollowStatsBol] = useState(false)
@@ -25,24 +26,29 @@ function Notifications() {
     const chang = () => {
         setFollowStatsBol(!followStatsBol)
     }
-    const getUs=async ()=>{
-        const a =cook.get('name')
-        const {data:{user},status} =   await getUser(a)
-        if(status===200&&user){
-            setUserPar(user)
-        }else {
-            setUserPar('')
+    const getUs = async () => {
+        const params = JSON.parse(cookie.get('username'))
+        const data = await request('get', "/api/v1/userinfo/" + params?.uid,)
+        if (data && data?.status === 200) {
+            const user = data?.data?.data
+            if (user) {
+                setUserPar(user)
+            } else {
+                setUserPar(null)
+            }
+        } else {
+            setUserPar(null)
         }
     }
     useEffect(() => {
-        if(cook.get('name')){
+        if (cook.get('username') && cook.get('username') != 'undefined') {
             getUs()
         }
-    }, [cook.get('name')]);
+    }, [cook.get('username')]);
     const notificationRead = async () => {
         try {
             const data = await axios.get(
-                `${baseUrl}/api/notifications`, {params: {userId: userPar?.id}}
+                `${baseUrl}/api/notifications`, {params: {userId: userPar?.uid}}
             );
             if (data.status === 200 && data.data) {
                 setNotifications(data.data)
@@ -53,24 +59,50 @@ function Notifications() {
     };
     const getUsers = async () => {
         const res = await axios.get(`${baseUrl}/api/user/userFollowStats`, {
-            params: {userId:userPar?.id},
+            params: {userId: userPar?.id},
         });
         if (res?.status === 200) {
             setLoggedUserFollowStats(res.data.userFollowStats)
         }
     }
     useEffect(() => {
-        if (userPar && userPar.id) {
+        if (userPar && userPar.uid) {
             notificationRead();
-            getUsers()
+            // getUsers()
         }
     }, [userPar, followStatsBol]);
+
+    // 获取屏幕
+    const [winHeight, setHeight] = useState();
+    const isAndroid = () => {
+        console.log(window.navigator.userAgent, "nav");
+        const u = window?.navigator?.userAgent;
+        if (u.indexOf("Android") > -1 || u.indexOf("iPhone") > -1) return true;
+        return false;
+    };
+    useEffect(() => {
+        if (isAndroid()) {
+            setHeight(window.innerHeight - 180);
+        } else {
+            setHeight("auto");
+        }
+    });
+
+
     return (
         <div className={styles.allMobliceBox}>
-            <div className={styles.allMoblice} style={{ backgroundColor:'rgb(253,213,62)',marginRight:"20px",borderRadius:'10px'}}>
+            <div
+                className={styles.allMoblice}
+                style={{
+                    backgroundColor: 'rgb(253,213,62)',
+                    marginRight: "20px",
+                    borderRadius: '10px',
+                    height: winHeight,
+                    minHeight: winHeight
+                }}>
                 <main
-                    className="flex"
-                    style={{height: "calc(100vh - 4.5rem)"}}>
+                    className={`flex ${styles.mobliceNotifications}`}
+                >
                     <Sidebar user={userPar} maxWidth={"250px"}/>
                     <div
                         style={{
@@ -80,7 +112,7 @@ function Notifications() {
                             overflowY: 'auto',
                             borderRadius: '10px',
                             padding: '20px',
-                            backgroundColor:'#B2DB7E'
+                            backgroundColor: '#B2DB7E'
                         }}>
                         <div className="flex items-center ml-2">
                             <p style={{
@@ -98,31 +130,31 @@ function Notifications() {
 
                         {notifications.length > 0 ? (
                             <div style={{borderTop: "1px solid #efefef"}}>
-                                {notifications?.map((notification) =>{
-                                    return   <div key={notification.id}>
-                                            {notification.type === "newLike" &&
-                                                notification.post !== null && (
-                                                    <LikeNotification notification={notification}/>
-                                                )}
-                                            {notification.type === "newComment" &&
-                                                notification.post !== null && (
-                                                    <CommentNotification notification={notification}/>
-                                                )}
-                                            {notification.type === "newFollower" &&
-                                                notification.post !== null && (
-                                                    <FollowNotification
-                                                        notification={notification}
-                                                        chang={chang}
-                                                        userFollowStats={userFollowStats}
-                                                        userPar={userPar}
-                                                    />
-                                                )}
-                                        </div>
+                                {notifications?.map((notification) => {
+                                    return <div key={notification.id}>
+                                        {notification.type === "newLike" &&
+                                            notification.post !== null && (
+                                                <LikeNotification notification={notification}/>
+                                            )}
+                                        {notification.type === "newComment" &&
+                                            notification.post !== null && (
+                                                <CommentNotification notification={notification}/>
+                                            )}
+                                        {notification.type === "newFollower" &&
+                                            notification.post !== null && (
+                                                <FollowNotification
+                                                    notification={notification}
+                                                    chang={chang}
+                                                    userFollowStats={userFollowStats}
+                                                    userPar={userPar}
+                                                />
+                                            )}
+                                    </div>
                                 })}
                             </div>
                         ) : (
                             <p className="text-md text-gray-500">
-                                {`${social.noti} ${userPar?.name}.`}
+                                {`${social.noti} ${userPar?.username || userPar?.address}.`}
                             </p>
                         )}
                     </div>
