@@ -163,9 +163,9 @@ function ProfilePage() {
     }
   }, [loadingBol]);
   const getPosts = async () => {
-      const res = await request('post','/api/v1/post/list',{uid:user.id,page:1})
+      const res = await request('post','/api/v1/post/list',{uid:user?.id,page:1})
     if(res&&res?.data){
-      setPosts(res.data.posts)
+      setPosts(res?.data?.posts)
     }else {
       setPosts([])
     }

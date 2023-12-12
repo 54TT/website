@@ -21,7 +21,7 @@ function RightSideColumn({user, chatsData, userFollowStats,change}) {
     const [loggedInUserFollowStats, setLoggedInUserFollowStats] =
         useState([]);
     useEffect(() => {
-        getUsersToFollow();
+        // getUsersToFollow();
         if (userFollowStats&&userFollowStats.following&&userFollowStats.following.length > 0) {
             setLoggedInUserFollowStats(userFollowStats.following)
         } else {

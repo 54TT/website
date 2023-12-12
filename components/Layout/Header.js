@@ -275,8 +275,10 @@ const Header = () => {
     // 获取用户信息
     const getUs = async () => {
         const data = await request('get', "/api/v1/userinfo",'')
+        const params =JSON.parse( cookie.get('username'))
         if (data && data?.status === 200) {
-            setUserPar(data?.data?.data)
+            const user = data?.data?.data
+            setUserPar({...user,id:params?.uid})
             // cookie.set('username', JSON.stringify(data?.data?.data), {expires: 1})
         }
         // if (data?.data && data?.data?.user) {

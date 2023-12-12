@@ -8,8 +8,6 @@ import dynamic from 'next/dynamic'
 const InputBox = dynamic(() => import('./InputBox'),{ ssr: false })
 const InfoBox = dynamic(() => import('./HelperComponents/InfoBox'),{ ssr: false })
 const PostCard = dynamic(() => import('./PostCard'),{ ssr: false })
-
-
 import InfiniteScroll from 'react-infinite-scroll-component';
 function Feed({user, postsData, errorLoading,change,changePage, increaseSizeAnim}) {
     useEffect(() => {

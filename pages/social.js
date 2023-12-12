@@ -14,6 +14,8 @@ import { CountContext } from '/components/Layout/Layout'
 const Feed = dynamic(() => import('../components/Feed'), { ssr: false });
 const RightSideColumn = dynamic(() => import('../components/RightSideColumn'), { ssr: false });
 import {arrayUnique} from '/utils/set'
+import {request} from "../utils/hashUrl";
+import cookie from "js-cookie";
 function Index() {
     const [postsData, setPostsData] = useState([])
     const [postsDataAdd, setPostsDataAdd] = useState([])
@@ -88,18 +90,24 @@ function Index() {
         }
     }, [postsDataBol])
     const getUs = async () => {
-        const {data: {user}, status} = await getUser(cook.get('name'))
-        if (status === 200 && user) {
-            setUserPar(user)
+        const data = await request('get', "/api/v1/userinfo",'')
+        const params =JSON.parse( cookie.get('username'))
+        if (data&&data?.status === 200) {
+            const user = data?.data?.data
+            if(user){
+                setUserPar({...user,id:params?.uid})
+            }else {
+                setUserPar(null)
+            }
         } else {
-            setUserPar('')
+            setUserPar(null)
         }
     }
     useEffect(() => {
-        if (cook.get('name')) {
-            // getUs()
+        if (cook.get("username")&&cook.get("username")!='undefined') {
+            getUs()
         }
-    }, [cook.get('name')]);
+    }, [cook.get("username")]);
     const change = (name, id) => {
         if (name === 'gun') {
             setScrollBol(true)
