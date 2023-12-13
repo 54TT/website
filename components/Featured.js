@@ -63,7 +63,7 @@ export default function Featured() {
         )
     }
     const columns = [{
-        title: packageHtml(featured.pair), align: 'left',
+        title: packageHtml(featured.pair), align: 'center',
         fixed: 'left', render: (text, record) => {
             const data = JSON.parse(record?.apiData)
             return <div className={styled.featuredColumnsBox}>
@@ -72,6 +72,7 @@ export default function Featured() {
                     <p className={changeAllTheme('darknessFont', 'brightFont')}>{data?.baseToken?.symbol.length > 7 ? data.baseToken.symbol.slice(0, 4) : data.baseToken.symbol}/<span
                         style={{color: '#626262'}}>{data?.quoteToken?.symbol.length > 7 ? data.quoteToken.symbol.slice(0, 4) : data.quoteToken.symbol}</span>
                     </p>
+                      <p className={changeAllTheme('darknessFont', 'brightFont')}>{record?.pair.slice(0,5)+'...'+record?.pair.slice(-4)}</p>
                 </div>
             </div>
         }

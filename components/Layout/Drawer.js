@@ -114,7 +114,7 @@ const Drawer = ({getMoney}) => {
                                     <Image src={'/logo.svg'} alt="logo" width={30} height={30}/>
                                 </ListItemIcon>
                                 <ListItemText primary={<div style={{width: '50%'}}>
-                                    <Image width={100} height={100} style={{width: '100%'}} src="/Union.png" alt=""/>
+                                    <Image width={100} height={100} style={{width: '100%'}} src="/Group21.svg" alt=""/>
                                 </div>}
                                               sx={{opacity: openDrawer ? 1 : 0}}/>
                             </DrawerHeader>

@@ -66,7 +66,7 @@ function ChatSearch({ setShowChatSearch, setChats, chats,user, }) {
         <div   style={{overflowY:'auto',height:'500px'}}>
           {searchResults.map((resultUser) => (
             <Link
-              key={resultUser.id}
+              key={resultUser?.id}
               href={`/chats?chat=${resultUser.id}`}
               passHref
             >

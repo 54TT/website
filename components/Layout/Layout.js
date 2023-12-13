@@ -3,9 +3,7 @@ import Header from "./Header";
 import {ConfigProvider, FloatButton} from 'antd';
 import {useRouter} from "next/router";
 import {Anchor} from 'antd'
-import cookie from 'js-cookie'
-import dynamic from "next/dynamic";
-// const Header = dynamic(() => import('./Header'),{ ssr: false })
+
 export const CountContext = createContext(null);
 const Layout = ({children}) => {
     const router = useRouter()
@@ -23,6 +21,15 @@ const Layout = ({children}) => {
 
     // 切换背景
     const [changeTheme, setChangeTheme] = useState(false)
+
+
+    // logout
+    const [logout, setLogout] = useState(false)
+
+    const logoutBack = () => {
+        setLogout(true)
+    }
+
     const changeBack = () => {
         setChangeTheme(!changeTheme)
     }
@@ -61,7 +68,8 @@ const Layout = ({children}) => {
             showData,
             changeBolName,
             changeBolLogin,
-            bolLogin
+            bolLogin,
+            logout, logoutBack
         }}>
             <ConfigProvider
                 theme={{
@@ -70,11 +78,12 @@ const Layout = ({children}) => {
                             selectorBg: changeTheme ? 'rgb(53,47,74)' : 'rgb(254,239,146)'
                         },
                         Segmented: {
-                            itemSelectedBg:'rgb(253,213,62)',
+                            itemSelectedBg: changeTheme ? 'rgb(59,55,71)' : 'rgb(253,213,62)',
+                            itemSelectedColor: changeTheme ? 'rgb(139,199,179)' : 'rgb(0,0,0)',
+                            itemColor: changeTheme ? 'rgb(255,255,255)' : 'rgb(0,0,0)'
                         }
                     }
-                }}
-            >
+                }}>
                 <div id={'part-1'}>
                     <Header/>
                     <div

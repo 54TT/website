@@ -1,27 +1,26 @@
 import React, {useEffect, useState, useContext} from "react";
-import axios from "axios";
 import Sidebar from "../components/Sidebar";
-import baseUrl from '/utils/baseUrl'
-// import Feed from "../components/Feed";
 import styles from "../public/styles/social.module.css";
-// import RightSideColumn from "../components/RightSideColumn";
 import _ from 'lodash'
 import dynamic from 'next/dynamic'
 import cook from "js-cookie";
-import { CountContext } from '/components/Layout/Layout'
-// const Sidebar = dynamic(() => import('../components/Sidebar'));
-const Feed = dynamic(() => import('../components/Feed'), { ssr: false });
-const RightSideColumn = dynamic(() => import('../components/RightSideColumn'), { ssr: false });
+import {CountContext} from '/components/Layout/Layout'
+
+const Feed = dynamic(() => import('../components/Feed'), {ssr: false});
+const RightSideColumn = dynamic(() => import('../components/RightSideColumn'), {ssr: false});
 import {arrayUnique} from '/utils/set'
 import {request} from "../utils/hashUrl";
 import cookie from "js-cookie";
+import {Skeleton} from "antd";
+
 function Index() {
     // 推文
     const [postsData, setPostsData] = useState([])
     const [postsDataAdd, setPostsDataAdd] = useState([])
     const [postsDataBol, setPostsDataBol] = useState(false)
-    const [postSession, setPostSession] = useState({})
-    const [errorLoading, setErrorLoading] = useState(false)
+
+    const [postsLoad, setPostsLoad] = useState(true)
+
     const [chatsData, setChatsData] = useState([])
     //  重新获取用户接口
     const [changeBol, setChangeBol] = useState(true)
@@ -31,18 +30,8 @@ function Index() {
     const [userPar, setUserPar] = useState(null)
     // 是否滚动
     const [scrollBol, setScrollBol] = useState(false)
-
-    //  是否点赞
-    const [clickBol, setClickBol] = useState(false)
-
     // 是否发推文
     const [sendBol, setSendBol] = useState(false)
-
-    // 删除的推文
-    const [deleteId, setDeleteId] = useState(null)
-
-    // 是否关注
-    const [likeBol, setLikeBol] = useState(false)
     useEffect(() => {
         if (scrollBol) {
             setScrollBol(false)
@@ -59,46 +48,23 @@ function Index() {
             } else {
                 setPostsDataAdd([])
             }
-        } else if (clickBol) {
-            setClickBol(false)
-            if (postsData && postsData.length > 0) {
-                const data = postsDataAdd.concat(postsData)
-                let aa = arrayUnique(data, 'id')
-                if (deleteId) {
-                    const man = aa.filter((i) => {
-                        return i.id !== deleteId
-                    })
-                    setPostsDataAdd(man)
-                    setDeleteId(null)
-                } else {
-                    setPostsDataAdd(aa)
-                }
-            } else {
-                if (deleteId) {
-                    const da = _.cloneDeep(postsDataAdd)
-                    const b = da.filter((i) => i.id !== deleteId)
-                    setPostsDataAdd(b)
-                    setDeleteId(null)
-                } else {
-                    setPostsDataAdd([...postsDataAdd])
-                }
-            }
         } else {
             if (postsData && postsData.length > 0) {
                 setPostsDataAdd(postsData)
             } else {
                 setPostsDataAdd([])
             }
+            setPostsLoad(false)
         }
     }, [postsDataBol])
     const getUs = async () => {
-        const params =JSON.parse( cookie.get('username'))
-        const data = await request('get', "/api/v1/userinfo/"+params?.uid,)
-        if (data&&data?.status === 200) {
+        const params = JSON.parse(cookie.get('username'))
+        const data = await request('get', "/api/v1/userinfo/" + params?.uid,)
+        if (data && data?.status === 200) {
             const user = data?.data?.data
-            if(user){
+            if (user) {
                 setUserPar(user)
-            }else {
+            } else {
                 setUserPar(null)
             }
         } else {
@@ -106,27 +72,26 @@ function Index() {
         }
     }
     useEffect(() => {
-        if (cook.get("username")&&cook.get("username")!='undefined') {
+        if (cook.get("username") && cook.get("username") != 'undefined') {
             getUs()
         }
     }, [cook.get("username")]);
     const change = (name, id) => {
         if (name === 'gun') {
             setScrollBol(true)
+            setChangeBol(!changeBol)
         }
         if (name === 'send') {
+            setChangeBol(!changeBol)
             setSendBol(true)
         }
-        if (name === 'click') {
-            setClickBol(true)
-        }
-        if (name === 'like') {
-            setLikeBol(true)
-        }
         if (id) {
-            setDeleteId(id)
+            const data = _.cloneDeep(postsDataAdd)
+            const man = data.filter((i) => {
+                return i.postId !== id
+            })
+            setPostsDataAdd(man)
         }
-        setChangeBol(!changeBol)
     }
     const changePage = () => {
         setPageNumber(pageNumber + 1)
@@ -137,8 +102,8 @@ function Index() {
         if (sendBol) {
             a = 1
         }
-        const res = await request('post',`/api/v1/post/public`, {page: a});
-        if (res&&res?.status === 200) {
+        const res = await request('post', `/api/v1/post/public`, {page: a});
+        if (res && res?.status === 200) {
             setPostsDataBol(!postsDataBol)
             setPostsData(res?.data?.posts)
         } else {
@@ -150,25 +115,12 @@ function Index() {
         // });
         // setChatsData(chatRes && chatRes?.data.length > 0 ? chatRes.data : [])
     }
-    const getUsers = async () => {
-        const res = await axios.get(`${baseUrl}/api/user/userFollowStats`, {
-            params: {userId: userPar?.id},
-        });
-        if (res?.status === 200) {
-            setPostSession(res.data.userFollowStats)
-        }
-    }
     useEffect(() => {
         if (userPar && userPar?.uid) {
-            if (!likeBol) {
-                getParams()
-            } else {
-                setLikeBol(false)
-            }
-            // getUsers()
+            getParams()
         }
     }, [userPar, changeBol])
-    const {  changeTheme } = useContext(CountContext);
+    const {changeTheme} = useContext(CountContext);
     const changeAllTheme = (a, b) => {
         return changeTheme ? a : b
     }
@@ -179,20 +131,21 @@ function Index() {
                      style={{backgroundColor: 'rgb(253,213,62)', marginRight: '20px', borderRadius: '10px'}}>
                     <main style={{display: 'flex'}}>
                         <Sidebar user={userPar ? userPar : ''}/>
-                        <Feed
-                            user={userPar ? userPar : ''}
-                            postsData={postsDataAdd}
-                            errorLoading={errorLoading}
-                            change={change}
-                            changePage={changePage}
-                            increaseSizeAnim={{
-                                sizeIncDown: styles.increasesizereally,
-                                sizeIncUp: styles.sizeup,
-                            }}
-                        />
+                        {
+                            postsLoad ? <Skeleton active/> : <Feed
+                                user={userPar ? userPar : ''}
+                                postsData={postsDataAdd}
+                                postsLoad={postsLoad}
+                                change={change}
+                                changePage={changePage}
+                                increaseSizeAnim={{
+                                    sizeIncDown: styles.increasesizereally,
+                                    sizeIncUp: styles.sizeup,
+                                }}
+                            />
+                        }
                         <RightSideColumn
                             chatsData={chatsData}
-                            userFollowStats={postSession}
                             change={change}
                             user={userPar ? userPar : {}}
                         />

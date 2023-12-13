@@ -12,7 +12,7 @@ import {
     ArrowLeftOutlined
 } from '@ant-design/icons'
 import {useEffect} from "react";
-import {notification} from "antd";
+import {notification, Skeleton} from "antd";
 import styled from '/public/styles/all.module.css'
 import {changeLang} from "/utils/set";
 import {request} from "../../utils/hashUrl";
@@ -24,7 +24,7 @@ const notifyError = () => {
     });
 }
 
-function ProfileFields({isUserOnOwnAccount, user, change, getProfile}) {
+function ProfileFields({isUserOnOwnAccount, user, change, getProfile,showLoad}) {
     // isUserOnOwnAccount
     const username = changeLang('username')
     const [bio, setBio] = useState("");
@@ -70,49 +70,48 @@ function ProfileFields({isUserOnOwnAccount, user, change, getProfile}) {
 
     return (
         <div
-            className={`bg-white justify-start rounded-2xl shadow-md p-5 ${styled.profileFieldsBox}`}
-        >
-
-            {/*修改*/}
-            {editProfile ? (
-                <div className="flex justify-between ml-1 mr-0.5 mb-1">
-                    <h1
-                        className="text-2xl font-semibold"
-                    >
-                        {username.intro}
-                    </h1>
-                    <div className={styled.profileFieldsIconBox}>
-                        <ArrowLeftOutlined className={styled.profileFieldsIcon} onClick={() => {
-                            setEditProfile(false)
-                            setBio(user?.bio)
-                            setSocial({
-                                youtube: user?.youtube, twitter: user?.twitter, websiteLink:
-                                user?.websiteLink, discord: user?.discord
-                            })
-                        }}/>
-                        <ArrowRightOutlined className={styled.profileFieldsIcons} onClick={updateProfile}/>
-                    </div>
-                </div>
-            ) : (
-                <>
-                    <div className="flex justify-between">
-                        <h1
-                            className="text-2xl font-semibold mb-1"
-                        >
-                            {username.intro}
-                        </h1>
-                        {isUserOnOwnAccount && (
-                            <FormOutlined style={{fontSize: '20px', fontWeight: 'bold'}}
-                                          onClick={() => setEditProfile(true)}
-                            />
-                        )}
-                    </div>
-                </>
-            )}
-
-            {/*数据*/}
-            {editProfile ? (
-                <div>
+            className={`bg-white justify-start rounded-2xl shadow-md p-5 ${styled.profileFieldsBox}`}>
+            {
+                showLoad?<Skeleton  active={true}/>: <>
+                    {/*修改*/}
+                    {editProfile ? (
+                        <div className="flex justify-between ml-1 mr-0.5 mb-1">
+                            <h1
+                                className="text-2xl font-semibold"
+                            >
+                                {username.intro}
+                            </h1>
+                            <div className={styled.profileFieldsIconBox}>
+                                <ArrowLeftOutlined className={styled.profileFieldsIcon} onClick={() => {
+                                    setEditProfile(false)
+                                    setBio(user?.bio)
+                                    setSocial({
+                                        youtube: user?.youtube, twitter: user?.twitter, websiteLink:
+                                        user?.websiteLink, discord: user?.discord
+                                    })
+                                }}/>
+                                <ArrowRightOutlined className={styled.profileFieldsIcons} onClick={updateProfile}/>
+                            </div>
+                        </div>
+                    ) : (
+                        <>
+                            <div className="flex justify-between">
+                                <h1
+                                    className="text-2xl font-semibold mb-1"
+                                >
+                                    {username.intro}
+                                </h1>
+                                {isUserOnOwnAccount && (
+                                    <FormOutlined style={{fontSize: '20px', fontWeight: 'bold'}}
+                                                  onClick={() => setEditProfile(true)}
+                                    />
+                                )}
+                            </div>
+                        </>
+                    )}
+                    {/*数据*/}
+                    {editProfile ? (
+                        <div>
           <textarea className={styled.profileFieldsTextarea}
                     name="bio"
                     value={bio}
@@ -121,122 +120,124 @@ function ProfileFields({isUserOnOwnAccount, user, change, getProfile}) {
                     rows="2"
                     wrap="soft"
           />
-                    <div>
-                        <div className={styled.profileFieldsDiv}>
-                            <YoutubeOutlined style={{color: "#8f85de"}}/>
-                            <input className={styled.profileFieldsInput}
-                                   name="youtube"
-                                   value={youtube}
-                                   onChange={handleChange}
-                                   placeholder="YouTube"
-                            />
-                        </div>
-                        <div className={styled.profileFieldsDiv}>
-                            <TwitterOutlined style={{color: "#8f85de"}}/>
-                            <input className={styled.profileFieldsInput}
-                                   name="twitter"
-                                   value={twitter}
-                                   onChange={handleChange}
-                                   placeholder="Twitter"
-                            />
-                        </div>
-                        <div className={styled.profileFieldsDiv}>
-                            <InstagramOutlined style={{color: "#8f85de"}}/>
-                            <input className={styled.profileFieldsInput}
-                                   name="websiteLink"
-                                   value={websiteLink}
-                                   onChange={handleChange}
-                                   placeholder="Instagram"
-                            />
-                        </div>
-                        <div className={styled.profileFieldsDiv}>
-                            <FacebookOutlined style={{color: "#8f85de"}}/>
-                            <input className={styled.profileFieldsInput}
-                                   name="discord"
-                                   value={discord}
-                                   onChange={handleChange}
-                                   placeholder="discord"
-                            />
-                        </div>
-                    </div>
-                </div>
-            ) : (
-                <>
-                    {bio !== "" ? (
-                        <div>
-                            <p>{bio}</p>
-                        </div>
-                    ) : (
-                        isUserOnOwnAccount && (
-                            <div className={styled.profileFieldsAdd}
-                                 onClick={() => setEditProfile(true)}>{username.addBio}</div>
-                        )
-                    )}
-                    {social.youtube === "" &&
-                    social.discord === "" &&
-                    social.twitter === "" &&
-                    social.websiteLink === "" ? (
-                        isUserOnOwnAccount && (
-                            <div className={styled.profileFieldsAdd} onClick={() => setEditProfile(true)}>
-                                {username.addSocial}
+                            <div>
+                                <div className={styled.profileFieldsDiv}>
+                                    <YoutubeOutlined style={{color: "#8f85de"}}/>
+                                    <input className={styled.profileFieldsInput}
+                                           name="youtube"
+                                           value={youtube}
+                                           onChange={handleChange}
+                                           placeholder="YouTube"
+                                    />
+                                </div>
+                                <div className={styled.profileFieldsDiv}>
+                                    <TwitterOutlined style={{color: "#8f85de"}}/>
+                                    <input className={styled.profileFieldsInput}
+                                           name="twitter"
+                                           value={twitter}
+                                           onChange={handleChange}
+                                           placeholder="Twitter"
+                                    />
+                                </div>
+                                <div className={styled.profileFieldsDiv}>
+                                    <InstagramOutlined style={{color: "#8f85de"}}/>
+                                    <input className={styled.profileFieldsInput}
+                                           name="websiteLink"
+                                           value={websiteLink}
+                                           onChange={handleChange}
+                                           placeholder="Instagram"
+                                    />
+                                </div>
+                                <div className={styled.profileFieldsDiv}>
+                                    <FacebookOutlined style={{color: "#8f85de"}}/>
+                                    <input className={styled.profileFieldsInput}
+                                           name="discord"
+                                           value={discord}
+                                           onChange={handleChange}
+                                           placeholder="discord"
+                                    />
+                                </div>
                             </div>
-                        )
-                    ) : (
-                        <div className="mt-5">
-                            {social?.youtube && (
-                                <p className={styled.profileFieldsName}
-
-                                   target="_blank"
-                                   href={`https://${social?.youtube}`}
-                                   rel="noopener noreferrer"
-                                >
-                                    <div className={styled.profileFieldsYou}>
-                                        <YoutubeOutlined style={{color: "#8f85de"}}/>
-                                        <p>{social?.youtube}</p>
-                                    </div>
-                                </p>
-                            )}
-                            {social?.twitter && (
-                                <p className={styled.profileFieldsName}
-
-                                   target="_blank"
-                                   href={`https://${social.twitter}`}
-                                   rel="noopener noreferrer"
-                                >
-                                    <div className={styled.profileFieldsYou}>
-                                        <TwitterOutlined style={{color: "#8f85de"}}/>
-                                        <p>{social?.twitter}</p>
-                                    </div>
-                                </p>
-                            )}
-                            {social?.discord && (
-                                <p className={styled.profileFieldsName}
-                                   target="_blank"
-                                   href={`https://${social.discord}`}
-                                   rel="noopener noreferrer"
-                                >
-                                    <div className={styled.profileFieldsYou}>
-                                        <FacebookOutlined style={{color: "#8f85de"}}/>
-                                        <p>{social?.discord}</p>
-                                    </div>
-                                </p>
-                            )}
-                            {social?.websiteLink && (
-                                <p className={styled.profileFieldsName}
-                                   target="_blank"
-                                   href={`https://${social.websiteLink}`}
-                                   rel="noopener noreferrer"
-                                >
-                                    <div className={styled.profileFieldsYou}>
-                                        <InstagramOutlined style={{color: "#8f85de"}}/>
-                                        <p>{social?.websiteLink}</p>
-                                    </div>
-                                </p>
-                            )}
                         </div>
+                    ) : (
+                        <>
+                            {bio !== "" ? (
+                                <div>
+                                    <p>{bio}</p>
+                                </div>
+                            ) : (
+                                isUserOnOwnAccount && (
+                                    <div className={styled.profileFieldsAdd}
+                                         onClick={() => setEditProfile(true)}>{username.addBio}</div>
+                                )
+                            )}
+                            {social.youtube === "" &&
+                            social.discord === "" &&
+                            social.twitter === "" &&
+                            social.websiteLink === "" ? (
+                                isUserOnOwnAccount && (
+                                    <div className={styled.profileFieldsAdd} onClick={() => setEditProfile(true)}>
+                                        {username.addSocial}
+                                    </div>
+                                )
+                            ) : (
+                                <div className="mt-5">
+                                    {social?.youtube && (
+                                        <div className={styled.profileFieldsName}
+
+                                           target="_blank"
+                                           href={`https://${social?.youtube}`}
+                                           rel="noopener noreferrer"
+                                        >
+                                            <div className={styled.profileFieldsYou}>
+                                                <YoutubeOutlined style={{color: "#8f85de"}}/>
+                                                <p>{social?.youtube}</p>
+                                            </div>
+                                        </div>
+                                    )}
+                                    {social?.twitter && (
+                                        <div className={styled.profileFieldsName}
+
+                                           target="_blank"
+                                           href={`https://${social.twitter}`}
+                                           rel="noopener noreferrer"
+                                        >
+                                            <div className={styled.profileFieldsYou}>
+                                                <TwitterOutlined style={{color: "#8f85de"}}/>
+                                                <p>{social?.twitter}</p>
+                                            </div>
+                                        </div>
+                                    )}
+                                    {social?.discord && (
+                                        <div className={styled.profileFieldsName}
+                                           target="_blank"
+                                           href={`https://${social.discord}`}
+                                           rel="noopener noreferrer"
+                                        >
+                                            <div className={styled.profileFieldsYou}>
+                                                <FacebookOutlined style={{color: "#8f85de"}}/>
+                                                <p>{social?.discord}</p>
+                                            </div>
+                                        </div>
+                                    )}
+                                    {social?.websiteLink && (
+                                        <div className={styled.profileFieldsName}
+                                           target="_blank"
+                                           href={`https://${social.websiteLink}`}
+                                           rel="noopener noreferrer"
+                                        >
+                                            <div className={styled.profileFieldsYou}>
+                                                <InstagramOutlined style={{color: "#8f85de"}}/>
+                                                <p>{social?.websiteLink}</p>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </>
                     )}
                 </>
-            )}
+            }
         </div>
     );
 }

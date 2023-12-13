@@ -22,7 +22,7 @@ function Statement() {
                     justifyContent: 'space-between',
                     width: '25%',
                     margin: '0 auto'
-                }}><Image src={'/logoTop.svg'} alt="logo" width={70} height={70}/><span
+                }}><Image src={'/logo.svg'} alt="logo" width={70} height={70}/><span
                     style={{fontSize: '47px', fontWeight: 'bold', color: 'rgb(55,55,55)'}}>DEXPERT</span></p>
                 <p style={{marginTop: '10px', fontSize: '18px'}} className={changeTheme?'darknessFont':'brightFont'}>DEXpert.io </p>
                 {

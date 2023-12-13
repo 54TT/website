@@ -1,7 +1,11 @@
 import React from 'react';
 import styled from '/public/styles/all.module.css'
+import {useRouter} from "next/router";
 
 function LaunchPresaleDetail(props) {
+    const router = useRouter()
+    console.log(router)
+
     return (
         <div className={styled.lpDetail}>
             {/*左边*/}

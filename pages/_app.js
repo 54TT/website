@@ -4,7 +4,6 @@ import '../public/styles/theme.css'
 // import {configureChains, createClient, WagmiConfig, chain} from 'wagmi';
 // import {publicProvider} from 'wagmi/providers/public';
 import {WagmiConfig, createConfig} from 'wagmi';
-import {ConfigProvider} from 'antd'
 import {mainnet, polygon, optimism, arbitrum} from 'wagmi/chains';
 //   使用钱包依赖
 import {ConnectKitProvider, getDefaultConfig} from 'hjt-connectkit';
@@ -41,7 +40,7 @@ function DexPert({Component, pageProps}) {
                 <title>My new cool app</title>
             </Head>
             <WagmiConfig config={config}>
-                <ConnectKitProvider debugMode>
+                <ConnectKitProvider >
                         <Layout>
                             <Component {...pageProps} />
                         </Layout>

@@ -1,20 +1,21 @@
-import React, {useRef, useState, useEffect} from "react";
+import React, {useRef, useState, useEffect, useContext} from "react";
 import {CameraIcon, ChevronUpIcon} from "@heroicons/react/solid";
 import {ArrowSmRightIcon} from "@heroicons/react/solid";
 import {XIcon} from "@heroicons/react/solid";
 import {ChevronDownIcon} from "@heroicons/react/solid";
 import {GlobalOutlined} from '@ant-design/icons'
-import uploadPic from "../utils/uploadPic";
 import {submitNewPost} from "../utils/postActions";
 import {ExclamationCircleIcon} from "@heroicons/react/outline";
-// import InfoBox from "./HelperComponents/InfoBox";
 import {LoadingOutlined} from '@ant-design/icons'
 import dynamic from "next/dynamic";
 import {notification} from "antd";
 import styled from '/public/styles/all.module.css'
 import {request} from "../utils/hashUrl";
-const InfoBox = dynamic(() => import('./HelperComponents/InfoBox'),{ ssr: false })
-function InputBox({user, setPosts, increaseSizeAnim,change}) {
+const InfoBox = dynamic(() => import('./HelperComponents/InfoBox'), {ssr: false})
+import {CountContext} from "./Layout/Layout";
+
+function InputBox({user, setPosts, increaseSizeAnim, change}) {
+    const {changeTheme} = useContext(CountContext);
     const inputRef = useRef(null);
     const buttonRef = useRef(null);
     const filePickerRef = useRef(null);
@@ -30,9 +31,9 @@ function InputBox({user, setPosts, increaseSizeAnim,change}) {
         setNewPost(value);
     };
 
-    const addImageFromDevice = (e) => {
+    const addImageFromDevice = async (e) => {
         const {files} = e.target;
-        setImage(files[0]); //files that we receive from e.target is automatically an array, so we don't need Array.from
+        setImage(files[0]);
         setImagePreview(URL.createObjectURL(files[0]));
     };
 
@@ -41,27 +42,31 @@ function InputBox({user, setPosts, increaseSizeAnim,change}) {
         setLoading(true);
         let picUrl;
         if (image !== null) {
-            picUrl = await uploadPic(image);
-            if (!picUrl) {
+            picUrl = await request('post','/api/v1/upload/image',image);
+            if (!picUrl && picUrl?.status !== 200) {
                 setLoading(false);
                 return setError("Error uploading image");
             }
         }
-        if(newPost){
-            const data = await request('post', "/api/v1/post/publish",{uid:user?.uid,address:user?.address,post:{content:newPost}})
-            if(data&&data?.status===200){
+        if (newPost) {
+            const data = await request('post', "/api/v1/post/publish", {
+                uid: user?.uid,
+                address: user?.address,
+                post: {content: newPost, imageList: picUrl && picUrl?.data?.url ? [picUrl.data?.url] : undefined}
+            })
+            if (data && data?.status === 200) {
                 change('send')
                 setImage(null);
                 setImagePreview(null);
                 setLoading(false);
                 setNewPost('')
-            }else {
+            } else {
                 setImage(null);
                 setImagePreview(null);
                 setLoading(false);
                 setNewPost('')
             }
-        }else{
+        } else {
             notification.warning({
                 message: `Please note`, description: 'Text required', placement: 'topLeft',
                 duration: 2
@@ -72,7 +77,7 @@ function InputBox({user, setPosts, increaseSizeAnim,change}) {
     const FormBottomHalf = ({}) => {
         return (
             <>
-        <p className={`mt-5 ${styled.inputBoxBoxLine}`}></p>
+                <p className={`mt-5 ${styled.inputBoxBoxLine}`}></p>
                 <div className="flex space-x-4 mt-2 ml-4 mr-4 justify-evenly items-center">
                     <div
                         className="flex flex-grow justify-center items-center hover:bg-gray-100 space-x-2 mb-2 pt-2 pb-2 pl-2.5 pr-2.5 rounded-xl cursor-pointer"
@@ -117,6 +122,9 @@ function InputBox({user, setPosts, increaseSizeAnim,change}) {
             buttonRef.current.click();
         }
     };
+    const changeAllTheme = (a, b) => {
+        return changeTheme ? a : b
+    }
 
     return (
         <>
@@ -126,10 +134,10 @@ function InputBox({user, setPosts, increaseSizeAnim,change}) {
                         <div className="pt-6 pl-6 pr-6">
                             <div className="flex space-x-4 items-center">
                                 <img src={user && user.profilePicUrl ? user.profilePicUrl : '/Ellipse1.png'} alt=""
-                                       style={{borderRadius: '50%'}} height={50} width={50}/>
+                                     style={{borderRadius: '50%'}} height={50} width={50}/>
                                 <div>
                                     <p style={{marginBottom: 0, fontWeight: "600"}}>
-                                        {user?.username?user.username:user.address.slice(0,5)}
+                                        {user?.username ? user.username : user.address.slice(0, 5)}
                                     </p>
                                     <div className="flex text-gray-500 text-sm space-x-1 items-center">
                                         <GlobalOutlined style={{fontSize: "18px"}}/>
@@ -145,10 +153,10 @@ function InputBox({user, setPosts, increaseSizeAnim,change}) {
                                         name="postText"
                                         value={newPost}
                                         rows="4"
-                                        style={{width:'100%',resize: 'none'}}
+                                        style={{width: '100%', resize: 'none'}}
                                         onChange={handleChange}
                                         className={`outline-none  bg-transparent font-light text-md placeholder-gray-400 text-lg `}
-                                        placeholder={`What's on your mind, ${user?.username?user.username:user.address.slice(0,5)}?`}
+                                        placeholder={`What's on your mind, ${user?.username ? user.username : user.address.slice(0, 5)}?`}
                                         onKeyDown={onEnterPress}
                                     ></textarea>
                                     <ChevronUpIcon
@@ -162,9 +170,9 @@ function InputBox({user, setPosts, increaseSizeAnim,change}) {
                                     <>
                                         <div className={styled.inputBoxView}>
                                             <div className={styled.inputBoxIcon} onClick={() => {
-                                                    setImage(null);
-                                                    setImagePreview(null);
-                                                }}
+                                                setImage(null);
+                                                setImagePreview(null);
+                                            }}
                                             >
                                                 <XIcon className="h-6 text-gray-700"/>
                                             </div>
@@ -184,8 +192,9 @@ function InputBox({user, setPosts, increaseSizeAnim,change}) {
                         <div className="flex items-center pt-6 pl-6 pr-6">
                             <form style={{width: '100%'}}>
                                 <div className="flex  space-x-4 items-center">
-                                    <img src={user && user.profilePicUrl ? user.profilePicUrl : '/Ellipse1.png'} height={50}
-                                           width={50} style={{borderRadius: "50%"}} alt="profile pic"/>
+                                    <img src={user && user.profilePicUrl ? user.profilePicUrl : '/Ellipse1.png'}
+                                         height={50}
+                                         width={50} style={{borderRadius: "50%"}} alt="profile pic"/>
                                     <div style={{width: '100%'}}
                                          className={`flex p-3.5 bg-gray-100 rounded-full items-center ${increaseSizeAnim.sizeIncUp}`}
                                     >
@@ -195,7 +204,7 @@ function InputBox({user, setPosts, increaseSizeAnim,change}) {
                                             onChange={handleChange}
                                             className="outline-none w-full bg-transparent font-light text-md placeholder-gray-400 text-lg"
                                             type="text"
-                                            placeholder={user ? `What's on your mind, ${user?.username?user.username:user.address.slice(0,5)}?` : "What's on your mind?"}
+                                            placeholder={user ? `What's on your mind, ${user?.username ? user.username : user.address.slice(0, 5)}?` : "What's on your mind?"}
                                         ></input>
                                         <ChevronDownIcon
                                             className="h-7 w-7 cursor-pointer text-gray-500"
@@ -212,10 +221,10 @@ function InputBox({user, setPosts, increaseSizeAnim,change}) {
                                             className={styled.inputBoxView}
                                         >
                                             <div className={styled.inputBoxIcon}
-                                                onClick={() => {
-                                                    setImage(null);
-                                                    setImagePreview(null);
-                                                }}
+                                                 onClick={() => {
+                                                     setImage(null);
+                                                     setImagePreview(null);
+                                                 }}
                                             >
                                                 <XIcon className="h-6 text-gray-700"/>
                                             </div>

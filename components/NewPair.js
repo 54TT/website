@@ -8,9 +8,6 @@ import Image from 'next/image';
 import {autoConvertNew, autoConvert} from '/utils/set';
 import {formatDecimal, sendGetRequestWithSensitiveData, getRelativeTimeDifference, formatDateTime} from './Utils';
 import styled from '/public/styles/all.module.css'
-// const client = new ApolloClient({
-//     uri: 'http://188.166.191.246:8000/subgraphs/name/dsb/uniswap', cache: new InMemoryCache(),
-// });
 const client = new ApolloClient({
     uri: 'https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-v2-dev', cache: new InMemoryCache(),
 });
@@ -25,6 +22,7 @@ export default function NewPair() {
     const {changeTheme} = useContext(CountContext);
     const [currentPage, setCurrentPage] = useState(1);
     const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [tableLoad, setTableLoad] = useState(true);
     const GET_DATA = gql`query LiveNewPair {
   uniswapFactories {
     id
@@ -62,15 +60,16 @@ export default function NewPair() {
             if (data && data?.pairs.length > 0) {
                 setTableParams(data?.pairs)
                 setTableTotal(data?.uniswapFactories[0]?.pairCount)
+                setTableLoad(false)
             } else {
                 setTableParams([])
+                setTableLoad(false)
             }
         } else {
             setTableParams([])
+            setTableLoad(false)
         }
     }, [loading, data]);
-
-
     //   修改 页数和页码
     const chang = (e, a) => {
         setCurrentPage(e)
@@ -219,6 +218,7 @@ export default function NewPair() {
                                },
                            };
                        }}
+                       loading={tableLoad}
                        columns={columns} scroll={{x: 'max-content'}} bordered={false}
                        dataSource={tableParams}
                        pagination={false}/>

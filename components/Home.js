@@ -19,17 +19,8 @@ import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 
 dayjs.extend(duration)
-import {
-    TwitterOutlined,
-    SendOutlined,
-    GlobalOutlined
-} from '@ant-design/icons'
-// import Bott from "./Bottom";
-import baseUrl from "../utils/baseUrl";
 import _ from "lodash";
 import InfiniteScroll from 'react-infinite-scroll-component';
-// import PostCard from "./PostCard";
-import Marquee from 'react-fast-marquee'
 import cook from 'js-cookie'
 import dynamic from "next/dynamic";
 import {CountContext} from '/components/Layout/Layout';
@@ -48,13 +39,13 @@ function Home() {
     const home = changeLang('home')
     const refHeight = useRef(null)
     const getUs = async () => {
-        const params =JSON.parse( cookie.get('username'))
-        const data = await request('get', "/api/v1/userinfo/"+params?.uid,)
-        if (data&&data?.status === 200) {
+        const params = JSON.parse(cookie.get('username'))
+        const data = await request('get', "/api/v1/userinfo/" + params?.uid,)
+        if (data && data?.status === 200) {
             const user = data?.data?.data
-            if(user){
+            if (user) {
                 setUserPa(user)
-            }else {
+            } else {
                 setUserPa(null)
             }
         } else {
@@ -62,10 +53,10 @@ function Home() {
         }
     }
     useEffect(() => {
-        if (cook.get('username')&&cook.get('username')!='undefined') {
+        if (cook.get('username') && cook.get('username') != 'undefined') {
             getUs()
         }
-    }, [bolLogin,showData]);
+    }, [bolLogin, showData]);
     const [userPa, setUserPa] = useState(null);
     const [launch, setLaunch] = useState([]);
     const [launchBol, setLaunchBol] = useState(false);
@@ -73,6 +64,9 @@ function Home() {
     const [presaleBol, setPresaleBol] = useState(false);
     const [featuredBol, setFeaturedBol] = useState(true);
     const [featured, setFeatured] = useState([]);
+
+    //   social Loading
+    const [socialLoad, setSocialLoad] = useState(true);
     const changeAllTheme = (a, b) => {
         return changeTheme ? a : b
     }
@@ -363,9 +357,11 @@ function Home() {
             setPostsDataBol(!postsDataBol)
             const {data} = res
             setPostsData(data && data?.posts?.length > 0 ? data.posts : [])
+            setSocialLoad(false)
         } else {
             setPostsDataBol(!postsDataBol)
             setPostsData([])
+            setSocialLoad(false)
         }
     }
     const changePage = () => {
@@ -376,10 +372,12 @@ function Home() {
         getPost()
     }, [postsDataCh]);
     const pushLink = (name) => {
-        if (name.includes('http') || name.includes('https')) {
-            window.open(name)
-        } else {
-            window.open('http://' + name)
+        if (name) {
+            if (name.includes('http') || name.includes('https')) {
+                window.open(name)
+            } else {
+                window.open('http://' + name)
+            }
         }
     }
     const pushSocial = () => {
@@ -456,7 +454,7 @@ function Home() {
                                                                        format="HH:mm:ss"/>
                                                         </div>
                                                         <img
-                                                            src={`${i?.platformLogo ? i.platformLogo : ''}`}
+                                                            src={`${i?.platformLogo ? i.platformLogo : '/ma.svg'}`}
                                                             onClick={() => pushLink(i?.link ? i.link : '')}
                                                             alt=""
                                                             width={'30px'} height={'30px'}
@@ -519,9 +517,10 @@ function Home() {
             </div>
             {/*右边*/}
             <div
+                //
                 className={`cardParams ${changeAllTheme('socialScrollD darknessThrees', 'socialScroll brightTwo boxHover')}`}
                 id="scrollableDiv"
-                style={{height: `${refHeight?.current?.scrollHeight || 0}px`}}>
+                style={{height: `${launchBol && presaleBol && !featuredBol ? refHeight?.current?.clientHeight : 20}px`}}>
                 <div className={styles.homeRightTop}>
                     <p className={`${styles.homeRightTopName} ${changeAllTheme('darknessFont', 'brightFont')}`}>{home.social}</p>
                     <Link href={'/social'}>
@@ -529,9 +528,12 @@ function Home() {
                            style={{fontSize: '20px', color: '#2394D4', cursor: 'pointer'}}>{home.more}></p>
                     </Link>
                 </div>
-                {/*cookBol ?*/}
+                {/* ?*/}
                 {
-                    postsDataAdd?.length > 0 ? <InfiniteScroll
+                    socialLoad ? <Skeleton
+                        avatar
+                        paragraph={{rows: 4,}}
+                    /> : postsDataAdd?.length > 0 ? <InfiniteScroll
                         hasMore={true}
                         next={changePage}
                         scrollableTarget="scrollableDiv"
@@ -544,9 +546,6 @@ function Home() {
                         dataLength={postsDataAdd.length}
                     >
                         {postsDataAdd && postsDataAdd?.length > 0 ? postsDataAdd.map((post, index) => {
-                            // const isLiked =
-                            //     post.likes && post.likes.length > 0 &&
-                            //     post.likes.filter((like) => like?.user?.id === userPa?.id).length > 0;
                             return <PostCard
                                 change={change}
                                 liked={false}
@@ -557,8 +556,6 @@ function Home() {
                         }) : ''}
                     </InfiniteScroll> : <div style={{textAlign: 'center', fontSize: '20px'}}
                                              className={changeAllTheme('darknessFont', 'brightFont')}>{home.noData}</div>
-                    // <div style={{textAlign: 'center', fontSize: '20px'}}
-                    //      className={changeAllTheme('darknessFont', 'brightFont')}>{home.sign}</div>
                 }
             </div>
         </div>

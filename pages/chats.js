@@ -4,24 +4,23 @@ import React, {useState, useEffect, useRef, useContext} from "react";
 import baseUrl from "../utils/baseUrl";
 import io from "socket.io-client";
 import Sidebar from "../components/Sidebar";
-// import ChatSearch from "../components/Chat/ChatSearch";
 import {SearchIcon} from "@heroicons/react/outline";
 import calculateTime from "../utils/calculateTime";
-// import Chat from "../components/Chat/Chat";
 import {LoadingOutlined} from '@ant-design/icons'
 import {AppleOutlined,} from '@ant-design/icons'
 import Link from 'next/link';
 import dynamic from 'next/dynamic'
 import cook from "js-cookie";
 import styles from '/public/styles/allmedia.module.css'
+import { CountContext } from '../components/Layout/Layout'
 
-// const Sidebar = dynamic(() => import('../components/Sidebar'));
 const ChatSearch = dynamic(() => import('../components/Chat/ChatSearch'),{ ssr: false });
 const Chat = dynamic(() => import('../components/Chat/Chat'),{ ssr: false });
 import {changeLang} from "/utils/set";
 import {request} from "../utils/hashUrl";
 import cookie from "js-cookie";
 function ChatsPage() {
+    const { changeTheme } = useContext(CountContext);
     const social=changeLang('social')
     const [chats, setChats] = useState([]);
     const [userPar, setUserPar] = useState({});
@@ -33,12 +32,6 @@ function ChatsPage() {
         }else {
             setUserPar('')
         }
-        // const {data: {user}, status} = await getUser(a)
-        // if (status === 200 && user) {
-        //     setUserPar(user)
-        // } else {
-        //     setUserPar('')
-        // }
     }
     useEffect(() => {
         if (cook.get('name')) {
@@ -78,7 +71,7 @@ function ChatsPage() {
 
     useEffect(() => {
         if (!socket.current) {
-            socket.current = io(baseUrl); //establishing connection with server;
+            socket.current = io(baseUrl);
         }
         if (socket.current && userPar && userPar?.uid) {
             socket.current.emit("join", {userId: userPar?.uid});
@@ -122,7 +115,7 @@ function ChatsPage() {
                             name: chat?.textsWith.username,
                             profilePicUrl: chat?.textsWith.profilePicUrl,
                         });
-                        openChatId.current = chat?.texts_with_id; //insert value in router.query ref
+                        openChatId.current = chat?.texts_with_id;
                     }
                 });
             };
@@ -238,20 +231,24 @@ function ChatsPage() {
     }
     // 获取屏幕
     const [winHeight, setHeight] = useState();
+    const [chatHeight, setChatHeight] = useState()
     const isAndroid = () => {
-        console.log(window.navigator.userAgent, "nav");
         const u = window?.navigator?.userAgent;
         if (u.indexOf("Android") > -1 || u.indexOf("iPhone") > -1) return true;
         return false;
     };
     useEffect(() => {
         if (isAndroid()) {
-        setHeight(window.innerHeight - 180);
+            setHeight(window.innerHeight - 180);
+            setChatHeight(window.innerHeight - 269)
         } else {
-        setHeight("auto");
+            setHeight("auto");
+            setChatHeight("auto");
         }
     });
-
+    const changeAllTheme = (a, b) => {
+        return changeTheme ? a : b
+    }
 
 
 
@@ -261,19 +258,18 @@ function ChatsPage() {
             <div 
                 className={styles.allMoblice} 
                 style={{backgroundColor: 'rgb(253,213,62)', marginRight: '20px', borderRadius: '10px', height: winHeight, minHeight: winHeight}}>
-                <main className="flex" style={{height: "calc(100vh - 4.5rem)"}}>
+                <main className="flex" style={{height: winHeight}}>
                     <Sidebar user={userPar} maxWidth={"250px"}/>
                     <div style={{backgroundColor: 'rgba(201,201,201,0.7)'}}
-                        className="flex flex-grow mx-auto h-full w-full max-w-2xl lg:max-w-[65rem] xl:max-w-[70.5rem] rounded-lg">
+                        className={`${styles.mobliceNonoFlex} ${changeAllTheme('darknessTwo', 'brightTwo')} flex flex-grow mx-auto h-full w-full max-w-2xl lg:max-w-[65rem] xl:max-w-[70.5rem] rounded-lg`}>
                         <div
                             style={{
                                 borderLeft: "1px solid lightgrey",
                                 borderRight: "1px solid lightgrey",
                                 fontFamily: "Inter",
                                 overflowY: 'auto',
-                                backgroundColor: 'rgb(178,219,126)'
                             }}
-                            className="lg:min-w-[27rem] pt-4"
+                            className={`${styles.allMobliceH} lg:min-w-[27rem] pt-4 ${changeAllTheme('darknessTwo', 'brightTwo')}`}
                         >
                             <p style={{
                                 userSelect: 'none',
@@ -430,7 +426,7 @@ function ChatsPage() {
                                 <div
                                     className=" flex flex-col justify-between"
                                     style={{
-                                        height: "calc(100vh - 10.5rem)",
+                                        height: chatHeight,
                                     }}
                                 >
                                     <div

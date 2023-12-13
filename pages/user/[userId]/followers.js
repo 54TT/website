@@ -1,18 +1,13 @@
 import React, {useContext, useEffect, useState} from "react";
-import axios from "axios";
 import {useRouter} from "next/router";
-import baseUrl from "../../../utils/baseUrl";
-// import InfoBox from "../../../components/HelperComponents/InfoBox";
 import {
     CheckCircleIcon, ExclamationCircleIcon, UserAddIcon,
 } from "@heroicons/react/solid";
-import {followUser, unfollowUser} from "../../../utils/profileActions";
 import Sidebar from "../../../components/Sidebar";
 import Link from 'next/link';
 import dynamic from 'next/dynamic'
 import cook from "js-cookie";
 const InfoBox = dynamic(() => import('../../../components/HelperComponents/InfoBox'), {ssr: false});
-// const Sidebar = dynamic(() => import('../../../components/Sidebar'));
 import styled from '/public/styles/all.module.css'
 import {changeLang} from "/utils/set";
 import cookie from "js-cookie";
@@ -40,14 +35,11 @@ function FollowersPage() {
             getUs()
         }
     }, [cook.get('username')]);
-    const [loggedUserFollowStats, setLoggedUserFollowStats] = useState({});
     const [userPar, setUserPar] = useState(null);
     const [errorLoading, setErrorLoading] = useState(false);
     const [followers, setFollowers] = useState([]);
-    console.log(followers)
     const [followersBol, setFollowersBol] = useState(false);
     const [page, setPage] = useState(1);
-
     const change = () => {
         setFollowersBol(!followersBol)
     }
@@ -56,25 +48,10 @@ function FollowersPage() {
         if(res&&res?.status===200){
             setFollowers(res?.data?.followerList)
         }
-        // if (res.status === 200) {
-        //     setFollowers(res.data)
-        // } else {
-        //     setFollowers([])
-        //     setErrorLoading(true)
-        // }
-    }
-    const getUsers = async () => {
-        const res = await axios.get(`${baseUrl}/api/user/userFollowStats`, {
-            params: {userId: userPar?.id},
-        });
-        if (res?.status === 200) {
-            setLoggedUserFollowStats(res.data.userFollowStats)
-        }
     }
     useEffect(() => {
         if (userPar && userPar.uid) {
             getParams()
-            // getUsers()
         }
     }, [userPar, followersBol])
     if (errorLoading) {
@@ -122,44 +99,43 @@ function FollowersPage() {
                         </div>
                         {followers.length > 0 ? (<div>
                             {followers.map((fol) => {
-                                const isLoggedInUserFollowing = loggedUserFollowStats?.following?.length > 0 && loggedUserFollowStats?.following?.filter((loggedInUserFollowing) => loggedInUserFollowing?.user.id === fol?.user?.id).length > 0;
                                 return (<div
                                     className={styled.followersBoxFollow}
-                                    key={fol?.user?.id}
+                                    key={fol?.uid}
                                 >
                                     <div className="flex items-center  ">
                                         <img src={fol?.avatar || '/Ellipse1.png'} alt="userimg" width={40}
                                              height={40}
                                              style={{borderRadius: '50%'}}/>
-                                        <Link href={`/${fol?.username}`}>
+                                        <Link href={`/${fol?.uid}`}>
                                             <p className={`ml-2 ${styled.followersBoxLink}`}>
-                                                {fol?.username.length > 10 ? fol.username.slice(0, 4) + '...' + fol.username.slice(-3) : fol?.username}
+                                                {fol?.username?fol?.username.length > 10 ? fol.username.slice(0, 4) + '...' + fol.username.slice(-3) : fol?.username:fol?.address.slice(0,4)}
                                             </p>
                                         </Link>
 
                                     </div>
                                     {/*关注或者取关*/}
-                                    {/*{fol?.uid !== userPar?.uid ? (<>*/}
-                                    {/*    {isLoggedInUserFollowing ? (<div className={styled.followersBoxFoll}*/}
-                                    {/*                                     onClick={async () => {*/}
-                                    {/*                                         const data = await unfollowUser(fol?.user?.id, setLoggedUserFollowStats, userPar?.id);*/}
-                                    {/*                                         if (data && data.status === 200) {*/}
-                                    {/*                                             change()*/}
-                                    {/*                                         }*/}
-                                    {/*                                     }}*/}
-                                    {/*    >*/}
-                                    {/*        <CheckCircleIcon className="h-6"/>*/}
-                                    {/*    </div>) : (<div className={styled.followersBoxFoll}*/}
-                                    {/*                    onClick={async () => {*/}
-                                    {/*                        const data = await followUser(fol?.user?.id, setLoggedUserFollowStats, userPar?.id);*/}
-                                    {/*                        if (data && data.status === 200) {*/}
-                                    {/*                            change()*/}
-                                    {/*                        }*/}
-                                    {/*                    }}*/}
-                                    {/*    >*/}
-                                    {/*        <UserAddIcon className="h-6"/>*/}
-                                    {/*    </div>)}*/}
-                                    {/*</>) : (<></>)}*/}
+                                    {Number(fol?.uid) !== Number(userPar?.uid) ? (<>
+                                        {fol?.IsFollowed ? (<div className={styled.followersBoxFoll}
+                                                                         onClick={async () => {
+                                                                             const  data = await request('post', "/api/v1/unfollow", {uid:fol.uid})
+                                                                             if(data&&data?.status===200&&data?.data?.code===200){
+                                                                                 change()
+                                                                             }
+                                                                         }}
+                                        >
+                                            <CheckCircleIcon className="h-6"/>
+                                        </div>) : (<div className={styled.followersBoxFoll}
+                                                        onClick={async () => {
+                                                            const  data = await request('post', "/api/v1/follow", {userId:fol.uid})
+                                                            if(data&&data?.status===200&&data?.data?.code===200){
+                                                                change()
+                                                            }
+                                                        }}
+                                        >
+                                            <UserAddIcon className="h-6"/>
+                                        </div>)}
+                                    </>) : (<></>)}
                                 </div>);
                             })}
                         </div>) : router?.query?.userId === userPar?.id ? (<p className="text-md text-gray-500">

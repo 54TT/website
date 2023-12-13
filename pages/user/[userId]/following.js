@@ -1,20 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
-import axios from "axios";
 import { useRouter } from "next/router";
-import baseUrl from "../../../utils/baseUrl";
-// import InfoBox from "../../../components/HelperComponents/InfoBox";
 import Link from "next/link";
 import { CheckCircleIcon, UserAddIcon } from "@heroicons/react/solid";
-import { followUser, unfollowUser } from "../../../utils/profileActions";
 import Sidebar from "../../../components/Sidebar";
-import dynamic from "next/dynamic";
 import cook from "js-cookie";
 import styled from "/public/styles/all.module.css";
-const InfoBox = dynamic(
-  () => import("../../../components/HelperComponents/InfoBox"),
-  { ssr: false }
-);
-// const Sidebar = dynamic(() => import('../../../components/Sidebar'))
 import { changeLang } from "/utils/set";
 import cookie from "js-cookie";
 import {request} from "../../../utils/hashUrl";
@@ -47,25 +37,12 @@ function FollowingPage() {
   const chang = () => {
     setUserFollowBol(!userFollowBol);
   };
-  const getUsers = async () => {
-    const res = await axios.get(`${baseUrl}/api/user/userFollowStats`, {
-      params: { userId: user?.id },
-    });
-    if (res?.status === 200) {
-      setUserFollowStats(res.data.userFollowStats);
-    }
-  };
   const getParams = async () => {
     try {
       const res = await request('post','/api/v1/followee/list',{uid:user?.uid,page:1});
       if(res&&res?.status===200){
         setFollowingArrayState(res?.data?.followeeList)
       }
-      // if (res && res.data) {
-      //   setFollowingArrayState(res.data);
-      // } else {
-      //   setFollowingArrayState([]);
-      // }
     } catch (error) {
       return null
     }
@@ -74,7 +51,6 @@ function FollowingPage() {
   useEffect(() => {
     if (user && user.uid) {
       getParams();
-      // getUsers();
     }
   }, [user, userFollowBol]);
   // 获取屏幕
@@ -116,16 +92,10 @@ function FollowingPage() {
             <div className={styled.followingBox}>
               {followingArrayState && followingArrayState.length > 0 ? (
                 followingArrayState.map((fol) => {
-                  const isLoggedInUserFollowing =
-                    userFollowStats?.following?.length > 0 &&
-                    userFollowStats?.following?.filter(
-                      (loggedInUserFollowing) =>
-                        loggedInUserFollowing?.user.id === fol?.user?.id
-                    ).length > 0;
                   return (
                     <div
                       className={styled.followersBoxFollow}
-                      key={fol?.user?.id}
+                      key={fol?.uid}
                     >
                       <div className="flex items-center ">
                         <img
@@ -139,56 +109,27 @@ function FollowingPage() {
                         />
                         <Link href={`/${fol?.uid}`}>
                           <p className={`ml-3 ${styled.followersBoxLink}`}>
-                            {fol?.username.length > 9
-                              ? fol?.username.slice(0, 4) +
+                            {fol?.username
+                              ? fol?.username.length > 9
+                                    ? fol?.username.slice(0, 4) +
                                 "..." +
                                 fol?.username.slice(-3)
-                              : fol?.username}
+                              : fol?.username:fol?.address.slice(0,5)}
                           </p>
                         </Link>
                       </div>
-                      {/*关注或者   取关*/}
-                      {/*{fol?.uid !== user?.uid ? (*/}
-                      {/*  <>*/}
-                      {/*    {isLoggedInUserFollowing ? (*/}
-                      {/*      <div*/}
-                      {/*        className={styled.followersBoxFoll}*/}
-                      {/*        onClick={async () => {*/}
-                      {/*          const data = await unfollowUser(*/}
-                      {/*            fol.user.id,*/}
-                      {/*            setUserFollowStats,*/}
-                      {/*            user?.id*/}
-                      {/*          );*/}
-                      {/*          if (data.status === 200) {*/}
-                      {/*            chang();*/}
-                      {/*          }*/}
-                      {/*        }}*/}
-                      {/*      >*/}
-                      {/*        <CheckCircleIcon className="h-6" />*/}
-                      {/*        /!*<p className="ml-1.5">Following</p>*!/*/}
-                      {/*      </div>*/}
-                      {/*    ) : (*/}
-                      {/*      <div*/}
-                      {/*        className={styled.followersBoxFoll}*/}
-                      {/*        onClick={async () => {*/}
-                      {/*          const data = await followUser(*/}
-                      {/*            fol?.user?.id,*/}
-                      {/*            setUserFollowStats,*/}
-                      {/*            user?.id*/}
-                      {/*          );*/}
-                      {/*          if (data.status === 200) {*/}
-                      {/*            chang();*/}
-                      {/*          }*/}
-                      {/*        }}*/}
-                      {/*      >*/}
-                      {/*        <UserAddIcon className="h-6 " />*/}
-                      {/*        /!*<p className="ml-1.5">Follow</p>*!/*/}
-                      {/*      </div>*/}
-                      {/*    )}*/}
-                      {/*  </>*/}
-                      {/*) : (*/}
-                      {/*  <></>*/}
-                      {/*)}*/}
+                      <div
+                          className={styled.followersBoxFoll}
+                          onClick={async () => {
+                            const  data = await request('post', "/api/v1/unfollow", {uid:fol?.uid})
+                            if(data&&data?.status===200&&data?.data?.code===200){
+                              chang()
+                            }
+                          }}
+                      >
+                        <CheckCircleIcon className="h-6" />
+                        {/*<p className="ml-1.5">Following</p>*/}
+                      </div>
                     </div>
                   );
                 })

@@ -12,6 +12,7 @@ import Image from 'next/image'
 import {changeLang} from "/utils/set";
 import {CountContext} from '/components/Layout/Layout';
 import {request} from "../utils/hashUrl";
+import {useRouter} from "next/router";
 
 export default function Presale() {
     const presale = changeLang('presale')
@@ -21,6 +22,7 @@ export default function Presale() {
     const [launchAll, setLaunchAll] = useState(0);
     const [launch, setLaunch] = useState([]);
     const [launchBol, setLaunchBol] = useState(true);
+    const router = useRouter()
     const changeAllTheme = (a, b) => {
         return changeTheme ? a : b
     }
@@ -161,6 +163,15 @@ export default function Presale() {
                 <Table className={`anyTable ${changeAllTheme('hotTableD', 'hotTable')}`} bordered={false}
                        columns={columns} loading={launchBol}
                        scroll={{x: 'max-content'}}
+                       onRow={(record) => {
+                           return {
+                               onClick: (event) => {
+                                   router.push({pathname:`/launchPresaleDetail`,
+                                       query: { name: 'John' }
+                               })
+                               },
+                           };
+                       }}
                        dataSource={launch} rowKey={(record) => record?.id}
                        pagination={false} rowClassName={(record) => {
                     return 'oneHave'

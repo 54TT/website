@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useRef, useState} from "react";
 import baseUrl from "/utils/baseUrl";
 import {CheckCircleIcon, UserAddIcon} from "@heroicons/react/solid";
-import uploadPic from "../utils/uploadPic";
+
 import {
     followUser,
     unfollowUser,
@@ -14,19 +14,12 @@ import {
     CloseOutlined,
     CheckOutlined,
 } from "@ant-design/icons";
-import {Avatar, Input, notification, Image} from "antd";
-import axios from "axios";
+import {Avatar, Input, notification, Image, Skeleton} from "antd";
 import styles from "/public/styles/allmedia.module.css";
-// import ProfileFields from "../components/ProfileComponents/ProfileFields";
-// import FollowingUsers from "../components/ProfileComponents/FollowingUsers";
-// import FollowerUsers from "../components/ProfileComponents/FollowerUsers";
 import {useRouter} from "next/router";
-// import PostCard from "../components/PostCard";
-// import InfoBox from "../components/HelperComponents/InfoBox";
 import InfiniteScroll from 'react-infinite-scroll-component';
 import {EmojiSadIcon} from "@heroicons/react/outline";
 import dynamic from "next/dynamic";
-import cook from "js-cookie";
 
 const PostCard = dynamic(() => import("../components/PostCard"), {
     ssr: false,
@@ -57,6 +50,7 @@ function ProfilePage() {
     const coverImageRef = useRef(null);
     const profilePicRef = useRef(null);
     const [user, setUser] = useState(null);
+    const [showLoad, setShowLoad] = useState(true);
     const [LoginUser, setLoginUser] = useState(null);
     const [profile, setProfile] = useState(null);
     const [userFollowStats, setUserFollowStats] = useState(null);
@@ -72,7 +66,6 @@ function ProfilePage() {
     const [editProfile, setEditProfile] = useState(false);
     const [editInput, setEditInput] = useState("");
     const [editInputBol, setEditInputBol] = useState(false);
-    console.log(user)
     useEffect(() => {
         if (cookie.get('username') && cookie.get('username') != 'undefined') {
             const data = JSON.parse(cookie.get('username'))
@@ -81,19 +74,6 @@ function ProfilePage() {
     }, [cookie.get('username')])
     // 推文  page
     const [page, setPage] = useState(1);
-    // const getUser=async ()=>{
-    //   const params =JSON.parse( cookie.get('username'))
-    //   const data = await request('get', "/api/v1/userinfo/"+params?.uid, '');
-    //   if(data&&data.status===200){
-    //     setEditInput(data?.data?.data.username?data?.data?.data.username:data?.data?.data.address)
-    //     setUser(data?.data?.data)
-    //   }
-    // }
-    //   useEffect(() => {
-    //   if (cook.get("username")&&cook.get("username")!='undefined') {
-    //     getUser()
-    //   }
-    // }, [cook.get("username")]);
     const changeImg = () => {
         setLoadingBol(!loadingBol);
     };
@@ -102,16 +82,24 @@ function ProfilePage() {
     // 推文
     const [posts, setPosts] = useState([]);
     const [postsAdd, setPostsAdd] = useState([]);
+
+    //  loading
+    const [postsLoad, setPostsLoad] = useState(true);
     const [postsBol, setPostsBol] = useState(false);
     useEffect(() => {
         if (postsBol) {
             if (posts && posts.length > 0) {
-                const data = [...postsAdd.concat(posts)]
-                setPostsAdd(data)
+                if (postsAdd.length > 0) {
+                    const data = [...postsAdd.concat(posts)]
+                    setPostsAdd(data)
+                    setPostsLoad(false)
+                } else {
+                    setPostsAdd(posts)
+                    setPostsLoad(false)
+                }
             }
             setPostsBol(false)
         }
-
     }, [postsBol])
     // 是否为关注者
     const [followBol, setFollowBol] = useState(false);
@@ -128,11 +116,11 @@ function ProfilePage() {
     const addImageFromDevice = async (e, name) => {
         const {files} = e.target;
         if (name === "cover") {
-            setCoverPic(files[0]); //files that we receive from e.target is automatically an array, so we don't need Array.from
+            setCoverPic(files[0]);
             setCoverPicPreview(URL.createObjectURL(files[0]));
             changeImg();
         } else {
-            setProfilePic(files[0]); //files that we receive from e.target is automatically an array, so we don't need Array.from
+            setProfilePic(files[0]);
             setProfilePicPreview(URL.createObjectURL(files[0]));
             changeImg();
         }
@@ -141,7 +129,7 @@ function ProfilePage() {
         let profileImageUrl;
         setLoadingProfilePic(true);
         if (profilePic !== null) {
-            profileImageUrl = await uploadPic(profilePic);
+            profileImageUrl = await request('post','/api/v1/upload/image',profilePic);
             if (!profileImageUrl) {
                 setLoadingProfilePic(false);
                 return setError("Error uploading image");
@@ -162,7 +150,7 @@ function ProfilePage() {
         let picUrl;
         setLoadingCoverPic(true);
         if (coverPic !== null) {
-            picUrl = await uploadPic(coverPic);
+            picUrl = await request('post','/api/v1/upload/image',coverPic);
             if (!picUrl) {
                 setLoadingCoverPic(false);
                 return setError("Error uploading image");
@@ -188,6 +176,11 @@ function ProfilePage() {
             }
         }
     }, [loadingBol]);
+    useEffect(()=>{
+            return () => {
+                setPostsAdd([])
+        }
+    },[])
     // 获取推文
     const getPosts = async () => {
         const res = await request('post', '/api/v1/post/list', {uid: params.username, page: page})
@@ -206,10 +199,8 @@ function ProfilePage() {
             if (data && data.status === 200) {
                 setEditInput(data?.data?.data.username ? data?.data?.data.username : data?.data?.data.address)
                 setUser(data?.data?.data)
+                setShowLoad(false)
             }
-            // const { profile, followersLength, followingLength } = res.data;
-            // setProfile(profile);
-            // setEditInput(profile.username);
         } catch (error) {
             return {errorLoading: true};
         }
@@ -224,12 +215,6 @@ function ProfilePage() {
         setFollowBol(!followBol);
     };
     const [changeBol, setChangeBol] = useState(false);
-    // useEffect(() => {
-    //   if (user && user.uid) {
-    //     // getProfile();
-    //     getPosts();
-    //   }
-    // }, [user]);
     useEffect(() => {
         if (changeBol) {
             getPosts();
@@ -245,7 +230,6 @@ function ProfilePage() {
         setChangeBol(true);
     };
     const setName = async () => {
-        // if (editInputBol) {
         if (editInput) {
             const data = await request('post', "/api/v1/userinfo", {
                 user: {
@@ -259,37 +243,13 @@ function ProfilePage() {
             } else {
                 setEditProfile(false)
             }
-            // if (
-            //   data.status === 200 &&
-            //   data?.data?.updateUserNameResult?.changedRows
-            // ) {
-            //
-            //   await getPosts();
-            //   setEditInput(editInput);
-            //   setEditProfile(false);
-            // }
         } else {
             setEditInput(user?.username ? user?.username : user?.address);
             setEditProfile(false);
         }
-        // } else {
-        //   notification.error({
-        //     message: `Please note`,
-        //     description: "The name is repeated, please re-enter it. ",
-        //     placement: "topLeft",
-        //   });
-        // }
     };
     const changeIn = async (e) => {
         setEditInput(e.target.value);
-        // if (e.target.value) {
-        //   const data = await axios.get(baseUrl + "/api/user/isUpdateUserName", {
-        //     params: { userName: e.target.value },
-        //   });
-        //   if (data.status === 200) {
-        //     setEditInputBol(data?.data?.flag);
-        //   }
-        // }
     };
     return (
         <>
@@ -328,18 +288,21 @@ function ProfilePage() {
                             style={{display: "none"}}
                         ></input>
                         {/*图像*/}
-                        <Avatar
-                            src={
-                                user?.avatarUrl ? user?.avatarUrl : 'error'
-                            }
-                            size={100}
-                            style={{
-                                position: "absolute",
-                                top: "50%",
-                                left: "50%",
-                                translate: "-50% -50%",
-                            }}
-                        />
+                        {
+                            showLoad ? <Skeleton.Avatar active={true} shape={'circle'}/> : <Avatar
+                                src={
+                                    user?.avatarUrl ? user?.avatarUrl : 'error'
+                                }
+                                size={100}
+                                style={{
+                                    position: "absolute",
+                                    top: "50%",
+                                    left: "50%",
+                                    translate: "-50% -50%",
+                                }}
+                            />
+                        }
+
                         {/*修改name*/}
                         <div className={styled.usernameBoxSetName}>
                             {editProfile ? (
@@ -349,9 +312,11 @@ function ProfilePage() {
                                     style={{fontSize: "20px", fontWeight: "bold"}}
                                 />
                             ) : (
-                                <p className={styles.mobliceEditInput} style={{fontSize: "20px", fontWeight: "bold"}}>
-                                    {editInput}
-                                </p>
+                                showLoad ? <Skeleton.Button active={true} shape={'default'}/> :
+                                    <p className={styles.mobliceEditInput}
+                                       style={{fontSize: "20px", fontWeight: "bold"}}>
+                                        {editInput}
+                                    </p>
                             )}
                             {/*提交按钮*/}
                             {editProfile ? (
@@ -385,11 +350,9 @@ function ProfilePage() {
                                 />
                             )}
                         </div>
-
-
                         {/*是否本人*/}
-                        {!isUserOnOwnAccount ?
-                            //   如果不是别人  是否关注
+                        {!showLoad && !(Number(LoginUser?.uid) === Number(user?.uid)) ?
+                            //   如果不是本人  是否关注
                             (followBol ? (
                                 <div
                                     className={styled.usernameBoxDiv}
@@ -462,8 +425,6 @@ function ProfilePage() {
                             </>
                         )}
                     </div>
-
-
                     {/*下面*/}
                     <div className={`w-full ${styled.usernameBoxBot}`}>
                         <div
@@ -475,29 +436,28 @@ function ProfilePage() {
                                     alignSelf: "flex-start",
                                 }}
                             >
-                                {
-                                    <>
-                                        <ProfileFields
-                                            user={user}
-                                            change={change}
-                                            getProfile={getProfile}
-                                            isUserOnOwnAccount={isUserOnOwnAccount}
-                                        />
-                                            {/*粉丝*/}
-                                            <FollowingUsers
-                                                isUserOnOwnAccount={isUserOnOwnAccount}
-                                                userFollowStats={userFollowStats}
-                                                user={user}
-                                            />
-                                            {/*我关注者*/}
-                                            <FollowerUsers
-                                                isUserOnOwnAccount={isUserOnOwnAccount}
-                                                userFollowStats={userFollowStats}
-                                                user={user}
-                                            />
-                                        <div className="h-9"></div>
-                                    </>
-                                }
+                                <ProfileFields
+                                    user={user}
+                                    change={change}
+                                    showLoad={showLoad}
+                                    getProfile={getProfile}
+                                    isUserOnOwnAccount={isUserOnOwnAccount}
+                                />
+                                {/*粉丝*/}
+                                <FollowingUsers
+                                    isUserOnOwnAccount={isUserOnOwnAccount}
+                                    showLoad={showLoad}
+                                    userFollowStats={userFollowStats}
+                                    user={user}
+                                />
+                                {/*我关注者*/}
+                                <FollowerUsers
+                                    isUserOnOwnAccount={isUserOnOwnAccount}
+                                    showLoad={showLoad}
+                                    userFollowStats={userFollowStats}
+                                    user={user}
+                                />
+                                <div className="h-9"></div>
                             </div>
                             {/*右边推文*/}
                             <div className={`flex-1 flex-grow mt-6 max-w-md md:max-w-lg lg:max-w-2xl`}>
@@ -519,9 +479,9 @@ function ProfilePage() {
                                                 }
                                                 loader={null}
                                                 dataLength={posts.length}
+                                                key={post?.postId}
                                             >
                                                 <PostCard
-                                                    key={post?.postId}
                                                     liked={isLiked}
                                                     post={post}
                                                     user={user}
@@ -530,7 +490,7 @@ function ProfilePage() {
                                             </InfiniteScroll>
                                         );
                                     })
-                                ) : (
+                                ) : (postsLoad? <Skeleton active/> :
                                     <InfoBox
                                         marginTop={1}
                                         Icon={EmojiSadIcon}

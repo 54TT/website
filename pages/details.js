@@ -13,6 +13,7 @@ function Details() {
     const [featured, setFeatured] = useState({});
     const getParams =async (name)=>{
         const data = await axios.get(`https://api.dexscreener.com/latest/dex/pairs/ethereum/${name}`);
+        console.log(data)
         if(data.status===200&&data?.data?.pair){
             setFeatured(data.data.pair)
         }

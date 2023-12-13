@@ -42,14 +42,6 @@ export default function Presale() {
             setLaunchBol(false)
         }
     }
-    // const [diffTime, setDiffTime] = useState(null)
-    // const refSet = useRef(null)
-    // useEffect(() => {
-    //     refSet.current = setInterval(() => setDiffTime(diffTime - 1), 1000)
-    //     return () => {
-    //         clearInterval(refSet.current)
-    //     }
-    // }, [diffTime])
     useEffect(() => {
         getParams('/api/v1/launch', {
             pageIndex: launchCurrent,

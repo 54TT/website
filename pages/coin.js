@@ -355,12 +355,12 @@ function Coin() {
                                 label="Project logo"
                                 className={styles.coinForm}
                                 name="logo"
-                                // rules={[
-                                //     {
-                                //         required: !imagePreview,
-                                //         message: 'Please select an image!',
-                                //     },
-                                // ]}
+                                rules={[
+                                    {
+                                        required: !imagePreview,
+                                        message: 'Please select an image!',
+                                    },
+                                ]}
                             >{
                                 imagePreview ? '' :
                                     <Input readOnly className={changeTheme?'darknessTwo':'brightTT'}

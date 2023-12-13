@@ -14,7 +14,6 @@ import Link from 'next/link'
 import _ from 'lodash'
 import cookie from 'js-cookie'
 import {useRouter} from 'next/router'
-// const DrawerPage = dynamic( () =>  import('./Drawer'),)
 import {ethers} from 'ethers'
 import {CountContext} from '/components/Layout/Layout';
 import Marquee from "react-fast-marquee";
@@ -28,7 +27,6 @@ const client = new ApolloClient({
     uri: 'https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-v2-dev', cache: new InMemoryCache(),
 });
 const {Option} = Select;
-// import ChatSearch from "../Chat/ChatSearch";
 const ChatSearch = dynamic(() => import('../Chat/ChatSearch'), {ssr: false})
 const Moralis = require("moralis")?.default;
 const Header = () => {
@@ -67,7 +65,7 @@ const Header = () => {
         changeBolName,
         changeFont,
         changeTheme,
-        changeBack
+        changeBack,logout,logoutBack
     } = useContext(CountContext);
     const header = changeLang('header')
     const [timeForm, setTime] = useState({});
@@ -187,8 +185,10 @@ const Header = () => {
             });
         }
     }
-
-
+    const aa  =()=>{
+        const aa = cookie.get('token')
+        console.log(aa)
+    }
     // 退出
     const set = () => {
         cookie.remove('name');
@@ -198,7 +198,14 @@ const Header = () => {
             router.push('/')
         }
         disconnect()
+        aa()
     }
+    useEffect(()=>{
+        if(logout){
+            set()
+            logoutBack(false)
+        }
+    },[logout])
     // 获取address  所有的代币合约地址
     const getAddressOwner = async (address) => {
         try {
@@ -306,7 +313,6 @@ const Header = () => {
                 setUserPar('')
             }
         } else {
-            // router.push('/')
             setNo(false)
             setUserPar('')
         }
@@ -347,10 +353,14 @@ const Header = () => {
         const params = {
             pageIndex: 1, pageSize: 10
         }
-        const res = await request('get', '/api/v1/launch', params)
-        if (res?.data && res?.status === 200) {
+
+        const res = await request('get', '/api/v1/feature', {
+            pageIndex: 1,
+            pageSize: 10
+        })
+        if (res && res?.status === 200) {
             const {data} = res
-            setLaunch(data?.launchs && data?.launchs.length > 0 ? data?.launchs : [])
+            setLaunch(data?.featureds && data?.featureds.length > 0 ? data?.featureds : [])
         } else {
             setLaunch([])
         }
@@ -393,29 +403,31 @@ const Header = () => {
         }
     }
     const push = () => {
-        if (cookie.get('name')) {
-            router.push('/social')
-        } else {
-            getMoney()
-        }
-    }
+      if (cookie.get("name")) {
+        openShowMenuItem();
+        router.push("/social");
+      } else {
+        getMoney();
+      }
+    };
     const pushPer = () => {
-        if (cookie.get('name')) {
-            const data = cookie.get('name')
-                        router.push(`/${data}`)
-        } else {
-            getMoney()
-        }
-    }
+      if (cookie.get("name")) {
+        const data = cookie.get("name");
+        openShowMenuItem();
+        router.push(`/${data}`);
+      } else {
+        getMoney();
+      }
+    };
     const ck = async () => {
         const data = await getAddressOwner('0xae2Fc483527B8EF99EB5D9B44875F005ba1FaE13')
     }
     const strategy = {
-        "one": function(){return router.push('/')},
-        "two": function(){return router.push('/featured')},
-        "three": function(){return router.push('/presale')},
-        "four": function(){return router.push('/launch')},
-        "five": function(){return router.push('/newPair')}
+        "one": function(){ openShowMenuItem(); return router.push('/')},
+        "two": function(){openShowMenuItem(); return router.push('/featured')},
+        "three": function(){openShowMenuItem(); return router.push('/presale')},
+        "four": function(){openShowMenuItem(); return router.push('/launch')},
+        "five": function(){openShowMenuItem(); return router.push('/newPair')}
     }
     const pushOnclick = (level) => {
         return strategy[level]
@@ -510,7 +522,6 @@ const Header = () => {
                 <DrawerPage getMoney={getMoney}/>
                 {/*</Suspense>*/}
             </div>
-
             {/* 移动端适配导航 */}
             <div className={`${styles.cardParams} ${changeTheme ? 'darknessTwo' : 'brightTwo'}`}>
                 <div className={styles['moblic-ShowNode']}>
@@ -538,9 +549,9 @@ const Header = () => {
                         </p>
                     </div>
                     {no && address ? <div className={styles.loginBox}>
-                        <Link href={`/${userPar && userPar.address ? userPar.address : ''}`}>
+                        <Link href={`/${userPar && userPar?.uid ? userPar.uid : ''}`}>
                             <img className={'loginImg'} width={35}
-                                 src={userPar && userPar.profilePicUrl ? userPar.profilePicUrl : '/Ellipse1.png'}
+                                 src={userPar && userPar?.profilePicUrl ? userPar.profilePicUrl : '/Ellipse1.png'}
                                  alt=""/>
                         </Link>
                         <Dropdown
@@ -571,8 +582,7 @@ const Header = () => {
                 </div>
             </div>
             {/* 菜单Items */}
-            <div
-                className={`${isShowMenuItem ? styles.mobliceMentHideItemsBox : styles.mobliceMentItemsBox} ${changeTheme ? 'darknessTwo' : 'brightTwo'}`}>
+            <div className={`${isShowMenuItem ? styles.mobliceMentHideItemsBox : styles.mobliceMentItemsBox} ${changeTheme ? 'darknessTwo' : 'brightTwo'}`}>
                 <div style={{display: 'flex', flexWrap: 'wrap'}}>
                     <div className={`${styles.mobliceDpFlex}`}>
                         <div onClick={pushOnclick('one')}>
@@ -656,8 +666,6 @@ const Header = () => {
                 </Marquee>
             </div>
         </>
-
-
     );
 };
 

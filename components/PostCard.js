@@ -10,9 +10,10 @@ import {
 } from "@heroicons/react/outline";
 import {Input, notification} from 'antd'
 import {deletePost, likePost, postComment} from "../utils/postActions";
-import CommentComponent from "./CommentComponent";
+import dynamic from 'next/dynamic'
 import {useRouter} from "next/router";
-import ReusableDialog from "./ReusableDialog";
+const ReusableDialog = dynamic(() => import('./ReusableDialog'), { ssr: false });
+const CommentComponent = dynamic(() => import('./CommentComponent'), { ssr: false });
 
 const {TextArea} = Input
 import dayjs from 'dayjs'
@@ -26,7 +27,6 @@ const notify = () => {
         duration: 2
     });
 }
-
 function PostCard({post, user, change, liked}) {
     const {changeTheme} = useContext(CountContext);
     // 评论
@@ -59,8 +59,6 @@ function PostCard({post, user, change, liked}) {
     useEffect(() => {
         if (commentBol) {
             if (comments.length > 0) {
-                console.log(commentStatus)
-                console.log(comments)
                 if (commentStatus === 'many') {
                     const data = [...commentsAdd.concat(comments)]
                     let aa = arrayUnique(data, 'id')
@@ -90,9 +88,6 @@ function PostCard({post, user, change, liked}) {
     // 提交评论按钮
     const buttonRef = useRef(null);
     const [open, setOpen] = useState(false);
-    const aaaa = () => {
-        console.log()
-    }
     // 发送评论
     const createComment = async (e) => {
         e.preventDefault();
@@ -110,12 +105,6 @@ function PostCard({post, user, change, liked}) {
             setComments(dat)
             setCommentBol(true)
             setCommentNum((res) => Number(res) + 1)
-            // const res = await request('post', '/api/v1/post/comment/list', {postId:  post?.postId, page: 1})
-            // if (res && res?.status === 200 && res?.data && res?.data?.comments) {
-            //     setComments(res?.data?.comments)
-            // } else {
-            //     setComments([])
-            // }
         }
     };
 
@@ -139,13 +128,11 @@ function PostCard({post, user, change, liked}) {
     };
 
     const handleAgree = async () => {
-        // const data = await deletePost(post?.id, setComments, notify, user.id);
         const res = await request('delete', '/api/v1/post/' + post?.postId, '')
-        console.log(res)
-        // if (data && data.status === 200) {
-        //     setOpen(false);
-        //     change('click', post?.id);
-        // }
+        if(res&&res?.status===200){
+            setOpen(false);
+            change('click', post?.postId);
+        }
     };
     const handleDisagree = () => {
         handleClose();
@@ -177,12 +164,12 @@ function PostCard({post, user, change, liked}) {
                          src={post && post?.user?.avatar ? post.user.avatar : '/Ellipse1.png'}
                          alt="userimg"/>
                     <div>
-                        <Link href={`/${post?.user?.address ? post.user.address : ''}`}>
+                        <Link href={`/${post?.user?.uid ? post.user.uid : ''}`}>
                             <div style={{
                                 cursor: 'pointer',
                                 fontSize: '20px'
                             }} className={changeTheme ? 'darknessFont' : 'brightFont'}>
-                                {post?.user?.username ? post?.user?.username.length > 10 ? post.user.username.slice(0, 8) : post.user.username : post.user.address}
+                                {post?.user?.username ? post?.user?.username.length > 10 ? post.user.username.slice(0, 8) : post.user.username : post.user.address.slice(0,5)+'...'}
                             </div>
                         </Link>
                         <p
@@ -309,9 +296,8 @@ function PostCard({post, user, change, liked}) {
                                      alt="profile pic"
                                 />
                                 <div
-                                    style={{padding: "10px"}}
-                                    className={`flex bg-gray-100 rounded-3xl items-center w-full`}
-                                >
+                                    style={{padding: "17px"}}
+                                    className={`flex bg-gray-100 rounded-3xl items-center w-full`}>
                                     <TextArea
                                         showCount
                                         maxLength={100}

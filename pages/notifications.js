@@ -4,19 +4,14 @@ import InfoBox from "../components/HelperComponents/InfoBox";
 import Sidebar from "../components/Sidebar";
 import baseUrl from "../utils/baseUrl";
 import styles from '/public/styles/allmedia.module.css'
-// import LikeNotification from "../components/Notification/LikeNotification";
-// import CommentNotification from "../components/Notification/CommentNotification";
-// import FollowNotification from "../components/Notification/FollowNotification";
 import dynamic from 'next/dynamic'
 import cook from "js-cookie";
-// const Sidebar = dynamic(() => import('../components/Sidebar'));
 const LikeNotification = dynamic(() => import('../components/Notification/LikeNotification'), {ssr: false});
 const CommentNotification = dynamic(() => import('../components/Notification/CommentNotification'), {ssr: false});
 const FollowNotification = dynamic(() => import('../components/Notification/FollowNotification'), {ssr: false});
 import {changeLang} from "/utils/set";
 import cookie from "js-cookie";
 import {request} from "../utils/hashUrl";
-
 function Notifications() {
     const social = changeLang('social')
     const [notifications, setNotifications] = useState([])
@@ -57,18 +52,9 @@ function Notifications() {
             setNotifications([])
         }
     };
-    const getUsers = async () => {
-        const res = await axios.get(`${baseUrl}/api/user/userFollowStats`, {
-            params: {userId: userPar?.id},
-        });
-        if (res?.status === 200) {
-            setLoggedUserFollowStats(res.data.userFollowStats)
-        }
-    }
     useEffect(() => {
         if (userPar && userPar.uid) {
-            notificationRead();
-            // getUsers()
+            // notificationRead();
         }
     }, [userPar, followStatsBol]);
 
@@ -87,8 +73,6 @@ function Notifications() {
             setHeight("auto");
         }
     });
-
-
     return (
         <div className={styles.allMobliceBox}>
             <div
