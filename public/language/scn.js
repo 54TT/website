@@ -35,7 +35,7 @@ export const scn={
         launch:'即将代发行币',
         newPair:'新交易对',
         community:'DEXpert 社区',
-        user:'用户资料'
+        user:'资料'
     },
     home:{
         presale:'预售',

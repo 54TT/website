@@ -93,7 +93,7 @@ function ChatSearch({ setShowChatSearch, setChats, chats,user, }) {
                 }}
                 className="flex items-center space-x-3 mt-2 cursor-pointer hover:bg-gray-100 rounded-lg p-2"
               >
-                <img style={{borderRadius:'50%'}} width={50} src={resultUser?.profilePicUrl?resultUser.profilePicUrl:'/Ellipse1.png'} alt="userimg" />
+                <img style={{borderRadius:'50%'}} width={50} src={resultUser?.profilePicUrl?resultUser.profilePicUrl:'/dexlogo.svg'} alt="userimg" />
                 <p className={styled.chatSearchName}>{resultUser?.name?resultUser.name.length>10?resultUser.name.slice(0,5)+'...'+resultUser.name.slice(-5):resultUser.name:''}</p>
               </div>
             </Link>

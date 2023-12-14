@@ -2,16 +2,19 @@ import React, {useState, useRef, useContext} from 'react';
 import {Card, Pagination, Segmented, Form, Input, Button, Popconfirm} from "antd";
 import styles from '/public/styles/all.module.css'
 import {CountContext} from '/components/Layout/Layout'
-
+import {request} from "../utils/hashUrl";
+import cookie from "js-cookie";
+import dayjs from "dayjs";
+import 'dayjs/locale/en'
 const {TextArea} = Input;
-
 function Token(props) {
-    const {changeTheme} = useContext(CountContext);
+    const {changeTheme,setLogin} = useContext(CountContext);
     const [infoSow, setInfoShow] = useState(false)
     const [infoParams, setInfoParams] = useState(null)
     const [form] = Form.useForm()
-    const [image, setImage] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
+    //  img  图片
+    const [imageP, setImageP] = useState(null);
     const filePickerRef = useRef(null);
     const onFinish = (values) => {
         console.log('Success:', values);
@@ -30,30 +33,33 @@ function Token(props) {
         name: 'text5',
         token: '0x6982508145454Ce325dDbE47a25d4ec3d2311933'
     }]
-
     //   获取图片
-    const addImageFromDevice = (e) => {
+    const addImageFromDevice =async (e) => {
         const {files} = e.target;
-        setImage(files[0]);
-        setImagePreview(URL.createObjectURL(files[0]));
+        const token = cookie.get('token')
+        const data = await request('post', '/api/v1/upload/image', files[0], token);
+        if(data==='please'){
+            setLogin()
+        }else if(data&&data?.status===200){
+            setImageP(data?.data?.url)
+            setImagePreview(URL.createObjectURL(files[0]));
+        }
     };
-
-
     // 删除图片
     const deleteImg = () => {
-        setImage(null)
         setImagePreview(null);
+        setImageP('')
     }
     return (
-        <div className={styles.coinBox}>
-            <p style={{fontSize: '20px', fontWeight: 'bold'}}>MY TOKEN</p>
+        <div className={`${styles.coinBox} ${changeTheme?'darknessTwo':'brightTwo'}`}>
+            <p style={{fontSize: '20px', fontWeight: 'bold'}} className={changeTheme?'darknessFour':''}>MY TOKEN</p>
             {/*数据*/}
             {
                 infoSow ? <div style={{display: 'flex', alignItems: 'center'}}>
                         <div className={styles.coinBoxTop}>
                             <img src="/Booking.png" alt="" width={30}/>
                             <span style={{margin: '0 10px'}}>{infoParams && infoParams.name}</span>
-                            <span style={{color: '#2294D4'}}>{infoParams && infoParams.token}</span>
+                            <span style={{color: '#9bc2d9'}}>{infoParams && infoParams.token}</span>
                         </div>
                         <div className={styles.coinBoxSet}>
                     <span className={styles.coinBoxInfo}>info</span>
@@ -69,7 +75,7 @@ function Token(props) {
                     onFinish={onFinish}
                     layout={'vertical'}
                     autoComplete="off"
-                   className={styles.coinBoxForm}
+                   className={`${styles.coinBoxForm} ${changeTheme?'colorDrak':''}`}
                 >
                     <Form.Item
                         label="e-mail"
@@ -104,7 +110,7 @@ function Token(props) {
                         <input
                             ref={filePickerRef}
                             onChange={addImageFromDevice}
-                            type="file"
+                            type="file" readOnly
                             accept="image/*"
                             style={{display: "none"}}
                         />
@@ -237,8 +243,8 @@ function Token(props) {
                                labelCol={{
                                    span: 20,
                                }} style={{width: '100%', marginBottom: '10px'}}>
-                        <TextArea placeholder={'max. 150 characters'}
-                                  style={{width: '100%', backgroundColor: 'rgb(254,239,146)'}} maxLength={10}/>
+                        <TextArea placeholder={'max. 150 characters'} className={changeTheme?'darknessTwo':'brightTT'}
+                                  style={{width: '100%',}} maxLength={10}/>
                     </Form.Item>
 
 
@@ -279,7 +285,7 @@ function Token(props) {
                         position: 'absolute', bottom: '50px', left: '50%',
                         transform: 'translateX(-50%)'
                     }}>
-                        <Pagination defaultCurrent={1} total={50}/>
+                        <Pagination rootClassName={changeTheme?'drakePat':''} defaultCurrent={1} total={50}/>
                     </div>
                 </div>
             }

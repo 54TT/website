@@ -33,7 +33,7 @@ export const en = {
         launch: 'Launching Soon Tokens',
         newPair: 'Live New Pairs',
         community: 'DEXpert Community',
-        user: 'User Chat'
+        user: 'Chat'
     },
     home: {
         presale: 'Presale',

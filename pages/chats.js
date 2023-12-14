@@ -26,7 +26,8 @@ function ChatsPage() {
     const [userPar, setUserPar] = useState({});
     const getUs = async () => {
         const params =JSON.parse( cookie.get('username'))
-        const data = await request('get', "/api/v1/userinfo/"+params?.uid,'')
+        const token =  cookie.get('token')
+        const data = await request('get', "/api/v1/userinfo/"+params?.uid,'',token)
         if(data&&data?.status===200){
             setUserPar(data?.data?.data)
         }else {
@@ -313,7 +314,7 @@ function ChatsPage() {
                                                     <div className="relative">
                                                         <img width={80} height={80} style={{
                                                             borderRadius: '50%'
-                                                        }} src={chat?.profilePicUrl || '/Ellipse1.png'} alt="userimg"/>
+                                                        }} src={chat?.profilePicUrl || '/dexlogo.svg'} alt="userimg"/>
                                                         {connectedUsers?.length > 0 &&
                                                         connectedUsers.filter(
                                                             (user) => user.userId === chat?.textsWith
@@ -395,7 +396,7 @@ function ChatsPage() {
                                     }}>
                                         <img width={80} height={80} style={{
                                             borderRadius: '50%'
-                                        }} src={chatUserData?.profilePicUrl || '/Ellipse1.png'} alt="userimg"/>
+                                        }} src={chatUserData?.profilePicUrl || '/dexlogo.svg'} alt="userimg"/>
                                         <div>
                                             <p style={{
                                                 userSelect: 'none',

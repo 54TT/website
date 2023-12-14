@@ -37,13 +37,15 @@ const Header = () => {
     ethPrice
   }
 }`
+
+    // eth  price
     const [gas, setGas] = useState(0);
     const {loading, error, data, refetch} = useQuery(GET_DATA, {client});
     useEffect(() => {
-        // getGasPrice()
+        getGasPrice()
         const interval = setInterval(() => {
             refetch();
-            // getGasPrice()
+            getGasPrice()
         }, 10000);
         return () => {
             clearInterval(interval);
@@ -51,10 +53,7 @@ const Header = () => {
     }, [refetch])
 
     const router = useRouter()
-    const [form] = Form.useForm();
-    const inputRef = useRef(null);
     const {address, isConnected} = useAccount()
-    const {disconnect} = useDisconnect()
     const {connect} = useConnect({
         connector: new InjectedConnector(),
     });
@@ -65,10 +64,9 @@ const Header = () => {
         changeBolName,
         changeFont,
         changeTheme,
-        changeBack,logout,logoutBack
+        changeBack, setLogin
     } = useContext(CountContext);
     const header = changeLang('header')
-    const [timeForm, setTime] = useState({});
     const [value, setValue] = useState(false)
     const changeThemes = (value) => {
         changeBack(value)
@@ -94,11 +92,10 @@ const Header = () => {
     const [showChatSearch, setShowChatSearch] = useState(false);
     const [chats, setChats] = useState([]);
     const [userPar, setUserPar] = useState(null);
-    const [userBol, setUserBol] = useState(false);
     // 获取聊天用户
     const getParams = async () => {
         const res = await axios.get(`${baseUrl}/api/chats`, {
-            params: {userId: userPar?.id}
+            params: {userId: userPar?.uid}
         });
         if (res.status === 200) {
             setChats(res.data)
@@ -107,32 +104,29 @@ const Header = () => {
         }
     }
     useEffect(() => {
-        if (userPar && userPar.id) {
+        if (userPar && userPar.uid) {
             // getParams()
         }
     }, [userPar])
 
-    // 获取  时间
-    const onChangeDate = (name, value, dateString) => {
-        let data = _.clone(timeForm)
-        if (name === 'launch') {
-            data.launch = dateString
-            setTime(data)
-        } else {
-            data.presale = dateString
-            setTime(data)
-        }
-    };
     // 获取用户信息
     const getUs = async () => {
-        const params =JSON.parse(cookie.get('username'))
-        const data = await request('get', "/api/v1/userinfo/"+params?.uid,'')
-        if (data && data?.status === 200) {
+        const params = JSON.parse(cookie.get('username'))
+        const token = cookie.get('token')
+        const data = await request('get', "/api/v1/userinfo/" + params?.uid, '', token)
+        if (data === 'please') {
+            setLogin()
+        } else if (data && data?.status === 200) {
             const user = data?.data?.data
-            setUserPar({...user,id:params?.uid})
-            // cookie.set('username', JSON.stringify(data?.data?.data), {expires: 1})
+            setUserPar(user)
+            cookie.set('username', JSON.stringify(data?.data?.data), {expires: 1})
         }
     }
+    useEffect(() => {
+        if (cookie.get('username') && cookie.get('username') != 'undefined') {
+            getUs()
+        }
+    }, [cookie.get('username')])
     const handleLogin = async () => {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         // provider._isProvider   判断是否还有请求没有结束
@@ -161,10 +155,15 @@ const Header = () => {
                         //   jwt  解析 token获取用户信息
                         const decodedToken = jwt.decode(res.data?.accessToken);
                         if (decodedToken && decodedToken.address) {
-                            cookie.set('token', res.data?.accessToken, {expires: 1})
-                            cookie.set('name', address, {expires: 1})
-                            cookie.set('username', JSON.stringify(decodedToken), {expires: 1})
-                            setUserBol(!userBol)
+                            const data = await request('get', "/api/v1/userinfo/" + decodedToken?.uid, '', res.data?.accessToken)
+                            if (data && data?.status === 200) {
+                                const user = data?.data?.data
+                                setUserPar(user)
+                                cookie.set('username', JSON.stringify(data?.data?.data), {expires: 1})
+                                cookie.set('token', res.data?.accessToken, {expires: 1})
+                                cookie.set('name', address, {expires: 1})
+                                cookie.set('user', JSON.stringify(decodedToken), {expires: 1})
+                            }
                         }
                     }
                 } catch (err) {
@@ -185,27 +184,17 @@ const Header = () => {
             });
         }
     }
-    const aa  =()=>{
-        const aa = cookie.get('token')
-        console.log(aa)
-    }
     // 退出
-    const set = () => {
-        cookie.remove('name');
-        cookie.remove('username');
-        cookie.remove('token');
-        if (router.pathname !== '/') {
-            router.push('/')
-        }
-        disconnect()
-        aa()
-    }
-    useEffect(()=>{
-        if(logout){
-            set()
-            logoutBack(false)
-        }
-    },[logout])
+    // const set = () => {
+    //     cookie.remove('name');
+    //     cookie.remove('username');
+    //     cookie.remove('token');
+    //     cookie.remove('user')
+    //     if (router.pathname !== '/') {
+    //         router.push('/')
+    //     }
+    //     disconnect()
+    // }
     // 获取address  所有的代币合约地址
     const getAddressOwner = async (address) => {
         try {
@@ -293,31 +282,6 @@ const Header = () => {
             }
         }
     }
-    const [no, setNo] = useState(false)
-    useEffect(() => {
-        const token = cookie.get('username')
-        if (token && token != 'undefined') {
-            const data = JSON.parse(token)
-            if (data && data?.exp && dayjs(dayjs.unix(data?.exp)).isAfter(dayjs())) {
-                setNo(true)
-                setUserPar(data)
-            } else {
-                set()
-                notification.warning({
-                    message: `warning`,
-                    description: 'Login expired, please log in again!',
-                    placement: 'topLeft',
-                    duration: 2
-                });
-                setNo(false)
-                setUserPar('')
-            }
-        } else {
-            setNo(false)
-            setUserPar('')
-        }
-    }, [cookie.get('name'), cookie.get('username'), userBol])
-
     // 登录的下拉
     const items = [{
         key: '1', label: (<Link href={`/${userPar && userPar.uid ? userPar.uid : ''}`}>
@@ -332,7 +296,7 @@ const Header = () => {
     </span>
         </Link>),
     }, {
-        key: '3', label: (<span onClick={set}>
+        key: '3', label: (<span onClick={() => setLogin()}>
             Sign out
           </span>),
     }, {
@@ -350,15 +314,13 @@ const Header = () => {
         }
     }
     const getLaunch = async () => {
-        const params = {
-            pageIndex: 1, pageSize: 10
-        }
-
         const res = await request('get', '/api/v1/feature', {
             pageIndex: 1,
             pageSize: 10
         })
-        if (res && res?.status === 200) {
+        if (res === 'please') {
+            setLogin()
+        } else if (res && res?.status === 200) {
             const {data} = res
             setLaunch(data?.featureds && data?.featureds.length > 0 ? data?.featureds : [])
         } else {
@@ -377,7 +339,7 @@ const Header = () => {
         // 获取当前 gas 价格
         const data = await provider.getGasPrice()
         const gasPrice = ethers.utils.formatUnits(data, 'gwei')
-        setGas(gasPrice ? gasPrice : 0)
+        setGas(gasPrice&&Number(gasPrice) ? Math.floor(Number(gasPrice)) : 0)
     }
     // 除了Home页面显示，其它页面不展示
     const [isShowClass, setIsShowClass] = useState(Boolean)
@@ -403,31 +365,46 @@ const Header = () => {
         }
     }
     const push = () => {
-      if (cookie.get("name")) {
-        openShowMenuItem();
-        router.push("/social");
-      } else {
-        getMoney();
-      }
+        if (cookie.get("name")) {
+            openShowMenuItem();
+            router.push("/social");
+        } else {
+            getMoney();
+        }
     };
     const pushPer = () => {
-      if (cookie.get("name")) {
-        const data = cookie.get("name");
-        openShowMenuItem();
-        router.push(`/${data}`);
-      } else {
-        getMoney();
-      }
+        if (cookie.get("name")) {
+            const data = cookie.get("name");
+            openShowMenuItem();
+            router.push(`/${data}`);
+        } else {
+            getMoney();
+        }
     };
     const ck = async () => {
         const data = await getAddressOwner('0xae2Fc483527B8EF99EB5D9B44875F005ba1FaE13')
     }
     const strategy = {
-        "one": function(){ openShowMenuItem(); return router.push('/')},
-        "two": function(){openShowMenuItem(); return router.push('/featured')},
-        "three": function(){openShowMenuItem(); return router.push('/presale')},
-        "four": function(){openShowMenuItem(); return router.push('/launch')},
-        "five": function(){openShowMenuItem(); return router.push('/newPair')}
+        "one": function () {
+            openShowMenuItem();
+            return router.push('/')
+        },
+        "two": function () {
+            openShowMenuItem();
+            return router.push('/featured')
+        },
+        "three": function () {
+            openShowMenuItem();
+            return router.push('/presale')
+        },
+        "four": function () {
+            openShowMenuItem();
+            return router.push('/launch')
+        },
+        "five": function () {
+            openShowMenuItem();
+            return router.push('/newPair')
+        }
     }
     const pushOnclick = (level) => {
         return strategy[level]
@@ -438,18 +415,25 @@ const Header = () => {
                 <div className={"top-0 w-full  z-30 transition-all headerClass"}>
                     {/*<span onClick={getGasPrice}>11111111111</span>*/}
                     <div className={styles['aaa']} style={{paddingLeft: '110px'}}>
+                        {/*走马灯*/}
                         <Marquee
                             pauseOnHover={true}
                             speed={30}
                             gradientWidth={100}
                             className={styles.marqueeBox}>
                             {launch.length > 0 && launch.map((i, index) => {
-                                return <div key={index} className={`${styles.marquee} `}>
-                                    <span className={changeTheme ? 'darknessFont' : 'brightFont'}>#{index + 1}</span>
-                                    <p className={styles.marqueeName}>{i?.symbol?.slice(0, 1)}</p>
-                                    <span className={changeTheme ? 'darknessFont' : 'brightFont'}>{i.symbol}</span>
-                                </div>
-                            })}
+                                if (i?.apiData) {
+                                    const data = JSON.parse(i.apiData)
+                                    return <div key={index} className={`${styles.marquee} `}>
+                                        <span
+                                            className={changeTheme ? 'darknessFont' : 'brightFont'}>#{index + 1}</span>
+                                        <p className={styles.marqueeName}>{data?.baseToken?.symbol?.slice(0, 1)}</p>
+                                        <span
+                                            className={changeTheme ? 'darknessFont' : 'brightFont'}>{data?.baseToken?.symbol}</span>
+                                    </div>
+                                }
+                            })
+                            }
                         </Marquee>
                         <div className={styles.searchToken}>
                             <p className={`${styles['search']} ${changeTheme ? 'darknessThree' : 'brightFore boxHover'}`}
@@ -460,6 +444,17 @@ const Header = () => {
                                 setChats={setChats}
                                 user={userPar}
                             />)}
+                        </div>
+                        {/*eth  price*/}
+                        <div className={`${styles.eth} ${changeTheme ? 'darknessTwo' : 'brightTwo'}`}>
+                            <img src="/Ellipse27.png" alt="" width={30}
+                                 style={{border: '50%', marginRight: '6px'}}/>
+                            <p className={changeTheme ? 'darknessFont' : 'brightFont'}>${!loading && data?.bundles?.length > 0 ? Number(data.bundles[0]?.ethPrice).toFixed(2) : 0}</p>
+                            <p style={{display: 'flex', alignItems: 'center', marginLeft: '8px'}}><img
+                                src="/GasStation.png"
+                                width={20} alt=""/>
+                                <span className={changeTheme ? 'darknessFont' : 'brightFont'}>{gas}</span>
+                            </p>
                         </div>
                         <div className={styles.login}>
                             {/*切换字体*/}
@@ -487,20 +482,12 @@ const Header = () => {
                             {/*添加代币*/}
                             {/*<Button type={'primary'} className={styles['but']}*/}
                             {/*        onClick={showDrawer}>{header.addCoin}</Button>*/}
-                            <div className={`${styles.eth} ${changeTheme ? 'darknessTwo' : 'brightTwo'}`}>
-                                <img src="/Ellipse27.png" alt="" width={30}
-                                     style={{border: '50%', marginRight: '6px'}}/>
-                                <p className={changeTheme ? 'darknessFont' : 'brightFont'}>${!loading && data?.bundles?.length > 0 ? Number(data.bundles[0]?.ethPrice).toFixed(2) : 0}</p>
-                                <p style={{display: 'flex', alignItems: 'center', marginLeft: '8px'}}><img
-                                    src="/GasStation.png"
-                                    width={20} alt=""/>
-                                    <span className={changeTheme ? 'darknessFont' : 'brightFont'}>{gas}</span>
-                                </p>
-                            </div>
-                            {no ? <div className={styles.loginBox}>
-                                <Link href={`/${userPar && userPar.uid ? userPar.uid : ''}`}>
-                                    <img className={'loginImg'} width={35}
-                                         src={userPar && userPar.profilePicUrl ? userPar.profilePicUrl : '/Ellipse1.png'}
+                            {/*eth   price*/}
+                            {/*登录*/}
+                            {userPar && userPar?.uid ? <div className={styles.loginBox}>
+                                <Link href={`/${userPar && userPar?.uid ? userPar.uid : ''}`}>
+                                    <img className={'loginImg'} width={40} style={{borderRadius: '50%'}}
+                                         src={userPar && userPar?.avatarUrl ? userPar.avatarUrl : '/deplogo.svg'}
                                          alt=""/>
                                 </Link>
                                 <Dropdown
@@ -511,7 +498,7 @@ const Header = () => {
                                     arrow
                                 >
                                     <Button
-                                        className={`${styles.loginName} ${styles.but} ${changeTheme ? 'darknessThree' : 'brightFore boxHover'} `}>{userPar && userPar.username ? userPar.username.length > 5 ? userPar.username.slice(0, 5) + '...' : userPar?.username : userPar?.address.slice(0, 5) + '...'}</Button>
+                                        className={`${styles.loginName} ${styles.but} ${changeTheme ? 'darknessThree' : 'brightFore boxHover'} `}>{userPar && userPar.username ? userPar.username.length > 5 ? userPar.username.slice(0, 5) + '...' : userPar?.username : userPar?.address?.slice(0, 5) + '...' || ''}</Button>
                                 </Dropdown>
                             </div> : <Button
                                 className={`${styles['but']} ${styles.loginName} ${changeTheme ? 'darknessThree' : 'brightFore boxHover'}`}
@@ -548,10 +535,10 @@ const Header = () => {
                             <span className={changeTheme ? 'darknessFont' : 'brightFont'}>{gas}</span>
                         </p>
                     </div>
-                    {no && address ? <div className={styles.loginBox}>
+                    {userPar && userPar?.uid ? <div className={styles.loginBox}>
                         <Link href={`/${userPar && userPar?.uid ? userPar.uid : ''}`}>
                             <img className={'loginImg'} width={35}
-                                 src={userPar && userPar?.profilePicUrl ? userPar.profilePicUrl : '/Ellipse1.png'}
+                                 src={userPar && userPar?.avatarUrl ? userPar.avatarUrl : '/dexlogo.svg'}
                                  alt=""/>
                         </Link>
                         <Dropdown
@@ -582,7 +569,8 @@ const Header = () => {
                 </div>
             </div>
             {/* 菜单Items */}
-            <div className={`${isShowMenuItem ? styles.mobliceMentHideItemsBox : styles.mobliceMentItemsBox} ${changeTheme ? 'darknessTwo' : 'brightTwo'}`}>
+            <div
+                className={`${isShowMenuItem ? styles.mobliceMentHideItemsBox : styles.mobliceMentItemsBox} ${changeTheme ? 'darknessTwo' : 'brightTwo'}`}>
                 <div style={{display: 'flex', flexWrap: 'wrap'}}>
                     <div className={`${styles.mobliceDpFlex}`}>
                         <div onClick={pushOnclick('one')}>
@@ -657,11 +645,15 @@ const Header = () => {
                     gradientWidth={100}
                     className={styles.marqueeBox}>
                     {launch.length > 0 && launch.map((i, index) => {
-                        return <div key={index} className={`${styles.marquee} `}>
-                            <span className={changeTheme ? 'darknessFont' : 'brightFont'}>#{index + 1}</span>
-                            <p className={styles.marqueeName}>{i?.symbol?.slice(0, 1)}</p>
-                            <span className={changeTheme ? 'darknessFont' : 'brightFont'}>{i.symbol}</span>
-                        </div>
+                        if(i?.apiData){
+                            const data = JSON.parse(i.apiData)
+                            return <div key={index} className={`${styles.marquee} `}>
+                                <span className={changeTheme ? 'darknessFont' : 'brightFont'}>#{index + 1}</span>
+                                <p className={styles.marqueeName}>{data?.baseToken?.symbol?.slice(0, 1)}</p>
+                                <span className={changeTheme ? 'darknessFont' : 'brightFont'}>{data?.baseToken?.symbol}</span>
+                            </div>
+                        }
+
                     })}
                 </Marquee>
             </div>

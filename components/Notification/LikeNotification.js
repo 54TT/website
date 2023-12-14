@@ -6,7 +6,7 @@ function LikeNotification({ notification }) {
   return (
     notification.type === "newLike" && (
       <div className={styled.commentNotificationBox}>
-        <img   width={60} height={60} style={{borderRadius:'50%'}} src={notification?.user?.profilePicUrl||'/Ellipse1.png'} alt="userimg" />
+        <img   width={60} height={60} style={{borderRadius:'50%'}} src={notification?.user?.profilePicUrl||'/dexlogo.svg'} alt="userimg" />
         <div className="select-none"  style={{marginLeft:'10px'}}>
           <p>
             <Link href={`/${notification?.user?.username?notification.user.username:''}`} passHref>

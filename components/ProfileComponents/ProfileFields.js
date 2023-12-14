@@ -16,6 +16,8 @@ import {notification, Skeleton} from "antd";
 import styled from '/public/styles/all.module.css'
 import {changeLang} from "/utils/set";
 import {request} from "../../utils/hashUrl";
+import cookie from "js-cookie";
+import {CountContext} from "../Layout/Layout";
 
 const notifyError = () => {
     notification.error({
@@ -24,9 +26,10 @@ const notifyError = () => {
     });
 }
 
-function ProfileFields({isUserOnOwnAccount, user, change, getProfile,showLoad}) {
+function ProfileFields({isUserOnOwnAccount, user, change, getProfile, showLoad}) {
     // isUserOnOwnAccount
     const username = changeLang('username')
+    const {setLogin} = useContext(CountContext)
     const [bio, setBio] = useState("");
     useEffect(() => {
         if (user) {
@@ -55,14 +58,16 @@ function ProfileFields({isUserOnOwnAccount, user, change, getProfile,showLoad}) 
             notifyError();
             return;
         }
-
+        const token = cookie.get('token')
         const data = await request('post', "/api/v1/userinfo", {
             user: {
                 ...user,
                 ...social, bio
             }
-        });
-        if (data && data?.status === 200) {
+        }, token);
+        if (data === 'please') {
+            setLogin()
+        } else if (data && data?.status === 200) {
             getProfile()
             setEditProfile(false)
         }
@@ -72,7 +77,7 @@ function ProfileFields({isUserOnOwnAccount, user, change, getProfile,showLoad}) 
         <div
             className={`bg-white justify-start rounded-2xl shadow-md p-5 ${styled.profileFieldsBox}`}>
             {
-                showLoad?<Skeleton  active={true}/>: <>
+                showLoad ? <Skeleton active={true}/> : <>
                     {/*修改*/}
                     {editProfile ? (
                         <div className="flex justify-between ml-1 mr-0.5 mb-1">
@@ -185,9 +190,9 @@ function ProfileFields({isUserOnOwnAccount, user, change, getProfile,showLoad}) 
                                     {social?.youtube && (
                                         <div className={styled.profileFieldsName}
 
-                                           target="_blank"
-                                           href={`https://${social?.youtube}`}
-                                           rel="noopener noreferrer"
+                                             target="_blank"
+                                             href={`https://${social?.youtube}`}
+                                             rel="noopener noreferrer"
                                         >
                                             <div className={styled.profileFieldsYou}>
                                                 <YoutubeOutlined style={{color: "#8f85de"}}/>
@@ -198,9 +203,9 @@ function ProfileFields({isUserOnOwnAccount, user, change, getProfile,showLoad}) 
                                     {social?.twitter && (
                                         <div className={styled.profileFieldsName}
 
-                                           target="_blank"
-                                           href={`https://${social.twitter}`}
-                                           rel="noopener noreferrer"
+                                             target="_blank"
+                                             href={`https://${social.twitter}`}
+                                             rel="noopener noreferrer"
                                         >
                                             <div className={styled.profileFieldsYou}>
                                                 <TwitterOutlined style={{color: "#8f85de"}}/>
@@ -210,9 +215,9 @@ function ProfileFields({isUserOnOwnAccount, user, change, getProfile,showLoad}) 
                                     )}
                                     {social?.discord && (
                                         <div className={styled.profileFieldsName}
-                                           target="_blank"
-                                           href={`https://${social.discord}`}
-                                           rel="noopener noreferrer"
+                                             target="_blank"
+                                             href={`https://${social.discord}`}
+                                             rel="noopener noreferrer"
                                         >
                                             <div className={styled.profileFieldsYou}>
                                                 <FacebookOutlined style={{color: "#8f85de"}}/>
@@ -222,9 +227,9 @@ function ProfileFields({isUserOnOwnAccount, user, change, getProfile,showLoad}) 
                                     )}
                                     {social?.websiteLink && (
                                         <div className={styled.profileFieldsName}
-                                           target="_blank"
-                                           href={`https://${social.websiteLink}`}
-                                           rel="noopener noreferrer"
+                                             target="_blank"
+                                             href={`https://${social.websiteLink}`}
+                                             rel="noopener noreferrer"
                                         >
                                             <div className={styled.profileFieldsYou}>
                                                 <InstagramOutlined style={{color: "#8f85de"}}/>

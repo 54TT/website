@@ -11,7 +11,7 @@ function FollowNotification({notification, userFollowStats, userPar, chang, }) {
             <div className={styled.commentNotificationBox}>
                 <div style={{display: 'flex', alignItems: 'center'}}>
                     <img   height={50} width={50} style={{ borderRadius: '50%', marginRight: '15px'}}
-                         src={notification?.user?.profilePicUrl ? notification.user.profilePicUrl : '/Ellipse1.png'}
+                         src={notification?.user?.profilePicUrl ? notification.user.profilePicUrl : '/dexlogo.svg'}
                          alt="userimg"/>
                     <div style={{marginLeft: '10px'}}>
                         <p className="select-none">

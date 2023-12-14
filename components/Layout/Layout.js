@@ -3,9 +3,12 @@ import Header from "./Header";
 import {ConfigProvider, FloatButton} from 'antd';
 import {useRouter} from "next/router";
 import {Anchor} from 'antd'
+import cookie from "js-cookie";
+import {useDisconnect} from "wagmi";
 
 export const CountContext = createContext(null);
 const Layout = ({children}) => {
+    const {disconnect} = useDisconnect()
     const router = useRouter()
     // 修改name
     const [bolName, setBol] = useState(false)
@@ -22,12 +25,16 @@ const Layout = ({children}) => {
     // 切换背景
     const [changeTheme, setChangeTheme] = useState(false)
 
-
-    // logout
-    const [logout, setLogout] = useState(false)
-
-    const logoutBack = () => {
-        setLogout(true)
+    // 退出
+    const setLogin = () => {
+        cookie.remove('name');
+        cookie.remove('username');
+        cookie.remove('token');
+        cookie.remove('user')
+        if (router.pathname !== '/') {
+            router.push('/')
+        }
+        disconnect()
     }
 
     const changeBack = () => {
@@ -69,18 +76,22 @@ const Layout = ({children}) => {
             changeBolName,
             changeBolLogin,
             bolLogin,
-            logout, logoutBack
+            setLogin
         }}>
             <ConfigProvider
                 theme={{
                     components: {
                         Select: {
-                            selectorBg: changeTheme ? 'rgb(53,47,74)' : 'rgb(254,239,146)'
+                            selectorBg: changeTheme ? 'rgb(59, 55, 71)' : 'rgb(254, 239, 146)'
                         },
                         Segmented: {
                             itemSelectedBg: changeTheme ? 'rgb(59,55,71)' : 'rgb(253,213,62)',
                             itemSelectedColor: changeTheme ? 'rgb(139,199,179)' : 'rgb(0,0,0)',
                             itemColor: changeTheme ? 'rgb(255,255,255)' : 'rgb(0,0,0)'
+                        },
+                        Pagination: {
+                            itemActiveBg: changeTheme ? 'rgb(37,30,38)' : '',
+                            itemActiveColorDisabled: changeTheme ? 'rgb(156,156,156)' : '',
                         }
                     }
                 }}>

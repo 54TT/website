@@ -204,7 +204,7 @@ export default function NewPair() {
                         <span style={{fontWeight: 'bold', fontSize: '26px'}} className={changeTheme ? 'darknessFont' : 'brightFont'}>{newPair?.newPair}</span>
                     </div>
                     <div className={styled.mobliceNewPair}>
-                        <Pagination defaultCurrent={1} showTitle={false} simple={true} current={currentPage} onChange={chang} total={tableTotal}
+                        <Pagination rootClassName={changeTheme?'drakePat':''} defaultCurrent={1} showTitle={false} simple={true} current={currentPage} onChange={chang} total={tableTotal}
                                     pageSize={rowsPerPage}/>
                     </div>
                 </div>

@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useContext, useState} from "react";
 import calculateTime from "../utils/calculateTime";
 import {useRouter} from "next/router";
 import {MinusCircleIcon, TrashIcon} from "@heroicons/react/outline";
@@ -10,6 +10,8 @@ import styled from '/public/styles/all.module.css'
 const ReusableDialog = dynamic(() => import('./ReusableDialog'), {ssr: false})
 import Link from 'next/link'
 import {request} from "../utils/hashUrl";
+import cookie from "js-cookie";
+import {CountContext} from "./Layout/Layout";
 
 const notifyCommentDelete = () => {
     notification.success({
@@ -19,6 +21,7 @@ const notifyCommentDelete = () => {
 }
 
 function CommentComponent({comment, postId, change, user, setComments, changComment}) {
+    const {setLogin} = useContext(CountContext);
     const [isHovering, setIsHovering] = useState(false);
     const [open, setOpen] = useState(false);
     // 删除评论  id
@@ -41,8 +44,11 @@ function CommentComponent({comment, postId, change, user, setComments, changComm
     };
 
     const handleAgree = async () => {
-        const res = await request('delete', '/api/v1/post/comment/' + commentId, '')
-        if (res && res?.status === 200 && res?.data?.code === 200) {
+        const token = cookie.get('token')
+        const res = await request('delete', '/api/v1/post/comment/' + commentId, '', token)
+        if(res==='please'){
+            setLogin()
+        }else if (res && res?.status === 200 && res?.data?.code === 200) {
             changComment(commentId)
             setCommentId(null)
             handleClose();
@@ -55,7 +61,7 @@ function CommentComponent({comment, postId, change, user, setComments, changComm
     return (
         <div className="flex items-start pl-5 pr-3 mt-3" style={{overflowY: 'auto'}}>
             <img alt={''} height={50} width={50}
-                 src={comment?.beReplyUserAvatar ? comment.beReplyUserAvatar : '/Ellipse1.png'}
+                 src={comment?.beReplyUserAvatar ? comment.beReplyUserAvatar : '/dexlogo.svg'}
                  className={`mr - 2 ${styled.commentCommentImg}`}
             />
             {/* extra div for flex of comment text div and the three dots  */}

@@ -13,16 +13,16 @@ import styled from '/public/styles/all.module.css'
 import {request} from "../utils/hashUrl";
 const InfoBox = dynamic(() => import('./HelperComponents/InfoBox'), {ssr: false})
 import {CountContext} from "./Layout/Layout";
+import cookie from "js-cookie";
 
 function InputBox({user, setPosts, increaseSizeAnim, change}) {
-    const {changeTheme} = useContext(CountContext);
+    const {changeTheme,setLogin} = useContext(CountContext);
     const inputRef = useRef(null);
     const buttonRef = useRef(null);
     const filePickerRef = useRef(null);
     const [image, setImage] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
     const [error, setError] = useState(null);
-    const [loading, setLoading] = useState(false);
     const [textareaEnabled, setTextareaEnabled] = useState(false);
     const [newPost, setNewPost] = useState('');
 
@@ -39,31 +39,33 @@ function InputBox({user, setPosts, increaseSizeAnim, change}) {
 
     const createPost = async (e) => {
         e.preventDefault();
-        setLoading(true);
         let picUrl;
         if (image !== null) {
-            picUrl = await request('post','/api/v1/upload/image',image);
-            if (!picUrl && picUrl?.status !== 200) {
-                setLoading(false);
+            const token = cookie.get('token')
+            picUrl = await request('post','/api/v1/upload/image',image,token);
+            if(picUrl==='please'){
+                setLogin()
+            }else if (!picUrl && picUrl?.status !== 200) {
                 return setError("Error uploading image");
             }
         }
         if (newPost) {
+            const token = cookie.get('token')
             const data = await request('post', "/api/v1/post/publish", {
                 uid: user?.uid,
                 address: user?.address,
                 post: {content: newPost, imageList: picUrl && picUrl?.data?.url ? [picUrl.data?.url] : undefined}
-            })
-            if (data && data?.status === 200) {
+            },token)
+            if(picUrl==='please'){
+                setLogin()
+            }else  if (data && data?.status === 200) {
                 change('send')
                 setImage(null);
                 setImagePreview(null);
-                setLoading(false);
                 setNewPost('')
             } else {
                 setImage(null);
                 setImagePreview(null);
-                setLoading(false);
                 setNewPost('')
             }
         } else {
@@ -99,17 +101,8 @@ function InputBox({user, setPosts, increaseSizeAnim, change}) {
                         ref={buttonRef}
                         onClick={createPost}
                     >
-                        {loading ? (
-                            <>
-                                <LoadingOutlined
-                                />
-                            </>
-                        ) : (
-                            <>
-                                <ArrowSmRightIcon className="h-7"/>
-                                <p>Post</p>
-                            </>
-                        )}
+                            <ArrowSmRightIcon className="h-7"/>
+                            <p>Post</p>
                     </button>
                 </div>
             </>
@@ -133,7 +126,7 @@ function InputBox({user, setPosts, increaseSizeAnim, change}) {
                     <>
                         <div className="pt-6 pl-6 pr-6">
                             <div className="flex space-x-4 items-center">
-                                <img src={user && user.profilePicUrl ? user.profilePicUrl : '/Ellipse1.png'} alt=""
+                                <img src={user && user.profilePicUrl ? user.profilePicUrl : '/dexlogo.svg'} alt=""
                                      style={{borderRadius: '50%'}} height={50} width={50}/>
                                 <div>
                                     <p style={{marginBottom: 0, fontWeight: "600"}}>
@@ -192,7 +185,7 @@ function InputBox({user, setPosts, increaseSizeAnim, change}) {
                         <div className="flex items-center pt-6 pl-6 pr-6">
                             <form style={{width: '100%'}}>
                                 <div className="flex  space-x-4 items-center">
-                                    <img src={user && user.profilePicUrl ? user.profilePicUrl : '/Ellipse1.png'}
+                                    <img src={user && user.profilePicUrl ? user.profilePicUrl : '/dexlogo.svg'}
                                          height={50}
                                          width={50} style={{borderRadius: "50%"}} alt="profile pic"/>
                                     <div style={{width: '100%'}}

@@ -34,7 +34,7 @@ export const tcn={
         launch:'即將推出代幣',
         newPair:'新交易對',
         community:'DEXpert 社區',
-        user:'使用者資料'
+        user:'資料'
     },
     home:{
         presale:'預售',

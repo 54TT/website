@@ -11,9 +11,12 @@ import {
 import {useRouter} from "next/router";
 import dayjs from "dayjs";
 import {request} from "../utils/hashUrl";
+import cookie from "js-cookie";
+import {CountContext} from "./Layout/Layout";
 
 function RightSideColumn({user, chatsData}) {
     const social = changeLang('social')
+    const {setLogin} =useContext(CountContext)
     const [bol, setBol] = useState(false)
     const chang = () => {
         setBol(!bol)
@@ -27,8 +30,11 @@ function RightSideColumn({user, chatsData}) {
     const [showLoad, setShowLoad] = useState(true);
     const getUsersToFollow = async () => {
         try {
-            const res = await request('get', '/api/v1/user/public', {page: 1});
-            if (res && res?.status === 200) {
+            const token =  cookie.get('token')
+            const res = await request('get', '/api/v1/user/public', {page: 1},token);
+            if (res === 'please') {
+                setLogin()
+            } else if (res && res?.status === 200) {
                 setUsersToFollow(res?.data?.userList)
             } else {
                 setUsersToFollow([])
@@ -56,7 +62,7 @@ function RightSideColumn({user, chatsData}) {
                                             key={fol.uid}
                                             className="flex justify-between items-center p-4 rounded-lg">
                                             <div className="flex items-center">
-                                                <img src={fol?.avatar ? fol.avatar : '/Ellipse1.png'} width={40}
+                                                <img src={fol?.avatar ? fol.avatar : '/dexlogo.svg'} width={40}
                                                      height={40}
                                                      style={{borderRadius: '50%'}} alt="userimg"/>
                                                 <div>
@@ -77,8 +83,11 @@ function RightSideColumn({user, chatsData}) {
                                                     {fol.isFollow ? (
                                                         <div className={styled.rightSideColumnClick}
                                                              onClick={async () => {
-                                                                 const data = await request('post', "/api/v1/unfollow", {uid: fol.uid})
-                                                                 if (data && data?.status === 200 && data?.data?.code === 200) {
+                                                                 const token =  cookie.get('token')
+                                                                 const data = await request('post', "/api/v1/unfollow", {uid: fol.uid},token)
+                                                                 if (data === 'please') {
+                                                                     setLogin()
+                                                                 } else if (data && data?.status === 200 && data?.data?.code === 200) {
                                                                      chang()
                                                                  }
                                                              }}>
@@ -94,8 +103,11 @@ function RightSideColumn({user, chatsData}) {
                                                             color: 'white'
                                                         }}
                                                              onClick={async () => {
-                                                                 const data = await request('post', "/api/v1/follow", {userId: fol.uid})
-                                                                 if (data && data?.status === 200 && data?.data?.code === 200) {
+                                                                 const token =  cookie.get('token')
+                                                                 const data = await request('post', "/api/v1/follow", {userId: fol.uid},token)
+                                                                 if (data === 'please') {
+                                                                     setLogin()
+                                                                 } else  if (data && data?.status === 200 && data?.data?.code === 200) {
                                                                      chang()
                                                                  }
                                                              }}
@@ -122,7 +134,7 @@ function RightSideColumn({user, chatsData}) {
                                         className={`hover:bg-gray-200 ${styled.rightSideColumnL}`}
                                     >
                                         <div className="relative">
-                                            <img src={chat?.profilePicUrl ? chat.profilePicUrl : '/Ellipse1.png'}
+                                            <img src={chat?.profilePicUrl ? chat.profilePicUrl : '/dexlogo.svg'}
                                                  width={40} height={40} style={{borderRadius: '50%'}} alt="userimg"/>
                                         </div>
                                         <div className="ml-1">

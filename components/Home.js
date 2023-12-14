@@ -35,13 +35,16 @@ import cookie from "js-cookie";
 
 function Home() {
     const router = useRouter();
-    const {bolLogin, changeShowData, showData, changeBolLogin, changeTheme} = useContext(CountContext);
+    const {bolLogin, changeShowData, showData, changeBolLogin, changeTheme, setLogin} = useContext(CountContext);
     const home = changeLang('home')
     const refHeight = useRef(null)
     const getUs = async () => {
         const params = JSON.parse(cookie.get('username'))
-        const data = await request('get', "/api/v1/userinfo/" + params?.uid,)
-        if (data && data?.status === 200) {
+        const token = cookie.get('token')
+        const data = await request('get', "/api/v1/userinfo/" + params?.uid, '', token)
+        if (data === 'please') {
+            setLogin()
+        } else if (data && data?.status === 200) {
             const user = data?.data?.data
             if (user) {
                 setUserPa(user)
@@ -65,8 +68,19 @@ function Home() {
     const [featuredBol, setFeaturedBol] = useState(true);
     const [featured, setFeatured] = useState([]);
 
+    //   social   高度
+    const [socialHeight, setSocialHeight] = useState('');
+
     //   social Loading
     const [socialLoad, setSocialLoad] = useState(true);
+    useEffect(() => {
+        if (launchBol && presaleBol && !featuredBol) {
+            const data = document.getElementById('left').offsetHeight
+            setSocialHeight(data)
+        }
+    }, [launchBol, presaleBol, featuredBol]);
+
+
     const changeAllTheme = (a, b) => {
         return changeTheme ? a : b
     }
@@ -91,13 +105,15 @@ function Home() {
     const params = [{
         data: presale,
         bol: presaleBol,
-        name: home.presale
-    }, {data: launch, bol: launchBol, name: home.launch}]
+        name: home.presale, symbol: 'a'
+    }, {data: launch, bol: launchBol, name: home.launch, symbol: 'b'}]
 
     const getParams = async (url, params, name) => {
         if (name === 'launch') {
             const res = await request('get', url, params)
-            if (res?.data && res?.status === 200) {
+            if (res === 'please') {
+                setLogin()
+            } else if (res?.data && res?.status === 200) {
                 const {data} = res
                 setLaunchBol(true)
                 setLaunch(data?.launchs?.length > 0 ? data.launchs : [])
@@ -108,7 +124,9 @@ function Home() {
         }
         if (name === 'presale') {
             const res = await request('get', url, params)
-            if (res?.data && res?.status === 200) {
+            if (res === 'please') {
+                setLogin()
+            } else if (res?.data && res?.status === 200) {
                 const {data} = res
                 setPresaleBol(true)
                 setPresale(data?.presales?.length > 0 ? data.presales : [])
@@ -119,7 +137,9 @@ function Home() {
         }
         if (name === 'featured') {
             const res = await request('get', url, params)
-            if (res?.data && res?.status === 200) {
+            if (res === 'please') {
+                setLogin()
+            } else if (res?.data && res?.status === 200) {
                 const {data} = res
                 setFeaturedBol(false)
                 setFeatured(data?.featureds?.length > 0 ? data.featureds : [])
@@ -219,7 +239,6 @@ function Home() {
             title: packageHtml(home.dex),
             align: 'center',
             render: (text, record) => {
-                const item = JSON.parse(record?.apiData)
                 return <Image src="/dex-uniswap.png" alt="" width={30} height={30}
                               style={{
                                   borderRadius: '50%',
@@ -244,6 +263,7 @@ function Home() {
             pageIndex: 1,
             pageSize: 10
         }, 'featured')
+        cookie.remove('list')
     }, []);
     const push = (i, name) => {
         switch (name) {
@@ -353,7 +373,9 @@ function Home() {
             a = 1
         }
         const res = await request('post', '/api/v1/post/public', {page: a.toString()})
-        if (res && res?.status === 200) {
+        if (res === 'please') {
+            setLogin()
+        } else if (res && res?.status === 200) {
             setPostsDataBol(!postsDataBol)
             const {data} = res
             setPostsData(data && data?.posts?.length > 0 ? data.posts : [])
@@ -392,11 +414,12 @@ function Home() {
             return 0
         }
     }
+
     return (<div className={styles['box']}>
         <div className={styles['boxPar']}>
             {/*<ConnectKitButton />*/}
             {/*左边*/}
-            <div ref={refHeight} className={styles['left']}>
+            <div ref={refHeight} id={'left'} className={styles['left']}>
                 {/*上面*/}
                 <div className={styles.homeTop}>
                     {
@@ -407,7 +430,7 @@ function Home() {
                                     <ul className={styles['rightUl']}>
                                         <li>
                                             <p className={`${styles.homeCardName} ${changeAllTheme('darknessFont', 'brightFont')}`}>{item.name}</p>
-                                            <Link href={item.name === 'presale' ? '/presale' : '/launch'}>
+                                            <Link href={item.symbol === 'a' ? '/presale' : '/launch'}>
                                                 <p className={styles.homeCardMore}>{home.more}></p>
                                             </Link>
                                         </li>
@@ -420,7 +443,13 @@ function Home() {
                                                         className={`${styles.li} ${changeAllTheme('darknessItem', 'brightItem')}`}
                                                         key={index}>
                                                         <div className={styles.homeCardListBox}>
-                                                            <p className={styles.homeCardIm}>{i.symbol.slice(0, 1)}</p>
+
+                                                            {
+                                                                i?.logo ?
+                                                                    <img className={styles.homeCardIm} src={i.logo}
+                                                                         alt=""/> :
+                                                                    <p className={styles.homeCardIm}>{i.symbol.slice(0, 1)}</p>
+                                                            }
                                                             <div style={{
                                                                 width: '78%',
                                                                 display: 'flex',
@@ -450,7 +479,7 @@ function Home() {
                                                                 alt="" width={15}/>
                                                             <Countdown title=""
                                                                        className={changeAllTheme('darknessFont', 'brightFont')}
-                                                                       value={getD(dayjs.unix(i?.time).isAfter(dayjs()) ? dayjs.unix(i?.time ? i.time : '').diff(dayjs(), 'seconds') : '')}
+                                                                       value={getD(dayjs.unix(i?.time).isAfter(dayjs().unix()) ? dayjs.unix(i?.time ? i.time : '').diff(dayjs(), 'seconds') : '')}
                                                                        format="HH:mm:ss"/>
                                                         </div>
                                                         <img
@@ -517,10 +546,9 @@ function Home() {
             </div>
             {/*右边*/}
             <div
-                //
                 className={`cardParams ${changeAllTheme('socialScrollD darknessThrees', 'socialScroll brightTwo boxHover')}`}
                 id="scrollableDiv"
-                style={{height: `${launchBol && presaleBol && !featuredBol ? refHeight?.current?.clientHeight : 20}px`}}>
+                style={{height: `${socialHeight || 200}px`}}>
                 <div className={styles.homeRightTop}>
                     <p className={`${styles.homeRightTopName} ${changeAllTheme('darknessFont', 'brightFont')}`}>{home.social}</p>
                     <Link href={'/social'}>
@@ -558,6 +586,7 @@ function Home() {
                                              className={changeAllTheme('darknessFont', 'brightFont')}>{home.noData}</div>
                 }
             </div>
+            {/*launchBol && presaleBol && !featuredBol ? refHeight?.current?.clientHeight :*/}
         </div>
         <Bott/>
     </div>);

@@ -1,18 +1,24 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import styled from '/public/styles/all.module.css'
 import {useRouter} from "next/router";
+import cookie from "js-cookie";
 
 function LaunchPresaleDetail(props) {
     const router = useRouter()
-    console.log(router)
-
+    const [list,setList] = useState(null)
+    useEffect(() => {
+        if(cookie.get('list')&&cookie.get('list')!='undefined'){
+            const data  =JSON.parse(cookie.get('list'))
+            setList(data)
+        }
+    }, [cookie.get('list')]);
     return (
         <div className={styled.lpDetail}>
             {/*左边*/}
             <div className={styled.lpDetailLeft}>
                 {/*上边*/}
                 <div className={styled.lpDetailLeftTop}>
-                    <img src="/avatar.png" alt="" width={80}/>
+                    <img src={list?.logo?list.logo:'/dexlogo.svg'} alt="" style={{borderRadius:'50%'}} width={80}/>
                     <span style={{fontWeight: 'bold', fontSize: '22px'}}>PLUR</span>
                     <div className={styled.lpDetailLeftBack}>$PLUR
                     </div>
@@ -51,23 +57,23 @@ function LaunchPresaleDetail(props) {
             <div className={styled.lpDetailR}>
                 <div className={styled.lpDetailRight}>
                     <img src="/detailImg.svg" alt="" className={styled.lpDetailRightImg}/>
-                    <p>@plur123</p>
+                    <p  className={styled.lpDetailRightCen}>@plur123</p>
                 </div>
                 <div className={styled.lpDetailRight}>
                     <img src="/detailImg.svg" alt="" className={styled.lpDetailRightImg}/>
-                    <p>Presale platform</p>
+                    <p  className={styled.lpDetailRightCen}>Presale platform</p>
                 </div>
                 <div className={styled.lpDetailRight}>
                     <img src="/detailImg.svg" alt="" className={styled.lpDetailRightImg}/>
-                    <p>Launch platform</p>
+                    <p  className={styled.lpDetailRightCen}>Launch platform</p>
                 </div>
                 <div className={styled.lpDetailRight}>
                     <img src="/detailImg.svg" alt="" className={styled.lpDetailRightImg}/>
-                    <p>Discord</p>
+                    <p  className={styled.lpDetailRightCen}>Discord</p>
                 </div>
                 <div className={styled.lpDetailRight}>
                     <img src="/detailImg.svg" alt="" className={styled.lpDetailRightImg}/>
-                    <p>Twitter</p>
+                    <p  className={styled.lpDetailRightCen}>Twitter</p>
                 </div>
                 <div className={styled.lpDetailRight}>
                     <img src="/detailImg.svg" alt="" className={styled.lpDetailRightImg}/>

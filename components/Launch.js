@@ -11,10 +11,11 @@ import Image from 'next/image'
 import {request} from '/utils/hashUrl'
 import {changeLang} from "/utils/set";
 import {CountContext} from '/components/Layout/Layout';
+import cookie from "js-cookie";
 
 export default function Presale() {
     const launch = changeLang('launch')
-    const {changeTheme} = useContext(CountContext);
+    const {changeTheme,setLogin} = useContext(CountContext);
     const [launchPageSize, setLaunchPageSize] = useState(10);
     const [launchCurrent, setLaunchCurrent] = useState(1);
     const [launchAll, setLaunchAll] = useState(0);
@@ -31,7 +32,9 @@ export default function Presale() {
     }
     const getParams = async (url, params) => {
         const res = await request('get', url, params)
-        if (res.status === 200) {
+        if(res==='please'){
+            setLogin()
+        }else if (res.status === 200) {
             let {launchs} = res.data
             setLaunch(launchs && launchs.length > 0 ? launchs : [])
             setLaunchAll(0)
@@ -47,6 +50,7 @@ export default function Presale() {
             pageIndex: launchCurrent,
             pageSize: launchPageSize
         })
+        cookie.remove('list')
     }, []);
     const push = (record, name) => {
         if (name === 'a') {
@@ -70,7 +74,7 @@ export default function Presale() {
             dataIndex: 'address', align: 'center',
             width: 30,
             render: (_, record) => {
-                return <img src={record?.logo?record?.logo:'/avatar.png'} alt="" width={30}/>
+                return <img src={record?.logo?record?.logo:'/avatar.png'} style={{borderRadius:'50%'}}  alt="" width={30}/>
             }
         },
         {
@@ -151,7 +155,7 @@ export default function Presale() {
                         <span style={{fontWeight: 'bold', fontSize: '26px'}} className={changeAllTheme('darknessFont' ,'brightFont')}> {launch.launch}</span>
                     </div>
                     <div className={styled.launchBoxFilter}>
-                        <Pagination defaultCurrent={1} current={launchCurrent} showSizeChanger onChange={change}
+                        <Pagination defaultCurrent={1} rootClassName={changeTheme?'drakePat':''} current={launchCurrent} showSizeChanger onChange={change}
                                     total={launchAll} pageSize={launchPageSize}/>
                     </div>
                 </div>

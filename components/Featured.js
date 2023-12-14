@@ -9,10 +9,11 @@ import styled from '/public/styles/all.module.css'
 import Image from 'next/image'
 import {CountContext} from '/components/Layout/Layout';
 import {request} from "../utils/hashUrl";
+import cookie from "js-cookie";
 
 export default function Featured() {
     const featured = changeLang('featured')
-    const {changeTheme} = useContext(CountContext);
+    const {changeTheme,setLogin} = useContext(CountContext);
     const router = useRouter()
     const changeAllTheme = (a, b) => {
         return changeTheme ? a : b
@@ -93,8 +94,7 @@ export default function Featured() {
             title: packageHtml(featured.createTime), align: 'center', render: (text, record) => {
                 const item = JSON.parse(record?.apiData)
                 const data = item.pairCreatedAt.toString().length > 10 ? Number(item.pairCreatedAt.toString().slice(0, 10)) : item.pairCreatedAt
-                return <p
-                    className={changeAllTheme('darknessFont', 'brightFont')}>{item?.pairCreatedAt ? getRelativeTimeDifference(formatDateTime(data)) : ''}</p>
+                return <p className={changeAllTheme('darknessFont', 'brightFont')}>{item?.pairCreatedAt ? getRelativeTimeDifference(formatDateTime(data)) : ''}</p>
             },
             sorter: {
                 compare: (a, b) => {
@@ -109,8 +109,7 @@ export default function Featured() {
         {
             title: packageHtml('% ' + time), align: 'center', render: (text, record) => {
                 const item = JSON.parse(record?.apiData)
-                return <p
-                    style={{color: item?.priceChange[time] > 0 ? 'green' : 'red'}}>{item?.priceChange[time] ? item.priceChange[time] : 0}</p>
+                return <p style={{color: item?.priceChange[time] > 0 ? 'green' : 'red'}}>{item?.priceChange[time] ? item.priceChange[time] : 0}</p>
             }
         },
         {
@@ -148,7 +147,9 @@ export default function Featured() {
     ]
     const getParams = async (url, params) => {
         const res = await request('get', url, params)
-        if (res && res.status === 200) {
+        if(res==='please'){
+            setLogin()
+        }else if (res && res.status === 200) {
             const {data} = res
             setFeaturedBol(false)
             setTableParams(data && data.featureds && data.featureds.length > 0 ? data.featureds : [])
@@ -201,7 +202,7 @@ export default function Featured() {
                            };
                        }} loading={featuredBol} bordered={false} dataSource={tableParams} pagination={false}/>
                 <div className={styled.featuredBoxBot}>
-                    <Pagination defaultCurrent={1} style={{marginTop: '20px'}} showSizeChanger current={featuredCurrent}
+                    <Pagination rootClassName={changeTheme?'drakePat':''} defaultCurrent={1} style={{marginTop: '20px'}} showSizeChanger current={featuredCurrent}
                                 total={featuredAll} onChange={changePag}
                                 pageSize={featuredPageSize}/>
                 </div>

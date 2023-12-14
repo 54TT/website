@@ -13,10 +13,11 @@ import {changeLang} from "/utils/set";
 import {CountContext} from '/components/Layout/Layout';
 import {request} from "../utils/hashUrl";
 import {useRouter} from "next/router";
+import cookie from "js-cookie";
 
 export default function Presale() {
     const presale = changeLang('presale')
-    const {changeTheme} = useContext(CountContext);
+    const {changeTheme, setLogin} = useContext(CountContext);
     const [launchPageSize, setLaunchPageSize] = useState(10);
     const [launchCurrent, setLaunchCurrent] = useState(1);
     const [launchAll, setLaunchAll] = useState(0);
@@ -37,7 +38,9 @@ export default function Presale() {
     }
     const getParams = async (url, params) => {
         const res = await request('get', url, params)
-        if (res&&res?.status === 200) {
+        if (res === 'please') {
+            setLogin()
+        } else if (res && res?.status === 200) {
             let {presales} = res?.data
             setLaunch(presales && presales.length > 0 ? presales : [])
             setLaunchAll(0)
@@ -52,6 +55,7 @@ export default function Presale() {
             pageIndex: launchCurrent,
             pageSize: launchPageSize
         },)
+        cookie.remove('list')
     }, []);
     const push = (record, name) => {
         if (name === 'a') {
@@ -69,13 +73,14 @@ export default function Presale() {
             return 0
         }
     }
-    const columns  = [
+    const columns = [
         {
             title: '',
             dataIndex: 'address', align: 'center',
             width: 30,
             render: (_, record) => {
-                return <img src={record?.logo?record.logo:'/avatar.png'} alt="" width={30}/>
+                return <img src={record?.logo ? record.logo : '/avatar.png'} style={{borderRadius: '50%'}} alt=""
+                            width={30}/>
             }
         },
         {
@@ -83,7 +88,8 @@ export default function Presale() {
             dataIndex: 'name', align: 'center',
             width: 100,
             render: (text) => {
-                return <p className={`${styled.presaleBoxTableP} ${styled.moblicePresaleBoxTableP} ${changeAllTheme( 'darknessFont' ,'brightFont')}`}>{text}</p>
+                return <p
+                    className={`${styled.presaleBoxTableP} ${styled.moblicePresaleBoxTableP} ${changeAllTheme('darknessFont', 'brightFont')}`}>{text}</p>
             }
         },
         {
@@ -152,12 +158,14 @@ export default function Presale() {
             <Card className={`${styled.launchBoxCard} ${changeAllTheme('darknessTwo', 'brightTwo')}`}>
                 <div className={styled.launchBoxCardBox}>
                     <div style={{display: 'flex', alignItems: 'center'}}>
-                        <Image src="/Group.png" alt="" width={70} height={70} className={styled.mobliceImage} />
-                        <span style={{fontWeight: 'bold', fontSize: '26px'}} className={changeAllTheme('darknessFont' ,'brightFont')}>{presale.presales}</span>
+                        <Image src="/iconsss.svg" alt="" width={70} height={70} className={styled.mobliceImage}/>
+                        <span style={{fontWeight: 'bold', fontSize: '26px'}}
+                              className={changeAllTheme('darknessFont', 'brightFont')}>{presale.presales}</span>
                     </div>
                     <div className={styled.launchBoxFilter}>
                         <Pagination defaultCurrent={1} current={launchCurrent} showSizeChanger onChange={change}
-                                    total={launchAll} pageSize={launchPageSize}/>
+                                    total={launchAll} rootClassName={changeTheme ? 'drakePat' : ''}
+                                    pageSize={launchPageSize}/>
                     </div>
                 </div>
                 <Table className={`anyTable ${changeAllTheme('hotTableD', 'hotTable')}`} bordered={false}
@@ -166,9 +174,9 @@ export default function Presale() {
                        onRow={(record) => {
                            return {
                                onClick: (event) => {
-                                   router.push({pathname:`/launchPresaleDetail`,
-                                       query: { name: 'John' }
-                               })
+                                   const data = JSON.stringify(record)
+                                   cookie.set('list',data)
+                                   router.push('/launchPresaleDetail')
                                },
                            };
                        }}

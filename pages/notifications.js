@@ -12,8 +12,10 @@ const FollowNotification = dynamic(() => import('../components/Notification/Foll
 import {changeLang} from "/utils/set";
 import cookie from "js-cookie";
 import {request} from "../utils/hashUrl";
+import {CountContext} from "../components/Layout/Layout";
 function Notifications() {
     const social = changeLang('social')
+    const {setLogin} = useContext(CountContext)
     const [notifications, setNotifications] = useState([])
     const [userPar, setUserPar] = useState(null)
     const [followStatsBol, setFollowStatsBol] = useState(false)
@@ -23,8 +25,9 @@ function Notifications() {
     }
     const getUs = async () => {
         const params = JSON.parse(cookie.get('username'))
-        const data = await request('get', "/api/v1/userinfo/" + params?.uid,)
-        if (data && data?.status === 200) {
+        const token =  cookie.get('token')
+        const data = await request('get', "/api/v1/userinfo/" + params?.uid,'',token)
+       if(data==='please'){setLogin()}else if (data && data?.status === 200) {
             const user = data?.data?.data
             if (user) {
                 setUserPar(user)
@@ -61,7 +64,6 @@ function Notifications() {
     // 获取屏幕
     const [winHeight, setHeight] = useState();
     const isAndroid = () => {
-        console.log(window.navigator.userAgent, "nav");
         const u = window?.navigator?.userAgent;
         if (u.indexOf("Android") > -1 || u.indexOf("iPhone") > -1) return true;
         return false;

@@ -73,15 +73,17 @@ const Drawer = ({getMoney}) => {
         setOpenDrawer(false);
     };
     const pushPer = () => {
-        if (cookie.get('name')) {
-            const data = cookie.get('name')
-            router.push(`/${data}`)
+        if (cookie.get('username') && cookie.get('username') != 'undefined') {
+            const data = JSON.parse(cookie.get('username'))
+            if (Number(data?.uid)) {
+                router.push(`/${data?.uid}`)
+            }
         } else {
             getMoney()
         }
     }
     const push = () => {
-        if (cookie.get('name')) {
+        if (cookie.get('username') && cookie.get('username') != 'undefined') {
             router.push('/social')
         } else {
             getMoney()

@@ -14,11 +14,11 @@ import cookie from "js-cookie";
 import {Skeleton} from "antd";
 
 function Index() {
+    const {setLogin} = useContext(CountContext);
     // 推文
     const [postsData, setPostsData] = useState([])
     const [postsDataAdd, setPostsDataAdd] = useState([])
     const [postsDataBol, setPostsDataBol] = useState(false)
-
     const [postsLoad, setPostsLoad] = useState(true)
 
     const [chatsData, setChatsData] = useState([])
@@ -59,8 +59,11 @@ function Index() {
     }, [postsDataBol])
     const getUs = async () => {
         const params = JSON.parse(cookie.get('username'))
-        const data = await request('get', "/api/v1/userinfo/" + params?.uid,)
-        if (data && data?.status === 200) {
+        const token =  cookie.get('token')
+        const data = await request('get', "/api/v1/userinfo/" + params?.uid,'',token)
+      if(data==='please'){
+          setLogin()
+      }else  if (data && data?.status === 200) {
             const user = data?.data?.data
             if (user) {
                 setUserPar(user)
@@ -102,8 +105,11 @@ function Index() {
         if (sendBol) {
             a = 1
         }
-        const res = await request('post', `/api/v1/post/public`, {page: a});
-        if (res && res?.status === 200) {
+        const token =  cookie.get('token')
+        const res = await request('post', `/api/v1/post/public`, {page: a},token);
+        if(res==='please'){
+            setLogin()
+        }else if (res && res?.status === 200) {
             setPostsDataBol(!postsDataBol)
             setPostsData(res?.data?.posts)
         } else {

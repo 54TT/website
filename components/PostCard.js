@@ -20,6 +20,7 @@ import dayjs from 'dayjs'
 import {CountContext} from '/components/Layout/Layout';
 import {request} from "../utils/hashUrl";
 import {arrayUnique} from "../utils/set";
+import cookie from "js-cookie";
 
 const notify = () => {
     notification.success({
@@ -28,7 +29,7 @@ const notify = () => {
     });
 }
 function PostCard({post, user, change, liked}) {
-    const {changeTheme} = useContext(CountContext);
+    const {changeTheme,setLogin} = useContext(CountContext);
     // 评论
     const [comments, setComments] = useState([]);
     const [commentsAdd, setCommentsAdd] = useState([]);
@@ -91,8 +92,11 @@ function PostCard({post, user, change, liked}) {
     // 发送评论
     const createComment = async (e) => {
         e.preventDefault();
-        const res = await request('post', '/api/v1/post/comment', {postId: post?.postId, content: commentText})
-        if (res && res?.data && res?.status === 200 && res?.data?.code && res?.data?.code === 200) {
+        const token =  cookie.get('token')
+        const res = await request('post', '/api/v1/post/comment', {postId: post?.postId, content: commentText},token)
+        if(res==='please'){
+            setLogin()
+        }else if (res && res?.data && res?.status === 200 && res?.data?.code && res?.data?.code === 200) {
             setCommentText('')
             const newComment = {
                 id: dayjs().valueOf(),
@@ -128,8 +132,11 @@ function PostCard({post, user, change, liked}) {
     };
 
     const handleAgree = async () => {
-        const res = await request('delete', '/api/v1/post/' + post?.postId, '')
-        if(res&&res?.status===200){
+        const token =  cookie.get('token')
+        const res = await request('delete', '/api/v1/post/' + post?.postId, '',token)
+        if(res==='please'){
+            setLogin()
+        }else if(res&&res?.status===200){
             setOpen(false);
             change('click', post?.postId);
         }
@@ -138,8 +145,11 @@ function PostCard({post, user, change, liked}) {
         handleClose();
     };
     const getComments = async (page) => {
-        const res = await request('post', '/api/v1/post/comment/list', {postId: post?.postId, page: page})
-        if (res && res?.status === 200 && res?.data && res?.data?.comments) {
+        const token =  cookie.get('token')
+        const res = await request('post', '/api/v1/post/comment/list', {postId: post?.postId, page: page},token)
+        if(res==='please'){
+            setLogin()
+        }else if (res && res?.status === 200 && res?.data && res?.data?.comments) {
             setComments(res?.data?.comments)
             setCommentBol(true)
         } else {
@@ -161,7 +171,7 @@ function PostCard({post, user, change, liked}) {
             <div className="p-4">
                 <div className="flex space-x-3 items-center ml-2 relative">
                     <img height={50} width={50} style={{borderRadius: '50%'}}
-                         src={post && post?.user?.avatar ? post.user.avatar : '/Ellipse1.png'}
+                         src={post && post?.user?.avatar ? post.user.avatar : '/dexlogo.svg'}
                          alt="userimg"/>
                     <div>
                         <Link href={`/${post?.user?.uid ? post.user.uid : ''}`}>
@@ -292,7 +302,7 @@ function PostCard({post, user, change, liked}) {
                             {/* div which contains the profilepic and the input div */}
                             <div className="flex space-x-2 items-center">
                                 <img width={50} height={50} style={{borderRadius: '50%'}}
-                                     src={user?.profilePicUrl || '/Ellipse1.png'}
+                                     src={user?.profilePicUrl || '/dexlogo.svg'}
                                      alt="profile pic"
                                 />
                                 <div

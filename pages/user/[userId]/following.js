@@ -8,8 +8,10 @@ import styled from "/public/styles/all.module.css";
 import { changeLang } from "/utils/set";
 import cookie from "js-cookie";
 import {request} from "../../../utils/hashUrl";
+import {CountContext} from "../../../components/Layout/Layout";
 function FollowingPage() {
   const social = changeLang("social");
+  const {setLogin}= useContext(CountContext)
   const router = useRouter();
   const [user, setUser] = useState(null);
   const [followingArrayState, setFollowingArrayState] = useState(null);
@@ -17,8 +19,11 @@ function FollowingPage() {
   const [userFollowBol, setUserFollowBol] = useState(false);
   const getUs = async () => {
     const params = JSON.parse(cookie.get('username'))
-    const data = await request('get', "/api/v1/userinfo/" + params?.uid,)
-    if (data && data?.status === 200) {
+    const token =  cookie.get('token')
+    const data = await request('get', "/api/v1/userinfo/" + params?.uid,'',token)
+    if(data==='please'){
+      setLogin()
+    }else if (data && data?.status === 200) {
       const user = data?.data?.data
       if (user) {
         setUser(user)
@@ -39,8 +44,11 @@ function FollowingPage() {
   };
   const getParams = async () => {
     try {
-      const res = await request('post','/api/v1/followee/list',{uid:user?.uid,page:1});
-      if(res&&res?.status===200){
+      const token =  cookie.get('token')
+      const res = await request('post','/api/v1/followee/list',{uid:user?.uid,page:1},token);
+      if(res==='please'){
+        setLogin()
+      }else if(res&&res?.status===200){
         setFollowingArrayState(res?.data?.followeeList)
       }
     } catch (error) {
@@ -104,7 +112,7 @@ function FollowingPage() {
                           style={{
                             borderRadius: "50%",
                           }}
-                          src={fol?.avatar|| "/Ellipse1.png"}
+                          src={fol?.avatar|| "/dexlogo.svg"}
                           alt="userimg"
                         />
                         <Link href={`/${fol?.uid}`}>
@@ -121,8 +129,11 @@ function FollowingPage() {
                       <div
                           className={styled.followersBoxFoll}
                           onClick={async () => {
-                            const  data = await request('post', "/api/v1/unfollow", {uid:fol?.uid})
-                            if(data&&data?.status===200&&data?.data?.code===200){
+                            const token =  cookie.get('token')
+                            const  data = await request('post', "/api/v1/unfollow", {uid:fol?.uid},token)
+                            if(data==='please'){
+                              setLogin()
+                            }else if(data&&data?.status===200&&data?.data?.code===200){
                               chang()
                             }
                           }}

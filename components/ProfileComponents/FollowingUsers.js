@@ -9,16 +9,20 @@ import styled from '/public/styles/all.module.css'
 import {changeLang} from "/utils/set";
 import {request} from "../../utils/hashUrl";
 import {Skeleton} from "antd";
+import {CountContext} from "../Layout/Layout";
 
 function FollowingUsers({userFollowStats,isUserOnOwnAccount, user,showLoad}) {
     const username=changeLang('username')
+    const {setLogin} = useContext(CountContext)
     const [following, setFollowing] = useState([]);
     const [loading, setLoading] = useState(true);
     const getFollowing = async () => {
         try {
-            const res = await request('post','/api/v1/follower/list',{uid:user?.uid,page:1});
-            console.log(res)
-            if(res&&res?.status===200){
+            const token =  cookie.get('token')
+            const res = await request('post','/api/v1/follower/list',{uid:user?.uid,page:1},token);
+           if(res==='please'){
+               setLogin()
+           }else if(res&&res?.status===200){
                 setFollowing(res?.data?.followerList)
             }
         } catch (error) {
@@ -68,7 +72,7 @@ function FollowingUsers({userFollowStats,isUserOnOwnAccount, user,showLoad}) {
                                             <div
                                                 className="mb-5 cursor-pointer"
                                                 style={{width: '100%'}}>
-                                                <img src={fol?.avatar||'/Ellipse1.png'} alt="userprof"   width={50}
+                                                <img src={fol?.avatar||'/dexlogo.svg'} alt="userprof"   width={50}
                                                      height={50}/>
                                                 <Link href={`/${fol?.uid}`}>
                                                     <p className={styled.followerUserName}>

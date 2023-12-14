@@ -46,7 +46,7 @@ import {request} from "../utils/hashUrl";
 import cookie from "js-cookie";
 
 function ProfilePage() {
-    const {changeBolName} = useContext(CountContext);
+    const {changeBolName, setLogin} = useContext(CountContext);
     const coverImageRef = useRef(null);
     const profilePicRef = useRef(null);
     const [user, setUser] = useState(null);
@@ -54,18 +54,11 @@ function ProfilePage() {
     const [LoginUser, setLoginUser] = useState(null);
     const [profile, setProfile] = useState(null);
     const [userFollowStats, setUserFollowStats] = useState(null);
-    const [coverPic, setCoverPic] = useState(null);
     const [coverPicPreview, setCoverPicPreview] = useState("");
-    const [profilePic, setProfilePic] = useState(null);
     const [profilePicPreview, setProfilePicPreview] = useState(null);
-    const [error, setError] = useState(null);
-    const [loadingCoverPic, setLoadingCoverPic] = useState(false);
-    const [loadingProfilePic, setLoadingProfilePic] = useState(false);
     const isUserOnOwnAccount = Number(LoginUser?.uid) === Number(user?.uid)
-    const [loadingBol, setLoadingBol] = useState(false);
     const [editProfile, setEditProfile] = useState(false);
     const [editInput, setEditInput] = useState("");
-    const [editInputBol, setEditInputBol] = useState(false);
     useEffect(() => {
         if (cookie.get('username') && cookie.get('username') != 'undefined') {
             const data = JSON.parse(cookie.get('username'))
@@ -74,9 +67,6 @@ function ProfilePage() {
     }, [cookie.get('username')])
     // 推文  page
     const [page, setPage] = useState(1);
-    const changeImg = () => {
-        setLoadingBol(!loadingBol);
-    };
     const router = useRouter();
     const params = router.query;
     // 推文
@@ -115,76 +105,54 @@ function ProfilePage() {
 
     const addImageFromDevice = async (e, name) => {
         const {files} = e.target;
-        if (name === "cover") {
-            setCoverPic(files[0]);
-            setCoverPicPreview(URL.createObjectURL(files[0]));
-            changeImg();
-        } else {
-            setProfilePic(files[0]);
-            setProfilePicPreview(URL.createObjectURL(files[0]));
-            changeImg();
-        }
-    };
-    const updateProfilePic = async () => {
-        let profileImageUrl;
-        setLoadingProfilePic(true);
-        if (profilePic !== null) {
-            profileImageUrl = await request('post','/api/v1/upload/image',profilePic);
-            if (!profileImageUrl) {
-                setLoadingProfilePic(false);
-                return setError("Error uploading image");
+        const token = cookie.get('token')
+        const data = await request('post', '/api/v1/upload/image', files[0], token);
+        if (data === 'please') {
+            setLogin()
+        } else if (data && data?.status === 200) {
+            if (name !== "cover") {
+                const res = await request('post', "/api/v1/userinfo", {
+                    user: {
+                        ...user,
+                        avatarUrl: data?.data?.url,
+                    }
+                }, token);
+                if (res && res?.status === 200) {
+                    setPage(1)
+                    change()
+                    setPostsAdd([])
+                    changeBolName(true);
+                    setProfilePicPreview(URL.createObjectURL(files[0]));
+                }
+            } else {
+                const res = await request('post', "/api/v1/userinfo", {
+                    user: {
+                        ...user,
+                        coverUrl: data?.data?.url,
+                    }
+                }, token);
+                if (res && res?.status === 200) {
+                    setPage(1)
+                    change()
+                    setPostsAdd([])
+                    changeBolName(true);
+                    setCoverPicPreview(URL.createObjectURL(files[0]));
+                }
             }
-            await profilePicturesUpdate(
-                profileImageUrl,
-                null,
-                setLoadingProfilePic,
-                setError,
-                user?.id
-            );
-            changeBolName(true);
-            await getPosts();
-            setLoadingProfilePic(false);
         }
     };
-    const updateCoverPic = async () => {
-        let picUrl;
-        setLoadingCoverPic(true);
-        if (coverPic !== null) {
-            picUrl = await request('post','/api/v1/upload/image',coverPic);
-            if (!picUrl) {
-                setLoadingCoverPic(false);
-                return setError("Error uploading image");
-            }
-            await profilePicturesUpdate(
-                null,
-                picUrl,
-                setLoadingCoverPic,
-                setError,
-                user?.id
-            );
-            setLoadingCoverPic(false);
-        }
-    };
-    // 上传图片
     useEffect(() => {
-        if (user && user.uid) {
-            if (profilePic) {
-                updateProfilePic();
-            }
-            if (coverPic) {
-                updateCoverPic();
-            }
+        return () => {
+            setPostsAdd([])
         }
-    }, [loadingBol]);
-    useEffect(()=>{
-            return () => {
-                setPostsAdd([])
-        }
-    },[])
+    }, [])
     // 获取推文
     const getPosts = async () => {
-        const res = await request('post', '/api/v1/post/list', {uid: params.username, page: page})
-        if (res && res?.data) {
+        const token = cookie.get('token')
+        const res = await request('post', '/api/v1/post/list', {uid: params.username, page: page}, token)
+        if (res === 'please') {
+            setLogin()
+        } else if (res && res?.data) {
             setPosts(res?.data?.posts)
             setPostsBol(true)
         } else {
@@ -195,8 +163,11 @@ function ProfilePage() {
     // 获取用户
     const getProfile = async () => {
         try {
-            const data = await request('get', "/api/v1/userinfo/" + params?.username, '');
-            if (data && data.status === 200) {
+            const token = cookie.get('token')
+            const data = await request('get', "/api/v1/userinfo/" + params?.username, '', token);
+            if (data === 'please') {
+                setLogin()
+            } else if (data && data.status === 200) {
                 setEditInput(data?.data?.data.username ? data?.data?.data.username : data?.data?.data.address)
                 setUser(data?.data?.data)
                 setShowLoad(false)
@@ -231,15 +202,21 @@ function ProfilePage() {
     };
     const setName = async () => {
         if (editInput) {
+            const token = cookie.get('token')
             const data = await request('post', "/api/v1/userinfo", {
                 user: {
                     ...user,
                     username: editInput,
                 }
-            });
-            if (data && data?.status === 200 && data?.data?.code === 200) {
+            }, token);
+            if (data === 'please') {
+                setLogin()
+            } else if (data && data?.status === 200 && data?.data?.code === 200) {
                 setEditProfile(false)
                 changeBolName(true);
+                setPage(1)
+                change()
+                setPostsAdd([])
             } else {
                 setEditProfile(false)
             }
@@ -272,7 +249,7 @@ function ProfilePage() {
                         {/*背景图*/}
                         <Image
                             src={
-                                user?.coverUrl ? user?.coverUrl
+                                coverPicPreview ? coverPicPreview : user?.coverUrl ? user?.coverUrl
                                     : 'error'
                             }
                             alt="cover pic"
@@ -290,9 +267,7 @@ function ProfilePage() {
                         {/*图像*/}
                         {
                             showLoad ? <Skeleton.Avatar active={true} shape={'circle'}/> : <Avatar
-                                src={
-                                    user?.avatarUrl ? user?.avatarUrl : 'error'
-                                }
+                                src={profilePicPreview ? profilePicPreview : user?.avatarUrl ? user?.avatarUrl : '/dexlogo.svg'}
                                 size={100}
                                 style={{
                                     position: "absolute",
@@ -302,7 +277,6 @@ function ProfilePage() {
                                 }}
                             />
                         }
-
                         {/*修改name*/}
                         <div className={styled.usernameBoxSetName}>
                             {editProfile ? (
@@ -320,12 +294,11 @@ function ProfilePage() {
                             )}
                             {/*提交按钮*/}
                             {editProfile ? (
-                                <div
-                                    style={{
-                                        display: "flex",
-                                        alignItems: "center",
-                                        marginLeft: "10px",
-                                    }}
+                                <div style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    marginLeft: "10px",
+                                }}
                                 >
                                     <CloseOutlined
                                         style={{fontSize: "20px", fontWeight: "bold"}}
@@ -343,12 +316,11 @@ function ProfilePage() {
                                         onClick={setName}
                                     />
                                 </div>
-                            ) : (
-                                <FormOutlined
-                                    className={styled.usernameBoxIcon}
-                                    onClick={() => setEditProfile(true)}
-                                />
-                            )}
+                            ) : (isUserOnOwnAccount ? <FormOutlined
+                                className={styled.usernameBoxIcon}
+                                onClick={() => setEditProfile(true)}
+                            /> : '')
+                            }
                         </div>
                         {/*是否本人*/}
                         {!showLoad && !(Number(LoginUser?.uid) === Number(user?.uid)) ?
@@ -357,14 +329,14 @@ function ProfilePage() {
                                 <div
                                     className={styled.usernameBoxDiv}
                                     onClick={async () => {
-                                        await unfollowUser(
-                                            profile?.user_id,
-                                            setUserFollowStats,
-                                            user?.uid
-                                        );
-                                        chang();
-                                    }}
-                                >
+                                        const token = cookie.get('token')
+                                        const data = await request('post', "/api/v1/unfollow", {uid: user?.uid}, token)
+                                        if (data === 'please') {
+                                            setLogin()
+                                        } else if (data && data?.status === 200 && data?.data?.code === 200) {
+                                            chang()
+                                        }
+                                    }}>
                                     <CheckCircleIcon className="h-6"/>
                                     <p className="ml-1.5">Following</p>
                                 </div>
@@ -372,12 +344,13 @@ function ProfilePage() {
                                 <div
                                     className={styled.usernameBoxDiv}
                                     onClick={async () => {
-                                        await followUser(
-                                            profile?.user_id,
-                                            setUserFollowStats,
-                                            user?.uid
-                                        );
-                                        chang();
+                                        const token = cookie.get('token')
+                                        const data = await request('post', "/api/v1/follow", {userId: user?.uid}, token)
+                                        if (data === 'please') {
+                                            setLogin()
+                                        } else if (data && data?.status === 200 && data?.data?.code === 200) {
+                                            chang()
+                                        }
                                     }}>
                                     <UserAddIcon className="h-6"/>
                                     <p className="ml-1.5">Follow</p>
@@ -388,39 +361,26 @@ function ProfilePage() {
                             <>
                                 <div
                                     className={styled.usernameBoxUp}
-                                    onClick={() => profilePicRef.current.click()}
-                                >
-                                    {loadingProfilePic ? (
-                                        <>
-                                            <LoadingOutlined/>
-                                        </>
-                                    ) : (
-                                        <CameraOutlined
-                                            style={{
-                                                fontSize: "20px",
-                                                color: "purple",
-                                                fontWeight: "bold",
-                                            }}
-                                        />
-                                    )}
+                                    onClick={() => profilePicRef.current.click()}>
+                                    <CameraOutlined
+                                        style={{
+                                            fontSize: "20px",
+                                            color: "purple",
+                                            fontWeight: "bold",
+                                        }}
+                                    />
                                 </div>
                                 <div
                                     className={styled.usernameBoxUpdate}
                                     onClick={() => coverImageRef.current.click()}
                                 >
-                                    {loadingCoverPic ? (
-                                        <>
-                                            <LoadingOutlined/>
-                                        </>
-                                    ) : (
-                                        <CameraOutlined
-                                            style={{
-                                                fontSize: "20px",
-                                                color: "gray",
-                                                fontWeight: "bold",
-                                            }}
-                                        />
-                                    )}
+                                    <CameraOutlined
+                                        style={{
+                                            fontSize: "20px",
+                                            color: "gray",
+                                            fontWeight: "bold",
+                                        }}
+                                    />
                                 </div>
                             </>
                         )}
@@ -462,7 +422,7 @@ function ProfilePage() {
                             {/*右边推文*/}
                             <div className={`flex-1 flex-grow mt-6 max-w-md md:max-w-lg lg:max-w-2xl`}>
                                 {postsAdd.length > 0 ? (
-                                    postsAdd.map((post) => {
+                                    postsAdd.map((post, index) => {
                                         const isLiked =
                                             post.likes &&
                                             post.likes.length > 0 &&
@@ -482,6 +442,7 @@ function ProfilePage() {
                                                 key={post?.postId}
                                             >
                                                 <PostCard
+                                                    key={index}
                                                     liked={isLiked}
                                                     post={post}
                                                     user={user}
@@ -490,21 +451,21 @@ function ProfilePage() {
                                             </InfiniteScroll>
                                         );
                                     })
-                                ) : (postsLoad? <Skeleton active/> :
-                                    <InfoBox
-                                        marginTop={1}
-                                        Icon={EmojiSadIcon}
-                                        message={
-                                            isUserOnOwnAccount
-                                                ? `You don't have any posts, ${editInput}.`
-                                                : "No posts"
-                                        }
-                                        content={
-                                            isUserOnOwnAccount
-                                                ? `Create a new post to start seeing posts here and get your faeshare of attention.`
-                                                : "This user hasn't made a single post. It looks like they are only interested in viewing other posts and lurking around."
-                                        }
-                                    />
+                                ) : (postsLoad ? <Skeleton active/> :
+                                        <InfoBox
+                                            marginTop={1}
+                                            Icon={EmojiSadIcon}
+                                            message={
+                                                isUserOnOwnAccount
+                                                    ? `You don't have any posts, ${editInput}.`
+                                                    : "No posts"
+                                            }
+                                            content={
+                                                isUserOnOwnAccount
+                                                    ? `Create a new post to start seeing posts here and get your faeshare of attention.`
+                                                    : "This user hasn't made a single post. It looks like they are only interested in viewing other posts and lurking around."
+                                            }
+                                        />
                                 )}
                             </div>
                         </div>

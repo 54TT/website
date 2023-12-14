@@ -7,19 +7,25 @@ import Sidebar from "../../../components/Sidebar";
 import Link from 'next/link';
 import dynamic from 'next/dynamic'
 import cook from "js-cookie";
+
 const InfoBox = dynamic(() => import('../../../components/HelperComponents/InfoBox'), {ssr: false});
 import styled from '/public/styles/all.module.css'
 import {changeLang} from "/utils/set";
 import cookie from "js-cookie";
 import {request} from "../../../utils/hashUrl";
+import {CountContext} from "../../../components/Layout/Layout";
 
 function FollowersPage() {
     const social = changeLang('social')
     const router = useRouter();
+    const {setLogin} = useContext(CountContext);
     const getUs = async () => {
         const params = JSON.parse(cookie.get('username'))
-        const data = await request('get', "/api/v1/userinfo/" + params?.uid,)
-        if (data && data?.status === 200) {
+        const token = cookie.get('token')
+        const data = await request('get', "/api/v1/userinfo/" + params?.uid, '', token)
+        if (data === 'please') {
+            setLogin()
+        } else if (data && data?.status === 200) {
             const user = data?.data?.data
             if (user) {
                 setUserPar(user)
@@ -44,8 +50,11 @@ function FollowersPage() {
         setFollowersBol(!followersBol)
     }
     const getParams = async () => {
-        const res = await request('post','/api/v1/follower/list',{uid:userPar?.uid,page});
-        if(res&&res?.status===200){
+        const token = cookie.get('token')
+        const res = await request('post', '/api/v1/follower/list', {uid: userPar?.uid, page}, token);
+        if (res === 'please') {
+            setLogin()
+        } else if (res && res?.status === 200) {
             setFollowers(res?.data?.followerList)
         }
     }
@@ -104,12 +113,12 @@ function FollowersPage() {
                                     key={fol?.uid}
                                 >
                                     <div className="flex items-center  ">
-                                        <img src={fol?.avatar || '/Ellipse1.png'} alt="userimg" width={40}
+                                        <img src={fol?.avatar || '/dexlogo.svg'} alt="userimg" width={40}
                                              height={40}
                                              style={{borderRadius: '50%'}}/>
                                         <Link href={`/${fol?.uid}`}>
                                             <p className={`ml-2 ${styled.followersBoxLink}`}>
-                                                {fol?.username?fol?.username.length > 10 ? fol.username.slice(0, 4) + '...' + fol.username.slice(-3) : fol?.username:fol?.address.slice(0,4)}
+                                                {fol?.username ? fol?.username.length > 10 ? fol.username.slice(0, 4) + '...' + fol.username.slice(-3) : fol?.username : fol?.address.slice(0, 4)}
                                             </p>
                                         </Link>
 
@@ -117,18 +126,24 @@ function FollowersPage() {
                                     {/*关注或者取关*/}
                                     {Number(fol?.uid) !== Number(userPar?.uid) ? (<>
                                         {fol?.IsFollowed ? (<div className={styled.followersBoxFoll}
-                                                                         onClick={async () => {
-                                                                             const  data = await request('post', "/api/v1/unfollow", {uid:fol.uid})
-                                                                             if(data&&data?.status===200&&data?.data?.code===200){
-                                                                                 change()
-                                                                             }
-                                                                         }}
+                                                                 onClick={async () => {
+                                                                     const token = cookie.get('token')
+                                                                     const data = await request('post', "/api/v1/unfollow", {uid: fol.uid}, token)
+                                                                     if (data === 'please') {
+                                                                         setLogin()
+                                                                     } else if (data && data?.status === 200 && data?.data?.code === 200) {
+                                                                         change()
+                                                                     }
+                                                                 }}
                                         >
                                             <CheckCircleIcon className="h-6"/>
                                         </div>) : (<div className={styled.followersBoxFoll}
                                                         onClick={async () => {
-                                                            const  data = await request('post', "/api/v1/follow", {userId:fol.uid})
-                                                            if(data&&data?.status===200&&data?.data?.code===200){
+                                                            const token = cookie.get('token')
+                                                            const data = await request('post', "/api/v1/follow", {userId: fol.uid}, token)
+                                                            if (data === 'please') {
+                                                                setLogin()
+                                                            } else if (data && data?.status === 200 && data?.data?.code === 200) {
                                                                 change()
                                                             }
                                                         }}
