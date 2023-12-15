@@ -162,10 +162,9 @@ const Drawer = ({getMoney}) => {
                                             minWidth: 0,
                                             mr: openDrawer ? 3 : 0,
                                             justifyContent: 'center',
-                                        }}
-                                    >
+                                        }}>
                                         {/* 源图片：ExchangeLogo */}
-                                        <Image src={`/icon_graph_.svg`} alt="logo" height={28} width={28}/>
+                                        <Image src={`/GroupJiuBa.svg`} alt="logo" height={28} width={28}/>
                                     </ListItemIcon>
                                     <ListItemText primary={<span
                                         className={changeTheme ? 'darknessFont' : 'brightFont'}>{drawer.featured}</span>}
@@ -240,7 +239,7 @@ const Drawer = ({getMoney}) => {
                                         }}
                                     >
                                         {/* 源图片：newpairsLogo */}
-                                        <Image src={`/GroupJiuBa.svg`} alt="logo" height={28} width={28}/>
+                                        <Image src={`/icon_graph_.svg`} alt="logo" height={28} width={28}/>
                                     </ListItemIcon>
                                     <ListItemText primary={<span
                                         className={changeTheme ? 'darknessFont' : 'brightFont'}>{drawer.newPair}</span>}

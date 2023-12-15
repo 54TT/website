@@ -792,6 +792,9 @@
     .mobliceImage{
         display: none;
     }
+    .min1200{
+        margin-left: 0;
+    }
     .launchBoxFilter{
         margin-top: 20px;
     }
@@ -858,7 +861,8 @@
 
     .mobliceFeaturedBox, .launchBox {
         margin-top: 20px;
-        margin-left: -86px;
+        /*margin-left: -86px;*/
+        margin-left: 5px;
     }
 
     .featuredBox, .launchBox {
@@ -884,7 +888,7 @@
 
     .allMoblice {
         margin-top: 20px;
-        margin-left: -86px;
+        margin-left: 5px;
         margin-right: 4px;
     }
 
@@ -918,14 +922,12 @@
         text-align: left;
     }
 }
-
 /* 小屏幕 */
 @media screen and (min-width: 768px) {
     .bottomImgs {
         width: 100%;
         justify-content: space-around;
     }
-
     .featuredColumns {
         min-width: 30px;
     }
@@ -937,6 +939,9 @@
     .newPairTableText {
         margin-left: 0;
     }
+    .min1200{
+        margin-left:90px;
+    }
 }
 
 /* 中型屏幕 平板 */
@@ -945,6 +950,9 @@
         width: 100%;
         justify-content: space-around;
     }
+    .min1200{
+        margin-left: 90px;
+    }
 }
 
 /* 电脑屏幕 */
@@ -952,5 +960,8 @@
     .bottomImgs {
         width: 15%;
         justify-content: space-around;
+    }
+    .min1200{
+        margin-left: 90px;
     }
 }

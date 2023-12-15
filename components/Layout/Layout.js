@@ -5,6 +5,7 @@ import {useRouter} from "next/router";
 import {Anchor} from 'antd'
 import cookie from "js-cookie";
 import {useDisconnect} from "wagmi";
+import  styled from '/public/styles/all.module.css'
 
 export const CountContext = createContext(null);
 const Layout = ({children}) => {
@@ -102,8 +103,7 @@ const Layout = ({children}) => {
                 }}>
                 <div id={'part-1'}>
                     <Header/>
-                    <div
-                        style={router.pathname === '/' ? {} : router.pathname === '/statement' ? {marginLeft: '20px'} : {marginLeft: '90px'}}>
+                    <div className={styled.min1200} style={ router.pathname === '/statement' ? {marginLeft: '20px'} : {}}>
                         {children}
                     </div>
                     <div>

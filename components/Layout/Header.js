@@ -562,13 +562,13 @@ const Header = () => {
                         <img src="/Ellipse27.png" alt="" width={40} style={{border: '50%', marginRight: '6px'}}/>
                         <p className={changeTheme ? 'darknessFont' : 'brightFont'}>${!loading && data?.bundles?.length > 0 ? Number(data.bundles[0]?.ethPrice).toFixed(2) : 0}</p>
                         <p style={{display: 'flex', alignItems: 'center', marginLeft: '8px'}}>
-                            <img src="/GasStation.png" width={20} alt=""/>
+                            <img src="/GasStation.png" width={20} alt="" style={{borderRadius:'50%'}}/>
                             <span className={changeTheme ? 'darknessFont' : 'brightFont'}>{gas}</span>
                         </p>
                     </div>
                     {userPar && userPar?.uid ? <div className={styles.loginBox}>
                         <Link href={`/${userPar && userPar?.uid ? userPar.uid : ''}`}>
-                            <img className={'loginImg'} width={35}
+                            <img className={'loginImg'} width={35} style={{borderRadius:'50%'}}
                                  src={userPar && userPar?.avatarUrl ? userPar.avatarUrl : '/dexlogo.svg'}
                                  alt=""/>
                         </Link>
@@ -586,12 +586,14 @@ const Header = () => {
                         className={`${styles['but']} ${styles.loginName} ${changeTheme ? 'darknessThree' : 'brightFore boxHover'}`}
                         onClick={getMoney}>{header.login}</Button>}
                     <div className={styles.mobliceMenuFlex}>
-                        <div
-                            className={`${styles.ethMobliceMg} ${styles.ethMoblice} ${changeTheme ? 'darkMode' : 'whiteMode'}`}
-                            onClick={getMoney}>
-                            <Image src={'/WalletMoblice.svg'} alt="WalletMoblice" style={{marginLeft: '10px'}}
-                                   width={20} height={20}/>
-                        </div>
+                        {
+                            userPar && userPar?.uid ?'': <div
+                                className={`${styles.ethMobliceMg} ${styles.ethMoblice} ${changeTheme ? 'darkMode' : 'whiteMode'}`}
+                                onClick={getMoney}>
+                                <Image src={'/WalletMoblice.svg'} alt="WalletMoblice" style={{marginLeft: '10px'}}
+                                       width={20} height={20}/>
+                            </div>
+                        }
                         <div className={`${styles.ethMoblice} ${changeTheme ? 'darkMode' : 'whiteMode'}`}
                              onClick={openShowMenuItem}>
                             <Image src={'/Menu.svg'} alt="Menu" style={{marginLeft: '10px'}} width={20} height={20}/>

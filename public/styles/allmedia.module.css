@@ -12,7 +12,8 @@
     height: 100%;width: 100%;
   }
   .allMobliceBox{
-    margin: 20px 4px 0 -86px;
+    /*margin: 20px 4px 0 -86px;*/
+    margin: 20px 4px 0 5px;
   }
   .allMoblice{
     width: 100%;

@@ -23,10 +23,8 @@ function Token(props) {
     const [tokenAll, setTokenAll] = useState([]);
     const [tokenSlice, setTokenSlice] = useState([]);
     const [current, setCurrent] = useState(1);
-
     // form   数据
     const [formList, setFormList] = useState(null);
-
     useEffect(() => {
         if (tokenAll && tokenAll.length > 0) {
             const aaa = [...tokenAll]
@@ -34,8 +32,17 @@ function Token(props) {
             setTokenSlice(data)
         }
     }, [current, tokenAll])
-    const onFinish = (values) => {
+    const onFinish = async (values) => {
         console.log('Success:', values);
+        const token = cookie.get('token')
+        const params = {...values,logo:imageP}
+        console.log(imageP)
+        const data = await request('post', '/api/v1/addToken', params, token);
+        if(data&&data?.status===200){
+            setImagePreview(null);
+            setImageP('')
+            setInfoShow(false)
+        }
     };
     const getParams = async () => {
         try {
@@ -123,8 +130,16 @@ function Token(props) {
         try {
             setInfoParams(i)
             const token = cookie.get('token')
-            const data = await request('get', '/api/v1/getTokenByTokenAddress', '', token);
-            setInfoShow(true)
+          request('get', '/api/v1/getTokenByTokenAddress', {address:i}, token).then(res=>{
+               if(res&&res?.status===200){
+                   setFormList(res?.data?.tokenResponse)
+                   setInfoShow(true)
+              }
+          }).catch(err=>{
+              setFormList(null)
+              setInfoShow(true)
+          })
+
         } catch (err) {
             return null
         }
@@ -161,8 +176,8 @@ function Token(props) {
                 infoSow ? <div style={{display: 'flex', alignItems: 'center'}}>
                         <div className={styles.coinBoxTop}>
                             <img src="/Booking.png" alt="" width={30}/>
-                            <span style={{margin: '0 10px'}}>{infoParams && infoParams.name}</span>
-                            <span style={{color: '#9bc2d9'}}>{infoParams && infoParams.token}</span>
+                            {/*<span style={{margin: '0 10px'}}>{infoParams && infoParams.name}</span>*/}
+                            <span style={{color: '#9bc2d9'}}>{infoParams.slice(0,5)+'...'+infoParams.slice(-5)}</span>
                         </div>
                         <div className={styles.coinBoxSet}>
                             <span className={styles.coinBoxInfo}>info</span>
@@ -176,13 +191,14 @@ function Token(props) {
                     name="basic"
                     form={form}
                     onFinish={onFinish}
+                    defaultValue={formList}
                     layout={'vertical'}
                     autoComplete="off"
                     className={`${styles.coinBoxForm} ${changeTheme ? 'colorDrak' : ''}`}
                 >
                     <Form.Item
                         label="e-mail"
-                        name="e-mail"
+                        name="email"
                         style={{width: '45%', marginBottom: '10px'}}
                         labelCol={{
                             span: 20,
@@ -193,7 +209,7 @@ function Token(props) {
 
                     <Form.Item
                         label="LINK TO LOGO URL"
-                        name="LINK"
+                        name="link"
                         labelCol={{
                             span: 20,
                         }}
@@ -240,7 +256,7 @@ function Token(props) {
                         labelCol={{
                             span: 20,
                         }}
-                        name="Token"
+                        name="website"
                         style={{width: '45%', marginBottom: '10px'}}
                     >
                         <Input className={changeTheme ? 'darknessTwo' : 'brightTT'}/>
@@ -250,7 +266,7 @@ function Token(props) {
                         labelCol={{
                             span: 20,
                         }}
-                        name="Telegram"
+                        name="telegram"
                         style={{width: '45%', marginBottom: '10px'}}
                         rules={[
                             {
@@ -263,7 +279,7 @@ function Token(props) {
                     </Form.Item>
                     <Form.Item
                         label="Discord"
-                        name="Discord"
+                        name="discord"
                         labelCol={{
                             span: 20,
                         }}
@@ -286,14 +302,14 @@ function Token(props) {
                         labelCol={{
                             span: 20,
                         }}
-                        name="Facebook"
+                        name="facebook"
                         style={{width: '45%', marginBottom: '10px'}}
                     >
                         <Input className={changeTheme ? 'darknessTwo' : 'brightTT'}/>
                     </Form.Item>
                     <Form.Item
                         label="Youtube"
-                        name="Youtube"
+                        name="youtube"
                         labelCol={{
                             span: 20,
                         }}
@@ -303,7 +319,7 @@ function Token(props) {
                     </Form.Item>
                     <Form.Item
                         label="Instagram"
-                        name="Instagram"
+                        name="instagram"
                         labelCol={{
                             span: 20,
                         }}
@@ -313,7 +329,7 @@ function Token(props) {
                     </Form.Item>
                     <Form.Item
                         label="TikTok"
-                        name="TikTok"
+                        name="tikTok"
                         labelCol={{
                             span: 20,
                         }}
@@ -323,7 +339,7 @@ function Token(props) {
                     </Form.Item>
                     <Form.Item
                         label="Medium"
-                        name="Medium"
+                        name="medium"
                         labelCol={{
                             span: 20,
                         }}
@@ -333,7 +349,7 @@ function Token(props) {
                     </Form.Item>
                     <Form.Item
                         label="Project Brief"
-                        name="Project"
+                        name="brief"
                         labelCol={{
                             span: 20,
                         }}
@@ -350,7 +366,10 @@ function Token(props) {
                     </Form.Item>
                     <Form.Item style={{display: 'flex', justifyContent: 'flex-end', width: '100%'}}>
                         <div style={{display: 'flex',}}><img src="/Vectors.svg" alt=""
-                                                             onClick={() => setInfoShow(false)}
+                                                             onClick={() => {
+                                                                 setInfoShow(false)
+                                                                 form.resetFields()
+                                                             }}
                                                              style={{cursor: 'pointer', marginRight: '20px'}}
                                                              width={25}/>
                             <img src="/sure.svg" alt="" onClick={() => form.submit()} style={{cursor: 'pointer'}}
@@ -368,13 +387,13 @@ function Token(props) {
                                 }}>{index + 1}</span>
                                 <img src="/Booking.png" alt="" width={30}/>
                                 {/*<span style={{margin: '0 10px'}}>{i.name}</span>*/}
-                                <span style={{color: '#2294D4'}}>{i}</span>
+                                <span style={{color: '#2294D4'}}>{i?.slice(0,5)+'...'+i?.slice(-4)}</span>
                                 <div className={styles.coinBoxSet}>
                             <span style={{
                                 fontSize: '18px',
                                 fontWeight: 'bold',
                                 marginRight: '10px',
-                                cursor: 'pointer'
+                                cursor: 'pointer',
                             }}>info</span>
                                     <img src="/setCoin.svg" alt="" width={15} style={{cursor: 'pointer'}}
                                          onClick={() => setInfo(i)}/>
@@ -382,8 +401,7 @@ function Token(props) {
                             </div>
                         }) : ''}
                     {
-                        tokenAll.length > 0 ? <div
-                            style={{position: 'absolute', bottom: '50px', left: '50%', transform: 'translateX(-50%)'}}>
+                        tokenAll.length > 0 ? <div>
                             <Pagination pageSize={20} onChange={change}
                                         rootClassName={`${changeTheme ? 'drakePat' : ''} setBo`} defaultCurrent={1}
                                         total={tokenAll.length}/>

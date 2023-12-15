@@ -134,7 +134,9 @@
 /* 超小屏幕 */
 @media screen and (max-width: 768px) {
   .mobliceSocialBox{
-    margin: 20px 4px 50px -84px;
+    /*margin: 20px 4px 50px -84px;*/
+    margin: 20px 4px 50px 5px;
+
   }
   .mobliceMain{
     flex-direction: column-reverse;

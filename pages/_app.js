@@ -14,7 +14,6 @@ require('dotenv').config({path: '.env'})
 //         publicProvider()
 //     ]
 // );
-
 const config = createConfig(
     getDefaultConfig({
         appName: 'ConnectKit Next.js demo',
@@ -36,8 +35,8 @@ function DexPert({Component, pageProps}) {
      return (
         <>
             <Head>
-                <link rel="shortcut icon" href="/avatar.png"/>
-                <title>My new cool app</title>
+                <link rel="shortcut icon" href="/dexlogo.svg"/>
+                <title>Dex Pert</title>
             </Head>
             <WagmiConfig config={config}>
                 <ConnectKitProvider >
