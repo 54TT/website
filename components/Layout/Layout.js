@@ -26,6 +26,10 @@ const Layout = ({children}) => {
     const [changeTheme, setChangeTheme] = useState(false)
 
     // 退出
+    const [logoutBol, setLogoutBol] = useState(false)
+    const changeBol=(name)=>{
+        setLogoutBol(name)
+    }
     const setLogin = () => {
         cookie.remove('name');
         cookie.remove('username');
@@ -34,6 +38,7 @@ const Layout = ({children}) => {
         if (router.pathname !== '/') {
             router.push('/')
         }
+        changeBol(true)
         disconnect()
     }
 
@@ -43,8 +48,8 @@ const Layout = ({children}) => {
     const changeFont = (name) => {
         setChangeFamily(name)
     }
-    const changeShowData = () => {
-        setShowData(!showData)
+    const changeShowData = (name) => {
+        setShowData(name)
     }
     const changeBolName = (name) => {
         setBol(name)
@@ -76,7 +81,7 @@ const Layout = ({children}) => {
             changeBolName,
             changeBolLogin,
             bolLogin,
-            setLogin
+            setLogin, logoutBol ,changeBol
         }}>
             <ConfigProvider
                 theme={{

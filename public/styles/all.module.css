@@ -131,21 +131,18 @@
     outline: none;
     padding: 15px;
     margin: 0 0;
-    border: 2px solid #f0e6ff;
     width: 100%;
     color: black;
     border-radius: 10px;
 }
 
 .profileFieldsDiv {
-    background-color: white;
     display: flex;
     align-items: center;
     justify-content: space-between;
     border-radius: 10px;
     padding: 10px;
     margin: 15px 0 0 0;
-    border: 2px solid #f0e6ff;
 }
 
 .profileFieldsInput {
@@ -170,7 +167,6 @@
     column-gap: 6px;
     margin-top: 8px;
     padding: 10px;
-    background-color: #efeeef;
     border-radius: 7px;
     user-select: none;
     cursor: pointer;
@@ -585,7 +581,7 @@
 
 
 .usernameBox {
-    background-color: rgb(188, 238, 125);
+    /*background-color: rgb(188, 238, 125);*/
     margin-right: 20px;
     border-radius: 10px;
 }
@@ -641,7 +637,7 @@
 }
 
 .usernameBoxUpdate {
-    padding: 10px;
+    padding: 5px;
     background-color: white;
     cursor: pointer;
     position: absolute;
@@ -654,7 +650,6 @@
     margin-top: 20px;
     min-height: calc(100vh - 26rem);
     padding-top: 60px;
-    background-color: rgb(253, 213, 62);
 }
 
 /* 文字中间省略，前后显示样式 */
@@ -682,7 +677,9 @@
 
 .coinBox {
     margin-right: 20px;
+    min-height: 90vh;
     border-radius: 10px;
+    position: relative;
     padding: 10px;
 }
 
@@ -726,6 +723,7 @@
 
 .lpDetail {
     background-color: rgb(253, 213, 62);
+    min-height: 90vh;
     border-radius: 10px;
     margin-right: 20px;
     padding: 40px;
@@ -741,7 +739,7 @@
 }
 .lpDetailRightImg{
     width: 30px;
-    margin-bottom: 5px;
+    margin-bottom: 5px;border-radius: 50%;
 }
 
 .lpDetailLeftBack{
@@ -756,7 +754,7 @@
     font-size: 18px; font-weight: bold; text-align: center;
 }
 .lpDetailLefPT{
-    font-size: 20px; text-align: center;
+    font-size: 20px;display: flex;align-items: center;
 }
 .lpDetailLeft {
     width: 70%;

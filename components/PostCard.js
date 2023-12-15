@@ -12,8 +12,9 @@ import {Input, notification} from 'antd'
 import {deletePost, likePost, postComment} from "../utils/postActions";
 import dynamic from 'next/dynamic'
 import {useRouter} from "next/router";
-const ReusableDialog = dynamic(() => import('./ReusableDialog'), { ssr: false });
-const CommentComponent = dynamic(() => import('./CommentComponent'), { ssr: false });
+
+const ReusableDialog = dynamic(() => import('./ReusableDialog'), {ssr: false});
+const CommentComponent = dynamic(() => import('./CommentComponent'), {ssr: false});
 
 const {TextArea} = Input
 import dayjs from 'dayjs'
@@ -28,8 +29,9 @@ const notify = () => {
         duration: 2
     });
 }
+
 function PostCard({post, user, change, liked}) {
-    const {changeTheme,setLogin} = useContext(CountContext);
+    const {changeTheme, setLogin} = useContext(CountContext);
     // 评论
     const [comments, setComments] = useState([]);
     const [commentsAdd, setCommentsAdd] = useState([]);
@@ -91,24 +93,31 @@ function PostCard({post, user, change, liked}) {
     const [open, setOpen] = useState(false);
     // 发送评论
     const createComment = async (e) => {
-        e.preventDefault();
-        const token =  cookie.get('token')
-        const res = await request('post', '/api/v1/post/comment', {postId: post?.postId, content: commentText},token)
-        if(res==='please'){
-            setLogin()
-        }else if (res && res?.data && res?.status === 200 && res?.data?.code && res?.data?.code === 200) {
-            setCommentText('')
-            const newComment = {
-                id: dayjs().valueOf(),
-                user,
-                content: commentText,
-                createdAt: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-            };
-            const dat = [newComment, ...comments]
-            setCommentStatus('enter')
-            setComments(dat)
-            setCommentBol(true)
-            setCommentNum((res) => Number(res) + 1)
+        try {
+            e.preventDefault();
+            const token = cookie.get('token')
+            const res = await request('post', '/api/v1/post/comment', {
+                postId: post?.postId,
+                content: commentText
+            }, token)
+            if (res === 'please') {
+                setLogin()
+            } else if (res && res?.data && res?.status === 200 && res?.data?.code && res?.data?.code === 200) {
+                setCommentText('')
+                const newComment = {
+                    id: dayjs().valueOf(),
+                    user,
+                    content: commentText,
+                    createdAt: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+                };
+                const dat = [newComment, ...comments]
+                setCommentStatus('enter')
+                setComments(dat)
+                setCommentBol(true)
+                setCommentNum((res) => Number(res) + 1)
+            }
+        } catch (err) {
+            return null
         }
     };
 
@@ -132,29 +141,37 @@ function PostCard({post, user, change, liked}) {
     };
 
     const handleAgree = async () => {
-        const token =  cookie.get('token')
-        const res = await request('delete', '/api/v1/post/' + post?.postId, '',token)
-        if(res==='please'){
-            setLogin()
-        }else if(res&&res?.status===200){
-            setOpen(false);
-            change('click', post?.postId);
+        try {
+            const token = cookie.get('token')
+            const res = await request('delete', '/api/v1/post/' + post?.postId, '', token)
+            if (res === 'please') {
+                setLogin()
+            } else if (res && res?.status === 200) {
+                setOpen(false);
+                change('click', post?.postId);
+            }
+        } catch (err) {
+            return null
         }
     };
     const handleDisagree = () => {
         handleClose();
     };
     const getComments = async (page) => {
-        const token =  cookie.get('token')
-        const res = await request('post', '/api/v1/post/comment/list', {postId: post?.postId, page: page},token)
-        if(res==='please'){
-            setLogin()
-        }else if (res && res?.status === 200 && res?.data && res?.data?.comments) {
-            setComments(res?.data?.comments)
-            setCommentBol(true)
-        } else {
-            setCommentBol(true)
-            setComments([])
+        try {
+            const token = cookie.get('token')
+            const res = await request('post', '/api/v1/post/comment/list', {postId: post?.postId, page: page}, token)
+            if (res === 'please') {
+                setLogin()
+            } else if (res && res?.status === 200 && res?.data && res?.data?.comments) {
+                setComments(res?.data?.comments)
+                setCommentBol(true)
+            } else {
+                setCommentBol(true)
+                setComments([])
+            }
+        } catch (err) {
+            return null
         }
     }
     const clickPush = () => {
@@ -166,7 +183,7 @@ function PostCard({post, user, change, liked}) {
     }
     return (
         <div
-            className={`mb-7 flex flex-col justify-start rounded-2xl shadow-md ${changeTheme ? 'darknessThree' : 'brightBackTwo'}`}>
+            className={`mb-7 flex flex-col justify-start rounded-2xl shadow-md ${changeTheme ? 'darknessThree' : 'whiteMode'}`}>
             {/*头像*/}
             <div className="p-4">
                 <div className="flex space-x-3 items-center ml-2 relative">
@@ -179,7 +196,7 @@ function PostCard({post, user, change, liked}) {
                                 cursor: 'pointer',
                                 fontSize: '20px'
                             }} className={changeTheme ? 'darknessFont' : 'brightFont'}>
-                                {post?.user?.username ? post?.user?.username.length > 10 ? post.user.username.slice(0, 8) : post.user.username : post.user.address.slice(0,5)+'...'}
+                                {post?.user?.username ? post?.user?.username.length > 10 ? post.user.username.slice(0, 8) : post.user.username : post.user.address.slice(0, 5) + '...'}
                             </div>
                         </Link>
                         <p
@@ -201,7 +218,7 @@ function PostCard({post, user, change, liked}) {
                         handleDisagree={handleDisagree}
                     />
                     {/*删除按钮*/}
-                    {post?.user?.uid === user?.uid && (
+                    {Number(post?.user?.uid) === Number(user?.uid) && (
                         <div style={{
                             borderRadius: '50%',
                             cursor: 'pointer'
@@ -228,16 +245,16 @@ function PostCard({post, user, change, liked}) {
             <div style={{marginTop: "10px"}} className="ml-5 mr-5">
                 <div className="flex justify-between w-full">
                     {/*点赞数*/}
-                    <div className="flex items-center space-x-0.5 cursor-pointer hover:underline">
-                        <ThumbUpIcon
-                            className="h-4 text-gray-40"
-                            style={{fill: `${liked ? "black" : "gray"}`}}
-                        />
-                        <p className="text-md text-gray-500 font-light select-none">
-                            {/*{post && post?.likes ? post?.likes.length : 0}*/}
-                            {post && post?.likeNum}
-                        </p>
-                    </div>
+                    {/*<div className="flex items-center space-x-0.5 cursor-pointer hover:underline">*/}
+                    {/*    <ThumbUpIcon*/}
+                    {/*        className="h-4 text-gray-40"*/}
+                    {/*        style={{fill: `${liked ? "black" : "gray"}`}}*/}
+                    {/*    />*/}
+                    {/*    <p className="text-md text-gray-500 font-light select-none">*/}
+                    {/*        /!*{post && post?.likes ? post?.likes.length : 0}*!/*/}
+                    {/*        {post && post?.likeNum}*/}
+                    {/*    </p>*/}
+                    {/*</div>*/}
                     <p
                         onClick={() => {
                             if (!showComments) {
@@ -250,7 +267,15 @@ function PostCard({post, user, change, liked}) {
                             }
                             setShowComments(!showComments)
                         }}
-                        className="text-gray-500 cursor-pointer hover:underline font-light select-none"
+                        className="text-gray-500 cursor-pointer font-light select-none"
+                        style={{
+                            padding: '5px',
+                            borderRadius: '10px',
+                            margin: '0 auto',
+                            textAlign: 'center',
+                            backgroundColor: 'rgb(254,239,146)',
+                            width: '100%'
+                        }}
                     >{`${commentNum}   comments`}</p>
                 </div>
             </div>

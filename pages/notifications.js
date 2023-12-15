@@ -6,6 +6,7 @@ import baseUrl from "../utils/baseUrl";
 import styles from '/public/styles/allmedia.module.css'
 import dynamic from 'next/dynamic'
 import cook from "js-cookie";
+
 const LikeNotification = dynamic(() => import('../components/Notification/LikeNotification'), {ssr: false});
 const CommentNotification = dynamic(() => import('../components/Notification/CommentNotification'), {ssr: false});
 const FollowNotification = dynamic(() => import('../components/Notification/FollowNotification'), {ssr: false});
@@ -13,6 +14,7 @@ import {changeLang} from "/utils/set";
 import cookie from "js-cookie";
 import {request} from "../utils/hashUrl";
 import {CountContext} from "../components/Layout/Layout";
+
 function Notifications() {
     const social = changeLang('social')
     const {setLogin} = useContext(CountContext)
@@ -24,18 +26,26 @@ function Notifications() {
         setFollowStatsBol(!followStatsBol)
     }
     const getUs = async () => {
-        const params = JSON.parse(cookie.get('username'))
-        const token =  cookie.get('token')
-        const data = await request('get', "/api/v1/userinfo/" + params?.uid,'',token)
-       if(data==='please'){setLogin()}else if (data && data?.status === 200) {
-            const user = data?.data?.data
-            if (user) {
-                setUserPar(user)
+        try {
+            const params = JSON.parse(cookie.get('username'))
+            const token = cookie.get('token')
+            const data = await request('get', "/api/v1/userinfo/" + params?.uid, '', token)
+            if (data === 'please') {
+                setUserPar(null)
+                setLogin()
+            } else if (data && data?.status === 200) {
+                const user = data?.data?.data
+                if (user) {
+                    setUserPar(user)
+                } else {
+                    setUserPar(null)
+                }
             } else {
                 setUserPar(null)
             }
-        } else {
+        } catch (err) {
             setUserPar(null)
+            return null
         }
     }
     useEffect(() => {

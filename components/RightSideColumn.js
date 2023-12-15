@@ -43,6 +43,7 @@ function RightSideColumn({user, chatsData}) {
         } catch (error) {
             setUsersToFollow([]);
             setShowLoad(false)
+            return null
         }
     };
 
@@ -83,12 +84,16 @@ function RightSideColumn({user, chatsData}) {
                                                     {fol.isFollow ? (
                                                         <div className={styled.rightSideColumnClick}
                                                              onClick={async () => {
+                                                                 try {
                                                                  const token =  cookie.get('token')
                                                                  const data = await request('post', "/api/v1/unfollow", {uid: fol.uid},token)
                                                                  if (data === 'please') {
                                                                      setLogin()
                                                                  } else if (data && data?.status === 200 && data?.data?.code === 200) {
                                                                      chang()
+                                                                 }
+                                                                 }catch (err){
+                                                                     return null
                                                                  }
                                                              }}>
                                                             <CheckCircleIcon className="h-6"/>
@@ -103,12 +108,16 @@ function RightSideColumn({user, chatsData}) {
                                                             color: 'white'
                                                         }}
                                                              onClick={async () => {
+                                                                 try {
                                                                  const token =  cookie.get('token')
                                                                  const data = await request('post', "/api/v1/follow", {userId: fol.uid},token)
                                                                  if (data === 'please') {
                                                                      setLogin()
                                                                  } else  if (data && data?.status === 200 && data?.data?.code === 200) {
                                                                      chang()
+                                                                 }
+                                                                 }catch (err){
+                                                                     return null
                                                                  }
                                                              }}
                                                         >

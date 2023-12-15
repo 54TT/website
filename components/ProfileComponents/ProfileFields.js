@@ -29,7 +29,7 @@ const notifyError = () => {
 function ProfileFields({isUserOnOwnAccount, user, change, getProfile, showLoad}) {
     // isUserOnOwnAccount
     const username = changeLang('username')
-    const {setLogin} = useContext(CountContext)
+    const {setLogin, changeTheme} = useContext(CountContext)
     const [bio, setBio] = useState("");
     useEffect(() => {
         if (user) {
@@ -54,36 +54,41 @@ function ProfileFields({isUserOnOwnAccount, user, change, getProfile, showLoad})
     };
 
     const updateProfile = async (e) => {
-        if (bio === "") {
-            notifyError();
-            return;
-        }
-        const token = cookie.get('token')
-        const data = await request('post', "/api/v1/userinfo", {
-            user: {
-                ...user,
-                ...social, bio
+        try {
+            if (bio === "") {
+                notifyError();
+                return;
             }
-        }, token);
-        if (data === 'please') {
-            setLogin()
-        } else if (data && data?.status === 200) {
-            getProfile()
+            const token = cookie.get('token')
+            const data = await request('post', "/api/v1/userinfo", {
+                user: {
+                    ...user,
+                    ...social, bio
+                }
+            }, token);
+            if (data === 'please') {
+                setEditProfile(false)
+                setLogin()
+            } else if (data && data?.status === 200) {
+                getProfile()
+                setEditProfile(false)
+            }
+        } catch (err) {
             setEditProfile(false)
+            return null
         }
     };
+    const list = [{name: 'youtube'}, {name: 'websiteLink'}, {name: 'twitter'}, {name: 'discord'}]
 
     return (
         <div
-            className={`bg-white justify-start rounded-2xl shadow-md p-5 ${styled.profileFieldsBox}`}>
+            className={` justify-start rounded-2xl shadow-md p-5 ${styled.profileFieldsBox} ${changeTheme ? 'introBack' : 'whiteMode'}`}>
             {
                 showLoad ? <Skeleton active={true}/> : <>
                     {/*修改*/}
                     {editProfile ? (
                         <div className="flex justify-between ml-1 mr-0.5 mb-1">
-                            <h1
-                                className="text-2xl font-semibold"
-                            >
+                            <h1 className={`${changeTheme ? 'fontW' : 'fontB'} text-2xl font-semibold`}>
                                 {username.intro}
                             </h1>
                             <div className={styled.profileFieldsIconBox}>
@@ -102,8 +107,7 @@ function ProfileFields({isUserOnOwnAccount, user, change, getProfile, showLoad})
                         <>
                             <div className="flex justify-between">
                                 <h1
-                                    className="text-2xl font-semibold mb-1"
-                                >
+                                    className={`  ${changeTheme ? 'fontW' : 'fontB'} text-2xl font-semibold mb-1`}>
                                     {username.intro}
                                 </h1>
                                 {isUserOnOwnAccount && (
@@ -117,58 +121,80 @@ function ProfileFields({isUserOnOwnAccount, user, change, getProfile, showLoad})
                     {/*数据*/}
                     {editProfile ? (
                         <div>
-          <textarea className={styled.profileFieldsTextarea}
-                    name="bio"
-                    value={bio}
-                    onChange={handleChange}
-                    placeholder={username.enterBio}
-                    rows="2"
-                    wrap="soft"
-          />
-                            <div>
-                                <div className={styled.profileFieldsDiv}>
-                                    <YoutubeOutlined style={{color: "#8f85de"}}/>
-                                    <input className={styled.profileFieldsInput}
-                                           name="youtube"
-                                           value={youtube}
-                                           onChange={handleChange}
-                                           placeholder="YouTube"
-                                    />
-                                </div>
-                                <div className={styled.profileFieldsDiv}>
-                                    <TwitterOutlined style={{color: "#8f85de"}}/>
-                                    <input className={styled.profileFieldsInput}
-                                           name="twitter"
-                                           value={twitter}
-                                           onChange={handleChange}
-                                           placeholder="Twitter"
-                                    />
-                                </div>
-                                <div className={styled.profileFieldsDiv}>
-                                    <InstagramOutlined style={{color: "#8f85de"}}/>
-                                    <input className={styled.profileFieldsInput}
-                                           name="websiteLink"
-                                           value={websiteLink}
-                                           onChange={handleChange}
-                                           placeholder="Instagram"
-                                    />
-                                </div>
-                                <div className={styled.profileFieldsDiv}>
-                                    <FacebookOutlined style={{color: "#8f85de"}}/>
-                                    <input className={styled.profileFieldsInput}
-                                           name="discord"
-                                           value={discord}
-                                           onChange={handleChange}
-                                           placeholder="discord"
-                                    />
-                                </div>
-                            </div>
+                            {/**/}
+                            <textarea
+                                className={`${changeTheme ? 'darknessThrees drakColor' : 'brightFore fontB'} ${styled.profileFieldsTextarea}`}
+                                name="bio"
+                                value={bio}
+                                onChange={handleChange}
+                                placeholder={username.enterBio}
+                                rows="2"
+                                wrap="soft"/>
+                            {
+                                list.map((i, index) => {
+                                    return <div key={index}
+                                                className={`${changeTheme ? 'darknessThrees' : 'brightFore'} ${styled.profileFieldsDiv}`}>
+                                        {
+                                            index === 0 ? <YoutubeOutlined style={{color: "#8f85de"}}/> : index === 1 ?
+                                                <FacebookOutlined style={{color: "#8f85de"}}/> : index === 2 ?
+                                                    <TwitterOutlined style={{color: "#8f85de"}}/> : index === 3 ?
+                                                        <InstagramOutlined style={{color: "#8f85de"}}/> : ''
+                                        }
+                                        <input
+                                            className={`${changeTheme ? 'darknessThrees drakColor' : 'brightFore fontB'}  ${styled.profileFieldsInput}`}
+                                            name={i.name}
+                                            value={social[i.name]}
+                                            onChange={handleChange}
+                                            placeholder={<span
+                                                className={`${changeTheme ? 'drakColor' : 'fontB'} `}>{i.name}</span>}
+                                        />
+                                    </div>
+                                })
+                            }
+                            {/*<div>*/}
+                            {/*    <div className={`${changeTheme?'darknessThrees':'brightFore'} ${styled.profileFieldsDiv}`}>*/}
+                            {/*        <YoutubeOutlined style={{color: "#8f85de"}}/>*/}
+                            {/*        <input className={`  ${styled.profileFieldsInput}`}*/}
+                            {/*               name="youtube"*/}
+                            {/*               value={youtube}*/}
+                            {/*               onChange={handleChange}*/}
+                            {/*               placeholder="YouTube"*/}
+                            {/*        />*/}
+                            {/*    </div>*/}
+                            {/*    <div className={`${changeTheme?'darknessThrees':'brightFore'} ${styled.profileFieldsDiv}`}>*/}
+                            {/*        <TwitterOutlined style={{color: "#8f85de"}}/>*/}
+                            {/*        <input className={styled.profileFieldsInput}*/}
+                            {/*               name="twitter"*/}
+                            {/*               value={twitter}*/}
+                            {/*               onChange={handleChange}*/}
+                            {/*               placeholder="Twitter"*/}
+                            {/*        />*/}
+                            {/*    </div>*/}
+                            {/*    <div className={`${changeTheme?'darknessThrees':'brightFore'} ${styled.profileFieldsDiv}`}>*/}
+                            {/*        <InstagramOutlined style={{color: "#8f85de"}}/>*/}
+                            {/*        <input className={styled.profileFieldsInput}*/}
+                            {/*               name="websiteLink"*/}
+                            {/*               value={websiteLink}*/}
+                            {/*               onChange={handleChange}*/}
+                            {/*               placeholder="Instagram"*/}
+                            {/*        />*/}
+                            {/*    </div>*/}
+                            {/*    <div className={styled.profileFieldsDiv}>*/}
+                            {/*        <FacebookOutlined style={{color: "#8f85de"}}/>*/}
+                            {/*        <input className={styled.profileFieldsInput}*/}
+                            {/*               name="discord"*/}
+                            {/*               value={discord}*/}
+                            {/*               onChange={handleChange}*/}
+                            {/*               placeholder="discord"*/}
+                            {/*        />*/}
+                            {/*    </div>*/}
+                            {/*</div>*/}
                         </div>
                     ) : (
                         <>
                             {bio !== "" ? (
                                 <div>
-                                    <p>{bio}</p>
+                                    <p className={`${changeTheme ? 'drakColor' : 'fontB'} `}>{bio}</p>
                                 </div>
                             ) : (
                                 isUserOnOwnAccount && (
@@ -189,27 +215,27 @@ function ProfileFields({isUserOnOwnAccount, user, change, getProfile, showLoad})
                                 <div className="mt-5">
                                     {social?.youtube && (
                                         <div className={styled.profileFieldsName}
-
                                              target="_blank"
                                              href={`https://${social?.youtube}`}
                                              rel="noopener noreferrer"
                                         >
-                                            <div className={styled.profileFieldsYou}>
+                                            <div
+                                                className={`${changeTheme ? 'darknessThrees' : 'brightFore'} ${styled.profileFieldsYou}`}>
                                                 <YoutubeOutlined style={{color: "#8f85de"}}/>
-                                                <p>{social?.youtube}</p>
+                                                <p className={`${changeTheme ? 'drakColor' : 'fontB'}`}>{social?.youtube}</p>
                                             </div>
                                         </div>
                                     )}
                                     {social?.twitter && (
                                         <div className={styled.profileFieldsName}
-
                                              target="_blank"
                                              href={`https://${social.twitter}`}
                                              rel="noopener noreferrer"
                                         >
-                                            <div className={styled.profileFieldsYou}>
+                                            <div
+                                                className={`${changeTheme ? 'darknessThrees' : 'brightFore'} ${styled.profileFieldsYou}`}>
                                                 <TwitterOutlined style={{color: "#8f85de"}}/>
-                                                <p>{social?.twitter}</p>
+                                                <p className={`${changeTheme ? 'drakColor' : 'fontB'} `}>{social?.twitter}</p>
                                             </div>
                                         </div>
                                     )}
@@ -219,9 +245,10 @@ function ProfileFields({isUserOnOwnAccount, user, change, getProfile, showLoad})
                                              href={`https://${social.discord}`}
                                              rel="noopener noreferrer"
                                         >
-                                            <div className={styled.profileFieldsYou}>
+                                            <div
+                                                className={`${changeTheme ? 'darknessThrees' : 'brightFore'} ${styled.profileFieldsYou}`}>
                                                 <FacebookOutlined style={{color: "#8f85de"}}/>
-                                                <p>{social?.discord}</p>
+                                                <p className={`${changeTheme ? 'drakColor' : 'fontB'} `}>{social?.discord}</p>
                                             </div>
                                         </div>
                                     )}
@@ -231,9 +258,10 @@ function ProfileFields({isUserOnOwnAccount, user, change, getProfile, showLoad})
                                              href={`https://${social.websiteLink}`}
                                              rel="noopener noreferrer"
                                         >
-                                            <div className={styled.profileFieldsYou}>
+                                            <div
+                                                className={`${changeTheme ? 'darknessThrees' : 'brightFore'} ${styled.profileFieldsYou}`}>
                                                 <InstagramOutlined style={{color: "#8f85de"}}/>
-                                                <p>{social?.websiteLink}</p>
+                                                <p className={`${changeTheme ? 'drakColor' : 'fontB'} `}>{social?.websiteLink}</p>
                                             </div>
                                         </div>
                                     )}

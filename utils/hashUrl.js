@@ -26,15 +26,7 @@ axios.interceptors.response.use(
         return response;
     },
     (error) => {
-        if (error.message === 'Network Error' && !error.response) {
-            console.error('Network error. Please check your internet connection.');
-        } else if (error.response) {
-            // 捕获服务器响应错误
-            console.error('Server error:', error.response.status, error.response.data);
-        } else {
-            // 捕获其他类型的错误
-            console.error('Error:', error.message);
-        }
+        return null
     }
 );
 export const request = async (method, url, data, token) => {

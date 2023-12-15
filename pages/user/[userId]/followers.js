@@ -20,20 +20,26 @@ function FollowersPage() {
     const router = useRouter();
     const {setLogin} = useContext(CountContext);
     const getUs = async () => {
-        const params = JSON.parse(cookie.get('username'))
-        const token = cookie.get('token')
-        const data = await request('get', "/api/v1/userinfo/" + params?.uid, '', token)
-        if (data === 'please') {
-            setLogin()
-        } else if (data && data?.status === 200) {
-            const user = data?.data?.data
-            if (user) {
-                setUserPar(user)
+        try {
+            const params = JSON.parse(cookie.get('username'))
+            const token = cookie.get('token')
+            const data = await request('get', "/api/v1/userinfo/" + params?.uid, '', token)
+            if (data === 'please') {
+                setLogin()
+                setUserPar(null)
+            } else if (data && data?.status === 200) {
+                const user = data?.data?.data
+                if (user) {
+                    setUserPar(user)
+                } else {
+                    setUserPar(null)
+                }
             } else {
                 setUserPar(null)
             }
-        } else {
+        } catch (err) {
             setUserPar(null)
+            return null
         }
     }
     useEffect(() => {
@@ -50,12 +56,16 @@ function FollowersPage() {
         setFollowersBol(!followersBol)
     }
     const getParams = async () => {
-        const token = cookie.get('token')
-        const res = await request('post', '/api/v1/follower/list', {uid: userPar?.uid, page}, token);
-        if (res === 'please') {
-            setLogin()
-        } else if (res && res?.status === 200) {
-            setFollowers(res?.data?.followerList)
+        try {
+            const token = cookie.get('token')
+            const res = await request('post', '/api/v1/follower/list', {uid: userPar?.uid, page}, token);
+            if (res === 'please') {
+                setLogin()
+            } else if (res && res?.status === 200) {
+                setFollowers(res?.data?.followerList)
+            }
+        } catch (err) {
+            return null
         }
     }
     useEffect(() => {
@@ -127,24 +137,32 @@ function FollowersPage() {
                                     {Number(fol?.uid) !== Number(userPar?.uid) ? (<>
                                         {fol?.IsFollowed ? (<div className={styled.followersBoxFoll}
                                                                  onClick={async () => {
-                                                                     const token = cookie.get('token')
-                                                                     const data = await request('post', "/api/v1/unfollow", {uid: fol.uid}, token)
-                                                                     if (data === 'please') {
-                                                                         setLogin()
-                                                                     } else if (data && data?.status === 200 && data?.data?.code === 200) {
-                                                                         change()
+                                                                     try {
+                                                                         const token = cookie.get('token')
+                                                                         const data = await request('post', "/api/v1/unfollow", {uid: fol.uid}, token)
+                                                                         if (data === 'please') {
+                                                                             setLogin()
+                                                                         } else if (data && data?.status === 200 && data?.data?.code === 200) {
+                                                                             change()
+                                                                         }
+                                                                     } catch (err) {
+                                                                         return null
                                                                      }
                                                                  }}
                                         >
                                             <CheckCircleIcon className="h-6"/>
                                         </div>) : (<div className={styled.followersBoxFoll}
                                                         onClick={async () => {
+                                                            try {
                                                             const token = cookie.get('token')
                                                             const data = await request('post', "/api/v1/follow", {userId: fol.uid}, token)
                                                             if (data === 'please') {
                                                                 setLogin()
                                                             } else if (data && data?.status === 200 && data?.data?.code === 200) {
                                                                 change()
+                                                            }
+                                                            }catch (err){
+                                                                return null
                                                             }
                                                         }}
                                         >

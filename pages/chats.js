@@ -12,26 +12,32 @@ import Link from 'next/link';
 import dynamic from 'next/dynamic'
 import cook from "js-cookie";
 import styles from '/public/styles/allmedia.module.css'
-import { CountContext } from '../components/Layout/Layout'
+import {CountContext} from '../components/Layout/Layout'
 
-const ChatSearch = dynamic(() => import('../components/Chat/ChatSearch'),{ ssr: false });
-const Chat = dynamic(() => import('../components/Chat/Chat'),{ ssr: false });
+const ChatSearch = dynamic(() => import('../components/Chat/ChatSearch'), {ssr: false});
+const Chat = dynamic(() => import('../components/Chat/Chat'), {ssr: false});
 import {changeLang} from "/utils/set";
 import {request} from "../utils/hashUrl";
 import cookie from "js-cookie";
+
 function ChatsPage() {
-    const { changeTheme } = useContext(CountContext);
-    const social=changeLang('social')
+    const {changeTheme} = useContext(CountContext);
+    const social = changeLang('social')
     const [chats, setChats] = useState([]);
     const [userPar, setUserPar] = useState({});
     const getUs = async () => {
-        const params =JSON.parse( cookie.get('username'))
-        const token =  cookie.get('token')
-        const data = await request('get', "/api/v1/userinfo/"+params?.uid,'',token)
-        if(data&&data?.status===200){
-            setUserPar(data?.data?.data)
-        }else {
+        try {
+            const params = JSON.parse(cookie.get('username'))
+            const token = cookie.get('token')
+            const data = await request('get', "/api/v1/userinfo/" + params?.uid, '', token)
+            if (data && data?.status === 200) {
+                setUserPar(data?.data?.data)
+            } else {
+                setUserPar('')
+            }
+        } catch (err) {
             setUserPar('')
+            return null
         }
     }
     useEffect(() => {
@@ -252,17 +258,21 @@ function ChatsPage() {
     }
 
 
-
-
     return (
         <div className={styles.allMobliceBox}>
-            <div 
-                className={styles.allMoblice} 
-                style={{backgroundColor: 'rgb(253,213,62)', marginRight: '20px', borderRadius: '10px', height: winHeight, minHeight: winHeight}}>
+            <div
+                className={styles.allMoblice}
+                style={{
+                    backgroundColor: 'rgb(253,213,62)',
+                    marginRight: '20px',
+                    borderRadius: '10px',
+                    height: winHeight,
+                    minHeight: winHeight
+                }}>
                 <main className="flex" style={{height: winHeight}}>
                     <Sidebar user={userPar} maxWidth={"250px"}/>
                     <div style={{backgroundColor: 'rgba(201,201,201,0.7)'}}
-                        className={`${styles.mobliceNonoFlex} ${changeAllTheme('darknessTwo', 'brightTwo')} flex flex-grow mx-auto h-full w-full max-w-2xl lg:max-w-[65rem] xl:max-w-[70.5rem] rounded-lg`}>
+                         className={`${styles.mobliceNonoFlex} ${changeAllTheme('darknessTwo', 'brightTwo')} flex flex-grow mx-auto h-full w-full max-w-2xl lg:max-w-[65rem] xl:max-w-[70.5rem] rounded-lg`}>
                         <div
                             style={{
                                 borderLeft: "1px solid lightgrey",
@@ -277,7 +287,7 @@ function ChatsPage() {
                                 fontSize: '20px',
                                 fontWeight: 'bold',
                                 fontFamily: 'Inter',
-                                margin:'15px',
+                                margin: '15px',
                             }}>{social.chats}</p>
                             <div
                                 onClick={() => setShowChatSearch(true)}
@@ -446,7 +456,8 @@ function ChatsPage() {
                                             ) : (
                                                 <div></div>
                                             )}
-                                            <div style={{marginBottom: '30px'
+                                            <div style={{
+                                                marginBottom: '30px'
                                             }} ref={endOfMessagesRef}/>
                                         </>
                                     </div>

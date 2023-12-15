@@ -13,19 +13,20 @@ import {CountContext} from "../Layout/Layout";
 
 function FollowingUsers({userFollowStats,isUserOnOwnAccount, user,showLoad}) {
     const username=changeLang('username')
-    const {setLogin} = useContext(CountContext)
+    const {setLogin,changeTheme} = useContext(CountContext)
     const [following, setFollowing] = useState([]);
     const [loading, setLoading] = useState(true);
     const getFollowing = async () => {
         try {
             const token =  cookie.get('token')
-            const res = await request('post','/api/v1/follower/list',{uid:user?.uid,page:1},token);
+            const res = await request('post','/api/v1/followee/list',{uid:user?.uid,page:1},token);
            if(res==='please'){
                setLogin()
            }else if(res&&res?.status===200){
-                setFollowing(res?.data?.followerList)
+                setFollowing(res?.data?.followeeList)
             }
         } catch (error) {
+            return null
         }
         setLoading(false);
     };
@@ -38,14 +39,13 @@ function FollowingUsers({userFollowStats,isUserOnOwnAccount, user,showLoad}) {
 
     return (
         <div
-            className="bg-white rounded-2xl shadow-md  mt-5 p-5">
+            className= {`${changeTheme?'introBack':'whiteMode'} rounded-2xl shadow-md  mt-5 p-5`}>
             {
                 showLoad&&!loading ? <Skeleton.Avatar active={true} shape={'circle'}/> : <>
                     <div className="flex justify-between">
                         <div className="flex">
                             <h1
-                                className="text-2xl font-semibold"
-                            >
+                                className={`${changeTheme?'fontW':'fontB'} text-2xl font-semibold`}>
                                 {username.following}
                             </h1>
                             <span
@@ -71,11 +71,12 @@ function FollowingUsers({userFollowStats,isUserOnOwnAccount, user,showLoad}) {
                                     {following.map((fol, index) => index < 5 && (
                                             <div
                                                 className="mb-5 cursor-pointer"
+                                                key={index}
                                                 style={{width: '100%'}}>
                                                 <img src={fol?.avatar||'/dexlogo.svg'} alt="userprof"   width={50}
                                                      height={50}/>
                                                 <Link href={`/${fol?.uid}`}>
-                                                    <p className={styled.followerUserName}>
+                                                    <p className={` ${changeTheme?'drakColor':'fontB'}  ${styled.followerUserName}`}>
                                                         {fol?.username?fol?.username:fol?.address.slice(0,5)}
                                                     </p>
                                                 </Link>

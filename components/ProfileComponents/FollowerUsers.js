@@ -12,21 +12,23 @@ import {CountContext} from "../Layout/Layout";
 
 function FollowerUsers({profile, userFollowStats, isUserOnOwnAccount, user, showLoad}) {
     const username = changeLang('username')
-    const {setLogin} = useContext(CountContext)
+    const {setLogin,changeTheme} = useContext(CountContext)
     const [followers, setFollowers] = useState([]);
     const [loading, setLoading] = useState(true);
     const getFollowers = async () => {
         try {
             const token =  cookie.get('token')
-            const res = await request('post', '/api/v1/followee/list', {uid: user?.uid, page: 1},token);
+            const res = await request('post', '/api/v1/follower/list', {uid: user?.uid, page: 1},token);
             if(res==='please'){
                 setLogin()
             }else if (res && res?.data) {
-                setFollowers(res.data?.followeeList)
+                setFollowers(res.data?.followerList)
             }
             setLoading(false)
         } catch (error) {
+            setLoading(false)
             setFollowers([])
+            return null
         }
     };
     useEffect(() => {
@@ -37,14 +39,13 @@ function FollowerUsers({profile, userFollowStats, isUserOnOwnAccount, user, show
 
     return (
         <div
-            className="bg-white rounded-2xl shadow-md  mt-5 p-5">
+            className={`  ${changeTheme?'introBack':'whiteMode'} rounded-2xl shadow-md  mt-5 p-5`}>
             {
                 showLoad && !loading ? <Skeleton.Avatar active={true} shape={'circle'}/> : <>
                     <div className="flex justify-between">
                         <div className="flex">
                             <h1
-                                className="text-2xl font-semibold"
-                            >
+                                className={`${changeTheme?'fontW':'fontB'} text-2xl font-semibold`}>
                                 {username.followers}
                             </h1>
                             <span
@@ -66,13 +67,14 @@ function FollowerUsers({profile, userFollowStats, isUserOnOwnAccount, user, show
                         <div className={styled.followerUserBox}>
                             {followers.map((fol, i) => i < 5 && (
                                     <div
-                                        className="mb-5 cursor-pointer"
+                                        className={`mb-5 cursor-pointer`}
                                         style={{width: '100%'}}
+                                        key={i}
                                     >
                                         <img src={fol?.avatar || '/dexlogo.svg'} alt="userprof" width={50}
                                              height={50}/>
                                         <Link href={`/${fol?.uid}`}>
-                                            <p className={styled.followerUserName}>
+                                            <p className={` ${changeTheme?'drakColor':'fontB'} ${styled.followerUserName}`}>
                                                 {fol?.username ? fol.username : fol.address.slice(0,5)}
                                             </p>
                                         </Link>

@@ -44,14 +44,23 @@ function CommentComponent({comment, postId, change, user, setComments, changComm
     };
 
     const handleAgree = async () => {
-        const token = cookie.get('token')
-        const res = await request('delete', '/api/v1/post/comment/' + commentId, '', token)
-        if(res==='please'){
-            setLogin()
-        }else if (res && res?.status === 200 && res?.data?.code === 200) {
-            changComment(commentId)
+        try {
+            const token = cookie.get('token')
+            const res = await request('delete', '/api/v1/post/comment/' + commentId, '', token)
+            if (res === 'please') {
+                setLogin()
+            } else if (res && res?.status === 200 && res?.data?.code === 200) {
+                changComment(commentId)
+                setCommentId(null)
+                handleClose();
+            }else {
+                setCommentId(null)
+                handleClose();
+            }
+        } catch (err) {
             setCommentId(null)
             handleClose();
+            return null
         }
     };
     const handleDisagree = () => {

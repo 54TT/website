@@ -145,19 +145,28 @@ export default function Featured() {
             }
         },
     ]
+    const changeFeature=()=>{
+        setFeaturedBol(false)
+        setTableParams([])
+        setFeaturedAll(0)
+    }
     const getParams = async (url, params) => {
+        try {
         const res = await request('get', url, params)
         if(res==='please'){
             setLogin()
+            changeFeature()
         }else if (res && res.status === 200) {
             const {data} = res
             setFeaturedBol(false)
             setTableParams(data && data.featureds && data.featureds.length > 0 ? data.featureds : [])
             setFeaturedAll(0)
         }else {
-            setFeaturedBol(false)
-            setTableParams([])
-            setFeaturedAll(0)
+            changeFeature()
+        }
+        }catch (err){
+            changeFeature()
+            return null
         }
     }
     useEffect(() => {

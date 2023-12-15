@@ -11,12 +11,13 @@ import dynamic from "next/dynamic";
 import {notification} from "antd";
 import styled from '/public/styles/all.module.css'
 import {request} from "../utils/hashUrl";
+
 const InfoBox = dynamic(() => import('./HelperComponents/InfoBox'), {ssr: false})
 import {CountContext} from "./Layout/Layout";
 import cookie from "js-cookie";
 
 function InputBox({user, setPosts, increaseSizeAnim, change}) {
-    const {changeTheme,setLogin} = useContext(CountContext);
+    const {changeTheme, setLogin} = useContext(CountContext);
     const inputRef = useRef(null);
     const buttonRef = useRef(null);
     const filePickerRef = useRef(null);
@@ -38,41 +39,52 @@ function InputBox({user, setPosts, increaseSizeAnim, change}) {
     };
 
     const createPost = async (e) => {
-        e.preventDefault();
-        let picUrl;
-        if (image !== null) {
-            const token = cookie.get('token')
-            picUrl = await request('post','/api/v1/upload/image',image,token);
-            if(picUrl==='please'){
-                setLogin()
-            }else if (!picUrl && picUrl?.status !== 200) {
-                return setError("Error uploading image");
+        try {
+            e.preventDefault();
+            let picUrl;
+            if (image !== null) {
+                const token = cookie.get('token')
+                picUrl = await request('post', '/api/v1/upload/image', image, token);
+                if (picUrl === 'please') {
+                    setLogin()
+                } else if (!picUrl && picUrl?.status !== 200) {
+                    return setError("Error uploading image");
+                }
             }
-        }
-        if (newPost) {
-            const token = cookie.get('token')
-            const data = await request('post', "/api/v1/post/publish", {
-                uid: user?.uid,
-                address: user?.address,
-                post: {content: newPost, imageList: picUrl && picUrl?.data?.url ? [picUrl.data?.url] : undefined}
-            },token)
-            if(picUrl==='please'){
-                setLogin()
-            }else  if (data && data?.status === 200) {
-                change('send')
-                setImage(null);
-                setImagePreview(null);
-                setNewPost('')
+            if (newPost) {
+                try {
+                    const token = cookie.get('token')
+                    const data = await request('post', "/api/v1/post/publish", {
+                        uid: user?.uid,
+                        address: user?.address,
+                        post: {
+                            content: newPost,
+                            imageList: picUrl && picUrl?.data?.url ? [picUrl.data?.url] : undefined
+                        }
+                    }, token)
+                    if (picUrl === 'please') {
+                        setLogin()
+                    } else if (data && data?.status === 200) {
+                        change('send')
+                        setImage(null);
+                        setImagePreview(null);
+                        setNewPost('')
+                    } else {
+                        setImage(null);
+                        setImagePreview(null);
+                        setNewPost('')
+                    }
+                } catch (err) {
+                    return null
+                }
             } else {
-                setImage(null);
-                setImagePreview(null);
-                setNewPost('')
+                notification.warning({
+                    message: `Please note`, description: 'Text required', placement: 'topLeft',
+                    duration: 2
+                })
             }
-        } else {
-            notification.warning({
-                message: `Please note`, description: 'Text required', placement: 'topLeft',
-                duration: 2
-            })
+        } catch (err) {
+            return null
         }
     };
 
@@ -101,8 +113,8 @@ function InputBox({user, setPosts, increaseSizeAnim, change}) {
                         ref={buttonRef}
                         onClick={createPost}
                     >
-                            <ArrowSmRightIcon className="h-7"/>
-                            <p>Post</p>
+                        <ArrowSmRightIcon className="h-7"/>
+                        <p>Post</p>
                     </button>
                 </div>
             </>

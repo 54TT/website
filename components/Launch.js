@@ -15,11 +15,12 @@ import cookie from "js-cookie";
 
 export default function Presale() {
     const launch = changeLang('launch')
-    const {changeTheme,setLogin} = useContext(CountContext);
+    const {changeTheme, setLogin} = useContext(CountContext);
     const [launchPageSize, setLaunchPageSize] = useState(10);
     const [launchCurrent, setLaunchCurrent] = useState(1);
     const [launchAll, setLaunchAll] = useState(0);
     const [launchPro, setLaunch] = useState([]);
+    console.log(launchPro)
     const [launchBol, setLaunchBol] = useState(true);
     const hint = () => {
         notification.error({
@@ -30,19 +31,28 @@ export default function Presale() {
     const changeAllTheme = (a, b) => {
         return changeTheme ? a : b
     }
+    const changeLaunch = () => {
+        setLaunch([])
+        setLaunchAll(0)
+        setLaunchBol(false)
+    }
     const getParams = async (url, params) => {
-        const res = await request('get', url, params)
-        if(res==='please'){
-            setLogin()
-        }else if (res.status === 200) {
-            let {launchs} = res.data
-            setLaunch(launchs && launchs.length > 0 ? launchs : [])
-            setLaunchAll(0)
-            setLaunchBol(false)
-        } else {
-            setLaunch([])
-            setLaunchAll(0)
-            setLaunchBol(false)
+        try {
+            const res = await request('get', url, params)
+            if (res === 'please') {
+                setLogin()
+                changeLaunch()
+            } else if (res && res?.status === 200) {
+                let {launchs} = res.data
+                setLaunch(launchs && launchs.length > 0 ? launchs : [])
+                setLaunchAll(0)
+                setLaunchBol(false)
+            } else {
+                changeLaunch()
+            }
+        } catch (err) {
+            changeLaunch()
+            return null
         }
     }
     useEffect(() => {
@@ -71,10 +81,10 @@ export default function Presale() {
     const columns = [
         {
             title: '',
-            dataIndex: 'address', align: 'center',
+            dataIndex: 'logo', align: 'center',
             width: 30,
-            render: (_, record) => {
-                return <img src={record?.logo?record?.logo:'/avatar.png'} style={{borderRadius:'50%'}}  alt="" width={30}/>
+            render: (text, record) => {
+                return <img src={text||'/dexlogo.svg'} alt="" width={30}/>
             }
         },
         {
@@ -129,9 +139,9 @@ export default function Presale() {
         },
         {
             title: launch.platform,
-            dataIndex: 'launch_platform_logo', align: 'center',
+            dataIndex: 'platformLogo', align: 'center',
             render: (text) => {
-                return <img src={baseUrl + text} alt="" width={'30px'} className={styled.launchTableImg}/>
+                return <img src={text || '/dexlogo.svg'} alt="" width={'30px'} className={styled.launchTableImg}/>
             }
         },
         {
@@ -152,10 +162,12 @@ export default function Presale() {
                 <div className={styled.launchBoxCardBox}>
                     <div style={{display: 'flex', alignItems: 'center'}}>
                         <img src="/Group.png" alt="" width={70} height={70} className={styled.mobliceImage}/>
-                        <span style={{fontWeight: 'bold', fontSize: '26px'}} className={changeAllTheme('darknessFont' ,'brightFont')}> {launch.launch}</span>
+                        <span style={{fontWeight: 'bold', fontSize: '26px'}}
+                              className={changeAllTheme('darknessFont', 'brightFont')}> {launch.launch}</span>
                     </div>
                     <div className={styled.launchBoxFilter}>
-                        <Pagination defaultCurrent={1} rootClassName={changeTheme?'drakePat':''} current={launchCurrent} showSizeChanger onChange={change}
+                        <Pagination defaultCurrent={1} rootClassName={changeTheme ? 'drakePat' : ''}
+                                    current={launchCurrent} showSizeChanger onChange={change}
                                     total={launchAll} pageSize={launchPageSize}/>
                     </div>
                 </div>
@@ -164,6 +176,14 @@ export default function Presale() {
                        dataSource={launchPro} rowKey={(record) => record.symbol + record.address}
                        pagination={false} rowClassName={(record) => {
                     return 'oneHave'
+                }} onRow={(record) => {
+                    return {
+                        onclick: () => {
+                            const data = JSON.stringify({...record, status: 'launch'})
+                            cookie.set('list', data)
+                            router.push('/launchPresaleDetail')
+                        }
+                    }
                 }}/>
             </Card>
             <p className={styled.launchBoxBot}>©DEXpert.io</p>

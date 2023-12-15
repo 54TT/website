@@ -33,6 +33,10 @@
     color: rgb(156, 156, 156) !important;
 }
 
+
+.drakColor{
+    color: rgb(156, 156, 156) !important;
+}
 .drakePat .ant-pagination-item-active > a {
     color: white !important;
 }
@@ -53,7 +57,11 @@
     color: rgb(145,140,140)!important;
 }
 
-.colorDrak .ant-form-item .ant-row .ant-col .ant-form-item-control-input .ant-form-item-control-input-content input,textarea{
+.colorDrak .ant-form-item .ant-row .ant-col .ant-form-item-control-input .ant-form-item-control-input-content input{
+    color: white!important;
+}
+
+.colorDrak .ant-form-item .ant-row .ant-col .ant-form-item-control-input .ant-form-item-control-input-content textarea{
     color: white!important;
 }
 .darknessFont {
@@ -70,13 +78,16 @@
     background-color: rgb(44, 37, 69) !important;
     color: white;
 }
+.introBack{
+    background-color: rgb(44,41,74)!important;
+}
 
 .fontB {
     color: black;
 }
 
 .fontW {
-    color: white;
+    color: white!important;
 }
 
 
@@ -138,7 +149,9 @@
 .brightFBack {
     background-color: rgb(188, 158, 45) !important;
 }
-
+.usernameBack{
+    background-color: rgb(188, 238, 125)!important;
+}
 .brightFont .ant-statistic-content .ant-statistic-content-value {
     color: rgb(37, 35, 42) !important;
     font-size: 20px;

@@ -46,7 +46,7 @@ import {request} from "../utils/hashUrl";
 import cookie from "js-cookie";
 
 function ProfilePage() {
-    const {changeBolName, setLogin} = useContext(CountContext);
+    const {changeBolName, changeTheme, setLogin} = useContext(CountContext);
     const coverImageRef = useRef(null);
     const profilePicRef = useRef(null);
     const [user, setUser] = useState(null);
@@ -65,6 +65,7 @@ function ProfilePage() {
             setLoginUser(data)
         }
     }, [cookie.get('username')])
+    //      changeTheme?'darknessThrees':'brightTwo'
     // 推文  page
     const [page, setPage] = useState(1);
     const router = useRouter();
@@ -104,41 +105,53 @@ function ProfilePage() {
     }, [isLoggedInUserFollowing]);
 
     const addImageFromDevice = async (e, name) => {
-        const {files} = e.target;
-        const token = cookie.get('token')
-        const data = await request('post', '/api/v1/upload/image', files[0], token);
-        if (data === 'please') {
-            setLogin()
-        } else if (data && data?.status === 200) {
-            if (name !== "cover") {
-                const res = await request('post', "/api/v1/userinfo", {
-                    user: {
-                        ...user,
-                        avatarUrl: data?.data?.url,
+        try {
+            const {files} = e.target;
+            const token = cookie.get('token')
+            const data = await request('post', '/api/v1/upload/image', files[0], token);
+            if (data === 'please') {
+                setLogin()
+            } else if (data && data?.status === 200) {
+                if (name !== "cover") {
+                    try {
+                        const res = await request('post', "/api/v1/userinfo", {
+                            user: {
+                                ...user,
+                                avatarUrl: data?.data?.url,
+                            }
+                        }, token);
+                        if (res && res?.status === 200) {
+                            setPage(1)
+                            change()
+                            setPostsAdd([])
+                            changeBolName(true);
+                            setProfilePicPreview(URL.createObjectURL(files[0]));
+                        }
+                    } catch (err) {
+                        return null
                     }
-                }, token);
-                if (res && res?.status === 200) {
-                    setPage(1)
-                    change()
-                    setPostsAdd([])
-                    changeBolName(true);
-                    setProfilePicPreview(URL.createObjectURL(files[0]));
-                }
-            } else {
-                const res = await request('post', "/api/v1/userinfo", {
-                    user: {
-                        ...user,
-                        coverUrl: data?.data?.url,
+                } else {
+                    try {
+                        const res = await request('post', "/api/v1/userinfo", {
+                            user: {
+                                ...user,
+                                coverUrl: data?.data?.url,
+                            }
+                        }, token);
+                        if (res && res?.status === 200) {
+                            setPage(1)
+                            change()
+                            setPostsAdd([])
+                            changeBolName(true);
+                            setCoverPicPreview(URL.createObjectURL(files[0]));
+                        }
+                    } catch (err) {
+                        return null
                     }
-                }, token);
-                if (res && res?.status === 200) {
-                    setPage(1)
-                    change()
-                    setPostsAdd([])
-                    changeBolName(true);
-                    setCoverPicPreview(URL.createObjectURL(files[0]));
                 }
             }
+        } catch (err) {
+            return null
         }
     };
     useEffect(() => {
@@ -148,16 +161,24 @@ function ProfilePage() {
     }, [])
     // 获取推文
     const getPosts = async () => {
-        const token = cookie.get('token')
-        const res = await request('post', '/api/v1/post/list', {uid: params.username, page: page}, token)
-        if (res === 'please') {
-            setLogin()
-        } else if (res && res?.data) {
-            setPosts(res?.data?.posts)
-            setPostsBol(true)
-        } else {
+        try {
+            const token = cookie.get('token')
+            const res = await request('post', '/api/v1/post/list', {uid: params.username, page: page}, token)
+            if (res === 'please') {
+                setPosts([])
+                setPostsBol(true)
+                setLogin()
+            } else if (res && res?.data) {
+                setPosts(res?.data?.posts)
+                setPostsBol(true)
+            } else {
+                setPosts([])
+                setPostsBol(true)
+            }
+        } catch (err) {
             setPosts([])
             setPostsBol(true)
+            return null
         }
     };
     // 获取用户
@@ -167,13 +188,15 @@ function ProfilePage() {
             const data = await request('get', "/api/v1/userinfo/" + params?.username, '', token);
             if (data === 'please') {
                 setLogin()
+                setShowLoad(false)
             } else if (data && data.status === 200) {
                 setEditInput(data?.data?.data.username ? data?.data?.data.username : data?.data?.data.address)
                 setUser(data?.data?.data)
                 setShowLoad(false)
             }
         } catch (error) {
-            return {errorLoading: true};
+            setShowLoad(false)
+            return null
         }
     };
     useEffect(() => {
@@ -201,28 +224,37 @@ function ProfilePage() {
         setChangeBol(true);
     };
     const setName = async () => {
-        if (editInput) {
-            const token = cookie.get('token')
-            const data = await request('post', "/api/v1/userinfo", {
-                user: {
-                    ...user,
-                    username: editInput,
+        try {
+            if (editInput) {
+                const token = cookie.get('token')
+                const data = await request('post', "/api/v1/userinfo", {
+                    user: {
+                        ...user,
+                        username: editInput,
+                    }
+                }, token);
+                if (data === 'please') {
+                    setEditProfile(false)
+                    changeBolName(true);
+                    setPostsAdd([])
+                    setPage(1)
+                    setLogin()
+                } else if (data && data?.status === 200 && data?.data?.code === 200) {
+                    setEditProfile(false)
+                    changeBolName(true);
+                    setPostsAdd([])
+                    setPage(1)
+                    change()
+                } else {
+                    setEditProfile(false)
                 }
-            }, token);
-            if (data === 'please') {
-                setLogin()
-            } else if (data && data?.status === 200 && data?.data?.code === 200) {
-                setEditProfile(false)
-                changeBolName(true);
-                setPage(1)
-                change()
-                setPostsAdd([])
             } else {
-                setEditProfile(false)
+                setEditInput(user?.username ? user?.username : user?.address);
+                setEditProfile(false);
             }
-        } else {
-            setEditInput(user?.username ? user?.username : user?.address);
-            setEditProfile(false);
+        } catch (err) {
+            setEditProfile(false)
+            return null
         }
     };
     const changeIn = async (e) => {
@@ -231,13 +263,15 @@ function ProfilePage() {
     return (
         <>
             <div className={styles.allMobliceBox}>
+                {/**/}
                 {/*上面*/}
                 <div
+                    // ${changeTheme?'darknessThrees':'brightTwo'} introBack
                     className={` ${
                         !isUserOnOwnAccount ? "min-h-[32.4rem]" : "min-h-[29.3rem]"
-                    }  shadow-lg ${styled.usernameBox} ${styles.allMoblice}`}
-                >
+                    }  shadow-lg ${styled.usernameBox} ${styles.allMoblice} ${changeTheme ? 'darknessThrees' : 'usernameBack'}`}>
                     <div className={styled.usernameBoxTop}>
+                        {/*修改背景图*/}
                         <input
                             type="file"
                             accept="image/*"
@@ -256,6 +290,7 @@ function ProfilePage() {
                             width={"100%"}
                             height={"100%"}
                         />
+                        {/*修改图像*/}
                         <input
                             type="file"
                             accept="image/*"
@@ -266,16 +301,18 @@ function ProfilePage() {
                         ></input>
                         {/*图像*/}
                         {
-                            showLoad ? <Skeleton.Avatar active={true} shape={'circle'}/> : <Avatar
-                                src={profilePicPreview ? profilePicPreview : user?.avatarUrl ? user?.avatarUrl : '/dexlogo.svg'}
-                                size={100}
-                                style={{
-                                    position: "absolute",
-                                    top: "50%",
-                                    left: "50%",
-                                    translate: "-50% -50%",
-                                }}
-                            />
+                            showLoad ? <Skeleton.Avatar active={true} shape={'circle'}/> :
+                                <Avatar onClick={() => profilePicRef.current.click()}
+                                        src={profilePicPreview ? profilePicPreview : user?.avatarUrl ? user?.avatarUrl : '/dexlogo.svg'}
+                                        size={100}
+                                        style={{
+                                            position: "absolute",
+                                            top: "50%",
+                                            left: "50%",
+                                            cursor: 'pointer',
+                                            translate: "-50% -50%",
+                                        }}
+                                />
                         }
                         {/*修改name*/}
                         <div className={styled.usernameBoxSetName}>
@@ -329,12 +366,16 @@ function ProfilePage() {
                                 <div
                                     className={styled.usernameBoxDiv}
                                     onClick={async () => {
-                                        const token = cookie.get('token')
-                                        const data = await request('post', "/api/v1/unfollow", {uid: user?.uid}, token)
-                                        if (data === 'please') {
-                                            setLogin()
-                                        } else if (data && data?.status === 200 && data?.data?.code === 200) {
-                                            chang()
+                                        try {
+                                            const token = cookie.get('token')
+                                            const data = await request('post', "/api/v1/unfollow", {uid: user?.uid}, token)
+                                            if (data === 'please') {
+                                                setLogin()
+                                            } else if (data && data?.status === 200 && data?.data?.code === 200) {
+                                                chang()
+                                            }
+                                        } catch (err) {
+                                            return null
                                         }
                                     }}>
                                     <CheckCircleIcon className="h-6"/>
@@ -344,12 +385,16 @@ function ProfilePage() {
                                 <div
                                     className={styled.usernameBoxDiv}
                                     onClick={async () => {
-                                        const token = cookie.get('token')
-                                        const data = await request('post', "/api/v1/follow", {userId: user?.uid}, token)
-                                        if (data === 'please') {
-                                            setLogin()
-                                        } else if (data && data?.status === 200 && data?.data?.code === 200) {
-                                            chang()
+                                        try {
+                                            const token = cookie.get('token')
+                                            const data = await request('post', "/api/v1/follow", {userId: user?.uid}, token)
+                                            if (data === 'please') {
+                                                setLogin()
+                                            } else if (data && data?.status === 200 && data?.data?.code === 200) {
+                                                chang()
+                                            }
+                                        } catch (err) {
+                                            return null
                                         }
                                     }}>
                                     <UserAddIcon className="h-6"/>
@@ -358,44 +403,22 @@ function ProfilePage() {
                             )) : ''}
 
                         {isUserOnOwnAccount && (
-                            <>
-                                <div
-                                    className={styled.usernameBoxUp}
-                                    onClick={() => profilePicRef.current.click()}>
-                                    <CameraOutlined
-                                        style={{
-                                            fontSize: "20px",
-                                            color: "purple",
-                                            fontWeight: "bold",
-                                        }}
-                                    />
-                                </div>
-                                <div
-                                    className={styled.usernameBoxUpdate}
-                                    onClick={() => coverImageRef.current.click()}
-                                >
-                                    <CameraOutlined
-                                        style={{
-                                            fontSize: "20px",
-                                            color: "gray",
-                                            fontWeight: "bold",
-                                        }}
-                                    />
-                                </div>
-                            </>
+                            <div
+                                className={styled.usernameBoxUpdate}
+                                onClick={() => coverImageRef.current.click()}>
+                                <img src="/Camera.svg" alt="" style={{width: '20px', borderRadius: '50%',}}/>
+                            </div>
                         )}
                     </div>
                     {/*下面*/}
-                    <div className={`w-full ${styled.usernameBoxBot}`}>
+                    <div className={`w-full ${styled.usernameBoxBot} ${changeTheme ? 'darknessThrees' : 'brightTwo'}`}>
                         <div
                             className=" md:flex space-x-4 mx-auto max-w-[30rem] sm:max-w-xl md:max-w-3xl lg:max-w-[1000px]">
                             {/*左边关注*/}
-                            <div
-                                className="max-w-[28rem] ml-4 static mt-3 md:sticky md:mt-6 flex-1 md:max-w-[27rem]"
-                                style={{
-                                    alignSelf: "flex-start",
-                                }}
-                            >
+                            <div className="max-w-[28rem] ml-4 static mt-3 md:sticky md:mt-6 flex-1 md:max-w-[27rem]"
+                                 style={{
+                                     alignSelf: "flex-start",
+                                 }}>
                                 <ProfileFields
                                     user={user}
                                     change={change}
@@ -439,7 +462,7 @@ function ProfilePage() {
                                                 }
                                                 loader={null}
                                                 dataLength={posts.length}
-                                                key={post?.postId}
+                                                key={index}
                                             >
                                                 <PostCard
                                                     key={index}

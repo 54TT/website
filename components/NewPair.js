@@ -8,8 +8,11 @@ import Image from 'next/image';
 import {autoConvertNew, autoConvert} from '/utils/set';
 import {formatDecimal, sendGetRequestWithSensitiveData, getRelativeTimeDifference, formatDateTime} from './Utils';
 import styled from '/public/styles/all.module.css'
+// const client = new ApolloClient({
+//     uri: 'https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-v2-dev', cache: new InMemoryCache(),
+// });
 const client = new ApolloClient({
-    uri: 'https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-v2-dev', cache: new InMemoryCache(),
+    uri: 'https://api.thegraph.com/subgraphs/name/levi0522/uniswap', cache: new InMemoryCache(),
 });
 import {changeLang} from "/utils/set";
 import {CountContext} from '/components/Layout/Layout';
@@ -17,12 +20,10 @@ import {useRouter} from "next/router";
 
 export default function NewPair() {
     const router = useRouter();
-
     const newPair = changeLang('newPair')
     const {changeTheme} = useContext(CountContext);
     const [currentPage, setCurrentPage] = useState(1);
     const [rowsPerPage, setRowsPerPage] = useState(10);
-    const [tableLoad, setTableLoad] = useState(true);
     const GET_DATA = gql`query LiveNewPair {
   uniswapFactories {
     id
@@ -60,14 +61,9 @@ export default function NewPair() {
             if (data && data?.pairs.length > 0) {
                 setTableParams(data?.pairs)
                 setTableTotal(data?.uniswapFactories[0]?.pairCount)
-                setTableLoad(false)
             } else {
                 setTableParams([])
-                setTableLoad(false)
             }
-        } else {
-            setTableParams([])
-            setTableLoad(false)
         }
     }, [loading, data]);
     //   修改 页数和页码
@@ -133,9 +129,7 @@ export default function NewPair() {
             title: newPair?.pair,
             dataIndex: 'name',
             render: (text, record) => <div className={styled.newPairTable}>
-                <p className={styled.newPairTableText}><span
-                    style={{fontSize: '18px'}}
-                    className={changeTheme ? 'darknessFont' : 'brightFont'}>{record?.token0?.symbol ? record?.token0?.symbol.length > 7 ? record?.token0?.symbol.slice(0, 5) : record?.token0?.symbol + '/' : ''}</span><span
+                <p className={styled.newPairTableText}><span className={changeTheme ? 'darknessFont' : 'brightFont'}>{record?.token0?.symbol ? record?.token0?.symbol.length > 7 ? record?.token0?.symbol.slice(0, 5) : record?.token0?.symbol + '/' : ''}</span><span
                     style={{color: 'rgb(98,98,98)'}}>{record?.token1?.symbol ? record?.token1?.symbol.length > 7 ? record?.token1?.symbol.slice(0, 5) : record?.token1?.symbol : ''}</span>
                 </p>
                 <div>{packageEllipsisHtml(record?.token1?.id)}</div>
@@ -218,7 +212,6 @@ export default function NewPair() {
                                },
                            };
                        }}
-                       loading={tableLoad}
                        columns={columns} scroll={{x: 'max-content'}} bordered={false}
                        dataSource={tableParams}
                        pagination={false}/>

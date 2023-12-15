@@ -242,6 +242,39 @@ li.check:before {
     background-color: rgb(254, 239, 146) !important;
 }
 
+
+
+
+
+
+
+
+.coinTable .ant-table .ant-table-content .ant-table-thead .ant-table-cell {
+    background-color: rgb(249, 188, 54);
+    padding: 8px !important;
+    border: none !important;
+}
+
+.coinTable .ant-table .ant-table-content .ant-table-thead .ant-table-cell:before {
+    display: none;
+}
+
+.coinTable .ant-table .ant-table-content .ant-table-tbody .ant-table-row .ant-table-cell {
+    background-color:  rgb(249, 188, 54);
+    border: none !important;
+    padding: 8px !important;
+}
+
+.coinTable .ant-table .ant-table-content .ant-table-tbody .ant-table-row:not(:last-child) .ant-table-cell {
+    border-bottom: 1px solid rgb(128, 128, 128);
+}
+
+.coinTable .ant-table .ant-table-content .ant-table-tbody .ant-table-row:hover .ant-table-cell {
+    background-color: rgb(254, 239, 146) !important;
+}
+
+
+
 .darkTable .ant-table .ant-table-content .ant-table-thead .ant-table-cell {
     background-color: rgb(59, 55, 71);
     padding: 8px !important;
@@ -346,12 +379,12 @@ li.check:before {
 .anyTable .ant-table .ant-table-content .ant-table-thead .ant-table-cell .ant-table-column-sorters {
     justify-content: center !important;
 }
-
-
 .ant-table .ant-table-container .ant-table-tbody .ant-table-row:hover {
     cursor: pointer;
 }
-
+.setBo .ant-pagination-options{
+    display: none!important;
+}
 .detailSegmented {
     background-color: rgb(253, 213, 62);
     margin-bottom: 20px;

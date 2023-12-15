@@ -35,31 +35,44 @@ import cookie from "js-cookie";
 
 function Home() {
     const router = useRouter();
-    const {bolLogin, changeShowData, showData, changeBolLogin, changeTheme, setLogin} = useContext(CountContext);
+    const {bolLogin, changeShowData, showData, changeBolLogin, changeTheme, logoutBol,setLogin} = useContext(CountContext);
     const home = changeLang('home')
     const refHeight = useRef(null)
     const getUs = async () => {
-        const params = JSON.parse(cookie.get('username'))
-        const token = cookie.get('token')
-        const data = await request('get', "/api/v1/userinfo/" + params?.uid, '', token)
-        if (data === 'please') {
-            setLogin()
-        } else if (data && data?.status === 200) {
-            const user = data?.data?.data
-            if (user) {
-                setUserPa(user)
+        try {
+            const params = JSON.parse(cookie.get('username'))
+            const token = cookie.get('token')
+            const data = await request('get', "/api/v1/userinfo/" + params?.uid, '', token)
+            if (data === 'please') {
+                setUserPa(null)
+                setLogin()
+            } else if (data && data?.status === 200) {
+                const user = data?.data?.data
+                if (user) {
+                    setUserPa(user)
+                } else {
+                    setUserPa(null)
+                }
             } else {
                 setUserPa(null)
             }
-        } else {
+        } catch (err) {
             setUserPa(null)
+            return null
         }
     }
     useEffect(() => {
-        if (cook.get('username') && cook.get('username') != 'undefined') {
+        if (cook.get('username') && cook.get('username') != 'undefined' || showData) {
             getUs()
+            changeShowData(false)
         }
     }, [bolLogin, showData]);
+    // 退出
+    useEffect(()=>{
+        if(logoutBol){
+            setUserPa(null)
+        }
+    },[logoutBol])
     const [userPa, setUserPa] = useState(null);
     const [launch, setLaunch] = useState([]);
     const [launchBol, setLaunchBol] = useState(false);
@@ -109,46 +122,61 @@ function Home() {
     }, {data: launch, bol: launchBol, name: home.launch, symbol: 'b'}]
 
     const getParams = async (url, params, name) => {
-        if (name === 'launch') {
-            const res = await request('get', url, params)
-            if (res === 'please') {
-                setLogin()
-            } else if (res?.data && res?.status === 200) {
-                const {data} = res
-                setLaunchBol(true)
-                setLaunch(data?.launchs?.length > 0 ? data.launchs : [])
-            } else {
-                setLaunchBol(true)
-                setLaunch([])
+        try {
+            if (name === 'launch') {
+                const res = await request('get', url, params)
+                if (res === 'please') {
+                    setLaunchBol(true)
+                    setLaunch([])
+                    setLogin()
+                } else if (res?.data && res?.status === 200) {
+                    const {data} = res
+                    setLaunchBol(true)
+                    setLaunch(data?.launchs?.length > 0 ? data.launchs : [])
+                } else {
+                    setLaunchBol(true)
+                    setLaunch([])
+                }
             }
-        }
-        if (name === 'presale') {
-            const res = await request('get', url, params)
-            if (res === 'please') {
-                setLogin()
-            } else if (res?.data && res?.status === 200) {
-                const {data} = res
-                setPresaleBol(true)
-                setPresale(data?.presales?.length > 0 ? data.presales : [])
-            } else {
-                setPresaleBol(true)
-                setPresale([])
+            if (name === 'presale') {
+                const res = await request('get', url, params)
+                if (res === 'please') {
+                    setLogin()
+                    setPresaleBol(true)
+                    setPresale([])
+                } else if (res?.data && res?.status === 200) {
+                    const {data} = res
+                    setPresaleBol(true)
+                    setPresale(data?.presales?.length > 0 ? data.presales : [])
+                } else {
+                    setPresaleBol(true)
+                    setPresale([])
+                }
             }
-        }
-        if (name === 'featured') {
-            const res = await request('get', url, params)
-            if (res === 'please') {
-                setLogin()
-            } else if (res?.data && res?.status === 200) {
-                const {data} = res
-                setFeaturedBol(false)
-                setFeatured(data?.featureds?.length > 0 ? data.featureds : [])
-            } else {
+            if (name === 'featured') {
+                const res = await request('get', url, params)
+                if (res === 'please') {
+                    setLogin()
+                    setFeaturedBol(false)
+                    setFeatured([])
+                } else if (res?.data && res?.status === 200) {
+                    const {data} = res
+                    setFeaturedBol(false)
+                    setFeatured(data?.featureds?.length > 0 ? data.featureds : [])
+                } else {
+                    setFeaturedBol(false)
+                    setFeatured([])
+                }
 
-                setFeaturedBol(false)
-                setFeatured([])
             }
-
+        } catch (err) {
+            setLaunchBol(true)
+            setLaunch([])
+            setFeaturedBol(false)
+            setFeatured([])
+            setPresaleBol(true)
+            setPresale([])
+            return null
         }
     }
     const [time, setTime] = useState('h24')
@@ -366,24 +394,33 @@ function Home() {
             }
         }
     }, [postsDataBol])
+    const changePost = () => {
+        setPostsDataBol(!postsDataBol)
+        setPostsData([])
+        setSocialLoad(false)
+    }
     const getPost = async () => {
-        let a = _.cloneDeep(pageNumber)
-        if (bolLogin) {
-            setPageNumber(1)
-            a = 1
-        }
-        const res = await request('post', '/api/v1/post/public', {page: a.toString()})
-        if (res === 'please') {
-            setLogin()
-        } else if (res && res?.status === 200) {
-            setPostsDataBol(!postsDataBol)
-            const {data} = res
-            setPostsData(data && data?.posts?.length > 0 ? data.posts : [])
-            setSocialLoad(false)
-        } else {
-            setPostsDataBol(!postsDataBol)
-            setPostsData([])
-            setSocialLoad(false)
+        try {
+            let a = _.cloneDeep(pageNumber)
+            if (bolLogin) {
+                setPageNumber(1)
+                a = 1
+            }
+            const res = await request('post', '/api/v1/post/public', {page: a.toString()})
+            if (res === 'please') {
+                changePost()
+                setLogin()
+            } else if (res && res?.status === 200) {
+                setPostsDataBol(!postsDataBol)
+                const {data} = res
+                setPostsData(data && data?.posts?.length > 0 ? data.posts : [])
+                setSocialLoad(false)
+            } else {
+                changePost()
+            }
+        } catch (err) {
+            changePost()
+            return null
         }
     }
     const changePage = () => {
@@ -414,7 +451,11 @@ function Home() {
             return 0
         }
     }
-
+    const pushDetail = (i, name) => {
+        const data = JSON.stringify({...i, status: name === 'a' ? 'presale' : 'launch'})
+        cookie.set('list', data)
+        router.push('/launchPresaleDetail')
+    }
     return (<div className={styles['box']}>
         <div className={styles['boxPar']}>
             {/*<ConnectKitButton />*/}
@@ -441,9 +482,8 @@ function Home() {
                                                 } else {
                                                     return <li
                                                         className={`${styles.li} ${changeAllTheme('darknessItem', 'brightItem')}`}
-                                                        key={index}>
+                                                        key={index} onClick={() => pushDetail(i, item.symbol)}>
                                                         <div className={styles.homeCardListBox}>
-
                                                             {
                                                                 i?.logo ?
                                                                     <img className={styles.homeCardIm} src={i.logo}

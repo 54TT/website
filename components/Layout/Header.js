@@ -21,12 +21,12 @@ import {changeLang} from "/utils/set";
 import Image from 'next/image'
 import {gql} from "graphql-tag";
 import {ApolloClient, InMemoryCache, useQuery} from "@apollo/client";
-import dayjs from "dayjs";
-
+// const client = new ApolloClient({
+//     uri: 'https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-v2-dev', cache: new InMemoryCache(),
+// });
 const client = new ApolloClient({
-    uri: 'https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-v2-dev', cache: new InMemoryCache(),
+    uri: 'https://api.thegraph.com/subgraphs/name/levi0522/uniswap', cache: new InMemoryCache(),
 });
-const {Option} = Select;
 const ChatSearch = dynamic(() => import('../Chat/ChatSearch'), {ssr: false})
 const Moralis = require("moralis")?.default;
 const Header = () => {
@@ -37,7 +37,6 @@ const Header = () => {
     ethPrice
   }
 }`
-
     // eth  price
     const [gas, setGas] = useState(0);
     const {loading, error, data, refetch} = useQuery(GET_DATA, {client});
@@ -64,7 +63,7 @@ const Header = () => {
         changeBolName,
         changeFont,
         changeTheme,
-        changeBack, setLogin
+        changeBack, setLogin, logoutBol, changeBol
     } = useContext(CountContext);
     const header = changeLang('header')
     const [value, setValue] = useState(false)
@@ -92,6 +91,12 @@ const Header = () => {
     const [showChatSearch, setShowChatSearch] = useState(false);
     const [chats, setChats] = useState([]);
     const [userPar, setUserPar] = useState(null);
+    useEffect(() => {
+        if (logoutBol) {
+            changeBol(false)
+            setUserPar(null)
+        }
+    }, [logoutBol]);
     // 获取聊天用户
     const getParams = async () => {
         const res = await axios.get(`${baseUrl}/api/chats`, {
@@ -111,15 +116,23 @@ const Header = () => {
 
     // 获取用户信息
     const getUs = async () => {
-        const params = JSON.parse(cookie.get('username'))
-        const token = cookie.get('token')
-        const data = await request('get', "/api/v1/userinfo/" + params?.uid, '', token)
-        if (data === 'please') {
-            setLogin()
-        } else if (data && data?.status === 200) {
-            const user = data?.data?.data
-            setUserPar(user)
-            cookie.set('username', JSON.stringify(data?.data?.data), {expires: 1})
+        try {
+            const params = JSON.parse(cookie.get('username'))
+            const token = cookie.get('token')
+            const data = await request('get', "/api/v1/userinfo/" + params?.uid, '', token)
+            if (data === 'please') {
+                setUserPar(null)
+                setLogin()
+            } else if (data && data?.status === 200) {
+                const user = data?.data?.data
+                setUserPar(user)
+                cookie.set('username', JSON.stringify(data?.data?.data), {expires: 1})
+            }else {
+                setUserPar(null)
+            }
+        } catch (err) {
+            setUserPar(null)
+            return null
         }
     }
     useEffect(() => {
@@ -128,60 +141,65 @@ const Header = () => {
         }
     }, [cookie.get('username')])
     const handleLogin = async () => {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        // provider._isProvider   判断是否还有请求没有结束
-        let account = await provider.send("eth_requestAccounts", []);
-        // 连接的网络和链信息。
-        var chain = await provider.getNetwork()
-        const token = await request('post', '/api/v1/token', {address})
-        // 获取签名
-        var signer = await provider.getSigner();
-        // const signature = await signer.signMessage('你好')
-        // 判断是否有账号
-        if (account.length > 0 && token && token?.data && token?.status === 200) {
-            // 判断是否是eth
-            if (chain && chain.name !== 'unknow' && chain.chainId) {
-                try {
-                    // const message = `请签名证明你是钱包账户的拥有者\nstatement:${window.location.host}\nNonce:\n${date}\ndomain:\n ${window.location.host}\naddress: ${address}\nchainId:${chain.chainId}\nuri: ${window.location.origin}\n`
-                    // 签名
-                    const message = token?.data?.nonce
-                    const signature = await signer.signMessage(message)
-                    // 验证签名
-                    // const recoveredAddress = ethers.utils.verifyMessage(message, signature);
-                    const res = await request('post', '/api/v1/login', {
-                        signature: signature, addr: address, message
-                    })
-                    if (res && res.data && res.data?.accessToken) {
-                        //   jwt  解析 token获取用户信息
-                        const decodedToken = jwt.decode(res.data?.accessToken);
-                        if (decodedToken && decodedToken.address) {
-                            const data = await request('get', "/api/v1/userinfo/" + decodedToken?.uid, '', res.data?.accessToken)
-                            if (data && data?.status === 200) {
-                                const user = data?.data?.data
-                                setUserPar(user)
-                                cookie.set('username', JSON.stringify(data?.data?.data), {expires: 1})
-                                cookie.set('token', res.data?.accessToken, {expires: 1})
-                                cookie.set('name', address, {expires: 1})
-                                cookie.set('user', JSON.stringify(decodedToken), {expires: 1})
+        try {
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            // provider._isProvider   判断是否还有请求没有结束
+            let account = await provider.send("eth_requestAccounts", []);
+            // 连接的网络和链信息。
+            var chain = await provider.getNetwork()
+            const token = await request('post', '/api/v1/token', {address})
+            // 获取签名
+            var signer = await provider.getSigner();
+            // const signature = await signer.signMessage('你好')
+            // 判断是否有账号
+            if (account.length > 0 && token && token?.data && token?.status === 200) {
+                // 判断是否是eth
+                if (chain && chain.name !== 'unknow' && chain.chainId) {
+                    try {
+                        // const message = `请签名证明你是钱包账户的拥有者\nstatement:${window.location.host}\nNonce:\n${date}\ndomain:\n ${window.location.host}\naddress: ${address}\nchainId:${chain.chainId}\nuri: ${window.location.origin}\n`
+                        // 签名
+                        const message = token?.data?.nonce
+                        const signature = await signer.signMessage(message)
+                        // 验证签名
+                        // const recoveredAddress = ethers.utils.verifyMessage(message, signature);
+                        const res = await request('post', '/api/v1/login', {
+                            signature: signature, addr: address, message
+                        })
+                        if (res && res.data && res.data?.accessToken) {
+                            //   jwt  解析 token获取用户信息
+                            const decodedToken = jwt.decode(res.data?.accessToken);
+                            if (decodedToken && decodedToken.address) {
+                                const data = await request('get', "/api/v1/userinfo/" + decodedToken?.uid, '', res.data?.accessToken)
+                                if (data && data?.status === 200) {
+                                    const user = data?.data?.data
+                                    changeShowData(true)
+                                    setUserPar(user)
+                                    cookie.set('username', JSON.stringify(data?.data?.data), {expires: 1})
+                                    cookie.set('token', res.data?.accessToken, {expires: 1})
+                                    cookie.set('name', address, {expires: 1})
+                                    cookie.set('user', JSON.stringify(decodedToken), {expires: 1})
+                                }
                             }
                         }
+                    } catch (err) {
+                        return null
                     }
-                } catch (err) {
-                    return null
+                } else {
+                    notification.warning({
+                        description: 'Please select eth!',
+                        placement: 'topLeft',
+                        duration: 2
+                    });
                 }
             } else {
                 notification.warning({
-                    description: 'Please select eth!',
+                    description: 'Please log in or connect to your account!',
                     placement: 'topLeft',
                     duration: 2
                 });
             }
-        } else {
-            notification.warning({
-                description: 'Please log in or connect to your account!',
-                placement: 'topLeft',
-                duration: 2
-            });
+        } catch (err) {
+            return null
         }
     }
     // 退出
@@ -230,27 +248,31 @@ const Header = () => {
     }
     // 获取该  代币合约地址的   所有者
     const getTokenOwner = async (token) => {
-        //   eth  api的节点
-        const provider = new ethers.providers.JsonRpcProvider('https://mainnet.infura.io/v3/d2660efdeff84ac982b0d2de03e13c20');
-        // eth的  合约 ABI
-        const tokenAbi = [{
-            "anonymous": false, "inputs": [{
-                "indexed": true, "name": "previousOwner", "type": "address"
-            }, {
-                "indexed": true, "name": "newOwner", "type": "address"
-            }], "name": "OwnershipTransferred", "type": "event"
-        }]
-        //获取该  合约地址的所有者  0x726a02b8b22882a2a8bd29d03c0f34429288418a
-        if (token) {
-            const tokenContract = new ethers.Contract(token, tokenAbi, provider);
-            // 过滤  合约地址所有者
-            const a = await tokenContract.filters.OwnershipTransferred("0x0000000000000000000000000000000000000000")
-            // 获取该代币合约地址  的所有者
-            const events = await tokenContract.queryFilter(a, 0, 19000000000);
-            if (events.length > 0 && events[0].args) {
-                return events[0]?.args[1]
+        try {
+            //   eth  api的节点
+            const provider = new ethers.providers.JsonRpcProvider('https://mainnet.infura.io/v3/d2660efdeff84ac982b0d2de03e13c20');
+            // eth的  合约 ABI
+            const tokenAbi = [{
+                "anonymous": false, "inputs": [{
+                    "indexed": true, "name": "previousOwner", "type": "address"
+                }, {
+                    "indexed": true, "name": "newOwner", "type": "address"
+                }], "name": "OwnershipTransferred", "type": "event"
+            }]
+            //获取该  合约地址的所有者  0x726a02b8b22882a2a8bd29d03c0f34429288418a
+            if (token) {
+                const tokenContract = new ethers.Contract(token, tokenAbi, provider);
+                // 过滤  合约地址所有者
+                const a = await tokenContract.filters.OwnershipTransferred("0x0000000000000000000000000000000000000000")
+                // 获取该代币合约地址  的所有者
+                const events = await tokenContract.queryFilter(a, 0, 19000000000);
+                if (events.length > 0 && events[0].args) {
+                    return events[0]?.args[1]
+                }
+            } else {
+                return null
             }
-        } else {
+        } catch (err) {
             return null
         }
     }
@@ -314,17 +336,22 @@ const Header = () => {
         }
     }
     const getLaunch = async () => {
-        const res = await request('get', '/api/v1/feature', {
-            pageIndex: 1,
-            pageSize: 10
-        })
-        if (res === 'please') {
-            setLogin()
-        } else if (res && res?.status === 200) {
-            const {data} = res
-            setLaunch(data?.featureds && data?.featureds.length > 0 ? data?.featureds : [])
-        } else {
+        try {
+            const res = await request('get', '/api/v1/feature', {
+                pageIndex: 1,
+                pageSize: 10
+            })
+            if (res === 'please') {
+                setLogin()
+            } else if (res && res?.status === 200) {
+                const {data} = res
+                setLaunch(data?.featureds && data?.featureds.length > 0 ? data?.featureds : [])
+            } else {
+                setLaunch([])
+            }
+        } catch (err) {
             setLaunch([])
+            return null
         }
     }
     useEffect(() => {
@@ -335,11 +362,15 @@ const Header = () => {
     }
     // 获取eth  gas和price
     const getGasPrice = async () => {
-        const provider = new ethers.providers.JsonRpcProvider('https://mainnet.infura.io/v3/d2660efdeff84ac982b0d2de03e13c20');
-        // 获取当前 gas 价格
-        const data = await provider.getGasPrice()
-        const gasPrice = ethers.utils.formatUnits(data, 'gwei')
-        setGas(gasPrice&&Number(gasPrice) ? Math.floor(Number(gasPrice)) : 0)
+        try {
+            const provider = new ethers.providers.JsonRpcProvider('https://mainnet.infura.io/v3/d2660efdeff84ac982b0d2de03e13c20');
+            // 获取当前 gas 价格
+            const data = await provider.getGasPrice()
+            const gasPrice = ethers.utils.formatUnits(data, 'gwei')
+            setGas(gasPrice && Number(gasPrice) ? Math.floor(Number(gasPrice)) : 0)
+        } catch (err) {
+            return null
+        }
     }
     // 除了Home页面显示，其它页面不展示
     const [isShowClass, setIsShowClass] = useState(Boolean)
@@ -645,12 +676,13 @@ const Header = () => {
                     gradientWidth={100}
                     className={styles.marqueeBox}>
                     {launch.length > 0 && launch.map((i, index) => {
-                        if(i?.apiData){
+                        if (i?.apiData) {
                             const data = JSON.parse(i.apiData)
                             return <div key={index} className={`${styles.marquee} `}>
                                 <span className={changeTheme ? 'darknessFont' : 'brightFont'}>#{index + 1}</span>
                                 <p className={styles.marqueeName}>{data?.baseToken?.symbol?.slice(0, 1)}</p>
-                                <span className={changeTheme ? 'darknessFont' : 'brightFont'}>{data?.baseToken?.symbol}</span>
+                                <span
+                                    className={changeTheme ? 'darknessFont' : 'brightFont'}>{data?.baseToken?.symbol}</span>
                             </div>
                         }
 

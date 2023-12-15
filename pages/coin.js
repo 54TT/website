@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useRef, useState} from 'react';
 import styles from '/public/styles/all.module.css'
-import {Button, Popconfirm, Input, Select, Form, DatePicker} from 'antd'
+import {Button, Popconfirm, Input, Select, Form, DatePicker, Table, Segmented} from 'antd'
 import baseUrl from "../utils/baseUrl";
 import {request} from "../utils/hashUrl";
 
@@ -60,26 +60,30 @@ function Coin() {
             logo: image
         }
         // youtube,
-        const token = cookie.get('token')
-        const addLaunch = await request('post', '/api/v1/addLaunch', {
-            platformId: launchPlatform,
-            link: launchLink,
-            time: dayjs(launchTime).unix().toString(), ...params
-        }, token)
-        const addPresale = await request('post', '/api/v1/addPresale', {
-            platformId: presalePlatform,
-            link: presaleLink,
-            time: dayjs(presaleTime).unix().toString(), ...params
-        }, token)
-        if (addLaunch === 'please') {
-            setLogin()
-        } else if (addPresale === 'please') {
-            setLogin()
-        } else if (addLaunch?.data?.flag && addPresale?.data?.flag) {
-            setInfoShow(false)
-            setImagePreview(null)
-            setImage(null)
-            form.resetFields()
+        try {
+            const token = cookie.get('token')
+            const addLaunch = await request('post', '/api/v1/addLaunch', {
+                platformId: launchPlatform,
+                link: launchLink,
+                time: dayjs(launchTime).unix().toString(), ...params
+            }, token)
+            const addPresale = await request('post', '/api/v1/addPresale', {
+                platformId: presalePlatform,
+                link: presaleLink,
+                time: dayjs(presaleTime).unix().toString(), ...params
+            }, token)
+            if (addLaunch === 'please') {
+                setLogin()
+            } else if (addPresale === 'please') {
+                setLogin()
+            } else if (addLaunch?.data?.flag && addPresale?.data?.flag) {
+                setInfoShow(false)
+                setImagePreview(null)
+                setImage(null)
+                form.resetFields()
+            }
+        } catch (err) {
+            return null
         }
     };
 
@@ -97,16 +101,26 @@ function Coin() {
     const [chain, setChain] = useState([]);
     const [launchPlatform, setLaunchPlatform] = useState([]);
     const filePickerRef = useRef(null);
+
+    // 发射 预售
+    const [presale, setPresale] = useState([]);
+    const [launch, setLaunch] = useState([]);
+    const [status, setStatus] = useState('presale');
+
     //   获取图片
     const addImageFromDevice = async (e) => {
-        const {files} = e.target;
-        const token = cookie.get('token')
-        const data = await request('post', '/api/v1/upload/image', files[0], token);
-        if(data==='please'){
-            setLogin()
-        }else if(data&&data?.status===200){
-            setImage(data?.data?.url)
-            setImagePreview(URL.createObjectURL(files[0]));
+        try {
+            const {files} = e.target;
+            const token = cookie.get('token')
+            const data = await request('post', '/api/v1/upload/image', files[0], token);
+            if (data === 'please') {
+                setLogin()
+            } else if (data && data?.status === 200) {
+                setImage(data?.data?.url)
+                setImagePreview(URL.createObjectURL(files[0]));
+            }
+        } catch (err) {
+            return null
         }
     };
     // 删除图片
@@ -126,29 +140,58 @@ function Coin() {
 
     // 获取下拉数据
     const getParams = async () => {
-        const token = cookie.get('token')
-        const getLaunch = await request('get', '/api/v1/getLaunchPlatforms', '', token)
-        const getPresale = await request('get', '/api/v1/getPresalePlatforms', '', token)
-        const getChains = await request('get', '/api/v1/getChains', '', token)
-        if (getLaunch === 'please') {
-            setLogin()
-        } else if (getPresale === 'please') {
-            setLogin()
-        } else if (getChains === 'please') {
-            setLogin()
-        } else {
-            const launch = analysis(getLaunch)
-            const presale = analysis(getPresale)
-            const chain = analysis(getChains)
-            setPresalePlatform(presale && presale?.presalePlatforms && presale.presalePlatforms.length > 0 ? presale.presalePlatforms : [])
-            setChain(chain && chain.chains && chain?.chains.length > 0 ? chain.chains : [])
-            setLaunchPlatform(launch && launch?.launchPlatform && launch.launchPlatform.length > 0 ? launch.launchPlatform : [])
+        try {
+            const token = cookie.get('token')
+            const getLaunch = await request('get', '/api/v1/getLaunchPlatforms', '', token)
+            const getPresale = await request('get', '/api/v1/getPresalePlatforms', '', token)
+            const getChains = await request('get', '/api/v1/getChains', '', token)
+            if (getLaunch === 'please') {
+                setLogin()
+            } else if (getPresale === 'please') {
+                setLogin()
+            } else if (getChains === 'please') {
+                setLogin()
+            } else {
+                const launch = analysis(getLaunch)
+                const presale = analysis(getPresale)
+                const chain = analysis(getChains)
+                setPresalePlatform(presale && presale?.presalePlatforms && presale.presalePlatforms.length > 0 ? presale.presalePlatforms : [])
+                setChain(chain && chain.chains && chain?.chains.length > 0 ? chain.chains : [])
+                setLaunchPlatform(launch && launch?.launchPlatform && launch.launchPlatform.length > 0 ? launch.launchPlatform : [])
+            }
+        } catch (err) {
+            return null
         }
     }
 
+    // 获取数据
+    const getData = async () => {
+        try {
+            const token = cookie.get('token')
+            const getPresale = await request('get', '/api/v1/getPresaleByUserId', '', token)
+            const getLaunch = await request('get', '/api/v1/getLaunchByUserId', '', token)
+            if (getPresale === 'please') {
+                setLogin()
+            } else if (getPresale && getPresale?.status === 200) {
+                setPresale(getPresale?.data?.presales)
+            }
+            if (getLaunch === 'please') {
+                setLogin()
+            } else if (getLaunch && getLaunch?.status === 200) {
+                setLaunch(getLaunch?.data?.launchs)
+            }
+        } catch (eer) {
+            return null
+        }
+    }
+    const changSeg=(e)=>{
+        setStatus(e)
+    }
+
     useEffect(() => {
+        getData()
         getParams()
-        if (cookie.get('username')&&cookie.get('username')!='undefined') {
+        if (cookie.get('username') && cookie.get('username') != 'undefined') {
             const data = JSON.parse(cookie.get('username'))
             setUser(data)
         }
@@ -169,6 +212,20 @@ function Coin() {
             </Option>
         }) : null
     }
+
+    const columns = [{
+        title: '1',
+        align: 'center',
+    }, {
+        title: '2',
+        align: 'center',
+    }, {
+        title: '3',
+        align: 'center',
+    }, {
+        title: '4',
+        align: 'center',
+    }]
     return (
         //
         <div className={`${styles.coin} ${changeTheme ? 'darknessTwo' : 'brightTwo'}`}>
@@ -177,13 +234,14 @@ function Coin() {
                     name="basic"
                     form={form}
                     layout={'vertical'}
-                    className={changeTheme?'colorDrak':''}
+                    className={changeTheme ? 'colorDrak' : ''}
                     onFinish={onFinish}
                     autoComplete="off"
                 >
                     <div style={{display: 'flex', alignItems: 'start', justifyContent: 'space-between'}}>
                         <div style={{width: '46%'}}>
-                            <p style={{fontSize: '20px', fontWeight: 'bold'}} className={changeTheme ? 'fontW' : 'fontB'}>Coin info</p>
+                            <p style={{fontSize: '20px', fontWeight: 'bold'}}
+                               className={changeTheme ? 'fontW' : 'fontB'}>Coin info</p>
                             <Form.Item
                                 label="Name"
                                 name="name"
@@ -215,7 +273,7 @@ function Coin() {
                                 name="description"
                                 className={styles.coinForm}
                             >
-                                <TextArea className={changeTheme?'darknessTwo':'brightTT'} rows={4}/>
+                                <TextArea className={changeTheme ? 'darknessTwo' : 'brightTT'} rows={4}/>
                             </Form.Item>
                             <Form.Item
                                 label="Chain"
@@ -229,7 +287,7 @@ function Coin() {
                                 ]}
                             >
                                 <Select
-                                    placeholder="Select a option and change input text above"
+                                    placeholder={'Select a option and change input text above'}
                                     allowClear
                                     style={{width: '100%'}}
                                 >
@@ -255,7 +313,8 @@ function Coin() {
                                 className={styles.coinForm}
                             >
                                 <DatePicker showTime
-                                            style={{width: '100%'}}  className={changeTheme?'darknessTwo':'brightTT'}/>
+                                            style={{width: '100%'}}
+                                            className={changeTheme ? 'darknessTwo' : 'brightTT'}/>
                             </Form.Item>
                             <Form.Item
                                 label="Presale platform"
@@ -263,7 +322,7 @@ function Coin() {
                                 className={styles.coinForm}
                             >
                                 <Select
-                                    placeholder="Select a option and change input text above"
+                                    placeholder={'Select a option and change input text above'}
                                     allowClear
                                     style={{width: '100%'}}
                                 >
@@ -291,7 +350,8 @@ function Coin() {
                                 ]}
                             >
                                 <DatePicker showTime
-                                            style={{width: '100%'}}  className={changeTheme?'darknessTwo':'brightTT'}/>
+                                            style={{width: '100%'}}
+                                            className={changeTheme ? 'darknessTwo' : 'brightTT'}/>
                             </Form.Item>
                             <Form.Item
                                 label="Launch platform"
@@ -299,7 +359,7 @@ function Coin() {
                                 className={styles.coinForm}
                             >
                                 <Select
-                                    placeholder="Select a option and change input text above"
+                                    placeholder={'Select a option and change input text above'}
                                     allowClear
                                     style={{width: '100%'}}
                                 >
@@ -323,7 +383,8 @@ function Coin() {
                             </Form.Item>
                         </div>
                     </div>
-                    <p style={{fontSize: '20px', fontWeight: 'bold'}} className={changeTheme ? 'fontW' : 'fontB'}>Links</p>
+                    <p style={{fontSize: '20px', fontWeight: 'bold'}}
+                       className={changeTheme ? 'fontW' : 'fontB'}>Links</p>
                     <div style={{
                         display: 'flex',
                         alignItems: 'center',
@@ -438,7 +499,8 @@ function Coin() {
                         </div>
                     </Form.Item>
                 </Form> : <div>
-                    <p style={{fontSize: '20px', fontWeight: 'bold'}} className={changeTheme?'darknessFour':''}>Your coin</p>
+                    <p style={{fontSize: '20px', fontWeight: 'bold'}} className={changeTheme ? 'darknessFour' : ''}>Your
+                        coin</p>
                     {
                         data.map((i, index) => {
                             return index !== 0 && <div key={index} className={styles.coinList}>
@@ -464,6 +526,19 @@ function Coin() {
                             </div>
                         })
                     }
+                    <Segmented
+                        options={['presale','launch']}
+                        onChange={changSeg}
+                        defaultValue={'presale'}
+                        className={`${changeTheme?'darkMode': 'whiteMode'}`}
+                    />
+                    <Table columns={columns}
+                           scroll={{x: 'max-content'}}
+                           rowKey={(record) => record?.id}
+                           loading={false}
+                           className={`${changeTheme ? 'darkTable' : 'coinTable'}  anyTable`}
+                           dataSource={status==='presale'?presale:launch}
+                           pagination={false} bordered={false}/>
                     <Button className={changeTheme ? 'darknessThree' : 'brightFore'} onClick={() => {
                         form.resetFields()
                         setInfoShow(true)

@@ -37,17 +37,25 @@ export default function Presale() {
         });
     }
     const getParams = async (url, params) => {
-        const res = await request('get', url, params)
-        if (res === 'please') {
-            setLogin()
-        } else if (res && res?.status === 200) {
-            let {presales} = res?.data
-            setLaunch(presales && presales.length > 0 ? presales : [])
-            setLaunchAll(0)
-            setLaunchBol(false)
-        } else {
+        try {
+            const res = await request('get', url, params)
+            if (res === 'please') {
+                setLogin()
+                setLaunch([])
+                setLaunchAll(0)
+            } else if (res && res?.status === 200) {
+                let {presales} = res?.data
+                setLaunch(presales && presales.length > 0 ? presales : [])
+                setLaunchAll(0)
+                setLaunchBol(false)
+            } else {
+                setLaunch([])
+                setLaunchAll(0)
+            }
+        } catch (err) {
             setLaunch([])
             setLaunchAll(0)
+            return null
         }
     }
     useEffect(() => {
@@ -79,8 +87,7 @@ export default function Presale() {
             dataIndex: 'address', align: 'center',
             width: 30,
             render: (_, record) => {
-                return <img src={record?.logo ? record.logo : '/avatar.png'} style={{borderRadius: '50%'}} alt=""
-                            width={30}/>
+                return <img src={record?.logo ? record.logo : '/avatar.png'} style={{borderRadius: '50%'}} alt="" width={30}/>
             }
         },
         {
@@ -174,8 +181,8 @@ export default function Presale() {
                        onRow={(record) => {
                            return {
                                onClick: (event) => {
-                                   const data = JSON.stringify(record)
-                                   cookie.set('list',data)
+                                   const data = JSON.stringify({...record, status: 'presale'})
+                                   cookie.set('list', data)
                                    router.push('/launchPresaleDetail')
                                },
                            };
