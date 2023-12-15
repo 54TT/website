@@ -10,5 +10,6 @@ run npm run build
 
 FROM nginx:1.19.0 as prod
 COPY --from=build /frontend/build /public/_next
+COPY --from=base /frontend/public/* /public
 COPY nginx.conf /etc/nginx/nginx.conf
 ENTRYPOINT ["nginx", "-g", "daemon off;"]
