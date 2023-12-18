@@ -9,7 +9,6 @@ import ListItemText from '@mui/material/ListItemText';
 import {useRouter} from "next/router";
 import Link from 'next/link'
 import cookie from "js-cookie";
-import Image from 'next/image'
 import {changeLang} from "/utils/set";
 import {Switch} from 'antd'
 import {CountContext} from '/components/Layout/Layout';
@@ -94,7 +93,7 @@ const Drawer = ({getMoney}) => {
         setValue(value)
     }
     return (
-        <div className={`drawerShowNode ${changeTheme ? 'socialScrollD' : 'socialScroll'}`}>
+        <div className={`drawerShowNode ${changeTheme ? 'socialScrollDd' : 'socialScrolld'}`}>
             <div className={changeTheme ? 'darknessTwo' : 'brightTwo'} style={{position: 'relative'}}>
                 <Drawer variant="permanent" open={openDrawer} onMouseEnter={handleDrawerOpen}
                         onMouseLeave={handleDrawerClose}>
@@ -113,10 +112,10 @@ const Drawer = ({getMoney}) => {
                                     }}
                                 >
                                     {/* 源图片：logoTop */}
-                                    <Image src={'/logo.svg'} alt="logo" width={30} height={30}/>
+                                    <img src={'/logo.svg'} alt="logo" width={30} height={30}/>
                                 </ListItemIcon>
                                 <ListItemText primary={<div style={{width: '50%'}}>
-                                    <Image width={100} height={100} style={{width: '100%'}} src="/Group21.svg" alt=""/>
+                                    <img width={100} height={100} style={{width: '100%'}} src="/Group21.svg" alt=""/>
                                 </div>}
                                               sx={{opacity: openDrawer ? 1 : 0}}/>
                             </DrawerHeader>
@@ -140,7 +139,7 @@ const Drawer = ({getMoney}) => {
                                         }}
                                     >
                                         {/* 源图片：HomeLogo */}
-                                        <Image src={`/Vector.svg`} alt="logo" width={28} height={28}/>
+                                        <img src={`/Vector.svg`} alt="logo" width={28} height={28}/>
                                     </ListItemIcon>
                                     <ListItemText primary={<span
                                         className={changeTheme ? 'darknessFont' : 'brightFont'}>{drawer.home}</span>}
@@ -164,7 +163,7 @@ const Drawer = ({getMoney}) => {
                                             justifyContent: 'center',
                                         }}>
                                         {/* 源图片：ExchangeLogo */}
-                                        <Image src={`/GroupJiuBa.svg`} alt="logo" height={28} width={28}/>
+                                        <img src={`/GroupJiuBa.svg`} alt="logo" height={28} width={28}/>
                                     </ListItemIcon>
                                     <ListItemText primary={<span
                                         className={changeTheme ? 'darknessFont' : 'brightFont'}>{drawer.featured}</span>}
@@ -189,7 +188,7 @@ const Drawer = ({getMoney}) => {
                                         }}
                                     >
                                         {/* 源图片：pre-saleLogo */}
-                                        <Image src={`/icon_rocket_.svg`} alt="logo" height={28} width={28}/>
+                                        <img src={`/icon_rocket_.svg`} alt="logo" height={28} width={28}/>
                                     </ListItemIcon>
                                     <ListItemText primary={<span
                                         className={changeTheme ? 'darknessFont' : 'brightFont'}>{drawer.presale}</span>}
@@ -214,7 +213,7 @@ const Drawer = ({getMoney}) => {
                                         }}
                                     >
                                         {/* 源图片：pre-saleLogo */}
-                                        <Image src={`/icon_timer_.svg`} alt="logo" height={28} width={28}/>
+                                        <img src={`/icon_timer_.svg`} alt="logo" height={28} width={28}/>
                                     </ListItemIcon>
                                     <ListItemText primary={<span
                                         className={changeTheme ? 'darknessFont' : 'brightFont'}>{drawer.launch}</span>}
@@ -239,7 +238,7 @@ const Drawer = ({getMoney}) => {
                                         }}
                                     >
                                         {/* 源图片：newpairsLogo */}
-                                        <Image src={`/icon_graph_.svg`} alt="logo" height={28} width={28}/>
+                                        <img src={`/icon_graph_.svg`} alt="logo" height={28} width={28}/>
                                     </ListItemIcon>
                                     <ListItemText primary={<span
                                         className={changeTheme ? 'darknessFont' : 'brightFont'}>{drawer.newPair}</span>}
@@ -264,7 +263,7 @@ const Drawer = ({getMoney}) => {
                                         }}
                                     >
                                         {/* 源图片：NewsLogo */}
-                                        <Image src={`/icon_newspaper_.svg`} alt="logo" width={28} height={28}/>
+                                        <img src={`/icon_newspaper_.svg`} alt="logo" width={28} height={28}/>
                                     </ListItemIcon>
                                     <ListItemText primary={<span
                                         className={changeTheme ? 'darknessFont' : 'brightFont'}>{drawer.community}</span>}
@@ -289,7 +288,7 @@ const Drawer = ({getMoney}) => {
                                         }}
                                     >
                                         {/* 源图片：UserSettings */}
-                                        <Image src={`/icon_new_spaper_.svg`} height={28} alt="logo" width={28}/>
+                                        <img src={`/icon_new_spaper_.svg`} height={28} alt="logo" width={28}/>
                                     </ListItemIcon>
                                     <ListItemText primary={<span
                                         className={changeTheme ? 'darknessFont' : 'brightFont'}>{drawer.user}</span>}

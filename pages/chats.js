@@ -1,7 +1,6 @@
 import axios from "axios";
 import {useRouter} from "next/router";
 import React, {useState, useEffect, useRef, useContext} from "react";
-import baseUrl from "../utils/baseUrl";
 import io from "socket.io-client";
 import Sidebar from "../components/Sidebar";
 import {SearchIcon} from "@heroicons/react/outline";
@@ -56,14 +55,14 @@ function ChatsPage() {
     });
     const getParams = async () => {
         if (userPar && userPar.uid) {
-            const res = await axios.get(`${baseUrl}/api/chats`, {
-                params: {userId: userPar?.uid}
-            });
-            if (res.status === 200) {
-                setChats(res.data)
-            } else {
-                setChats([])
-            }
+            // const res = await axios.get(`${baseUrl}/api/chats`, {
+            //     params: {userId: userPar?.uid}
+            // });
+            // if (res.status === 200) {
+            //     setChats(res.data)
+            // } else {
+            //     setChats([])
+            // }
         }
     }
     const [takeOver, setTakeOver] = useState(false)
@@ -78,7 +77,7 @@ function ChatsPage() {
 
     useEffect(() => {
         if (!socket.current) {
-            socket.current = io(baseUrl);
+            // socket.current = io(baseUrl);
         }
         if (socket.current && userPar && userPar?.uid) {
             socket.current.emit("join", {userId: userPar?.uid});
@@ -228,10 +227,10 @@ function ChatsPage() {
     }, [texts]);
     const postPar = async () => {
         try {
-            await axios.post(
-                `${baseUrl}/api/chats`,
-                {userId: userPar.uid}
-            );
+            // await axios.post(
+            //     `${baseUrl}/api/chats`,
+            //     {userId: userPar.uid}
+            // );
         } catch (error) {
 
         }

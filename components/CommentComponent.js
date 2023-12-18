@@ -1,8 +1,6 @@
 import React, {useContext, useState} from "react";
 import calculateTime from "../utils/calculateTime";
-import {useRouter} from "next/router";
 import {MinusCircleIcon, TrashIcon} from "@heroicons/react/outline";
-import {deleteComment} from "../utils/postActions";
 import {notification,} from "antd";
 import dynamic from "next/dynamic";
 import styled from '/public/styles/all.module.css'

@@ -1,7 +1,6 @@
 import React, {useContext} from 'react';
 import Bott from '/components/Bottom'
 import style from '/public/styles/home.module.css'
-import Image from 'next/image'
 import {changeLang} from "/utils/set";
 import {CountContext} from '/components/Layout/Layout'
 
@@ -22,7 +21,7 @@ function Statement() {
                     justifyContent: 'space-between',
                     width: '25%',
                     margin: '0 auto'
-                }}><Image src={'/logo.svg'} alt="logo" width={70} height={70}/><span
+                }}><img src={'/logo.svg'} alt="logo" width={70} height={70}/><span
                     style={{fontSize: '47px', fontWeight: 'bold', color: 'rgb(55,55,55)'}}>DEXPERT</span></p>
                 <p style={{marginTop: '10px', fontSize: '18px'}} className={changeTheme?'darknessFont':'brightFont'}>DEXpert.io </p>
                 {

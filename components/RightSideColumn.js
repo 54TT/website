@@ -1,6 +1,5 @@
 import React, {useContext, useEffect, useState} from "react";
 import Link from "next/link";
-import baseUrl from '/utils/baseUrl'
 import styled from '/public/styles/all.module.css';
 import {changeLang} from "/utils/set";
 import {Skeleton} from 'antd'
@@ -8,7 +7,6 @@ import {
     CheckCircleIcon,
     UserAddIcon,
 } from "@heroicons/react/solid";
-import {useRouter} from "next/router";
 import dayjs from "dayjs";
 import {request} from "../utils/hashUrl";
 import cookie from "js-cookie";
@@ -68,8 +66,7 @@ function RightSideColumn({user, chatsData}) {
                                                      style={{borderRadius: '50%'}} alt="userimg"/>
                                                 <div>
                                                     <Link href={`/${fol?.uid}`}>
-                                                        <p
-                                                            className="ml-3 cursor-pointer hover:underline">
+                                                        <p className="ml-3 cursor-pointer hover:underline" style={{color:'rgb(138,138,138)'}}>
                                                             {fol?.username ? fol?.username.length > 7 ? fol.username.slice(0, 3) + '...' + fol.username.slice('-3') : fol.username : fol?.address.slice(0, 5)}
                                                         </p>
                                                     </Link>

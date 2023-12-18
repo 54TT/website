@@ -3,8 +3,6 @@ import {Table, Pagination, Card} from 'antd'
 import _ from 'lodash'
 import {ApolloClient, InMemoryCache, useQuery} from "@apollo/client";
 import {gql} from "graphql-tag";
-import dayjs from 'dayjs'
-import Image from 'next/image';
 import {autoConvertNew, autoConvert} from '/utils/set';
 import {formatDecimal, sendGetRequestWithSensitiveData, getRelativeTimeDifference, formatDateTime} from './Utils';
 import styled from '/public/styles/all.module.css'
@@ -184,7 +182,7 @@ export default function NewPair() {
         },
         {
             title: newPair.dex, align: 'center', render: (text, record) => {
-                return <Image src="/dex-uniswap.png" alt="" width={30} height={30}
+                return <img src="/dex-uniswap.png" alt="" width={30} height={30}
                               className={styled.newPairTableImg}/>
             }
         },
@@ -194,7 +192,7 @@ export default function NewPair() {
             <Card className={`${styled.launchBoxCard} ${changeTheme ? 'darknessTwo' : 'brightTwo'}`}>
                 <div className={styled.launchBoxCardBox}>
                     <div style={{display: 'flex', alignItems: 'center'}}>
-                        <Image src="/gpsReceiving.png" alt="" height={70} width={70} className={styled.mobliceImage}/>
+                        <img src="/gpsReceiving.png" alt="" height={70} width={70} className={styled.mobliceImage}/>
                         <span style={{fontWeight: 'bold', fontSize: '26px'}} className={changeTheme ? 'darknessFont' : 'brightFont'}>{newPair?.newPair}</span>
                     </div>
                     <div className={styled.mobliceNewPair}>

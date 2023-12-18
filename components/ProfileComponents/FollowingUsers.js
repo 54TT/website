@@ -1,9 +1,5 @@
-import axios from "axios";
 import React, {useContext, useEffect, useState} from "react";
 import cookie from "js-cookie";
-import baseUrl from '/utils/baseUrl'
-import {useRouter} from "next/router";
-import {LoadingOutlined} from '@ant-design/icons'
 import Link from 'next/link'
 import styled from '/public/styles/all.module.css'
 import {changeLang} from "/utils/set";

@@ -5,7 +5,6 @@ import _ from 'lodash'
 import dynamic from 'next/dynamic'
 import cook from "js-cookie";
 import {CountContext} from '/components/Layout/Layout'
-
 const Feed = dynamic(() => import('../components/Feed'), {ssr: false});
 const RightSideColumn = dynamic(() => import('../components/RightSideColumn'), {ssr: false});
 import {arrayUnique} from '/utils/set'

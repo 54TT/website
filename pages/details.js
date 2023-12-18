@@ -1,9 +1,8 @@
 import React, {useState, useEffect, useContext} from 'react';
 import {useRouter} from 'next/router';
 import style from '../public/styles/details.module.css'
-import {Table, Card, Segmented,Progress } from 'antd'
+import {Progress } from 'antd'
 import axios from 'axios';
-import Image from 'next/image'
 import {CountContext} from '/components/Layout/Layout';
 function Details() {
     const router = useRouter();
@@ -72,7 +71,7 @@ function Details() {
         },
         {
             title: 'DEX', align: 'center', render: () => {
-                return <Image src="/dex-uniswap.png" alt="" width={30} height={30} style={{borderRadius:'50%',display:'block',margin:'0 auto',width:'auto',height:'auto'}}/>
+                return <img src="/dex-uniswap.png" alt="" width={30} height={30} style={{borderRadius:'50%',display:'block',margin:'0 auto',width:'auto',height:'auto'}}/>
             }
         },
     ];

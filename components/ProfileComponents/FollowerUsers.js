@@ -1,8 +1,5 @@
-import axios from "axios";
 import React, {useContext, useEffect, useState} from "react";
 import cookie from "js-cookie";
-import {useRouter} from "next/router";
-import baseUrl from '/utils/baseUrl'
 import Link from 'next/link'
 import styled from '/public/styles/all.module.css'
 import {changeLang} from "/utils/set";

@@ -48,91 +48,9 @@ const formatDecimal = (number, count) => {
         return number;
     }
 }
-
-/**
- * 发送 GET 请求并隐藏敏感信息
- * @param {string} url - 请求的URL
- * @param {object} sensitiveData - 包含敏感信息的对象
- * @param {object} params - 请求参数
- * @param {object} options - 其他 Axios 选项
- * @returns {Promise} 包含响应数据的 Promise
- */
-async function sendGetRequestWithSensitiveData(url, sensitiveData, params = {}, options = {}) {
-    // 创建 Axios 实例
-    const instance = axios.create();
-    // 请求拦截器：在发送请求之前隐藏敏感信息
-    instance.interceptors.request.use(config => {
-        // 删除或替换敏感信息
-        config.headers = {
-            ...config.headers,
-            ...sensitiveData,
-        };
-        return config;
-    }, error => {
-        return Promise.reject(error);
-    });
-
-    try {
-        // 发送 GET 请求
-        const response = await instance.get(url, {
-            params: params,
-            ...options,
-        });
-
-        // 响应拦截器：在处理响应之前检查响应数据并隐藏敏感信息
-        const responseData = response.data;
-        // 这里可以检查和处理 responseData 中的敏感信息
-
-        return responseData;
-    } catch (error) {
-        // 处理请求错误
-        throw error;
-    }
-}
-
-/**
- * 发送 POST 请求并隐藏敏感信息
- * @param {string} url - 请求的URL
- * @param {object} sensitiveData - 包含敏感信息的对象
- * @param {object} data - POST 请求的数据
- * @param {object} options - 其他 Axios 选项
- * @returns {Promise} 包含响应数据的 Promise
- */
-async function sendPostRequestWithSensitiveData(url, sensitiveData, data = {}, options = {}) {
-    // 创建 Axios 实例
-    const instance = axios.create();
-
-    // 请求拦截器：在发送请求之前隐藏敏感信息
-    instance.interceptors.request.use(config => {
-        // 删除或替换敏感信息
-        config.headers = {
-            ...config.headers,
-            ...sensitiveData,
-        };
-        return config;
-    }, error => {
-        return Promise.reject(error);
-    });
-
-    try {
-        // 发送 POST 请求
-        const response = await instance.post(url, data, options);
-
-        // 响应拦截器：在处理响应之前检查响应数据并隐藏敏感信息
-        const responseData = response.data;
-        // 这里可以检查和处理 responseData 中的敏感信息
-
-        return responseData;
-    } catch (error) {
-        // 处理请求错误
-        throw error;
-    }
-}
-
 function formatDateTime(dateTime, format = 'YYYY-MM-DD HH:mm:ss') {
     return dayjs.unix(dateTime).format(format);
 }
-
 function getRelativeTimeDifference(dateTime) {
     const now = dayjs();
     const targetDateTime = dayjs(dateTime)
@@ -173,8 +91,6 @@ function getRelativeTimeDifference(dateTime) {
 
 module.exports = {
     formatDecimal,
-    sendGetRequestWithSensitiveData,
-    sendPostRequestWithSensitiveData,
     getRelativeTimeDifference,
     formatDateTime,
 

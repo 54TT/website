@@ -1,11 +1,7 @@
 import axios from "axios";
 import cookie from "js-cookie";
-import router from "next/router";
-import catchErrors from "../utils/catchErrors";
-import baseUrl from '/utils/baseUrl'
-
 const Axios = axios.create({
-    baseURL: `${baseUrl}/api/profile`,
+    // baseURL: `${baseUrl}/api/profile`,
     headers: {Authorization: cookie.get("token")},
 });
 
@@ -15,14 +11,13 @@ export const followUser = async (
     userId
 ) => {
     try {
-        const data = await Axios.post(`/follow/${userToFollowId}`, {userId});
-        if(setUserFollowStats){
-            setUserFollowStats((prev) => ({
-                ...prev,
-                following: [...prev.following, {user: userToFollowId}],
-            }));
-        }
-
+        // const data = await Axios.post(`/follow/${userToFollowId}`, {userId});
+        // if(setUserFollowStats){
+        //     setUserFollowStats((prev) => ({
+        //         ...prev,
+        //         following: [...prev.following, {user: userToFollowId}],
+        //     }));
+        // }
         return data
     } catch (error) {
     }
@@ -34,16 +29,16 @@ export const unfollowUser = async (
     userId
 ) => {
     try {
-        const data = await Axios.put(`/unfollow/${userToUnfollowId}`, {userId});
-        if (setUserFollowStats) {
-            setUserFollowStats((prev) => ({
-                ...prev,
-                following: prev.following.filter(
-                    (following) => following.user !== userToUnfollowId
-                ),
-            }));
-        }
-        return data
+        // const data = await Axios.put(`/unfollow/${userToUnfollowId}`, {userId});
+        // if (setUserFollowStats) {
+        //     setUserFollowStats((prev) => ({
+        //         ...prev,
+        //         following: prev.following.filter(
+        //             (following) => following.user !== userToUnfollowId
+        //         ),
+        //     }));
+        // }
+        // return data
     } catch (error) {
 
     }
@@ -60,7 +55,7 @@ export const profileUpdate = async (
           return true
       }
     } catch (error) {
-        setError(catchErrors(error));
+        // setError(catchErrors(error));
     }
 };
 
@@ -75,7 +70,7 @@ export const profilePicturesUpdate = async (
         setLoading(false);
         // router.reload();
     } catch (error) {
-        setError(catchErrors(error));
+        // setError(catchErrors(error));
         setLoading(false);
     }
 };

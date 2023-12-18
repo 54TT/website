@@ -3,12 +3,10 @@ import styled from '../public/styles/allmedia.module.css'
 import {EmojiSadIcon} from "@heroicons/react/outline";
 import {LoadingOutlined} from '@ant-design/icons'
 import dynamic from 'next/dynamic'
-
 const InputBox = dynamic(() => import('./InputBox'), {ssr: false})
 const InfoBox = dynamic(() => import('./HelperComponents/InfoBox'), {ssr: false})
 const PostCard = dynamic(() => import('./PostCard'), {ssr: false})
 import InfiniteScroll from 'react-infinite-scroll-component';
-
 function Feed({user, postsData, change, changePage, increaseSizeAnim, postsLoad}) {
     useEffect(() => {
         if (postsData && postsData.length > 0) {
@@ -28,9 +26,6 @@ function Feed({user, postsData, change, changePage, increaseSizeAnim, postsLoad}
                         setPosts={setPosts}
                         increaseSizeAnim={increaseSizeAnim}
                     />
-                    {
-
-                    }
                     {posts ? (
                         !postsLoad && posts.length === 0 ? (
                                 <InfoBox

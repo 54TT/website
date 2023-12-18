@@ -1,6 +1,4 @@
 import React, {useContext, useState} from "react";
-import {ArrowSmRightIcon, PencilAltIcon} from "@heroicons/react/solid";
-import {profileUpdate} from "../../utils/profileActions";
 import {
     YoutubeOutlined,
     TwitterOutlined,
@@ -8,7 +6,6 @@ import {
     FacebookOutlined,
     FormOutlined,
     InstagramOutlined,
-    LoadingOutlined,
     ArrowLeftOutlined
 } from '@ant-design/icons'
 import {useEffect} from "react";

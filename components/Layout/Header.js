@@ -1,11 +1,8 @@
 import React, {useContext, useEffect, useRef, useState} from "react";
-import baseUrl from '/utils/baseUrl'
 import {request} from '/utils/hashUrl'
 import {useAccount, useConnect, useDisconnect,} from "wagmi"
 import {InjectedConnector} from 'wagmi/connectors/injected'
-import axios from 'axios';
 import {Button, DatePicker, Drawer, Dropdown, Form, Input, notification, Select, Switch,} from 'antd'
-import {CaretDownFilled, CaretRightFilled} from '@ant-design/icons';
 import styles from './css/header.module.css'
 import jwt from 'jsonwebtoken';
 import DrawerPage from './Drawer'
@@ -18,7 +15,6 @@ import {ethers} from 'ethers'
 import {CountContext} from '/components/Layout/Layout';
 import Marquee from "react-fast-marquee";
 import {changeLang} from "/utils/set";
-import Image from 'next/image'
 import {gql} from "graphql-tag";
 import {ApolloClient, InMemoryCache, useQuery} from "@apollo/client";
 // const client = new ApolloClient({
@@ -99,14 +95,14 @@ const Header = () => {
     }, [logoutBol]);
     // 获取聊天用户
     const getParams = async () => {
-        const res = await axios.get(`${baseUrl}/api/chats`, {
-            params: {userId: userPar?.uid}
-        });
-        if (res.status === 200) {
-            setChats(res.data)
-        } else {
-            setChats([])
-        }
+        // const res = await axios.get(`${baseUrl}/api/chats`, {
+        //     params: {userId: userPar?.uid}
+        // });
+        // if (res.status === 200) {
+        //     setChats(res.data)
+        // } else {
+        //     setChats([])
+        // }
     }
     useEffect(() => {
         if (userPar && userPar.uid) {
@@ -547,13 +543,13 @@ const Header = () => {
                         <div
                             className={`${styles.ethMobliceMg} ${styles.ethMoblice} ${changeTheme ? 'darkMode' : 'whiteMode'}`}>
                             <Link href={'/'}>
-                                <Image src={'/GroupMoblice.svg'} alt="GroupMoblice" style={{marginLeft: '12px'}}
-                                       width={20} height={20}/>
+                                <img src={'/GroupMoblice.svg'} alt="GroupMoblice" style={{marginLeft: '12px'}}
+                                       width={20}/>
                             </Link>
                         </div>
                         <div className={`${styles.ethMoblice} ${changeTheme ? 'darkMode' : 'whiteMode'}`}>
                             <Link href={'/search'}>
-                                <Image src={'/Search.svg'} alt="Search" style={{marginLeft: '10px'}} width={20}
+                                <img src={'/Search.svg'} alt="Search" style={{marginLeft: '10px'}} width={20}
                                        height={20}/>
                             </Link>
                         </div>
@@ -590,13 +586,13 @@ const Header = () => {
                             userPar && userPar?.uid ?'': <div
                                 className={`${styles.ethMobliceMg} ${styles.ethMoblice} ${changeTheme ? 'darkMode' : 'whiteMode'}`}
                                 onClick={getMoney}>
-                                <Image src={'/WalletMoblice.svg'} alt="WalletMoblice" style={{marginLeft: '10px'}}
+                                <img src={'/WalletMoblice.svg'} alt="WalletMoblice" style={{marginLeft: '10px'}}
                                        width={20} height={20}/>
                             </div>
                         }
                         <div className={`${styles.ethMoblice} ${changeTheme ? 'darkMode' : 'whiteMode'}`}
                              onClick={openShowMenuItem}>
-                            <Image src={'/Menu.svg'} alt="Menu" style={{marginLeft: '10px'}} width={20} height={20}/>
+                            <img src={'/Menu.svg'} alt="Menu" style={{marginLeft: '10px'}} width={20} height={20}/>
                         </div>
                     </div>
                 </div>
@@ -608,7 +604,7 @@ const Header = () => {
                     <div className={`${styles.mobliceDpFlex}`}>
                         <div onClick={pushOnclick('one')}>
                             <div className={`${styles.mobliceDpFlexs}`}>
-                                <Image src={`/Vector.svg`} alt="logo" width={32} height={32}/>
+                                <img src={`/Vector.svg`} alt="logo" width={32} height={32}/>
                                 <div className={changeTheme ? 'darknessFont' : 'brightFont'}>{drawer.home}</div>
                             </div>
                         </div>
@@ -616,7 +612,7 @@ const Header = () => {
                     <div className={`${styles.mobliceDpFlex}`}>
                         <div onClick={pushOnclick('two')}>
                             <div className={`${styles.mobliceDpFlexs}`}>
-                                <Image src={`/icon_graph_.svg`} alt="logo" height={32} width={32}/>
+                                <img src={`/icon_graph_.svg`} alt="logo" height={32} width={32}/>
                                 <div className={changeTheme ? 'darknessFont' : 'brightFont'}>{drawer.featured}</div>
                             </div>
                         </div>
@@ -624,7 +620,7 @@ const Header = () => {
                     <div className={`${styles.mobliceDpFlex}`}>
                         <div onClick={pushOnclick('three')}>
                             <div className={`${styles.mobliceDpFlexs}`}>
-                                <Image src={`/icon_rocket_.svg`} alt="logo" height={32} width={32}/>
+                                <img src={`/icon_rocket_.svg`} alt="logo" height={32} width={32}/>
                                 <div className={changeTheme ? 'darknessFont' : 'brightFont'}>{drawer.presale}</div>
                             </div>
                         </div>
@@ -632,7 +628,7 @@ const Header = () => {
                     <div className={`${styles.mobliceDpFlex}`}>
                         <div onClick={pushOnclick('four')}>
                             <div className={`${styles.mobliceDpFlexs}`}>
-                                <Image src={`/icon_timer_.svg`} alt="logo" height={32} width={32}/>
+                                <img src={`/icon_timer_.svg`} alt="logo" height={32} width={32}/>
                                 <div className={changeTheme ? 'darknessFont' : 'brightFont'}>{drawer.launch}</div>
                             </div>
                         </div>
@@ -640,7 +636,7 @@ const Header = () => {
                     <div className={`${styles.mobliceDpFlex}`}>
                         <div onClick={pushOnclick('five')}>
                             <div className={`${styles.mobliceDpFlexs}`}>
-                                <Image src={`/GroupJiuBa.svg`} alt="logo" height={32} width={32}/>
+                                <img src={`/GroupJiuBa.svg`} alt="logo" height={32} width={32}/>
                                 <div className={changeTheme ? 'darknessFont' : 'brightFont'}>{drawer.newPair}</div>
                             </div>
                         </div>
@@ -648,7 +644,7 @@ const Header = () => {
                     <div className={`${styles.mobliceDpFlex}`}>
                         <div onClick={push}>
                             <div className={`${styles.mobliceDpFlexs}`}>
-                                <Image src={`/icon_newspaper_.svg`} alt="logo" width={32} height={32}/>
+                                <img src={`/icon_newspaper_.svg`} alt="logo" width={32} height={32}/>
                                 <div className={changeTheme ? 'darknessFont' : 'brightFont'}>{drawer.community}</div>
                             </div>
                         </div>
@@ -656,7 +652,7 @@ const Header = () => {
                     <div className={`${styles.mobliceDpFlex}`}>
                         <div onClick={pushPer}>
                             <div className={`${styles.mobliceDpFlexs}`}>
-                                <Image src={`/icon_new_spaper_.svg`} height={32} alt="logo" width={32}/>
+                                <img src={`/icon_new_spaper_.svg`} height={32} alt="logo" width={32}/>
                                 <div className={changeTheme ? 'darknessFont' : 'brightFont'}>{drawer.user}</div>
                             </div>
                         </div>

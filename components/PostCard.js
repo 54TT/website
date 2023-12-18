@@ -1,21 +1,12 @@
 import React, {useContext, useEffect, useRef, useState} from "react";
-import {ThumbUpIcon} from "@heroicons/react/solid";
 import Link from 'next/link'
-import styled from '/public/styles/all.module.css'
 import {
-    ChatAltIcon,
     MinusCircleIcon,
-    ShareIcon,
-    ThumbUpIcon as ThumbUpOutlineIcon,
 } from "@heroicons/react/outline";
 import {Input, notification} from 'antd'
-import {deletePost, likePost, postComment} from "../utils/postActions";
 import dynamic from 'next/dynamic'
-import {useRouter} from "next/router";
-
 const ReusableDialog = dynamic(() => import('./ReusableDialog'), {ssr: false});
 const CommentComponent = dynamic(() => import('./CommentComponent'), {ssr: false});
-
 const {TextArea} = Input
 import dayjs from 'dayjs'
 import {CountContext} from '/components/Layout/Layout';
@@ -128,10 +119,10 @@ function PostCard({post, user, change, liked}) {
         }
     };
     const handleLike = async () => {
-        const data = await likePost(post?.id, user?.id, !liked)
-        if (data && data.status === 200) {
-            change('click')
-        }
+        // const data = await likePost(post?.id, user?.id, !liked)
+        // if (data && data.status === 200) {
+        //     change('click')
+        // }
     };
     const handleClickOpen = () => {
         setOpen(true);
@@ -267,15 +258,7 @@ function PostCard({post, user, change, liked}) {
                             }
                             setShowComments(!showComments)
                         }}
-                        className="text-gray-500 cursor-pointer font-light select-none"
-                        style={{
-                            padding: '5px',
-                            borderRadius: '10px',
-                            margin: '0 auto',
-                            textAlign: 'center',
-                            backgroundColor: 'rgb(254,239,146)',
-                            width: '100%'
-                        }}
+                        className="text-gray-500 cursor-pointer font-light select-none postCardComment"
                     >{`${commentNum}   comments`}</p>
                 </div>
             </div>

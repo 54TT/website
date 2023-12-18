@@ -1,6 +1,5 @@
 import React, {useContext} from 'react';
 import styles from "/public/styles/all.module.css";
-import Image from 'next/image'
 import {CountContext} from '/components/Layout/Layout';
 import {changeLang} from "/utils/set";
 
@@ -12,7 +11,7 @@ function Bottom(props) {
             <div style={{marginBottom:"30px"}} className={`${styles.mobliceBottomBoxLogo} ${styles.bottomBoxLogo} ${changeTheme ? 'darknessTwo' : 'brightTwo boxHover'}`}>
                 <div className={`${styles.mobliceBottomTop} ${styles.bottomTop}`}>
                     <div className={styles.bottomImg}>
-                        <Image src="/video.png" alt="" width={100} height={100} style={{width: '100%'}}/>
+                        <img src="/video.png" alt="" width={100} height={100} style={{width: '100%'}}/>
                     </div>
                     <p className={`${styles.bottomSlign} ${changeTheme ? 'darknessFont' : 'brightFont'}`}>{bottom.video}</p>
                 </div>
@@ -24,10 +23,10 @@ function Bottom(props) {
             </div>
             <div className={`${styles['bottomBoxLogo']}  ${changeTheme ? 'darknessTwo' : 'brightTwo boxHover'}`}>
                 <div className={styles.bottomImgs}>
-                    <Image src="/TwitterX1.png" alt="" width={45} height={45}/>
-                    <Image src="/TelegramApp.png" alt="" width={45} height={45}/>
-                    <Image src="/Discord.png" alt="" width={45} height={45}/>
-                    <Image src="/Medium.png" alt="" width={45} height={45}/>
+                    <img src="/TwitterX1.png" alt="" width={45} height={45}/>
+                    <img src="/TelegramApp.png" alt="" width={45} height={45}/>
+                    <img src="/Discord.png" alt="" width={45} height={45}/>
+                    <img src="/Medium.png" alt="" width={45} height={45}/>
                 </div>
             </div>
             <div className={styles.bottomBot}

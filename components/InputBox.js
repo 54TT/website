@@ -4,21 +4,17 @@ import {ArrowSmRightIcon} from "@heroicons/react/solid";
 import {XIcon} from "@heroicons/react/solid";
 import {ChevronDownIcon} from "@heroicons/react/solid";
 import {GlobalOutlined} from '@ant-design/icons'
-import {submitNewPost} from "../utils/postActions";
 import {ExclamationCircleIcon} from "@heroicons/react/outline";
-import {LoadingOutlined} from '@ant-design/icons'
 import dynamic from "next/dynamic";
 import {notification} from "antd";
 import styled from '/public/styles/all.module.css'
 import {request} from "../utils/hashUrl";
-
 const InfoBox = dynamic(() => import('./HelperComponents/InfoBox'), {ssr: false})
 import {CountContext} from "./Layout/Layout";
 import cookie from "js-cookie";
 
 function InputBox({user, setPosts, increaseSizeAnim, change}) {
     const {changeTheme, setLogin} = useContext(CountContext);
-    const inputRef = useRef(null);
     const buttonRef = useRef(null);
     const filePickerRef = useRef(null);
     const [image, setImage] = useState(null);

@@ -5,7 +5,6 @@ import axios from "axios";
 import React, {useState, useRef, useContext} from "react";
 import Link from "next/link";
 import { useClickAway } from "react-use";
-import baseUrl from "../../utils/baseUrl";
 import styled from '/public/styles/all.module.css';
 import {changeLang} from "/utils/set";
 function ChatSearch({ setShowChatSearch, setChats, chats,user, }) {
@@ -23,11 +22,11 @@ function ChatSearch({ setShowChatSearch, setChats, chats,user, }) {
     setSearchTerm(value);
     setLoading(true);
     try {
-      const res = await axios.get(`${baseUrl}/api/search/${value}`, {params:{userId:user.id}});
-      if (res.data.length === 0) {
-        searchResults.length > 0 && setSearchResults([]);
-        return setLoading(false);
-      }
+      // const res = await axios.get(`${baseUrl}/api/search/${value}`, {params:{userId:user.id}});
+      // if (res.data.length === 0) {
+      //   searchResults.length > 0 && setSearchResults([]);
+      //   return setLoading(false);
+      // }
       setSearchResults(res.data);
     } catch (error) {
         setSearchResults([]);

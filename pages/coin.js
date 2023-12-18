@@ -1,7 +1,6 @@
 import React, {useContext, useEffect, useRef, useState} from 'react';
 import styles from '/public/styles/all.module.css'
 import {Button, Popconfirm, Input, Select, Form, DatePicker, Table, Segmented} from 'antd'
-import baseUrl from "../utils/baseUrl";
 import {request} from "../utils/hashUrl";
 
 const {TextArea} = Input

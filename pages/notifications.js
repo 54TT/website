@@ -1,8 +1,5 @@
-import axios from "axios";
 import React, {useContext, useEffect, useState} from "react";
-import InfoBox from "../components/HelperComponents/InfoBox";
 import Sidebar from "../components/Sidebar";
-import baseUrl from "../utils/baseUrl";
 import styles from '/public/styles/allmedia.module.css'
 import dynamic from 'next/dynamic'
 import cook from "js-cookie";
@@ -14,7 +11,6 @@ import {changeLang} from "/utils/set";
 import cookie from "js-cookie";
 import {request} from "../utils/hashUrl";
 import {CountContext} from "../components/Layout/Layout";
-
 function Notifications() {
     const social = changeLang('social')
     const {setLogin} = useContext(CountContext)
@@ -55,12 +51,12 @@ function Notifications() {
     }, [cook.get('username')]);
     const notificationRead = async () => {
         try {
-            const data = await axios.get(
-                `${baseUrl}/api/notifications`, {params: {userId: userPar?.uid}}
-            );
-            if (data.status === 200 && data.data) {
-                setNotifications(data.data)
-            }
+            // const data = await axios.get(
+            //     `${baseUrl}/api/notifications`, {params: {userId: userPar?.uid}}
+            // );
+            // if (data.status === 200 && data.data) {
+            //     setNotifications(data.data)
+            // }
         } catch (error) {
             setNotifications([])
         }

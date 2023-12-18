@@ -24,7 +24,7 @@ const Layout = ({children}) => {
     const [changeFamily, setChangeFamily] = useState('english')
 
     // 切换背景
-    const [changeTheme, setChangeTheme] = useState(false)
+    const [changeTheme, setChangeTheme] = useState(true)
 
     // 退出
     const [logoutBol, setLogoutBol] = useState(false)
@@ -103,7 +103,7 @@ const Layout = ({children}) => {
                 }}>
                 <div id={'part-1'}>
                     <Header/>
-                    <div className={styled.min1200} style={ router.pathname === '/statement' ? {marginLeft: '20px'} : {}}>
+                    <div className={styled.min1200} style={router.pathname === '/statement' ? {marginLeft: '20px'} : {}}>
                         {children}
                     </div>
                     <div>

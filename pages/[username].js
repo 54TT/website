@@ -1,15 +1,6 @@
 import React, {useContext, useEffect, useRef, useState} from "react";
-import baseUrl from "/utils/baseUrl";
 import {CheckCircleIcon, UserAddIcon} from "@heroicons/react/solid";
-
 import {
-    followUser,
-    unfollowUser,
-    profilePicturesUpdate,
-} from "../utils/profileActions";
-import {
-    LoadingOutlined,
-    CameraOutlined,
     FormOutlined,
     CloseOutlined,
     CheckOutlined,
@@ -20,7 +11,6 @@ import {useRouter} from "next/router";
 import InfiniteScroll from 'react-infinite-scroll-component';
 import {EmojiSadIcon} from "@heroicons/react/outline";
 import dynamic from "next/dynamic";
-
 const PostCard = dynamic(() => import("../components/PostCard"), {
     ssr: false,
 });
@@ -52,7 +42,6 @@ function ProfilePage() {
     const [user, setUser] = useState(null);
     const [showLoad, setShowLoad] = useState(true);
     const [LoginUser, setLoginUser] = useState(null);
-    const [profile, setProfile] = useState(null);
     const [userFollowStats, setUserFollowStats] = useState(null);
     const [coverPicPreview, setCoverPicPreview] = useState("");
     const [profilePicPreview, setProfilePicPreview] = useState(null);
@@ -65,7 +54,6 @@ function ProfilePage() {
             setLoginUser(data)
         }
     }, [cookie.get('username')])
-    //      changeTheme?'darknessThrees':'brightTwo'
     // 推文  page
     const [page, setPage] = useState(1);
     const router = useRouter();

@@ -1,12 +1,10 @@
 import React, {useContext, useEffect, useRef, useState} from "react";
-import axios from 'axios';
 import {formatDateTime, formatDecimal, getRelativeTimeDifference} from './Utils';
 import dayjs from 'dayjs';
 import {Card, Pagination, Segmented, Table} from "antd";
 import {useRouter} from 'next/router'
 import {autoConvert, changeLang} from '/utils/set'
 import styled from '/public/styles/all.module.css'
-import Image from 'next/image'
 import {CountContext} from '/components/Layout/Layout';
 import {request} from "../utils/hashUrl";
 import cookie from "js-cookie";
@@ -135,7 +133,7 @@ export default function Featured() {
         },
         {
             title: packageHtml(featured.dex), align: 'center', render: (text, record) => {
-                return <Image src="/dex-uniswap.png" alt="" width={30} height={30} style={{
+                return <img src="/dex-uniswap.png" alt="" width={30} height={30} style={{
                     borderRadius: '50%',
                     display: 'block',
                     margin: '0 auto',
@@ -193,7 +191,7 @@ export default function Featured() {
             <Card className={`${styled.featuredBoxCard} ${changeAllTheme('darknessTwo', 'brightTwo')}`}>
                 <div className={styled.featuredBoxTop}>
                     <div style={{display: 'flex', alignItems: 'center'}}>
-                        <Image src="/wallet.png" alt="" width={70}  height={70} className={styled.mobliceImage} />
+                        <img src="/wallet.png" alt="" width={70}  height={70} className={styled.mobliceImage} />
                         <span style={{fontWeight: 'bold', fontSize: '26px'}} className={changeAllTheme('darknessFont','brightFont')}>{featured.featured}</span>
                     </div>
                     <Segmented options={['5m', '1h', '6h', '24h']} onChange={changSeg} defaultValue={'24h'}

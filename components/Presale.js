@@ -1,14 +1,9 @@
 import React, {useContext, useEffect, useRef, useState} from "react";
 import dayjs from 'dayjs';
 import {notification, Pagination, Table, Card, Statistic} from "antd";
-import _ from "lodash";
 import {GlobalOutlined, SendOutlined, TwitterOutlined} from "@ant-design/icons";
-import {dao} from '/utils/set'
-import baseUrl from "../utils/baseUrl";
 import styled from '/public/styles/all.module.css'
-
 const {Countdown} = Statistic;
-import Image from 'next/image'
 import {changeLang} from "/utils/set";
 import {CountContext} from '/components/Layout/Layout';
 import {request} from "../utils/hashUrl";
@@ -151,7 +146,7 @@ export default function Presale() {
         },
         {
             title: presale.dex, align: 'center', render: (text, record) => {
-                return <Image src="/dex-uniswap.png" alt="" width={30} style={{height: 'auto', width: 'auto'}}
+                return <img src="/dex-uniswap.png" alt="" width={30} style={{height: 'auto', width: 'auto'}}
                               height={30} className={styled.presaleBoxTableImgs}/>
             }
         },
@@ -165,7 +160,7 @@ export default function Presale() {
             <Card className={`${styled.launchBoxCard} ${changeAllTheme('darknessTwo', 'brightTwo')}`}>
                 <div className={styled.launchBoxCardBox}>
                     <div style={{display: 'flex', alignItems: 'center'}}>
-                        <Image src="/iconsss.svg" alt="" width={70} height={70} className={styled.mobliceImage}/>
+                        <img src="/iconsss.svg" alt="" width={70} height={70} className={styled.mobliceImage}/>
                         <span style={{fontWeight: 'bold', fontSize: '26px'}}
                               className={changeAllTheme('darknessFont', 'brightFont')}>{presale.presales}</span>
                     </div>
