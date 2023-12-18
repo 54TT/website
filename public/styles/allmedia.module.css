@@ -1,5 +1,5 @@
 .mobliceNotifications{
-  height: calc(100vh - 4.5rem);
+  min-height: 90vh;
 }
 /* 超小屏幕 */
 @media screen and (max-width: 768px) {

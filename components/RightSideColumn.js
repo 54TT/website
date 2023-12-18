@@ -14,7 +14,7 @@ import {CountContext} from "./Layout/Layout";
 
 function RightSideColumn({user, chatsData}) {
     const social = changeLang('social')
-    const {setLogin} =useContext(CountContext)
+    const {setLogin,changeTheme} =useContext(CountContext)
     const [bol, setBol] = useState(false)
     const chang = () => {
         setBol(!bol)
@@ -50,8 +50,8 @@ function RightSideColumn({user, chatsData}) {
             className="hidden  p-2 lg:block max-w-[300px] lg:min-w-[290px] xl:min-w-[300px] sticky xl:mr-8"
             style={{alignSelf: "flex-start"}}>
             {
-                showLoad ? <Skeleton active/> : <>
-                    <p className={styled.rightSideColumnName}>{social.who}</p>
+                showLoad ? <Skeleton active/> : <> className=
+                    <p className={`${changeTheme?'fontW':'fontB'} ${styled.rightSideColumnName}`}>{social.who}</p>
                     {usersToFollow && usersToFollow.length > 0 && Array.isArray(usersToFollow) ? (
                         usersToFollow.map((fol) => {
                             return (
@@ -66,6 +66,7 @@ function RightSideColumn({user, chatsData}) {
                                                      style={{borderRadius: '50%'}} alt="userimg"/>
                                                 <div>
                                                     <Link href={`/${fol?.uid}`}>
+                                                        {/*chats?chat=*/}
                                                         <p className="ml-3 cursor-pointer hover:underline" style={{color:'rgb(138,138,138)'}}>
                                                             {fol?.username ? fol?.username.length > 7 ? fol.username.slice(0, 3) + '...' + fol.username.slice('-3') : fol.username : fol?.address.slice(0, 5)}
                                                         </p>
@@ -136,9 +137,7 @@ function RightSideColumn({user, chatsData}) {
                         {chatsData && Array.isArray(chatsData) ? (
                             chatsData.map((chat) => (
                                 <Link href={`/chats?chat=${chat.textsWith}`} key={chat?.textsWith}>
-                                    <div
-                                        className={`hover:bg-gray-200 ${styled.rightSideColumnL}`}
-                                    >
+                                    <div className={`hover:bg-gray-200 ${styled.rightSideColumnL}`}>
                                         <div className="relative">
                                             <img src={chat?.profilePicUrl ? chat.profilePicUrl : '/dexlogo.svg'}
                                                  width={40} height={40} style={{borderRadius: '50%'}} alt="userimg"/>

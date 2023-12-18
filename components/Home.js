@@ -178,6 +178,18 @@ function Home() {
         }
     }
     const [time, setTime] = useState('h24')
+    const aaaa =()=>{
+        const token =  cookie.get('token')
+        const es = new EventSource(`/subscribe`, {
+            headers: {
+                'Authorization': token,
+            }
+        });
+        es.onmessage = ({ data }) => {
+            console.log(data);
+        }
+    }
+    aaaa()
     const columns = [{
         title: '',
         align: 'center',
@@ -265,13 +277,11 @@ function Home() {
             title: packageHtml(home.dex),
             align: 'center',
             render: (text, record) => {
-                return <img src="/dex-uniswap.png" alt="" width={30} height={30}
+                return <img src="https://dex-pert-pic.sgp1.cdn.digitaloceanspaces.com/uniswap-uni-logo.png" alt="" width={30}
                               style={{
                                   borderRadius: '50%',
                                   display: 'block',
                                   margin: '0 auto',
-                                  height: 'auto',
-                                  width: 'auto',
                               }}/>
             }
         },

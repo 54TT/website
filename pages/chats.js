@@ -12,15 +12,16 @@ import dynamic from 'next/dynamic'
 import cook from "js-cookie";
 import styles from '/public/styles/allmedia.module.css'
 import {CountContext} from '../components/Layout/Layout'
-
+import { EventSourcePolyfill } from 'event-source-polyfill';
 const ChatSearch = dynamic(() => import('../components/Chat/ChatSearch'), {ssr: false});
 const Chat = dynamic(() => import('../components/Chat/Chat'), {ssr: false});
 import {changeLang} from "/utils/set";
 import {request} from "../utils/hashUrl";
 import cookie from "js-cookie";
+import dayjs from "dayjs";
 
 function ChatsPage() {
-    const {changeTheme} = useContext(CountContext);
+    const {changeTheme,setLogin} = useContext(CountContext);
     const social = changeLang('social')
     const [chats, setChats] = useState([]);
     const [userPar, setUserPar] = useState({});
@@ -29,7 +30,9 @@ function ChatsPage() {
             const params = JSON.parse(cookie.get('username'))
             const token = cookie.get('token')
             const data = await request('get', "/api/v1/userinfo/" + params?.uid, '', token)
-            if (data && data?.status === 200) {
+         if(data==='please'){
+            setLogin()
+         }else  if (data && data?.status === 200) {
                 setUserPar(data?.data?.data)
             } else {
                 setUserPar('')
@@ -40,12 +43,12 @@ function ChatsPage() {
         }
     }
     useEffect(() => {
-        if (cook.get('name')) {
+        if (cook.get('username') && cook.get('username') != 'undefined') {
             getUs()
         }
-    }, [cook.get('name')]);
+    }, [cook.get('username')]);
     const router = useRouter();
-    const socket = useRef();
+    const socket = useRef(null);
     const [texts, setTexts] = useState([]);
     const [connectedUsers, setConnectedUsers] = useState([]);
     const [newText, setNewText] = useState("");
@@ -74,143 +77,173 @@ function ChatsPage() {
     const da = () => {
         setShowChatSearch(!showChatSearch)
     }
+    const getChats = async () => {
+        const token = cookie.get('token')
+        const data = await request('get', "/api/v1/session/list", '', token)
+        if(data==='please'){setLogin()}else if (data && data?.status === 200) {
+            // setChats(data?.data?.SessionList ? data?.data?.SessionList : [])
+        } else {
+            // setChats([])
+        }
+    }
 
     useEffect(() => {
-        if (!socket.current) {
-            // socket.current = io(baseUrl);
-        }
-        if (socket.current && userPar && userPar?.uid) {
-            socket.current.emit("join", {userId: userPar?.uid});
-            socket.current.on("connectedUsers", ({users}) => {
-                setConnectedUsers(users);
+        if (cookie.get('token') && cookie.get('token') != 'undefined') {
+            getChats()
+            const token = cookie.get('token')
+            socket.current = new EventSourcePolyfill('http://188.166.191.246:8081/api/v1/subscribe', {
+                headers: {
+                    'Authorization': token,
+                }
             });
+            // if (socket.current && userPar && userPar?.uid) {
+            //     socket.current.emit("join", {userId: userPar?.uid});
+            //     socket.current.on("connectedUsers", ({users}) => {
+            //         setConnectedUsers(users);
+            //     });
+            // }
+            // if (
+            //     chats &&
+            //     chats.length > 0 &&
+            //     !router.query.chat &&
+            //     router.pathname === "/chats"
+            // ) {
+            //     router.push(`/chats?chat=${chats[0].textsWith}`, undefined, {
+            //         shallow: true,
+            //     });
+            // }
+            // if (userPar && userPar.uid) {
+            //     postPar();
+            // }
+
+
         }
-        if (
-            chats &&
-            chats.length > 0 &&
-            !router.query.chat &&
-            router.pathname === "/chats"
-        ) {
-            router.push(`/chats?chat=${chats[0].textsWith}`, undefined, {
-                shallow: true,
-            });
-        }
-        if (userPar && userPar.uid) {
-            postPar();
-        }
-    }, [userPar]);
+    }, []);
     useEffect(() => {
         if (userPar && userPar.uid && router.query.chat) {
-            const loadTexts = () => {
-                socket?.current.emit("loadTexts", {
-                    userId: userPar.uid,
-                    textsWith: router.query.chat,
-                });
-                socket?.current.on("textsLoaded", ({chat, textsWithDetails}) => {
-                    if (textsWithDetails) {
-                        setTexts([]);
-                        setChatUserData({
-                            name: textsWithDetails.username,
-                            profilePicUrl: textsWithDetails.profilePicUrl,
-                        });
-                        openChatId.current = router.query?.chat;
-                    } else {
-                        setTexts(chat?.texts && chat.texts.length > 0 ? chat?.texts : []);
-                        scrollToBottom();
-                        setChatUserData({
-                            name: chat?.textsWith.username,
-                            profilePicUrl: chat?.textsWith.profilePicUrl,
-                        });
-                        openChatId.current = chat?.texts_with_id;
-                    }
-                });
-            };
-            if (socket?.current && router.query?.chat) {
-                loadTexts();
+            // const loadTexts = () => {
+            //     socket?.current.emit("loadTexts", {
+            //         userId: userPar.uid,
+            //         textsWith: router.query.chat,
+            //     });
+            //     socket?.current.on("textsLoaded", ({chat, textsWithDetails}) => {
+            //         if (textsWithDetails) {
+            //             setTexts([]);
+            //             setChatUserData({
+            //                 name: textsWithDetails.username,
+            //                 profilePicUrl: textsWithDetails.profilePicUrl,
+            //             });
+            //             openChatId.current = router.query?.chat;
+            //         } else {
+            //             setTexts(chat?.texts && chat.texts.length > 0 ? chat?.texts : []);
+            //             scrollToBottom();
+            //             setChatUserData({
+            //                 name: chat?.textsWith.username,
+            //                 profilePicUrl: chat?.textsWith.profilePicUrl,
+            //             });
+            //             openChatId.current = chat?.texts_with_id;
+            //         }
+            //     });
+            // };
+            if (router.query?.chat) {
+                setChats([{uid: router.query?.chat,username:'aa'}])
             }
         }
     }, [router.query.chat, userPar]);
-    const sendText = (e, text) => {
+    const sendText = async (e, text) => {
         e.preventDefault();
-        if (text) {
-            if (socket.current) {
-                if (userPar && userPar.uid) {
-                    socket?.current.emit("sendNewText", {
-                        userId: userPar.uid,
-                        userToTextId: openChatId?.current,
-                        text,
-                    });
-                }
-            }
-        }
+        const token = cookie.get('token')
+        const data = await request('post', "/api/v1/send", {
+            Kind: 'text',
+             toUser: {uid: router?.query?.chat},
+            formUser: {uid: userPar?.uid},
+            data: text,
+            sent: dayjs().unix()
+        }, token)
+        console.log(data)
+        // if (text) {
+        //     if (socket.current) {
+        //         if (userPar && userPar.uid) {
+        //             socket?.current.emit("sendNewText", {
+        //                 userId: userPar.uid,
+        //                 userToTextId: openChatId?.current,
+        //                 text,
+        //             });
+        //         }
+        //     }
+        // }
         setNewText("");
     };
 
     useEffect(() => {
-        if (socket.current) {
-            socket.current.on("textSent", ({newText}) => {
-                if (newText.receiverId === openChatId?.current) {
-                    setTexts((prev) => [...prev, newText]);
-                    setChats((prev) => {
-                        let previousChat = prev.find(
-                            (chat) => chat.textsWith === newText.receiverId
-                        );
-                        if (!previousChat || !previousChat.lastText) {
-                            previousChat = {
-                                lastText: '',
-                                created_at: ''
-                            }
-                        }
-                        previousChat.lastText = newText.text;
-                        previousChat.created_at = newText.created_at;
-                        return [...prev];
-                    });
-                }
-            });
-            socket.current.on("newTextReceived", async ({newText, userDetails}) => {
-                if (newText?.senderId === openChatId?.current) {
-                    setTexts((prev) => [...prev, newText]);
-                    setChats((prev) => {
-                        let previousChat = prev.find(
-                            (chat) => chat.textsWith === newText.senderId
-                        );
-                        if (!previousChat || !previousChat.lastText) {
-                            previousChat = {
-                                lastText: '',
-                                created_at: ''
-                            }
-                        }
-                        previousChat.lastText = newText.text;
-                        previousChat.created_at = newText.created_at;
-                        return [...prev];
-                    });
-                } else {
-                    const ifPreviouslyTexted = chats.filter((chat) => chat.textsWith === newText.senderId).length > 0;
-                    if (ifPreviouslyTexted) {
-                        setChats((prev) => {
-                            let previousChat = prev.find(
-                                (chat) => chat.textsWith === newText.senderId
-                            );
-                            if (!previousChat || !previousChat.lastText) {
-                                previousChat = {
-                                    lastText: '',
-                                    created_at: ''
-                                }
-                            }
-                            previousChat.lastText = newText.text;
-                            previousChat.created_at = newText.created_at;
-                            return [...prev];
-                        });
-                    } else {
-                        setTakeOver(!takeOver)
-                    }
-                }
-            });
+        if (socket?.current) {
+            socket.current.onmessage = ({data}) => {
+                const  aa =JSON.parse(data)
+                console.log(aa)
+            }
+            //     socket.current.on("textSent", ({newText}) => {
+            //         if (newText.receiverId === openChatId?.current) {
+            //             setTexts((prev) => [...prev, newText]);
+            //             setChats((prev) => {
+            //                 let previousChat = prev.find(
+            //                     (chat) => chat.textsWith === newText.receiverId
+            //                 );
+            //                 if (!previousChat || !previousChat.lastText) {
+            //                     previousChat = {
+            //                         lastText: '',
+            //                         created_at: ''
+            //                     }
+            //                 }
+            //                 previousChat.lastText = newText.text;
+            //                 previousChat.created_at = newText.created_at;
+            //                 return [...prev];
+            //             });
+            //         }
+            //     });
+            //     socket.current.on("newTextReceived", async ({newText, userDetails}) => {
+            //         if (newText?.senderId === openChatId?.current) {
+            //             setTexts((prev) => [...prev, newText]);
+            //             setChats((prev) => {
+            //                 let previousChat = prev.find(
+            //                     (chat) => chat.textsWith === newText.senderId
+            //                 );
+            //                 if (!previousChat || !previousChat.lastText) {
+            //                     previousChat = {
+            //                         lastText: '',
+            //                         created_at: ''
+            //                     }
+            //                 }
+            //                 previousChat.lastText = newText.text;
+            //                 previousChat.created_at = newText.created_at;
+            //                 return [...prev];
+            //             });
+            //         } else {
+            //             const ifPreviouslyTexted = chats.filter((chat) => chat.textsWith === newText.senderId).length > 0;
+            //             if (ifPreviouslyTexted) {
+            //                 setChats((prev) => {
+            //                     let previousChat = prev.find(
+            //                         (chat) => chat.textsWith === newText.senderId
+            //                     );
+            //                     if (!previousChat || !previousChat.lastText) {
+            //                         previousChat = {
+            //                             lastText: '',
+            //                             created_at: ''
+            //                         }
+            //                     }
+            //                     previousChat.lastText = newText.text;
+            //                     previousChat.created_at = newText.created_at;
+            //                     return [...prev];
+            //                 });
+            //             } else {
+            //                 setTakeOver(!takeOver)
+            //             }
+            //         }
+            //     });
         }
         return () => {
             if (socket.current) {
-                socket.current.off("textSent");
-                socket.current.off("newTextReceived");
+                // socket.current.off("textSent");
+                // socket.current.off("newTextReceived");
             }
         };
     }, [newText, socket, chats]);
@@ -255,23 +288,36 @@ function ChatsPage() {
     const changeAllTheme = (a, b) => {
         return changeTheme ? a : b
     }
+    const [va, setVa] = useState('')
+    const sendChangeText = (e) => {
+        const {target: {value}} = e
+        setVa(value)
+    }
+    const sendClickText = async (e) => {
+        if (va && e.key === 'Enter') {
+            const token = cookie.get('token')
+            const data = await request('post', "/api/v1/send", {
+                Kind: 'text',
+                formUser: {uid: '2'},
+                toUser: {uid: '3'},
+                data: 'nihao',
+                sent: dayjs().unix()
+            }, token)
+            const datas = await request('get', "/api/v1/unsubscribe", '', token)
+        }
+    }
 
 
     return (
         <div className={styles.allMobliceBox}>
             <div
-                className={styles.allMoblice}
-                style={{
-                    backgroundColor: 'rgb(253,213,62)',
-                    marginRight: '20px',
-                    borderRadius: '10px',
-                    height: winHeight,
-                    minHeight: winHeight
-                }}>
-                <main className="flex" style={{height: winHeight}}>
+                className={`${styles.allMoblice} ${changeAllTheme('darknessTwo', 'brightTwo')}`}
+                style={{marginRight: '20px', borderRadius: '10px', minHeight: winHeight}}>
+                {/*<input type="text" onChange={sendChangeText} onKeyDown={sendClickText}/>*/}
+                <main className="flex">
                     <Sidebar user={userPar} maxWidth={"250px"}/>
-                    <div style={{backgroundColor: 'rgba(201,201,201,0.7)'}}
-                         className={`${styles.mobliceNonoFlex} ${changeAllTheme('darknessTwo', 'brightTwo')} flex flex-grow mx-auto h-full w-full max-w-2xl lg:max-w-[65rem] xl:max-w-[70.5rem] rounded-lg`}>
+                    <div
+                        className={`${styles.mobliceNonoFlex} ${changeAllTheme('darknessTwo', 'brightTwo')} flex flex-grow mx-auto h-full w-full max-w-2xl lg:max-w-[65rem] xl:max-w-[70.5rem] rounded-lg`}>
                         <div
                             style={{
                                 borderLeft: "1px solid lightgrey",
@@ -310,7 +356,7 @@ function ChatsPage() {
                                 <>
                                     {chats && chats.length > 0 ? (
                                         chats.map((chat) => (
-                                            <Link href={`/chats?chat=${chat?.textsWith}`} key={chat.textsWith}>
+                                            <Link href={`/chats?chat=${chat?.uid}`} key={chat.uid}>
                                                 <div style={{
                                                     display: 'flex',
                                                     cursor: 'pointer',
@@ -435,9 +481,9 @@ function ChatsPage() {
 
                                 <div
                                     className=" flex flex-col justify-between"
-                                    style={{
-                                        height: chatHeight,
-                                    }}
+                                    // style={{
+                                    //     height: chatHeight,
+                                    // }}
                                 >
                                     <div
                                         className="mt-3 pl-4 pr-4 overflow-y-auto"

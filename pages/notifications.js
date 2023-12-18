@@ -11,9 +11,10 @@ import {changeLang} from "/utils/set";
 import cookie from "js-cookie";
 import {request} from "../utils/hashUrl";
 import {CountContext} from "../components/Layout/Layout";
+import styled from "../public/styles/all.module.css";
 function Notifications() {
     const social = changeLang('social')
-    const {setLogin} = useContext(CountContext)
+    const {setLogin,changeTheme} = useContext(CountContext)
     const [notifications, setNotifications] = useState([])
     const [userPar, setUserPar] = useState(null)
     const [followStatsBol, setFollowStatsBol] = useState(false)
@@ -84,34 +85,19 @@ function Notifications() {
     return (
         <div className={styles.allMobliceBox}>
             <div
-                className={styles.allMoblice}
+                className={`${styles.allMoblice} ${changeTheme?'darknessTwo': 'brightTwo'}`}
                 style={{
-                    backgroundColor: 'rgb(253,213,62)',
                     marginRight: "20px",
                     borderRadius: '10px',
                     height: winHeight,
                     minHeight: winHeight
                 }}>
                 <main
-                    className={`flex ${styles.mobliceNotifications}`}
-                >
+                    className={`flex ${styles.mobliceNotifications}`}>
                     <Sidebar user={userPar} maxWidth={"250px"}/>
-                    <div
-                        style={{
-                            fontFamily: "Inter",
-                            width: '50%',
-                            margin: '20px auto 0',
-                            overflowY: 'auto',
-                            borderRadius: '10px',
-                            padding: '20px',
-                            backgroundColor: '#B2DB7E'
-                        }}>
+                    <div className={`${changeTheme?'darknessThree':'noti'} ${styled.followersBoxData}`}>
                         <div className="flex items-center ml-2">
-                            <p style={{
-                                userSelect: 'none',
-                                fontSize: '20px',
-                                fontWeight: 'bold'
-                            }}>{social.notification} ·</p>
+                            <p className={`${styled.followersBoxName} ${changeTheme?'fontW':'fontB'}`}>{social.notification} ·</p>
                             <p style={{
                                 userSelect: 'none',
                                 fontSize: '20px'

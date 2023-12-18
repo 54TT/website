@@ -161,12 +161,12 @@ const Header = () => {
                         const res = await request('post', '/api/v1/login', {
                             signature: signature, addr: address, message
                         })
-                        if (res && res.data && res.data?.accessToken) {
+                       if(res==='please'){setLogin()}else if (res && res.data && res.data?.accessToken) {
                             //   jwt  解析 token获取用户信息
                             const decodedToken = jwt.decode(res.data?.accessToken);
                             if (decodedToken && decodedToken.address) {
                                 const data = await request('get', "/api/v1/userinfo/" + decodedToken?.uid, '', res.data?.accessToken)
-                                if (data && data?.status === 200) {
+                               if(data==='please'){setLogin()}else if (data && data?.status === 200) {
                                     const user = data?.data?.data
                                     changeShowData(true)
                                     setUserPar(user)
@@ -246,7 +246,7 @@ const Header = () => {
     const getTokenOwner = async (token) => {
         try {
             //   eth  api的节点
-            const provider = new ethers.providers.JsonRpcProvider('https://mainnet.infura.io/v3/d2660efdeff84ac982b0d2de03e13c20');
+            const provider = new ethers.providers.JsonRpcProvider('https://eth-mainnet.g.alchemy.com/v2/kNPJaYqMx7BA9TcDDJQ8pS5WcLqXGiG7');
             // eth的  合约 ABI
             const tokenAbi = [{
                 "anonymous": false, "inputs": [{
@@ -359,11 +359,15 @@ const Header = () => {
     // 获取eth  gas和price
     const getGasPrice = async () => {
         try {
-            const provider = new ethers.providers.JsonRpcProvider('https://mainnet.infura.io/v3/d2660efdeff84ac982b0d2de03e13c20');
+            const provider = new ethers.providers.JsonRpcProvider('https://eth-mainnet.g.alchemy.com/v2/kNPJaYqMx7BA9TcDDJQ8pS5WcLqXGiG7');
+         try {
             // 获取当前 gas 价格
             const data = await provider.getGasPrice()
             const gasPrice = ethers.utils.formatUnits(data, 'gwei')
             setGas(gasPrice && Number(gasPrice) ? Math.floor(Number(gasPrice)) : 0)
+         }catch (err){
+             return  null
+         }
         } catch (err) {
             return null
         }

@@ -1,10 +1,9 @@
 import React, {useContext, useEffect, useRef, useState} from "react";
 import {Table, Pagination, Card} from 'antd'
-import _ from 'lodash'
 import {ApolloClient, InMemoryCache, useQuery} from "@apollo/client";
 import {gql} from "graphql-tag";
 import {autoConvertNew, autoConvert} from '/utils/set';
-import {formatDecimal, sendGetRequestWithSensitiveData, getRelativeTimeDifference, formatDateTime} from './Utils';
+import {formatDecimal, getRelativeTimeDifference, formatDateTime} from './Utils';
 import styled from '/public/styles/all.module.css'
 // const client = new ApolloClient({
 //     uri: 'https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-v2-dev', cache: new InMemoryCache(),
@@ -29,7 +28,7 @@ export default function NewPair() {
   }
   pairs(first: ${rowsPerPage}, skip: ${(currentPage - 1) * 10}, orderBy: createdAtTimestamp, orderDirection: desc) {
     id
-    reserveETH  
+    reserveETH
     liquidityPositionSnapshots(orderDirection: desc, first: 1) {
       token0PriceUSD
       token1PriceUSD
@@ -51,6 +50,37 @@ export default function NewPair() {
     createdAtBlockNumber
   }
 }`
+//     const GET_DATA = gql`query QueryPairByToken0Address {
+//   pairs(
+//  first: ${rowsPerPage}
+//      skip: ${(currentPage - 1) * 10}
+//     where: {token0_contains_nocase: ""}
+//     orderBy: createdAtTimestamp
+//     orderDirection: desc
+//   ) {
+//     id
+//     reserveETH
+//     liquidityPositionSnapshots(orderDirection: desc, first: 1) {
+//       token0PriceUSD
+//       token1PriceUSD
+//     }
+//     volumeUSD
+//     trackedReserveETH
+//     token0 {
+//       id
+//       name
+//       symbol
+//     }
+//     token1 {
+//       id
+//       name
+//       symbol
+//     }
+//     txCount
+//     createdAtTimestamp
+//     createdAtBlockNumber
+//   }
+// }`
     const [tableParams, setTableParams] = useState([]);
     const [tableTotal, setTableTotal] = useState(0);
     const {loading, error, data, refetch} = useQuery(GET_DATA, {client});

@@ -4,7 +4,7 @@ import styles from '/public/styles/all.module.css'
 import {CountContext} from '/components/Layout/Layout'
 import {request} from "../utils/hashUrl";
 import cookie from "js-cookie";
-import dayjs from "dayjs";
+import {LoadingOutlined} from '@ant-design/icons'
 import 'dayjs/locale/en'
 import {default as Moralis} from "moralis";
 import {ethers} from "ethers";
@@ -14,6 +14,7 @@ const {TextArea} = Input;
 function Token(props) {
     const {changeTheme, setLogin} = useContext(CountContext);
     const [infoSow, setInfoShow] = useState(false)
+    const [isSureShow, setIsSureShow] = useState(true)
     const [infoParams, setInfoParams] = useState(null)
     const [form] = Form.useForm()
     const [imagePreview, setImagePreview] = useState(null);
@@ -33,15 +34,17 @@ function Token(props) {
         }
     }, [current, tokenAll])
     const onFinish = async (values) => {
-        console.log('Success:', values);
-        const token = cookie.get('token')
-        const params = {...values,logo:imageP}
-        console.log(imageP)
-        const data = await request('post', '/api/v1/addToken', params, token);
-        if(data&&data?.status===200){
-            setImagePreview(null);
-            setImageP('')
-            setInfoShow(false)
+        try {
+            const token = cookie.get('token')
+            const params = {...values, logo: imageP}
+            const data = await request('post', '/api/v1/addToken', params, token);
+          if(data==='please'){setLogin()}else  if (data && data?.status === 200) {
+                setImagePreview(null);
+                setImageP('')
+                setInfoShow(false)
+            }
+        } catch (err) {
+            return null
         }
     };
     const getParams = async () => {
@@ -52,8 +55,10 @@ function Token(props) {
                 const aaa = await getAddressOwner('0xae2Fc483527B8EF99EB5D9B44875F005ba1FaE13')
                 if (aaa && aaa.length > 0) {
                     setTokenAll(aaa)
+                    setIsSureShow(false)
                 } else {
                     setTokenAll([])
+                    setIsSureShow(false)
                 }
             }
         } catch (err) {
@@ -97,26 +102,30 @@ function Token(props) {
     const getTokenOwner = async (token) => {
         try {
             //   eth  api的节点
-            const provider = new ethers.providers.JsonRpcProvider('https://mainnet.infura.io/v3/d2660efdeff84ac982b0d2de03e13c20');
-            // eth的  合约 ABI
-            const tokenAbi = [{
-                "anonymous": false, "inputs": [{
-                    "indexed": true, "name": "previousOwner", "type": "address"
-                }, {
-                    "indexed": true, "name": "newOwner", "type": "address"
-                }], "name": "OwnershipTransferred", "type": "event"
-            }]
-            //获取该  合约地址的所有者  0x726a02b8b22882a2a8bd29d03c0f34429288418a
-            if (token) {
-                const tokenContract = new ethers.Contract(token, tokenAbi, provider);
-                // 过滤  合约地址所有者
-                const a = await tokenContract.filters.OwnershipTransferred("0x0000000000000000000000000000000000000000")
-                // 获取该代币合约地址  的所有者
-                const events = await tokenContract.queryFilter(a, 0, 19000000000);
-                if (events.length > 0 && events[0].args) {
-                    return events[0]?.args[1]
+            const provider = new ethers.providers.JsonRpcProvider('https://eth-mainnet.g.alchemy.com/v2/kNPJaYqMx7BA9TcDDJQ8pS5WcLqXGiG7');
+            try {
+                // eth的  合约 ABI
+                const tokenAbi = [{
+                    "anonymous": false, "inputs": [{
+                        "indexed": true, "name": "previousOwner", "type": "address"
+                    }, {
+                        "indexed": true, "name": "newOwner", "type": "address"
+                    }], "name": "OwnershipTransferred", "type": "event"
+                }]
+                //获取该  合约地址的所有者  0x726a02b8b22882a2a8bd29d03c0f34429288418a
+                if (token) {
+                    const tokenContract = new ethers.Contract(token, tokenAbi, provider);
+                    // 过滤  合约地址所有者
+                    const a = await tokenContract.filters.OwnershipTransferred("0x0000000000000000000000000000000000000000")
+                    // 获取该代币合约地址  的所有者
+                    const events = await tokenContract.queryFilter(a, 0, 19000000000);
+                    if (events.length > 0 && events[0].args) {
+                        return events[0]?.args[1]
+                    }
+                } else {
+                    return null
                 }
-            } else {
+            } catch (err) {
                 return null
             }
         } catch (err) {
@@ -130,15 +139,15 @@ function Token(props) {
         try {
             setInfoParams(i)
             const token = cookie.get('token')
-          request('get', '/api/v1/getTokenByTokenAddress', {address:i}, token).then(res=>{
-               if(res&&res?.status===200){
-                   setFormList(res?.data?.tokenResponse)
-                   setInfoShow(true)
-              }
-          }).catch(err=>{
-              setFormList(null)
-              setInfoShow(true)
-          })
+            request('get', '/api/v1/getTokenByTokenAddress', {address: i}, token).then(res => {
+               if(res){setLogin()}else if (res && res?.status === 200) {
+                    setFormList(res?.data?.tokenResponse)
+                    setInfoShow(true)
+                }
+            }).catch(err => {
+                setFormList(null)
+                setInfoShow(true)
+            })
 
         } catch (err) {
             return null
@@ -173,242 +182,256 @@ function Token(props) {
             <p style={{fontSize: '20px', fontWeight: 'bold'}} className={changeTheme ? 'darknessFour' : ''}>MY TOKEN</p>
             {/*数据*/}
             {
-                infoSow ? <div style={{display: 'flex', alignItems: 'center'}}>
-                        <div className={styles.coinBoxTop}>
-                            <img src="/Booking.png" alt="" width={30}/>
-                            {/*<span style={{margin: '0 10px'}}>{infoParams && infoParams.name}</span>*/}
-                            <span style={{color: '#9bc2d9'}}>{infoParams.slice(0,5)+'...'+infoParams.slice(-5)}</span>
-                        </div>
-                        <div className={styles.coinBoxSet}>
-                            <span className={styles.coinBoxInfo}>info</span>
-                            <img src="/setCoin.svg" alt="" width={15} style={{cursor: 'pointer'}}/>
-                        </div>
-                    </div>
-                    : ''
-            }
-            {
-                infoSow ? <Form
-                    name="basic"
-                    form={form}
-                    onFinish={onFinish}
-                    defaultValue={formList}
-                    layout={'vertical'}
-                    autoComplete="off"
-                    className={`${styles.coinBoxForm} ${changeTheme ? 'colorDrak' : ''}`}
-                >
-                    <Form.Item
-                        label="e-mail"
-                        name="email"
-                        style={{width: '45%', marginBottom: '10px'}}
-                        labelCol={{
-                            span: 20,
-                        }}
-                    >
-                        <Input className={changeTheme ? 'darknessTwo' : 'brightTT'}/>
-                    </Form.Item>
-
-                    <Form.Item
-                        label="LINK TO LOGO URL"
-                        name="link"
-                        labelCol={{
-                            span: 20,
-                        }}
-                        style={{width: '45%', marginBottom: '10px'}}
-                        rules={[
-                            {
-                                required: !imagePreview,
-                                message: 'Please input your password!',
-                            },
-                        ]}
-                    >
-                        {
-                            imagePreview ? '' :
-                                <Input readOnly className={changeTheme ? 'darknessTwo' : 'brightTT'}
-                                       onClick={() => filePickerRef.current.click()}/>
-                        }
-                        <input
-                            ref={filePickerRef}
-                            onChange={addImageFromDevice}
-                            type="file" readOnly
-                            accept="image/*"
-                            style={{display: "none"}}
-                        />
-                        {
-                            imagePreview ? <div style={{display: 'flex', alignItems: 'center'}}>
-                                <img src={imagePreview} alt="imagePreview"
-                                     width={35}/>
-                                <Popconfirm
-                                    title="Delete the task"
-                                    description="Are you sure to delete this task?"
-                                    onConfirm={deleteImg}
-                                    okText="Yes"
-                                    cancelText="No"
-                                >
-                                    <img src="/delete1.svg" style={{marginLeft: '10px', cursor: 'pointer'}}
-                                         alt=""
-                                         width={15}/>
-                                </Popconfirm>
-                            </div> : ''
-                        }
-                    </Form.Item>
-                    <Form.Item
-                        label="Token Website"
-                        labelCol={{
-                            span: 20,
-                        }}
-                        name="website"
-                        style={{width: '45%', marginBottom: '10px'}}
-                    >
-                        <Input className={changeTheme ? 'darknessTwo' : 'brightTT'}/>
-                    </Form.Item>
-                    <Form.Item
-                        label="Telegram"
-                        labelCol={{
-                            span: 20,
-                        }}
-                        name="telegram"
-                        style={{width: '45%', marginBottom: '10px'}}
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Please input your username!',
-                            },
-                        ]}
-                    >
-                        <Input className={changeTheme ? 'darknessTwo' : 'brightTT'}/>
-                    </Form.Item>
-                    <Form.Item
-                        label="Discord"
-                        name="discord"
-                        labelCol={{
-                            span: 20,
-                        }}
-                        style={{width: '45%', marginBottom: '10px'}}
-                    >
-                        <Input className={changeTheme ? 'darknessTwo' : 'brightTT'}/>
-                    </Form.Item>
-                    <Form.Item
-                        label="Twitter"
-                        labelCol={{
-                            span: 20,
-                        }}
-                        name="Twitter"
-                        style={{width: '45%', marginBottom: '10px'}}
-                    >
-                        <Input className={changeTheme ? 'darknessTwo' : 'brightTT'}/>
-                    </Form.Item>
-                    <Form.Item
-                        label="Facebook"
-                        labelCol={{
-                            span: 20,
-                        }}
-                        name="facebook"
-                        style={{width: '45%', marginBottom: '10px'}}
-                    >
-                        <Input className={changeTheme ? 'darknessTwo' : 'brightTT'}/>
-                    </Form.Item>
-                    <Form.Item
-                        label="Youtube"
-                        name="youtube"
-                        labelCol={{
-                            span: 20,
-                        }}
-                        style={{width: '45%', marginBottom: '10px'}}
-                    >
-                        <Input className={changeTheme ? 'darknessTwo' : 'brightTT'}/>
-                    </Form.Item>
-                    <Form.Item
-                        label="Instagram"
-                        name="instagram"
-                        labelCol={{
-                            span: 20,
-                        }}
-                        style={{width: '45%', marginBottom: '10px'}}
-                    >
-                        <Input className={changeTheme ? 'darknessTwo' : 'brightTT'}/>
-                    </Form.Item>
-                    <Form.Item
-                        label="TikTok"
-                        name="tikTok"
-                        labelCol={{
-                            span: 20,
-                        }}
-                        style={{width: '45%', marginBottom: '10px'}}
-                    >
-                        <Input className={changeTheme ? 'darknessTwo' : 'brightTT'}/>
-                    </Form.Item>
-                    <Form.Item
-                        label="Medium"
-                        name="medium"
-                        labelCol={{
-                            span: 20,
-                        }}
-                        style={{width: '45%', marginBottom: '10px'}}
-                    >
-                        <Input className={changeTheme ? 'darknessTwo' : 'brightTT'}/>
-                    </Form.Item>
-                    <Form.Item
-                        label="Project Brief"
-                        name="brief"
-                        labelCol={{
-                            span: 20,
-                        }}
-                        style={{width: '45%', marginBottom: '10px'}}
-                    >
-                        <Input className={changeTheme ? 'darknessTwo' : 'brightTT'}/>
-                    </Form.Item>
-
-                    <Form.Item label="TextArea" name="12" labelCol={{span: 20,}}
-                               style={{width: '100%', marginBottom: '10px'}}>
-                        <TextArea placeholder={'max. 150 characters'}
-                                  className={changeTheme ? 'darknessTwo' : 'brightTT'} style={{width: '100%',}}
-                                  maxLength={10}/>
-                    </Form.Item>
-                    <Form.Item style={{display: 'flex', justifyContent: 'flex-end', width: '100%'}}>
-                        <div style={{display: 'flex',}}><img src="/Vectors.svg" alt=""
-                                                             onClick={() => {
-                                                                 setInfoShow(false)
-                                                                 form.resetFields()
-                                                             }}
-                                                             style={{cursor: 'pointer', marginRight: '20px'}}
-                                                             width={25}/>
-                            <img src="/sure.svg" alt="" onClick={() => form.submit()} style={{cursor: 'pointer'}}
-                                 width={30}/>
-                        </div>
-                    </Form.Item>
-                </Form> : <div>
+                isSureShow ? <LoadingOutlined
+                    style={changeTheme ? {color: 'white', display: 'block', margin: '0 auto'} : {
+                        color: 'black',
+                        display: 'block',
+                        margin: '0 auto'
+                    }}/> : <>
                     {
-                        tokenSlice.length > 0 ? tokenSlice.map((i, index) => {
-                            return <div key={index} className={styles.coinBoxTop}>
+                        infoSow ? <div style={{display: 'flex', alignItems: 'center'}}>
+                                <div className={styles.coinBoxTop}>
+                                    <img src="/Booking.png" alt="" width={30}/>
+                                    {/*<span style={{margin: '0 10px'}}>{infoParams && infoParams.name}</span>*/}
+                                    <span
+                                        style={{color: '#9bc2d9'}}>{infoParams.slice(0, 5) + '...' + infoParams.slice(-5)}</span>
+                                </div>
+                                <div className={styles.coinBoxSet}>
+                                    <span className={styles.coinBoxInfo}>info</span>
+                                    <img src="/setCoin.svg" alt="" width={15} style={{cursor: 'pointer'}}/>
+                                </div>
+                            </div>
+                            : ''
+                    }
+                    {
+                        infoSow ? <Form
+                            name="basic"
+                            form={form}
+                            onFinish={onFinish}
+                            defaultValue={formList}
+                            layout={'vertical'}
+                            autoComplete="off"
+                            className={`${styles.coinBoxForm} ${changeTheme ? 'colorDrak' : ''}`}
+                        >
+                            <Form.Item
+                                label="e-mail"
+                                name="email"
+                                style={{width: '45%', marginBottom: '10px'}}
+                                labelCol={{
+                                    span: 20,
+                                }}
+                            >
+                                <Input className={changeTheme ? 'darknessTwo' : 'brightTT'}/>
+                            </Form.Item>
+
+                            <Form.Item
+                                label="LINK TO LOGO URL"
+                                name="link"
+                                labelCol={{
+                                    span: 20,
+                                }}
+                                style={{width: '45%', marginBottom: '10px'}}
+                                rules={[
+                                    {
+                                        required: !imagePreview,
+                                        message: 'Please input your password!',
+                                    },
+                                ]}
+                            >
+                                {
+                                    imagePreview ? '' :
+                                        <Input readOnly className={changeTheme ? 'darknessTwo' : 'brightTT'}
+                                               onClick={() => filePickerRef.current.click()}/>
+                                }
+                                <input
+                                    ref={filePickerRef}
+                                    onChange={addImageFromDevice}
+                                    type="file" readOnly
+                                    accept="image/*"
+                                    style={{display: "none"}}
+                                />
+                                {
+                                    imagePreview ? <div style={{display: 'flex', alignItems: 'center'}}>
+                                        <img src={imagePreview} alt="imagePreview"
+                                             width={35}/>
+                                        <Popconfirm
+                                            title="Delete the task"
+                                            description="Are you sure to delete this task?"
+                                            onConfirm={deleteImg}
+                                            okText="Yes"
+                                            cancelText="No"
+                                        >
+                                            <img src="/delete1.svg" style={{marginLeft: '10px', cursor: 'pointer'}}
+                                                 alt=""
+                                                 width={15}/>
+                                        </Popconfirm>
+                                    </div> : ''
+                                }
+                            </Form.Item>
+                            <Form.Item
+                                label="Token Website"
+                                labelCol={{
+                                    span: 20,
+                                }}
+                                name="website"
+                                style={{width: '45%', marginBottom: '10px'}}
+                            >
+                                <Input className={changeTheme ? 'darknessTwo' : 'brightTT'}/>
+                            </Form.Item>
+                            <Form.Item
+                                label="Telegram"
+                                labelCol={{
+                                    span: 20,
+                                }}
+                                name="telegram"
+                                style={{width: '45%', marginBottom: '10px'}}
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Please input your username!',
+                                    },
+                                ]}
+                            >
+                                <Input className={changeTheme ? 'darknessTwo' : 'brightTT'}/>
+                            </Form.Item>
+                            <Form.Item
+                                label="Discord"
+                                name="discord"
+                                labelCol={{
+                                    span: 20,
+                                }}
+                                style={{width: '45%', marginBottom: '10px'}}
+                            >
+                                <Input className={changeTheme ? 'darknessTwo' : 'brightTT'}/>
+                            </Form.Item>
+                            <Form.Item
+                                label="Twitter"
+                                labelCol={{
+                                    span: 20,
+                                }}
+                                name="Twitter"
+                                style={{width: '45%', marginBottom: '10px'}}
+                            >
+                                <Input className={changeTheme ? 'darknessTwo' : 'brightTT'}/>
+                            </Form.Item>
+                            <Form.Item
+                                label="Facebook"
+                                labelCol={{
+                                    span: 20,
+                                }}
+                                name="facebook"
+                                style={{width: '45%', marginBottom: '10px'}}
+                            >
+                                <Input className={changeTheme ? 'darknessTwo' : 'brightTT'}/>
+                            </Form.Item>
+                            <Form.Item
+                                label="Youtube"
+                                name="youtube"
+                                labelCol={{
+                                    span: 20,
+                                }}
+                                style={{width: '45%', marginBottom: '10px'}}
+                            >
+                                <Input className={changeTheme ? 'darknessTwo' : 'brightTT'}/>
+                            </Form.Item>
+                            <Form.Item
+                                label="Instagram"
+                                name="instagram"
+                                labelCol={{
+                                    span: 20,
+                                }}
+                                style={{width: '45%', marginBottom: '10px'}}
+                            >
+                                <Input className={changeTheme ? 'darknessTwo' : 'brightTT'}/>
+                            </Form.Item>
+                            <Form.Item
+                                label="TikTok"
+                                name="tikTok"
+                                labelCol={{
+                                    span: 20,
+                                }}
+                                style={{width: '45%', marginBottom: '10px'}}
+                            >
+                                <Input className={changeTheme ? 'darknessTwo' : 'brightTT'}/>
+                            </Form.Item>
+                            <Form.Item
+                                label="Medium"
+                                name="medium"
+                                labelCol={{
+                                    span: 20,
+                                }}
+                                style={{width: '45%', marginBottom: '10px'}}
+                            >
+                                <Input className={changeTheme ? 'darknessTwo' : 'brightTT'}/>
+                            </Form.Item>
+                            <Form.Item
+                                label="Project Brief"
+                                name="brief"
+                                labelCol={{
+                                    span: 20,
+                                }}
+                                style={{width: '45%', marginBottom: '10px'}}
+                            >
+                                <Input className={changeTheme ? 'darknessTwo' : 'brightTT'}/>
+                            </Form.Item>
+
+                            <Form.Item label="TextArea" name="12" labelCol={{span: 20,}}
+                                       style={{width: '100%', marginBottom: '10px'}}>
+                                <TextArea placeholder={'max. 150 characters'}
+                                          className={changeTheme ? 'darknessTwo' : 'brightTT'} style={{width: '100%',}}
+                                          maxLength={10}/>
+                            </Form.Item>
+                            <Form.Item style={{display: 'flex', justifyContent: 'flex-end', width: '100%'}}>
+                                <div style={{display: 'flex',}}><img src="/Vectors.svg" alt=""
+                                                                     onClick={() => {
+                                                                         setInfoShow(false)
+                                                                         form.resetFields()
+                                                                     }}
+                                                                     style={{cursor: 'pointer', marginRight: '20px'}}
+                                                                     width={25}/>
+                                    <img src="/sure.svg" alt="" onClick={() => form.submit()}
+                                         style={{cursor: 'pointer'}}
+                                         width={30}/>
+                                </div>
+                            </Form.Item>
+                        </Form> : <div>
+                            {
+                                tokenSlice.length > 0 ? tokenSlice.map((i, index) => {
+                                    return <div key={index} className={styles.coinBoxTop}>
                                 <span style={{
                                     fontSize: '18px',
                                     fontWeight: 'bold',
                                     marginRight: '10px'
                                 }}>{index + 1}</span>
-                                <img src="/Booking.png" alt="" width={30}/>
-                                {/*<span style={{margin: '0 10px'}}>{i.name}</span>*/}
-                                <span style={{color: '#2294D4'}}>{i?.slice(0,5)+'...'+i?.slice(-4)}</span>
-                                <div className={styles.coinBoxSet}>
+                                        <img src="/Booking.png" alt="" width={30}/>
+                                        {/*<span style={{margin: '0 10px'}}>{i.name}</span>*/}
+                                        <span style={{color: '#2294D4'}}>{i?.slice(0, 5) + '...' + i?.slice(-4)}</span>
+                                        <div className={styles.coinBoxSet}>
                             <span style={{
                                 fontSize: '18px',
                                 fontWeight: 'bold',
                                 marginRight: '10px',
                                 cursor: 'pointer',
                             }}>info</span>
-                                    <img src="/setCoin.svg" alt="" width={15} style={{cursor: 'pointer'}}
-                                         onClick={() => setInfo(i)}/>
-                                </div>
-                            </div>
-                        }) : ''}
-                    {
-                        tokenAll.length > 0 ? <div>
-                            <Pagination pageSize={20} onChange={change}
-                                        rootClassName={`${changeTheme ? 'drakePat' : ''} setBo`} defaultCurrent={1}
-                                        total={tokenAll.length}/>
-                        </div> : ''
+                                            <img src="/setCoin.svg" alt="" width={15} style={{cursor: 'pointer'}}
+                                                 onClick={() => setInfo(i)}/>
+                                        </div>
+                                    </div>
+                                }) : <p style={{textAlign: 'center'}}>no data</p>}
+                            {
+                                tokenAll.length > 0 ? <div>
+                                    <Pagination pageSize={20} onChange={change}
+                                                rootClassName={`${changeTheme ? 'drakePat' : ''} setBo`}
+                                                defaultCurrent={1}
+                                                total={tokenAll.length}/>
+                                </div> : ''
+                            }
+                        </div>
                     }
-                </div>
+                </>
+
             }
+
         </div>
     );
 }

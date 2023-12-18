@@ -71,7 +71,7 @@ function Details() {
         },
         {
             title: 'DEX', align: 'center', render: () => {
-                return <img src="/dex-uniswap.png" alt="" width={30} height={30} style={{borderRadius:'50%',display:'block',margin:'0 auto',width:'auto',height:'auto'}}/>
+                return <img src="/dex-uniswap.png" alt="" width={30} height={30} style={{borderRadius:'50%',display:'block',margin:'0 auto'}}/>
             }
         },
     ];

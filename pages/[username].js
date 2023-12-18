@@ -108,7 +108,9 @@ function ProfilePage() {
                                 avatarUrl: data?.data?.url,
                             }
                         }, token);
-                        if (res && res?.status === 200) {
+                        if(res==='please'){
+                            setLogin()
+                        }else if (res && res?.status === 200) {
                             setPage(1)
                             change()
                             setPostsAdd([])
@@ -126,7 +128,9 @@ function ProfilePage() {
                                 coverUrl: data?.data?.url,
                             }
                         }, token);
-                        if (res && res?.status === 200) {
+                        if(res){
+                            setLogin()
+                        }else if (res && res?.status === 200) {
                             setPage(1)
                             change()
                             setPostsAdd([])

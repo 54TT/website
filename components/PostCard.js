@@ -97,7 +97,10 @@ function PostCard({post, user, change, liked}) {
                 setCommentText('')
                 const newComment = {
                     id: dayjs().valueOf(),
-                    user,
+                    beReplyUserAvatar:user?.avatarUrl,
+                    replyUserId:user?.uid,
+                    replyUsername:user?.username,
+                    replyUserAddress:user.address,
                     content: commentText,
                     createdAt: dayjs().format('YYYY-MM-DD HH:mm:ss'),
                 };
@@ -231,7 +234,7 @@ function PostCard({post, user, change, liked}) {
                  className={changeTheme ? 'darknessFont' : 'brightFont'}>{post?.content || ''}</div>
             {/*图片*/}
             {post && post?.imageList && post?.imageList.length > 0 ?
-                <img src={post?.imageList[0] || ''} alt={''} style={{width: '100%',}}/> : ''}
+                <img src={post?.imageList[0] || ''} alt={''} style={{width: '80%',display:'block',margin:'0 auto',borderRadius:'10px'}}/> : ''}
             {/*几条聊天*/}
             <div style={{marginTop: "10px"}} className="ml-5 mr-5">
                 <div className="flex justify-between w-full">
@@ -305,7 +308,7 @@ function PostCard({post, user, change, liked}) {
             {/*发送消息*/}
             {showComments && (
                 <div className="pb-4">
-                    <div className="flex items-center pt-4 pl-5 pr-5 ">
+                    <div className="flex items-center pt-4 pl-5 pr-5 " style={{marginBottom:'15px'}}>
                         <form className="w-full">
                             {/* div which contains the profilepic and the input div */}
                             <div className="flex space-x-2 items-center">

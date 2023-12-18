@@ -27,7 +27,6 @@ function CommentComponent({comment, postId, change, user, setComments, changComm
     const handleMouseOver = () => {
         setIsHovering(true);
     };
-
     const handleMouseOut = () => {
         setIsHovering(false);
     };
@@ -36,11 +35,9 @@ function CommentComponent({comment, postId, change, user, setComments, changComm
         setOpen(true);
         setCommentId(id)
     };
-
     const handleClose = () => {
         setOpen(false);
     };
-
     const handleAgree = async () => {
         try {
             const token = cookie.get('token')

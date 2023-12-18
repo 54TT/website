@@ -130,6 +130,12 @@ li.check:before {
 .leftMoe:hover {
     background-color: #D0FF95;
 }
+.leftMoe:hover span {
+    color: black !important;
+}
+.hoverBut:hover{
+    background-color: rgb(128, 128, 128);
+}
 
 .aaaa .MuiDrawer-paper {
     background-color: rgb(253, 213, 62);
@@ -243,12 +249,6 @@ li.check:before {
 }
 
 
-
-
-
-
-
-
 .coinTable .ant-table .ant-table-content .ant-table-thead .ant-table-cell {
     background-color: rgb(249, 188, 54);
     padding: 8px !important;
@@ -260,7 +260,7 @@ li.check:before {
 }
 
 .coinTable .ant-table .ant-table-content .ant-table-tbody .ant-table-row .ant-table-cell {
-    background-color:  rgb(249, 188, 54);
+    background-color: rgb(249, 188, 54);
     border: none !important;
     padding: 8px !important;
 }
@@ -272,7 +272,6 @@ li.check:before {
 .coinTable .ant-table .ant-table-content .ant-table-tbody .ant-table-row:hover .ant-table-cell {
     background-color: rgb(254, 239, 146) !important;
 }
-
 
 
 .darkTable .ant-table .ant-table-content .ant-table-thead .ant-table-cell {
@@ -327,9 +326,11 @@ li.check:before {
     border: none;
     color: rgb(143, 143, 143) !important;
 }
+
 .hotTableD .ant-table .ant-table-container .ant-table-thead .ant-table-cell .ant-table-column-sorter .ant-table-column-sorter-inner span {
     color: rgb(143, 143, 143);
 }
+
 .hotTableD .ant-table .ant-table-container .ant-table-thead .ant-table-cell:before {
     display: none;
 }
@@ -342,8 +343,6 @@ li.check:before {
     background-color: rgb(59, 55, 71) !important;
     border-bottom-color: #626262;
 }
-
-
 
 
 .anyHave .ant-table-cell {
@@ -362,13 +361,16 @@ li.check:before {
 .presale .ant-table .ant-table-content .ant-table-tbody .ant-table-row:hover .ant-table-cell {
     background-color: rgb(254, 239, 146) !important;
 }
+
 .presale .ant-table .ant-table-content .ant-table-thead .ant-table-cell {
     background-color: #BCEE7D;
     border: none;
 }
+
 .presale .ant-table .ant-table-content .ant-table-thead .ant-table-cell:before {
     display: none;
 }
+
 .presale .ant-table .ant-table-content .ant-table-tbody tr td {
     border-bottom: 1px solid black !important;
 }
@@ -376,15 +378,19 @@ li.check:before {
 .anyTable .ant-table .ant-table-content .ant-table-thead .ant-table-cell .ant-table-column-sorters .ant-table-column-title {
     flex: none !important;
 }
+
 .anyTable .ant-table .ant-table-content .ant-table-thead .ant-table-cell .ant-table-column-sorters {
     justify-content: center !important;
 }
+
 .ant-table .ant-table-container .ant-table-tbody .ant-table-row:hover {
     cursor: pointer;
 }
-.setBo .ant-pagination-options{
-    display: none!important;
+
+.setBo .ant-pagination-options {
+    display: none !important;
 }
+
 .detailSegmented {
     background-color: rgb(253, 213, 62);
     margin-bottom: 20px;
@@ -423,7 +429,7 @@ li.check:before {
 }
 
 /*drawer  滚动条*/
-.socialScrolld  .darknessTwo .MuiDrawer-root .MuiDrawer-paper ::-webkit-scrollbar {
+.socialScrolld .darknessTwo .MuiDrawer-root .MuiDrawer-paper ::-webkit-scrollbar {
     width: 10px;
     background-color: rgb(253, 213, 62);
 }
@@ -483,7 +489,8 @@ li.check:before {
     border-radius: 12px;
     transition: box-shadow 0.3s;
 }
-.postCardComment{
+
+.postCardComment {
     padding: 5px;
     border-radius: 10px;
     margin: 0 auto;
@@ -491,34 +498,35 @@ li.check:before {
     /*background-color: rgb(254,239,146);*/
     width: 100%;
 }
-.postCardComment:hover{
+
+.postCardComment:hover {
     background-color: white;
 }
 
 /* 超小屏幕 */
 @media screen and (max-width: 768px) {
-    .cardParams{
+    .cardParams {
         width: 100%;
     }
-  }
-  
-  /* 小屏幕 */
-  @media screen and (min-width: 768px) {
-    .cardParams{
+}
+
+/* 小屏幕 */
+@media screen and (min-width: 768px) {
+    .cardParams {
         width: 100%;
     }
-  }
-  
-  /* 中型屏幕 平板 */
-  @media screen and (min-width: 992px){
-    
-  }
-  
-  /* 电脑屏幕 */
-  @media screen and (min-width: 1200px){
-    .cardParams{
+}
+
+/* 中型屏幕 平板 */
+@media screen and (min-width: 992px) {
+
+}
+
+/* 电脑屏幕 */
+@media screen and (min-width: 1200px) {
+    .cardParams {
         width: 34%;
     }
-  }
+}
 
 

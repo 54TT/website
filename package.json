@@ -24,6 +24,7 @@
     "dayjs": "^1.11.10",
     "dotenv": "^16.3.1",
     "ethers": "^5.7.2",
+    "event-source-polyfill": "^1.0.31",
     "graphql": "^16.8.1",
     "graphql-tag": "^2.12.6",
     "hjt-connectkit": "^1.5.9",

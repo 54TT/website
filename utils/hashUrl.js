@@ -30,6 +30,7 @@ axios.interceptors.response.use(
     }
 );
 export const request = async (method, url, data, token) => {
+    console.log(token)
     const username = cookie.get('user')
     if (username && username != 'undefined') {
         const params = JSON.parse(username)

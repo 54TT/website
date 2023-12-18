@@ -12,7 +12,7 @@ import {CountContext} from "../../../components/Layout/Layout";
 
 function FollowingPage() {
     const social = changeLang("social");
-    const {setLogin} = useContext(CountContext)
+    const {setLogin,changeTheme} = useContext(CountContext)
     const router = useRouter();
     const [user, setUser] = useState(null);
     const [followingArrayState, setFollowingArrayState] = useState(null);
@@ -86,14 +86,14 @@ function FollowingPage() {
     return (
         <div className={styled.allMoblice}>
             <div
-                className={`h-screen ${styled.followersBox} ${styled.allMobliceW}`}
+                className={`h-screen ${styled.followersBox} ${styled.allMobliceW}  ${changeTheme?'darknessTwo': 'brightTwo'}`}
                 style={{height: winHeight, minHeight: winHeight}}
             >
                 <main className={styled.followersBoxMin}>
                     <Sidebar user={user} topDist={"0"} maxWidth={"250px"}/>
-                    <div className={styled.followersBoxData}>
+                    <div className={`${changeTheme?'darknessThree':'noti'} ${styled.followersBoxData}`}>
                         <div className="flex items-center ml-2">
-                            <p className={styled.followersBoxName}>{social.following} ·</p>
+                            <p className={`${changeTheme?'fontW':'fontB'} ${styled.followersBoxName}`}>{social.following} ·</p>
                             <p
                                 style={{
                                     userSelect: "none",
@@ -123,7 +123,7 @@ function FollowingPage() {
                                                     alt="userimg"
                                                 />
                                                 <Link href={`/${fol?.uid}`}>
-                                                    <p className={`ml-3 ${styled.followersBoxLink}`}>
+                                                    <p className={` ${styled.followersBoxLink}  ${changeTheme?'fontW':'fontB'} `}>
                                                         {fol?.username
                                                             ? fol?.username.length > 9
                                                                 ? fol?.username.slice(0, 4) +

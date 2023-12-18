@@ -444,8 +444,6 @@
     border-radius: 50%;
     display: block;
     margin: 0 auto;
-    height: auto;
-    width: auto;
 }
 
 
@@ -514,13 +512,12 @@
 
 
 .followersBox {
-    background-color: rgb(253, 213, 62);
     margin-right: 20px;
     border-radius: 10px;
 }
 
 .followersBoxMin {
-    height: calc(100vh - 4.5rem);
+    /*min-height: 90vh;*/
     overflow-y: auto;
     display: flex;
 }
@@ -531,7 +528,6 @@
     overflow-y: auto;
     border-radius: 10px;
     padding: 20px;
-    background-color: #B2DB7E;
 }
 
 .followersBoxName {
@@ -543,14 +539,18 @@
 .followersBoxFollow {
     margin-bottom: 10px;
     border: 1px solid rgb(128, 128, 128);
-    width: 30%;
     padding: 10px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     border-radius: 10px;
-    background-color: #BCEE7D;
     flex-wrap: wrap;
+}
+.followersBoxFollow:hover{
+    background-color: #D0FF95;
+}
+.followersBoxFollow:hover p{
+    color: black!important;
 }
 
 .followersBoxLink {
@@ -648,7 +648,7 @@
 
 .usernameBoxBot {
     margin-top: 20px;
-    min-height: calc(100vh - 26rem);
+    /*min-height: 90vh;*/
     padding-top: 60px;
 }
 
@@ -677,7 +677,7 @@
 
 .coinBox {
     margin-right: 20px;
-    min-height: 90vh;
+    /*min-height: 90vh;*/
     border-radius: 10px;
     position: relative;
     padding: 10px;
@@ -723,7 +723,7 @@
 
 .lpDetail {
     background-color: rgb(253, 213, 62);
-    min-height: 90vh;
+    /*min-height: 90vh;*/
     border-radius: 10px;
     margin-right: 20px;
     padding: 40px;

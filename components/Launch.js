@@ -143,7 +143,7 @@ export default function Presale() {
         },
         {
             title: launch.dex, align: 'center', render: (text, record) => {
-                return <img src="/dex-uniswap.png" alt="" style={{height: 'auto', width: 'auto'}} width={30}
+                return <img src="/dex-uniswap.png" alt="" width={30}
                               height={30} className={styled.launchTableImg}/>
             }
         },

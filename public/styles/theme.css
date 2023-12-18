@@ -45,6 +45,9 @@
 .darknessThree {
     background-color: rgb(53, 47, 74) !important;
 }
+.noti{
+    background-color: #B2DB7E !important;
+}
 
 .darknessThree > span {
     color: rgb(138, 138, 138);

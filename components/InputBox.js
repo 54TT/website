@@ -90,7 +90,7 @@ function InputBox({user, setPosts, increaseSizeAnim, change}) {
                 <p className={`mt-5 ${styled.inputBoxBoxLine}`}></p>
                 <div className="flex space-x-4 mt-2 ml-4 mr-4 justify-evenly items-center">
                     <div
-                        className="flex flex-grow justify-center items-center hover:bg-gray-100 space-x-2 mb-2 pt-2 pb-2 pl-2.5 pr-2.5 rounded-xl cursor-pointer"
+                        className="flex flex-grow justify-center items-center hoverBut  space-x-2 mb-2 pt-2 pb-2 pl-2.5 pr-2.5 rounded-xl cursor-pointer"
                         onClick={() => filePickerRef.current.click()}
                     >
                         <CameraIcon className="h-7  "/>
@@ -99,18 +99,19 @@ function InputBox({user, setPosts, increaseSizeAnim, change}) {
                             onChange={addImageFromDevice}
                             type="file"
                             accept="image/*"
+                            className={changeTheme?'fontW':'fontB'}
                             style={{display: "none"}}
                         />
-                        <p>Photo</p>
+                        <p className={changeTheme?'fontW':'fontB'}>Photo</p>
                     </div>
                     <button
-                        className="flex flex-grow justify-center items-center hover:bg-gray-100 space-x-2 mb-2 pt-2 pb-2 pl-2.5 pr-2.5 rounded-xl cursor-pointer"
+                        className="flex flex-grow justify-center items-center hoverBut space-x-2 mb-2 pt-2 pb-2 pl-2.5 pr-2.5 rounded-xl cursor-pointer"
                         type="submit"
                         ref={buttonRef}
                         onClick={createPost}
                     >
-                        <ArrowSmRightIcon className="h-7"/>
-                        <p>Post</p>
+                        <ArrowSmRightIcon className={changeTheme?'fontW h-7':'fontB h-7'}/>
+                        <p className={changeTheme?'fontW':'fontB'}>Post</p>
                     </button>
                 </div>
             </>

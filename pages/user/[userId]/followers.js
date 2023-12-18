@@ -18,7 +18,7 @@ import {CountContext} from "../../../components/Layout/Layout";
 function FollowersPage() {
     const social = changeLang('social')
     const router = useRouter();
-    const {setLogin} = useContext(CountContext);
+    const {setLogin, changeTheme} = useContext(CountContext);
     const getUs = async () => {
         try {
             const params = JSON.parse(cookie.get('username'))
@@ -99,16 +99,14 @@ function FollowersPage() {
     return (
         <div className={styled.allMoblice}>
             <div
-                className={`h-screen ${styled.followersBox} ${styled.allMobliceW}`}
-                style={{height: winHeight, minHeight: winHeight}}
-
-            >
+                className={`h-screen ${styled.followersBox} ${styled.allMobliceW}  ${changeTheme ? 'darknessTwo' : 'brightTwo'}`}
+                style={{height: winHeight, minHeight: winHeight}}>
                 <main className={styled.followersBoxMin}>
                     <Sidebar user={userPar} topDist={"0"} maxWidth={"250px"}/>
                     <div
-                        className={styled.followersBoxData}>
+                        className={`${styled.followersBoxData} ${changeTheme ? 'darknessThree' : 'noti'}`}>
                         <div className="flex items-center ml-2">
-                            <p className={styled.followersBoxName}>{social.followers} ·</p>
+                            <p className={`${changeTheme ? 'fontW' : 'fontB'} ${styled.followersBoxName}`}>{social.followers} ·</p>
                             <p style={{
                                 userSelect: 'none',
                                 fontSize: '20px'
@@ -116,7 +114,7 @@ function FollowersPage() {
                                 {followers?.length || 0}
                             </p>
                         </div>
-                        {followers.length > 0 ? (<div>
+                        {followers.length > 0 ? (<div className={styled.followingBox}>
                             {followers.map((fol) => {
                                 return (<div
                                     className={styled.followersBoxFollow}
@@ -127,7 +125,7 @@ function FollowersPage() {
                                              height={40}
                                              style={{borderRadius: '50%'}}/>
                                         <Link href={`/${fol?.uid}`}>
-                                            <p className={`ml-2 ${styled.followersBoxLink}`}>
+                                            <p className={`${styled.followersBoxLink} ${changeTheme ? 'fontW' : 'fontB'}`}>
                                                 {fol?.username ? fol?.username.length > 10 ? fol.username.slice(0, 4) + '...' + fol.username.slice(-3) : fol?.username : fol?.address.slice(0, 4)}
                                             </p>
                                         </Link>
@@ -154,14 +152,14 @@ function FollowersPage() {
                                         </div>) : (<div className={styled.followersBoxFoll}
                                                         onClick={async () => {
                                                             try {
-                                                            const token = cookie.get('token')
-                                                            const data = await request('post', "/api/v1/follow", {userId: fol.uid}, token)
-                                                            if (data === 'please') {
-                                                                setLogin()
-                                                            } else if (data && data?.status === 200 && data?.data?.code === 200) {
-                                                                change()
-                                                            }
-                                                            }catch (err){
+                                                                const token = cookie.get('token')
+                                                                const data = await request('post', "/api/v1/follow", {userId: fol.uid}, token)
+                                                                if (data === 'please') {
+                                                                    setLogin()
+                                                                } else if (data && data?.status === 200 && data?.data?.code === 200) {
+                                                                    change()
+                                                                }
+                                                            } catch (err) {
                                                                 return null
                                                             }
                                                         }}

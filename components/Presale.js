@@ -146,7 +146,7 @@ export default function Presale() {
         },
         {
             title: presale.dex, align: 'center', render: (text, record) => {
-                return <img src="/dex-uniswap.png" alt="" width={30} style={{height: 'auto', width: 'auto'}}
+                return <img src="/dex-uniswap.png" alt="" width={30}
                               height={30} className={styled.presaleBoxTableImgs}/>
             }
         },

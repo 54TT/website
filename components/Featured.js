@@ -7,8 +7,6 @@ import {autoConvert, changeLang} from '/utils/set'
 import styled from '/public/styles/all.module.css'
 import {CountContext} from '/components/Layout/Layout';
 import {request} from "../utils/hashUrl";
-import cookie from "js-cookie";
-
 export default function Featured() {
     const featured = changeLang('featured')
     const {changeTheme,setLogin} = useContext(CountContext);
@@ -133,12 +131,10 @@ export default function Featured() {
         },
         {
             title: packageHtml(featured.dex), align: 'center', render: (text, record) => {
-                return <img src="/dex-uniswap.png" alt="" width={30} height={30} style={{
+                return <img src="https://dex-pert-pic.sgp1.cdn.digitaloceanspaces.com/uniswap-uni-logo.png" alt="" width={30} height={30} style={{
                     borderRadius: '50%',
                     display: 'block',
                     margin: '0 auto',
-                    height: 'auto',
-                    width: 'auto'
                 }}/>
             }
         },

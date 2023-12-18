@@ -6,6 +6,7 @@ import {Anchor} from 'antd'
 import cookie from "js-cookie";
 import {useDisconnect} from "wagmi";
 import  styled from '/public/styles/all.module.css'
+import {request} from "../../utils/hashUrl";
 
 export const CountContext = createContext(null);
 const Layout = ({children}) => {
@@ -31,7 +32,7 @@ const Layout = ({children}) => {
     const changeBol=(name)=>{
         setLogoutBol(name)
     }
-    const setLogin = () => {
+    const setLogin = async () => {
         cookie.remove('name');
         cookie.remove('username');
         cookie.remove('token');
@@ -39,6 +40,7 @@ const Layout = ({children}) => {
         if (router.pathname !== '/') {
             router.push('/')
         }
+
         changeBol(true)
         disconnect()
     }
