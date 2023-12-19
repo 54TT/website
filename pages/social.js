@@ -5,12 +5,14 @@ import _ from 'lodash'
 import dynamic from 'next/dynamic'
 import cook from "js-cookie";
 import {CountContext} from '/components/Layout/Layout'
+
 const Feed = dynamic(() => import('../components/Feed'), {ssr: false});
 const RightSideColumn = dynamic(() => import('../components/RightSideColumn'), {ssr: false});
 import {arrayUnique} from '/utils/set'
 import {request} from "../utils/hashUrl";
 import cookie from "js-cookie";
 import {Skeleton} from "antd";
+
 function Index() {
     const {setLogin} = useContext(CountContext);
     // 推文
@@ -57,19 +59,35 @@ function Index() {
     }, [postsDataBol])
     const getUs = async () => {
         const params = JSON.parse(cookie.get('username'))
-        const token =  cookie.get('token')
-        const data = await request('get', "/api/v1/userinfo/" + params?.uid,'',token)
-      if(data==='please'){
-          setLogin()
-      }else  if (data && data?.status === 200) {
-            const user = data?.data?.data
-            if (user) {
-                setUserPar(user)
+        const token = cookie.get('token')
+        try {
+            const data = await request('get', "/api/v1/userinfo/" + params?.uid, '', token)
+            if (data === 'please') {
+                setLogin()
+            } else if (data && data?.status === 200) {
+                const user = data?.data?.data
+                if (user) {
+                    setUserPar(user)
+                } else {
+                    setUserPar(null)
+                }
             } else {
                 setUserPar(null)
             }
-        } else {
-            setUserPar(null)
+        } catch (err) {
+            return null
+        }
+        try {
+            const data = await request('get', '/api/v1/session/list', '', token);
+            if (data === 'please') {
+                setLogin()
+            } else if (data && data?.status === 200) {
+                setChatsData(data?.data?.SessionList)
+            } else {
+                setChatsData([])
+            }
+        } catch (err) {
+            return null
         }
     }
     useEffect(() => {
@@ -103,21 +121,18 @@ function Index() {
         if (sendBol) {
             a = 1
         }
-        const token =  cookie.get('token')
-        const res = await request('post', `/api/v1/post/public`, {page: a},token);
-        if(res==='please'){
+        const token = cookie.get('token')
+        const res = await request('post', `/api/v1/post/public`, {page: a}, token);
+        if (res === 'please') {
             setLogin()
-        }else if (res && res?.status === 200) {
+        } else if (res && res?.status === 200) {
             setPostsDataBol(!postsDataBol)
             setPostsData(res?.data?.posts)
         } else {
             setPostsDataBol(!postsDataBol)
             setPostsData([])
         }
-        // const chatRes = await axios.get(`${baseUrl}/api/chats`, {
-        //     params: {userId: userPar?.id},
-        // });
-        // setChatsData(chatRes && chatRes?.data.length > 0 ? chatRes.data : [])
+
     }
     useEffect(() => {
         if (userPar && userPar?.uid) {

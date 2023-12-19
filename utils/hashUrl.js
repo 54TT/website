@@ -3,7 +3,7 @@ import cookie from "js-cookie";
 import dayjs from 'dayjs'
 import {notification} from "antd";
 const requestA = axios.create({
-    baseURL: 'http://188.166.191.246:8081',
+    baseURL: process.env.NODE_ENV==='development'?'http://188.166.191.246:8081':'http://188.166.191.246:8080',
     // headers: {
     // 'Content-Type': 'application/json; charset=utf-8',
     //     'Authorization': cookie.get('token')&&cookie.get('token')!='undefined'?cookie.get('token'):'',
@@ -30,7 +30,6 @@ axios.interceptors.response.use(
     }
 );
 export const request = async (method, url, data, token) => {
-    console.log(token)
     const username = cookie.get('user')
     if (username && username != 'undefined') {
         const params = JSON.parse(username)

@@ -5,34 +5,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5ca5f751-1a0e-4de7-a19a-35f5fc6604b8" name="更改" comment="">
+      <change afterPath="$PROJECT_DIR$/public/Group19.svg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/CommentComponent.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/CommentComponent.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/Featured.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/Featured.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/HelperComponents/SidebarRow.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/HelperComponents/SidebarRow.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/Chat/Chat.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/Chat/Chat.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/components/Home.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/Home.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/InputBox.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/InputBox.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/components/Launch.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/Launch.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/components/Layout/Header.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/Layout/Header.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/components/Layout/Layout.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/Layout/Layout.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/NewPair.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/NewPair.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/PostCard.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/PostCard.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/Presale.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/Presale.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/components/RightSideColumn.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/RightSideColumn.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pages/[username].js" beforeDir="false" afterPath="$PROJECT_DIR$/pages/[username].js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/_app.js" beforeDir="false" afterPath="$PROJECT_DIR$/pages/_app.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pages/chats.js" beforeDir="false" afterPath="$PROJECT_DIR$/pages/chats.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/details.js" beforeDir="false" afterPath="$PROJECT_DIR$/pages/details.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/notifications.js" beforeDir="false" afterPath="$PROJECT_DIR$/pages/notifications.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pages/social.js" beforeDir="false" afterPath="$PROJECT_DIR$/pages/social.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/token.js" beforeDir="false" afterPath="$PROJECT_DIR$/pages/token.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/user/[userId]/followers.js" beforeDir="false" afterPath="$PROJECT_DIR$/pages/user/[userId]/followers.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/user/[userId]/following.js" beforeDir="false" afterPath="$PROJECT_DIR$/pages/user/[userId]/following.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/dexlogo.svg" beforeDir="false" afterPath="$PROJECT_DIR$/public/dexlogo.svg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/public/styles/all.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/styles/all.module.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/styles/allmedia.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/styles/allmedia.module.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/styles/tailwind.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/styles/tailwind.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/styles/theme.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/styles/theme.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/utils/hashUrl.js" beforeDir="false" afterPath="$PROJECT_DIR$/utils/hashUrl.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/yarn.lock" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -165,7 +152,8 @@
       <workItem from="1702619212946" duration="18887000" />
       <workItem from="1702640709205" duration="9620000" />
       <workItem from="1702878947847" duration="6826000" />
-      <workItem from="1702886428585" duration="20091000" />
+      <workItem from="1702886428585" duration="20534000" />
+      <workItem from="1702964655994" duration="27115000" />
     </task>
     <servers />
   </component>

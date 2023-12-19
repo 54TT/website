@@ -12,7 +12,8 @@ import dynamic from 'next/dynamic'
 import cook from "js-cookie";
 import styles from '/public/styles/allmedia.module.css'
 import {CountContext} from '../components/Layout/Layout'
-import { EventSourcePolyfill } from 'event-source-polyfill';
+import {EventSourcePolyfill} from 'event-source-polyfill';
+
 const ChatSearch = dynamic(() => import('../components/Chat/ChatSearch'), {ssr: false});
 const Chat = dynamic(() => import('../components/Chat/Chat'), {ssr: false});
 import {changeLang} from "/utils/set";
@@ -21,18 +22,20 @@ import cookie from "js-cookie";
 import dayjs from "dayjs";
 
 function ChatsPage() {
-    const {changeTheme,setLogin} = useContext(CountContext);
+    const {changeTheme, setLogin} = useContext(CountContext);
     const social = changeLang('social')
+    // 聊天列表
     const [chats, setChats] = useState([]);
+    // 登录用户
     const [userPar, setUserPar] = useState({});
     const getUs = async () => {
         try {
             const params = JSON.parse(cookie.get('username'))
             const token = cookie.get('token')
             const data = await request('get', "/api/v1/userinfo/" + params?.uid, '', token)
-         if(data==='please'){
-            setLogin()
-         }else  if (data && data?.status === 200) {
+            if (data === 'please') {
+                setLogin()
+            } else if (data && data?.status === 200) {
                 setUserPar(data?.data?.data)
             } else {
                 setUserPar('')
@@ -49,48 +52,66 @@ function ChatsPage() {
     }, [cook.get('username')]);
     const router = useRouter();
     const socket = useRef(null);
+    // 聊天消息
     const [texts, setTexts] = useState([]);
     const [connectedUsers, setConnectedUsers] = useState([]);
     const [newText, setNewText] = useState("");
-    const [chatUserData, setChatUserData] = useState({
-        name: "",
-        profilePicUrl: "",
-    });
-    const getParams = async () => {
-        if (userPar && userPar.uid) {
-            // const res = await axios.get(`${baseUrl}/api/chats`, {
-            //     params: {userId: userPar?.uid}
-            // });
-            // if (res.status === 200) {
-            //     setChats(res.data)
-            // } else {
-            //     setChats([])
-            // }
-        }
-    }
-    const [takeOver, setTakeOver] = useState(false)
-    useEffect(() => {
-        // getParams()
-    }, [userPar, takeOver])
+    // 聊天的对象
+    const [chatUserData, setChatUserData] = useState(null);
     const openChatId = useRef("");
     const [showChatSearch, setShowChatSearch] = useState(false);
     const da = () => {
         setShowChatSearch(!showChatSearch)
     }
     const getChats = async () => {
-        const token = cookie.get('token')
-        const data = await request('get', "/api/v1/session/list", '', token)
-        if(data==='please'){setLogin()}else if (data && data?.status === 200) {
-            // setChats(data?.data?.SessionList ? data?.data?.SessionList : [])
-        } else {
-            // setChats([])
+        try {
+            const token = cookie.get('token')
+            const data = await request('get', "/api/v1/session/list", '', token)
+            if (data === 'please') {
+                setLogin()
+            } else if (data && data?.status === 200) {
+                if (router.query && router.query?.chat) {
+                    const listChat = data?.data?.SessionList ? data?.data?.SessionList : []
+                    try {
+                        const user = await request('get', "/api/v1/userinfo/" + router.query?.chat, '', token)
+                        if (user === 'please') {
+                            setLogin()
+                        } else if (user && user?.status === 200) {
+                            const aaa = listChat.filter((i) => Number(i?.User?.Uid) === Number(router.query?.chat))
+                            if (aaa && aaa.length > 0) {
+                                setChats(listChat)
+                            } else {
+                                const li = {
+                                    Uid: user?.data?.data?.uid,
+                                    Username: user?.data?.data?.username,
+                                    Address: user?.data?.data?.address,
+                                    Avatar: user?.data?.data?.avatarUrl, ...user?.data?.data
+                                }
+                                const par = listChat.concat([{User: li, Online: false}])
+                                setChats(par)
+                            }
+                            setChatUserData(user?.data?.data)
+                        } else {
+                            setChatUserData(null)
+                        }
+                    } catch (err) {
+                        return null
+                    }
+                } else {
+                    setChats(data?.data?.SessionList ? data?.data?.SessionList : [])
+                }
+            } else {
+                setChats([])
+            }
+        } catch (err) {
+            return null
         }
     }
-
     useEffect(() => {
         if (cookie.get('token') && cookie.get('token') != 'undefined') {
             getChats()
             const token = cookie.get('token')
+            // 连接  sse
             socket.current = new EventSourcePolyfill('http://188.166.191.246:8081/api/v1/subscribe', {
                 headers: {
                     'Authorization': token,
@@ -115,130 +136,74 @@ function ChatsPage() {
             // if (userPar && userPar.uid) {
             //     postPar();
             // }
-
-
         }
     }, []);
-    useEffect(() => {
-        if (userPar && userPar.uid && router.query.chat) {
-            // const loadTexts = () => {
-            //     socket?.current.emit("loadTexts", {
-            //         userId: userPar.uid,
-            //         textsWith: router.query.chat,
-            //     });
-            //     socket?.current.on("textsLoaded", ({chat, textsWithDetails}) => {
-            //         if (textsWithDetails) {
-            //             setTexts([]);
-            //             setChatUserData({
-            //                 name: textsWithDetails.username,
-            //                 profilePicUrl: textsWithDetails.profilePicUrl,
-            //             });
-            //             openChatId.current = router.query?.chat;
-            //         } else {
-            //             setTexts(chat?.texts && chat.texts.length > 0 ? chat?.texts : []);
-            //             scrollToBottom();
-            //             setChatUserData({
-            //                 name: chat?.textsWith.username,
-            //                 profilePicUrl: chat?.textsWith.profilePicUrl,
-            //             });
-            //             openChatId.current = chat?.texts_with_id;
-            //         }
-            //     });
-            // };
-            if (router.query?.chat) {
-                setChats([{uid: router.query?.chat,username:'aa'}])
-            }
-        }
-    }, [router.query.chat, userPar]);
     const sendText = async (e, text) => {
-        e.preventDefault();
-        const token = cookie.get('token')
-        const data = await request('post', "/api/v1/send", {
-            Kind: 'text',
-             toUser: {uid: router?.query?.chat},
-            formUser: {uid: userPar?.uid},
-            data: text,
-            sent: dayjs().unix()
-        }, token)
-        console.log(data)
-        // if (text) {
-        //     if (socket.current) {
-        //         if (userPar && userPar.uid) {
-        //             socket?.current.emit("sendNewText", {
-        //                 userId: userPar.uid,
-        //                 userToTextId: openChatId?.current,
-        //                 text,
-        //             });
-        //         }
-        //     }
-        // }
-        setNewText("");
-    };
+        try {
 
+
+            e.preventDefault();
+            const token = cookie.get('token')
+            const list = {
+                Kind: 'text',
+                toUser: {uid: Number(router?.query?.chat)},
+                fromUser: {...userPar, uid: Number(userPar?.uid)},
+                data: text,
+                sent: dayjs().unix()
+            }
+            const data = await request('post', "/api/v1/send", list, token)
+            if (data === 'please') {
+                setLogin()
+            } else if (data && data?.status === 200) {
+                const params = texts.concat([{
+                    ...list,
+                    FromUid: userPar?.uid,
+                    CreatedAt: dayjs(),
+                    ToUid: router?.query?.chat,
+                    Content: text
+                }])
+                setIsMore(true)
+                setTexts(params)
+                setNewText("");
+            }
+        } catch (err) {
+            return null
+        }
+    };
     useEffect(() => {
         if (socket?.current) {
             socket.current.onmessage = ({data}) => {
-                const  aa =JSON.parse(data)
-                console.log(aa)
+                let aa = JSON.parse(data)
+                if (aa?.kind === "text") {
+                    // 接收消息   判断是否是当前聊天用户
+                    if (Number(router?.query?.chat) === Number(aa?.fromUser?.Uid)) {
+                        const params = texts.concat([{
+                            FromUid: aa?.fromUser?.Uid,
+                            CreatedAt: dayjs.unix(1702982355),
+                            ToUid: aa?.toUser?.Uid,
+                            Content: aa?.data
+                        }])
+                        setIsMore(false)
+                        setTexts(params)
+                    } else {
+                        const aaa = [...chats]
+                        const list = aaa.filter(i => Number(aa?.fromUser?.Uid) === Number(i.User.Uid))
+                        // 判断聊天列表是否有
+                        if (list.length > 0) {
+
+                        } else {
+                            const li = {
+                                Uid: aa?.fromUser?.Uid,
+                                Username: aa?.fromUser?.Username,
+                                Address: aa?.fromUser?.Address,
+                                Avatar: aa?.fromUser?.Avatar
+                            }
+                            const par = aaa.concat([{User: li, Online: false}])
+                            setChats(par)
+                        }
+                    }
+                }
             }
-            //     socket.current.on("textSent", ({newText}) => {
-            //         if (newText.receiverId === openChatId?.current) {
-            //             setTexts((prev) => [...prev, newText]);
-            //             setChats((prev) => {
-            //                 let previousChat = prev.find(
-            //                     (chat) => chat.textsWith === newText.receiverId
-            //                 );
-            //                 if (!previousChat || !previousChat.lastText) {
-            //                     previousChat = {
-            //                         lastText: '',
-            //                         created_at: ''
-            //                     }
-            //                 }
-            //                 previousChat.lastText = newText.text;
-            //                 previousChat.created_at = newText.created_at;
-            //                 return [...prev];
-            //             });
-            //         }
-            //     });
-            //     socket.current.on("newTextReceived", async ({newText, userDetails}) => {
-            //         if (newText?.senderId === openChatId?.current) {
-            //             setTexts((prev) => [...prev, newText]);
-            //             setChats((prev) => {
-            //                 let previousChat = prev.find(
-            //                     (chat) => chat.textsWith === newText.senderId
-            //                 );
-            //                 if (!previousChat || !previousChat.lastText) {
-            //                     previousChat = {
-            //                         lastText: '',
-            //                         created_at: ''
-            //                     }
-            //                 }
-            //                 previousChat.lastText = newText.text;
-            //                 previousChat.created_at = newText.created_at;
-            //                 return [...prev];
-            //             });
-            //         } else {
-            //             const ifPreviouslyTexted = chats.filter((chat) => chat.textsWith === newText.senderId).length > 0;
-            //             if (ifPreviouslyTexted) {
-            //                 setChats((prev) => {
-            //                     let previousChat = prev.find(
-            //                         (chat) => chat.textsWith === newText.senderId
-            //                     );
-            //                     if (!previousChat || !previousChat.lastText) {
-            //                         previousChat = {
-            //                             lastText: '',
-            //                             created_at: ''
-            //                         }
-            //                     }
-            //                     previousChat.lastText = newText.text;
-            //                     previousChat.created_at = newText.created_at;
-            //                     return [...prev];
-            //                 });
-            //             } else {
-            //                 setTakeOver(!takeOver)
-            //             }
-            //         }
-            //     });
         }
         return () => {
             if (socket.current) {
@@ -247,6 +212,8 @@ function ChatsPage() {
             }
         };
     }, [newText, socket, chats]);
+    // 判断是否加载更多
+    const [isMore, setIsMore] = useState(false)
     const endOfMessagesRef = useRef(null);
     const scrollToBottom = () => {
         endOfMessagesRef.current.scrollIntoView({
@@ -256,18 +223,10 @@ function ChatsPage() {
     };
 
     useEffect(() => {
-        texts.length > 0 && scrollToBottom();
-    }, [texts]);
-    const postPar = async () => {
-        try {
-            // await axios.post(
-            //     `${baseUrl}/api/chats`,
-            //     {userId: userPar.uid}
-            // );
-        } catch (error) {
-
+        if (endOfMessagesRef.current && isMore) {
+            scrollToBottom();
         }
-    }
+    }, [texts]);
     // 获取屏幕
     const [winHeight, setHeight] = useState();
     const [chatHeight, setChatHeight] = useState()
@@ -282,7 +241,7 @@ function ChatsPage() {
             setChatHeight(window.innerHeight - 269)
         } else {
             setHeight("auto");
-            setChatHeight("auto");
+            setChatHeight("80vh");
         }
     });
     const changeAllTheme = (a, b) => {
@@ -293,19 +252,103 @@ function ChatsPage() {
         const {target: {value}} = e
         setVa(value)
     }
-    const sendClickText = async (e) => {
-        if (va && e.key === 'Enter') {
+    const getChatUser = async () => {
+        try {
             const token = cookie.get('token')
-            const data = await request('post', "/api/v1/send", {
-                Kind: 'text',
-                formUser: {uid: '2'},
-                toUser: {uid: '3'},
-                data: 'nihao',
-                sent: dayjs().unix()
-            }, token)
-            const datas = await request('get', "/api/v1/unsubscribe", '', token)
+            const data = await request('get', "/api/v1/userinfo/" + router?.query?.chat, '', token)
+            if (data === 'please') {
+                setLogin()
+            } else if (data && data?.status === 200) {
+                setChatUserData(data?.data?.data)
+            } else {
+                setChatUserData(null)
+            }
+        } catch (err) {
+            return null
         }
     }
+    const getChatList = async (time) => {
+        const token = cookie.get('token')
+        const chatList = texts.length > 0 ? texts : []
+        try {
+            const data = await request('post', "/api/v1/message/list", {
+                queryTime: time,
+                uid: Number(router?.query?.chat)
+            }, token)
+            if (data === 'please') {
+                setLogin()
+            } else if (data && data?.status === 200) {
+                const list = data?.data?.messageList ? data?.data?.messageList : []
+                const listRr = list.length > 0 ? list.reverse() : []
+                if (chatUserData) {
+                    if (Number(chatUserData.uid) === Number(router?.query?.chat)) {
+                        // 加载更多
+                        if (chatList.length > 0) {
+                            const all = listRr.concat(chatList)
+                            setIsMore(false)
+                            setTexts(all)
+                        } else {
+                            setIsMore(false)
+                            setTexts(listRr)
+                        }
+                    } else {
+                        setIsMore(true)
+                        setTexts(listRr)
+                    }
+                } else {
+                    setIsMore(true)
+                    setTexts(listRr)
+                }
+            } else {
+                if (chatUserData) {
+                    if (Number(chatUserData.uid) === Number(router?.query?.chat)) {
+                        setTexts(chatList)
+                        setIsMore(false)
+                    } else {
+                        setIsMore(false)
+                        setTexts(chatList)
+                    }
+                } else {
+                    setIsMore(false)
+                    setTexts([])
+                }
+            }
+        } catch (err) {
+            return null
+        }
+    }
+    useEffect(() => {
+        if (router?.query && router?.query?.chat && Number(router?.query?.chat) != Number(chatUserData?.uid) && cookie.get('token') && cookie.get('token') != 'undefined') {
+            getChatUser()
+            getChatList(dayjs().unix())
+        }
+    }, [router?.query])
+    const getMore = () => {
+        const data = dayjs(dayjs(texts[0]?.CreatedAt)).unix()
+        getChatList(data)
+    }
+    const [scrollTopBol, setScrollTopBol] = useState(false)
+    const containerRef = useRef(null)
+    useEffect(() => {
+        const handleScroll = () => {
+            if (containerRef.current) {
+                if (containerRef.current.scrollTop < 10) {
+                    setScrollTopBol(true)
+                } else {
+                    setScrollTopBol(false)
+                }
+            }
+        };
+        if (containerRef.current) {
+            containerRef.current.addEventListener('scroll', handleScroll);
+        }
+        return () => {
+            // 在组件卸载时移除监听器
+            if (containerRef.current) {
+                containerRef.current.removeEventListener('scroll', handleScroll);
+            }
+        };
+    }, []);
 
 
     return (
@@ -313,8 +356,8 @@ function ChatsPage() {
             <div
                 className={`${styles.allMoblice} ${changeAllTheme('darknessTwo', 'brightTwo')}`}
                 style={{marginRight: '20px', borderRadius: '10px', minHeight: winHeight}}>
-                {/*<input type="text" onChange={sendChangeText} onKeyDown={sendClickText}/>*/}
                 <main className="flex">
+                    {/*侧边栏*/}
                     <Sidebar user={userPar} maxWidth={"250px"}/>
                     <div
                         className={`${styles.mobliceNonoFlex} ${changeAllTheme('darknessTwo', 'brightTwo')} flex flex-grow mx-auto h-full w-full max-w-2xl lg:max-w-[65rem] xl:max-w-[70.5rem] rounded-lg`}>
@@ -343,6 +386,7 @@ function ChatsPage() {
                                     type="text"
                                     placeholder={social.search}
                                 />
+                                {/* 搜索聊天用户*/}
                                 {showChatSearch && (
                                     <ChatSearch
                                         setShowChatSearch={da}
@@ -356,7 +400,7 @@ function ChatsPage() {
                                 <>
                                     {chats && chats.length > 0 ? (
                                         chats.map((chat) => (
-                                            <Link href={`/chats?chat=${chat?.uid}`} key={chat.uid}>
+                                            <Link href={`/chats?chat=${chat?.User?.Uid}`} key={chat?.User?.Uid}>
                                                 <div style={{
                                                     display: 'flex',
                                                     cursor: 'pointer',
@@ -367,13 +411,10 @@ function ChatsPage() {
                                                     columnGap: '10px',
                                                 }}>
                                                     <div className="relative">
-                                                        <img width={80} height={80} style={{
+                                                        <img width={50} height={50} style={{
                                                             borderRadius: '50%'
-                                                        }} src={chat?.profilePicUrl || '/dexlogo.svg'} alt="userimg"/>
-                                                        {connectedUsers?.length > 0 &&
-                                                        connectedUsers.filter(
-                                                            (user) => user.userId === chat?.textsWith
-                                                        ).length > 0 ? (
+                                                        }} src={chat?.User?.Avatar || '/dexlogo.svg'} alt="userimg"/>
+                                                        {chat?.Online && (
                                                             <AppleOutlined
                                                                 style={{
                                                                     color: "#55d01d",
@@ -383,32 +424,19 @@ function ChatsPage() {
                                                                     right: "0",
                                                                 }}
                                                             />
-                                                        ) : (
-                                                            <></>
                                                         )}
                                                     </div>
                                                     <div className="ml-1">
-                                                        {
-                                                            chat?.username ?
-                                                                <p style={{
-                                                                    userSelect: 'none',
-                                                                    fontWeight: 'bold',
-                                                                    fontSize: '18px',
-                                                                    marginBottom: '10px'
-                                                                }}>{chat?.username?.length > 10 ? chat.username.slice(0, 5) + '...' + chat.username.slice(-5) : chat.username}</p> :
-                                                                <p style={{
-                                                                    userSelect: 'none',
-                                                                    fontWeight: 'bold',
-                                                                    fontSize: '18px',
-                                                                    marginBottom: '10px'
-                                                                }}>{chat?.name?.length > 10 ? chat.name.slice(0, 5) + '...' + chat.name.slice(-5) : chat.name}</p>
-                                                        }
+                                                        <p style={{
+                                                            userSelect: 'none',
+                                                            fontWeight: 'bold',
+                                                            fontSize: '18px',
+                                                            marginBottom: '10px'
+                                                        }}>{chat?.User?.Username ? chat?.User?.Username?.length > 10 ? chat?.User?.Username.slice(0, 5) + '...' : chat?.User?.Username : chat?.User?.Address.slice(0, 5)}</p>
                                                         <p style={{
                                                             marginTop: '-13px'
                                                         }}>
-                                                            {chat.lastText && chat.lastText.length > 30
-                                                                ? `${chat.lastText.substring(0, 30)}...`
-                                                                : chat.lastText}
+                                                            {chat?.data || ''}
                                                         </p>
                                                     </div>
                                                     {chat.created_at && (
@@ -430,16 +458,15 @@ function ChatsPage() {
                             </div>
                         </div>
                         {/*右边聊天*/}
-                        {router.query?.chat && (
+                        {router?.query?.chat && (
                             <div
                                 style={{
                                     flex: "1",
                                     borderRight: "1px solid lightgrey",
                                     fontFamily: "Inter",
-                                }}
-                            >
-                                {/*右边聊天*/}
-                                {chatUserData && chatUserData.profilePicUrl ? (
+                                }}>
+                                {/*右边聊天  对象*/}
+                                {chatUserData && chatUserData.uid ? (
                                     <div style={{
                                         display: 'flex',
                                         cursor: 'pointer',
@@ -451,14 +478,15 @@ function ChatsPage() {
                                     }}>
                                         <img width={80} height={80} style={{
                                             borderRadius: '50%'
-                                        }} src={chatUserData?.profilePicUrl || '/dexlogo.svg'} alt="userimg"/>
+                                        }} src={chatUserData?.avatarUrl || '/dexlogo.svg'} alt="userimg"/>
                                         <div>
                                             <p style={{
                                                 userSelect: 'none',
                                                 fontWeight: 'bold',
                                                 fontSize: '18px',
                                                 marginBottom: '10px',
-                                            }}>{chatUserData?.name.length > 7 ? chatUserData.name.slice(0, 3) + '...' + chatUserData.name.slice(-3) : chatUserData.name}</p>
+                                            }}>{chatUserData?.username ? chatUserData?.username.length > 7 ? chatUserData.username.slice(0, 5) + '...' : chatUserData.username : chatUserData.address.slice(0, 5) + '...'}</p>
+                                            {/*判断是否在线*/}
                                             {connectedUsers.length > 0 &&
                                                 connectedUsers.filter(
                                                     (user) => user?.userId === openChatId?.current
@@ -473,38 +501,38 @@ function ChatsPage() {
                                 ) : (
                                     <div
                                         className="max-w-[28rem]"
-                                        style={{padding: "14px"}}
-                                    >
+                                        style={{padding: "14px"}}>
                                         <LoadingOutlined/>
                                     </div>
                                 )}
-
+                                {/*聊天的背景*/}
                                 <div
                                     className=" flex flex-col justify-between"
-                                    // style={{
-                                    //     height: chatHeight,
-                                    // }}
-                                >
-                                    <div
-                                        className="mt-3 pl-4 pr-4 overflow-y-auto"
-                                        style={{scrollbarWidth: "thin"}}
-                                    >
-                                        <>
-                                            {texts.length > 0 ? (
-                                                texts.map((text, i) => (
-                                                    <Chat
-                                                        key={i}
-                                                        user={userPar}
-                                                        text={text}
-                                                    />
-                                                ))
-                                            ) : (
-                                                <div></div>
-                                            )}
-                                            <div style={{
-                                                marginBottom: '30px'
-                                            }} ref={endOfMessagesRef}/>
-                                        </>
+                                    style={{
+                                        height: chatHeight,
+                                    }}>
+                                    <div className="mt-3 pl-4 pr-4 overflow-y-auto"
+                                         style={{scrollbarWidth: "thin"}} ref={containerRef}>
+                                        {
+                                            texts && texts.length > 99 && scrollTopBol && (
+                                                <div style={{textAlign: 'center', cursor: 'pointer'}}
+                                                     onClick={getMore}>加载更多</div>)
+                                        }
+                                        {texts.length > 0 ? (
+                                            texts.map((text, i) => (
+                                                <Chat
+                                                    key={i}
+                                                    chatUserData={chatUserData}
+                                                    user={userPar}
+                                                    text={text}
+                                                />
+                                            ))
+                                        ) : (
+                                            <></>
+                                        )}
+                                        <div style={{
+                                            marginBottom: '30px'
+                                        }} ref={endOfMessagesRef}/>
                                     </div>
                                     <div
                                         style={{

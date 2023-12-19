@@ -6,7 +6,6 @@ import {Anchor} from 'antd'
 import cookie from "js-cookie";
 import {useDisconnect} from "wagmi";
 import  styled from '/public/styles/all.module.css'
-import {request} from "../../utils/hashUrl";
 
 export const CountContext = createContext(null);
 const Layout = ({children}) => {

@@ -178,18 +178,6 @@ function Home() {
         }
     }
     const [time, setTime] = useState('h24')
-    const aaaa =()=>{
-        const token =  cookie.get('token')
-        const es = new EventSource(`/subscribe`, {
-            headers: {
-                'Authorization': token,
-            }
-        });
-        es.onmessage = ({ data }) => {
-            console.log(data);
-        }
-    }
-    aaaa()
     const columns = [{
         title: '',
         align: 'center',
@@ -341,7 +329,6 @@ function Home() {
     // 删除的推文id
     const [deleteChange, setDeleteChange] = useState(null)
     const change = (name, id) => {
-        console.log(name,id)
         if (id) {
             setDeleteChange(id)
         }
@@ -357,13 +344,11 @@ function Home() {
         if (postsData && postsData.length > 0) {
             if (bolLogin) {
                 changeBolLogin()
-                console.log(111111111111111)
                 setPostsDataAdd(postsData)
             } else {
                 if (scrollChange) {
                     const data = postsDataAdd.concat(postsData)
                     setScrollChange(false)
-                    console.log(2222222222222222)
                     setPostsDataAdd(data)
                 } else if (clickChange) {
                     setClickChange(false)
@@ -373,38 +358,31 @@ function Home() {
                         const man = aa.filter((i) => {
                             return i.id !== deleteChange
                         })
-                        console.log(333333333333333)
                         setPostsDataAdd(man)
                         setDeleteChange(null)
                     } else {
-                        console.log(44444444444444444)
                         setPostsDataAdd(aa)
                     }
                 } else {
-                    console.log(5555555555555)
                     setPostsDataAdd(postsData)
                 }
             }
         } else {
             if (bolLogin) {
                 changeBolLogin()
-                console.log(6666666666666666)
                 setPostsDataAdd([])
             } else {
                 if (scrollChange) {
                     setScrollChange(false)
-                    console.log(77777777777777777777)
                     setPostsDataAdd([...postsDataAdd])
                 } else if (clickChange) {
                     setClickChange(false)
                     if (deleteChange) {
                         const da = _.cloneDeep(postsDataAdd)
                         const b = da.filter((i) => i.id !== clickChange)
-                        console.log(88888888888888888888)
                         setPostsDataAdd(b)
                         setDeleteChange(null)
                     } else {
-                        console.log(999999999999999)
                         setPostsDataAdd([...postsDataAdd])
                     }
                 }

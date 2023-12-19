@@ -11,6 +11,7 @@ import {useRouter} from "next/router";
 import InfiniteScroll from 'react-infinite-scroll-component';
 import {EmojiSadIcon} from "@heroicons/react/outline";
 import dynamic from "next/dynamic";
+
 const PostCard = dynamic(() => import("../components/PostCard"), {
     ssr: false,
 });
@@ -108,9 +109,9 @@ function ProfilePage() {
                                 avatarUrl: data?.data?.url,
                             }
                         }, token);
-                        if(res==='please'){
+                        if (res === 'please') {
                             setLogin()
-                        }else if (res && res?.status === 200) {
+                        } else if (res && res?.status === 200) {
                             setPage(1)
                             change()
                             setPostsAdd([])
@@ -128,9 +129,9 @@ function ProfilePage() {
                                 coverUrl: data?.data?.url,
                             }
                         }, token);
-                        if(res){
+                        if (res) {
                             setLogin()
-                        }else if (res && res?.status === 200) {
+                        } else if (res && res?.status === 200) {
                             setPage(1)
                             change()
                             setPostsAdd([])
@@ -252,13 +253,15 @@ function ProfilePage() {
     const changeIn = async (e) => {
         setEditInput(e.target.value);
     };
+    const pushLink = () => {
+        router.push('/chats?chat=' + router?.query?.username)
+    }
     return (
         <>
             <div className={styles.allMobliceBox}>
                 {/**/}
                 {/*上面*/}
                 <div
-                    // ${changeTheme?'darknessThrees':'brightTwo'} introBack
                     className={` ${
                         !isUserOnOwnAccount ? "min-h-[32.4rem]" : "min-h-[29.3rem]"
                     }  shadow-lg ${styled.usernameBox} ${styles.allMoblice} ${changeTheme ? 'darknessThrees' : 'usernameBack'}`}>
@@ -267,7 +270,11 @@ function ProfilePage() {
                         <input
                             type="file"
                             accept="image/*"
-                            onChange={(e) => addImageFromDevice(e, "cover")}
+                            onChange={(e) => {
+                                if (Number(LoginUser?.uid) === Number(user?.uid)) {
+                                    addImageFromDevice(e, "cover")
+                                }
+                            }}
                             name="media"
                             ref={coverImageRef}
                             style={{display: "none"}}
@@ -286,7 +293,11 @@ function ProfilePage() {
                         <input
                             type="file"
                             accept="image/*"
-                            onChange={(e) => addImageFromDevice(e, "profile")}
+                            onChange={(e) => {
+                                if(Number(LoginUser?.uid) === Number(user?.uid)) {
+                                    addImageFromDevice(e, "profile")
+                                }
+                            }}
                             name="media"
                             ref={profilePicRef}
                             style={{display: "none"}}
@@ -294,7 +305,11 @@ function ProfilePage() {
                         {/*图像*/}
                         {
                             showLoad ? <Skeleton.Avatar active={true} shape={'circle'}/> :
-                                <Avatar onClick={() => profilePicRef.current.click()}
+                                <Avatar onClick={() => {
+                                    if(Number(LoginUser?.uid) === Number(user?.uid)) {
+                                        profilePicRef.current.click()
+                                    }
+                                }}
                                         src={profilePicPreview ? profilePicPreview : user?.avatarUrl ? user?.avatarUrl : '/dexlogo.svg'}
                                         size={100}
                                         style={{
@@ -311,16 +326,18 @@ function ProfilePage() {
                             {editProfile ? (
                                 <Input
                                     onChange={changeIn}
+                                    rootClassName={changeTheme ? 'fontW' : 'fontB'}
                                     value={editInput}
                                     style={{fontSize: "20px", fontWeight: "bold"}}
                                 />
                             ) : (
                                 showLoad ? <Skeleton.Button active={true} shape={'default'}/> :
-                                    <p className={styles.mobliceEditInput}
+                                    <p className={` ${changeTheme ? 'fontW' : 'fontB'} ${styles.mobliceEditInput}`}
                                        style={{fontSize: "20px", fontWeight: "bold"}}>
                                         {editInput}
                                     </p>
                             )}
+
                             {/*提交按钮*/}
                             {editProfile ? (
                                 <div style={{
@@ -402,6 +419,9 @@ function ProfilePage() {
                             </div>
                         )}
                     </div>
+
+                    <button style={{color: 'white'}} onClick={pushLink}>聊天</button>
+
                     {/*下面*/}
                     <div className={`w-full ${styled.usernameBoxBot} ${changeTheme ? 'darknessThrees' : 'brightTwo'}`}>
                         <div

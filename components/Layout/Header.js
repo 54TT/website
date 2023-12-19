@@ -37,10 +37,10 @@ const Header = () => {
     const [gas, setGas] = useState(0);
     const {loading, error, data, refetch} = useQuery(GET_DATA, {client});
     useEffect(() => {
-        getGasPrice()
+        // getGasPrice()
         const interval = setInterval(() => {
             refetch();
-            getGasPrice()
+            // getGasPrice()
         }, 10000);
         return () => {
             clearInterval(interval);
@@ -444,7 +444,6 @@ const Header = () => {
         <>
             <div className={styles['headerShowNode']}>
                 <div className={"top-0 w-full  z-30 transition-all headerClass"}>
-                    {/*<span onClick={getGasPrice}>11111111111</span>*/}
                     <div className={styles['aaa']} style={{paddingLeft: '110px'}}>
                         {/*走马灯*/}
                         <Marquee

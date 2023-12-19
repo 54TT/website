@@ -17,7 +17,6 @@ export default function Presale() {
     const [launchCurrent, setLaunchCurrent] = useState(1);
     const [launchAll, setLaunchAll] = useState(0);
     const [launchPro, setLaunch] = useState([]);
-    console.log(launchPro)
     const [launchBol, setLaunchBol] = useState(true);
     const hint = () => {
         notification.error({

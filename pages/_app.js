@@ -35,7 +35,7 @@ function DexPert({Component, pageProps}) {
      return (
         <>
             <Head>
-                <link rel="shortcut icon" href="/dexlogo.svg"/>
+                <link rel="shortcut icon" href="/Group19.svg"/>
                 <title>Dex Pert</title>
             </Head>
             <WagmiConfig config={config}>
