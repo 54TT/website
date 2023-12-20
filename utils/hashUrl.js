@@ -3,7 +3,7 @@ import cookie from "js-cookie";
 import dayjs from 'dayjs'
 import {notification} from "antd";
 const requestA = axios.create({
-    baseURL: process.env.NODE_ENV==='development'?'http://188.166.191.246:8081':'http://188.166.191.246:8080',
+    baseURL: process.env.NODE_ENV==='development'?'http://188.166.191.246:8081':'http://dexpert.io',
     // headers: {
     // 'Content-Type': 'application/json; charset=utf-8',
     //     'Authorization': cookie.get('token')&&cookie.get('token')!='undefined'?cookie.get('token'):'',
