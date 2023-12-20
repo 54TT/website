@@ -3,7 +3,7 @@ import {CheckCircleIcon, UserAddIcon} from "@heroicons/react/solid";
 import {
     FormOutlined,
     CloseOutlined,
-    CheckOutlined,
+    CheckOutlined, MessageOutlined
 } from "@ant-design/icons";
 import {Avatar, Input, notification, Image, Skeleton} from "antd";
 import styles from "/public/styles/allmedia.module.css";
@@ -12,28 +12,28 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import {EmojiSadIcon} from "@heroicons/react/outline";
 import dynamic from "next/dynamic";
 
-const PostCard = dynamic(() => import("../components/PostCard"), {
+const PostCard = dynamic(() => import("/components/PostCard"), {
     ssr: false,
 });
 const InfoBox = dynamic(
-    () => import("../components/HelperComponents/InfoBox"),
+    () => import("/components/HelperComponents/InfoBox"),
     {ssr: false}
 );
 const ProfileFields = dynamic(
-    () => import("../components/ProfileComponents/ProfileFields"),
+    () => import("/components/ProfileComponents/ProfileFields"),
     {ssr: false}
 );
 const FollowingUsers = dynamic(
-    () => import("../components/ProfileComponents/FollowingUsers"),
+    () => import("/components/ProfileComponents/FollowingUsers"),
     {ssr: false}
 );
 const FollowerUsers = dynamic(
-    () => import("../components/ProfileComponents/FollowerUsers"),
+    () => import("/components/ProfileComponents/FollowerUsers"),
     {ssr: false}
 );
 import {CountContext} from '/components/Layout/Layout';
 import styled from "/public/styles/all.module.css";
-import {request} from "../utils/hashUrl";
+import {request} from "/utils/hashUrl";
 import cookie from "js-cookie";
 
 function ProfilePage() {
@@ -129,7 +129,7 @@ function ProfilePage() {
                                 coverUrl: data?.data?.url,
                             }
                         }, token);
-                        if (res) {
+                        if (res === 'please') {
                             setLogin()
                         } else if (res && res?.status === 200) {
                             setPage(1)
@@ -281,20 +281,20 @@ function ProfilePage() {
                         ></input>
                         {/*背景图*/}
                         <Image
+                            style={{position:'relative',top:'50%',left:'50%',transform:'translate(-50%,-50%)'}}
                             src={
                                 coverPicPreview ? coverPicPreview : user?.coverUrl ? user?.coverUrl
-                                    : 'error'
+                                    : '/backto.gif'
                             }
                             alt="cover pic"
-                            width={"100%"}
-                            height={"100%"}
+                            width={'100%'}
                         />
                         {/*修改图像*/}
                         <input
                             type="file"
                             accept="image/*"
                             onChange={(e) => {
-                                if(Number(LoginUser?.uid) === Number(user?.uid)) {
+                                if (Number(LoginUser?.uid) === Number(user?.uid)) {
                                     addImageFromDevice(e, "profile")
                                 }
                             }}
@@ -306,7 +306,7 @@ function ProfilePage() {
                         {
                             showLoad ? <Skeleton.Avatar active={true} shape={'circle'}/> :
                                 <Avatar onClick={() => {
-                                    if(Number(LoginUser?.uid) === Number(user?.uid)) {
+                                    if (Number(LoginUser?.uid) === Number(user?.uid)) {
                                         profilePicRef.current.click()
                                     }
                                 }}
@@ -326,7 +326,6 @@ function ProfilePage() {
                             {editProfile ? (
                                 <Input
                                     onChange={changeIn}
-                                    rootClassName={changeTheme ? 'fontW' : 'fontB'}
                                     value={editInput}
                                     style={{fontSize: "20px", fontWeight: "bold"}}
                                 />
@@ -347,7 +346,7 @@ function ProfilePage() {
                                 }}
                                 >
                                     <CloseOutlined
-                                        style={{fontSize: "20px", fontWeight: "bold"}}
+                                        style={{fontSize: "20px", fontWeight: "bold", color: 'rgb(59,55,71)'}}
                                         onClick={() => {
                                             setEditProfile(false)
                                             setEditInput(user.username ? user.username : user.address)
@@ -357,7 +356,7 @@ function ProfilePage() {
                                         style={{
                                             fontSize: "20px",
                                             fontWeight: "bold",
-                                            marginLeft: "10px",
+                                            marginLeft: "10px", color: 'rgb(59,55,71)'
                                         }}
                                         onClick={setName}
                                     />
@@ -419,8 +418,13 @@ function ProfilePage() {
                             </div>
                         )}
                     </div>
-
-                    <button style={{color: 'white'}} onClick={pushLink}>聊天</button>
+                    {
+                        !(Number(LoginUser?.uid) === Number(user?.uid)) &&
+                        <div style={{display: 'flex', justifyContent: 'center'}}>
+                            <MessageOutlined onClick={pushLink} className={changeTheme ? 'fontW' : 'fontB'}
+                                             style={{fontSize: '20px', cursor: 'pointer'}}/>
+                        </div>
+                    }
 
                     {/*下面*/}
                     <div className={`w-full ${styled.usernameBoxBot} ${changeTheme ? 'darknessThrees' : 'brightTwo'}`}>

@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useRef, useContext} from "react";
-import styles from "../public/styles/home.module.css";
+import styles from "/public/styles/home.module.css";
 import {formatDecimal, getRelativeTimeDifference, formatDateTime} from './Utils';
 import {useRouter} from 'next/router';
 import Link from 'next/link'
@@ -23,14 +23,12 @@ import cook from 'js-cookie'
 import dynamic from "next/dynamic";
 import {CountContext} from '/components/Layout/Layout';
 import {arrayUnique} from '/utils/set'
-// import {ConnectKitButton, changeBack} from 'hjt-connectkit';
 const {Countdown} = Statistic;
 const PostCard = dynamic(() => import('./PostCard'), {ssr: false})
 const Bott = dynamic(() => import('./Bottom'), {ssr: false})
 import {changeLang} from "/utils/set";
-import {request} from "../utils/hashUrl";
+import {request} from "/utils/hashUrl";
 import cookie from "js-cookie";
-
 function Home() {
     const router = useRouter();
     const {bolLogin, changeShowData, showData, changeBolLogin, changeTheme, logoutBol,setLogin} = useContext(CountContext);
@@ -265,11 +263,11 @@ function Home() {
             title: packageHtml(home.dex),
             align: 'center',
             render: (text, record) => {
-                return <img src="https://dex-pert-pic.sgp1.cdn.digitaloceanspaces.com/uniswap-uni-logo.png" alt="" width={30}
+                return <img src="https://dex-pert-pic.sgp1.cdn.digitaloceanspaces.com/uniswap-uni-logo.png" alt=""
                               style={{
                                   borderRadius: '50%',
                                   display: 'block',
-                                  margin: '0 auto',
+                                  margin: '0 auto',width:'30px',height:'30px'
                               }}/>
             }
         },
@@ -497,13 +495,13 @@ function Home() {
                                                                      className={`${styles['editDis']} ${styles['dis']}`}>
                                                                     <img onClick={() => push(i, 'one')}
                                                                          src={changeAllTheme('/Websitee.svg', "/Websiteaa.svg")}
-                                                                         alt="" width={16}/>
+                                                                         alt="" style={{width:'16px',height:'16px'}}/>
                                                                     <img onClick={() => push(i, 'two')}
                                                                          src={changeAllTheme('/TwitterX22.svg', "/TwitterX11.svg")}
-                                                                         alt="" width={18}/>
+                                                                         alt="" style={{width:'18px',height:'18px'}}/>
                                                                     <img onClick={() => push(i, 'three')}
                                                                          src={changeAllTheme("/Telegramss.svg", 'Telegram11.svg')}
-                                                                         alt="" width={20}/>
+                                                                         alt="" style={{width:'20px',height:'20px'}}/>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -511,7 +509,7 @@ function Home() {
                                                             className={`${styles.homeCardDate} ${styles.editHomeCardDate}`}>
                                                             <img
                                                                 src={changeAllTheme("/icon _timer.svg", '/icon _time1.svg')}
-                                                                alt="" width={15}/>
+                                                                alt="" style={{width:'15px',height:'15px'}}/>
                                                             <Countdown title=""
                                                                        className={changeAllTheme('darknessFont', 'brightFont')}
                                                                        value={getD(dayjs.unix(i?.time).isAfter(dayjs().unix()) ? dayjs.unix(i?.time ? i.time : '').diff(dayjs(), 'seconds') : '')}
@@ -521,7 +519,7 @@ function Home() {
                                                             src={`${i?.platformLogo ? i.platformLogo : '/ma.svg'}`}
                                                             onClick={() => pushLink(i?.link ? i.link : '')}
                                                             alt=""
-                                                            width={'30px'} height={'30px'}
+                                                            style={{width:'30px',height:'30px'}}
                                                             className={styles.homeCardListImg}/>
                                                     </li>
                                                 }

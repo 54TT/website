@@ -1,35 +1,40 @@
-import "../public/styles/tailwind.css";
-import "../public/styles/slick.css";
-import '../public/styles/theme.css'
-// import {configureChains, createClient, WagmiConfig, chain} from 'wagmi';
-// import {publicProvider} from 'wagmi/providers/public';
+import "/public/styles/tailwind.css";
+import "/public/styles/slick.css";
+import '/public/styles/theme.css'
 import {WagmiConfig, createConfig} from 'wagmi';
 import {mainnet, polygon, optimism, arbitrum} from 'wagmi/chains';
-//   使用钱包依赖
-import {ConnectKitProvider, getDefaultConfig} from 'hjt-connectkit';
+import { createPublicClient, http } from 'viem'
 require('dotenv').config({path: '.env'})
-// export const {chains, publicClient, webSocketPublicClient, provider} = configureChains(
-//     [chain.mainnet, chain.polygon, chain.optimism, chain.arbitrum],
-//     [
-//         publicProvider()
-//     ]
+//   使用钱包依赖
+// import {ConnectKitProvider, getDefaultConfig} from 'hjt-connectkit';
+// import {ConnectKitButton, changeBack} from 'hjt-connectkit';
+// const config = createConfig(
+//     getDefaultConfig({
+//         appName: 'ConnectKit Next.js demo',
+//         //infuraId: process.env.NEXT_PUBLIC_INFURA_ID,
+//         //alchemyId:  process.env.NEXT_PUBLIC_ALCHEMY_ID,
+//         chains: [mainnet, polygon, optimism, arbitrum],
+//         // walletConnectProjectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID
+//     })
 // );
-const config = createConfig(
-    getDefaultConfig({
-        appName: 'ConnectKit Next.js demo',
-        //infuraId: process.env.NEXT_PUBLIC_INFURA_ID,
-        //alchemyId:  process.env.NEXT_PUBLIC_ALCHEMY_ID,
-        chains: [mainnet, polygon, optimism, arbitrum],
-        // walletConnectProjectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID
-    })
+
+const config = createConfig({
+    autoConnect: true,
+    publicClient: createPublicClient({
+        chain: mainnet,
+        transport: http(),
+    }),
+})
+const Layout = dynamic(
+    () => import('/components/Layout/Layout'),
+    {ssr: false}
 );
-// const client = createClient({
-//     autoConnect: true,
-//         provider,
-// })
-import Layout from '/components/Layout/Layout'
-import Head from 'next/head';
-import React, { useContext } from "react";
+const Head = dynamic(
+    () => import('next/head'),
+    {ssr: false}
+);
+import React from "react";
+import dynamic from "next/dynamic";
 
 function DexPert({Component, pageProps}) {
      return (
@@ -39,11 +44,11 @@ function DexPert({Component, pageProps}) {
                 <title>Dex Pert</title>
             </Head>
             <WagmiConfig config={config}>
-                <ConnectKitProvider >
+                {/*<ConnectKitProvider >*/}
                         <Layout>
                             <Component {...pageProps} />
                         </Layout>
-                </ConnectKitProvider>
+                {/*</ConnectKitProvider>*/}
             </WagmiConfig>
         </>
     );

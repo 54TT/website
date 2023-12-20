@@ -2,22 +2,21 @@ import axios from "axios";
 import {useRouter} from "next/router";
 import React, {useState, useEffect, useRef, useContext} from "react";
 import io from "socket.io-client";
-import Sidebar from "../components/Sidebar";
+import Sidebar from "/components/Sidebar";
 import {SearchIcon} from "@heroicons/react/outline";
-import calculateTime from "../utils/calculateTime";
+import calculateTime from "/utils/calculateTime";
 import {LoadingOutlined} from '@ant-design/icons'
 import {AppleOutlined,} from '@ant-design/icons'
 import Link from 'next/link';
 import dynamic from 'next/dynamic'
 import cook from "js-cookie";
 import styles from '/public/styles/allmedia.module.css'
-import {CountContext} from '../components/Layout/Layout'
+import {CountContext} from '/components/Layout/Layout'
 import {EventSourcePolyfill} from 'event-source-polyfill';
-
-const ChatSearch = dynamic(() => import('../components/Chat/ChatSearch'), {ssr: false});
-const Chat = dynamic(() => import('../components/Chat/Chat'), {ssr: false});
+const ChatSearch = dynamic(() => import('/components/Chat/ChatSearch'), {ssr: false});
+const Chat = dynamic(() => import('/components/Chat/Chat'), {ssr: false});
 import {changeLang} from "/utils/set";
-import {request} from "../utils/hashUrl";
+import {request} from "/utils/hashUrl";
 import cookie from "js-cookie";
 import dayjs from "dayjs";
 
@@ -26,6 +25,7 @@ function ChatsPage() {
     const social = changeLang('social')
     // 聊天列表
     const [chats, setChats] = useState([]);
+    // MessageList
     // 登录用户
     const [userPar, setUserPar] = useState({});
     const getUs = async () => {
@@ -79,7 +79,8 @@ function ChatsPage() {
                         } else if (user && user?.status === 200) {
                             const aaa = listChat.filter((i) => Number(i?.User?.Uid) === Number(router.query?.chat))
                             if (aaa && aaa.length > 0) {
-                                setChats(listChat)
+                                const list = listChat.reverse()
+                                setChats(list)
                             } else {
                                 const li = {
                                     Uid: user?.data?.data?.uid,
@@ -88,7 +89,8 @@ function ChatsPage() {
                                     Avatar: user?.data?.data?.avatarUrl, ...user?.data?.data
                                 }
                                 const par = listChat.concat([{User: li, Online: false}])
-                                setChats(par)
+                                const dd = par.reverse()
+                                setChats(dd)
                             }
                             setChatUserData(user?.data?.data)
                         } else {
@@ -98,7 +100,9 @@ function ChatsPage() {
                         return null
                     }
                 } else {
-                    setChats(data?.data?.SessionList ? data?.data?.SessionList : [])
+                    const parm = data?.data?.SessionList ? data?.data?.SessionList : []
+                    const p = parm.reverse()
+                    setChats(p)
                 }
             } else {
                 setChats([])
@@ -117,25 +121,6 @@ function ChatsPage() {
                     'Authorization': token,
                 }
             });
-            // if (socket.current && userPar && userPar?.uid) {
-            //     socket.current.emit("join", {userId: userPar?.uid});
-            //     socket.current.on("connectedUsers", ({users}) => {
-            //         setConnectedUsers(users);
-            //     });
-            // }
-            // if (
-            //     chats &&
-            //     chats.length > 0 &&
-            //     !router.query.chat &&
-            //     router.pathname === "/chats"
-            // ) {
-            //     router.push(`/chats?chat=${chats[0].textsWith}`, undefined, {
-            //         shallow: true,
-            //     });
-            // }
-            // if (userPar && userPar.uid) {
-            //     postPar();
-            // }
         }
     }, []);
     const sendText = async (e, text) => {
@@ -179,7 +164,7 @@ function ChatsPage() {
                     if (Number(router?.query?.chat) === Number(aa?.fromUser?.Uid)) {
                         const params = texts.concat([{
                             FromUid: aa?.fromUser?.Uid,
-                            CreatedAt: dayjs.unix(1702982355),
+                            CreatedAt: dayjs.unix(aa?.sent),
                             ToUid: aa?.toUser?.Uid,
                             Content: aa?.data
                         }])
@@ -188,9 +173,21 @@ function ChatsPage() {
                     } else {
                         const aaa = [...chats]
                         const list = aaa.filter(i => Number(aa?.fromUser?.Uid) === Number(i.User.Uid))
+                        const mess = {
+                            Content: aa?.data,
+                            Touid: aa?.toUser?.Uid,
+                            FromUid: aa?.fromUser?.Uid,
+                            CreatedAt: aa?.sent
+                        }
                         // 判断聊天列表是否有
                         if (list.length > 0) {
-
+                            const par = aaa.map((i) => {
+                                if (Number(aa?.fromUser?.Uid) === Number(i.User.Uid)) {
+                                    i.MessageList = [mess].concat(i.MessageList)
+                                }
+                                return i
+                            })
+                            setChats(par)
                         } else {
                             const li = {
                                 Uid: aa?.fromUser?.Uid,
@@ -198,8 +195,9 @@ function ChatsPage() {
                                 Address: aa?.fromUser?.Address,
                                 Avatar: aa?.fromUser?.Avatar
                             }
-                            const par = aaa.concat([{User: li, Online: false}])
-                            setChats(par)
+                            const par = aaa.concat([{User: li, Online: false, MessageList: [mess]}])
+                            const aaa = par.reverse()
+                            setChats(aaa)
                         }
                     }
                 }
@@ -396,7 +394,7 @@ function ChatsPage() {
                                     />
                                 )}
                             </div>
-                            <div className="mt-4" style={{borderTop: "1px solid #efefef"}}>
+                            <div className={`mt-4 ${changeTheme? 'darkModes' :'whiteModes'}`}   style={{borderTop: "1px solid #efefef",height:'80vh',overflowY:'auto',backgroundColor:null}}>
                                 <>
                                     {chats && chats.length > 0 ? (
                                         chats.map((chat) => (
@@ -411,8 +409,8 @@ function ChatsPage() {
                                                     columnGap: '10px',
                                                 }}>
                                                     <div className="relative">
-                                                        <img width={50} height={50} style={{
-                                                            borderRadius: '50%'
+                                                        <img style={{
+                                                            borderRadius: '50%',width:'50px',height:'50px'
                                                         }} src={chat?.User?.Avatar || '/dexlogo.svg'} alt="userimg"/>
                                                         {chat?.Online && (
                                                             <AppleOutlined
@@ -436,7 +434,7 @@ function ChatsPage() {
                                                         <p style={{
                                                             marginTop: '-13px'
                                                         }}>
-                                                            {chat?.data || ''}
+                                                            {chat?.MessageList && chat?.MessageList.length > 0 ? chat?.MessageList[0].Content : ''}
                                                         </p>
                                                     </div>
                                                     {chat.created_at && (
@@ -476,8 +474,8 @@ function ChatsPage() {
                                         alignItems: 'center',
                                         columnGap: '7px'
                                     }}>
-                                        <img width={80} height={80} style={{
-                                            borderRadius: '50%'
+                                        <img  style={{
+                                            borderRadius: '50%',width:'80px',height:'80px'
                                         }} src={chatUserData?.avatarUrl || '/dexlogo.svg'} alt="userimg"/>
                                         <div>
                                             <p style={{

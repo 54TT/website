@@ -23,10 +23,10 @@ function Bottom(props) {
             </div>
             <div className={`${styles['bottomBoxLogo']}  ${changeTheme ? 'darknessTwo' : 'brightTwo boxHover'}`}>
                 <div className={styles.bottomImgs}>
-                    <img src="/TwitterX1.png" alt="" width={45} height={45}/>
-                    <img src="/TelegramApp.png" alt="" width={45} height={45}/>
-                    <img src="/Discord.png" alt="" width={45} height={45}/>
-                    <img src="/Medium.png" alt="" width={45} height={45}/>
+                    <img src="/TwitterX1.png" alt="" style={{width:'45px',height:'45px'}}/>
+                    <img src="/TelegramApp.png" alt="" style={{width:'45px',height:'45px'}}/>
+                    <img src="/Discord.png" alt="" style={{width:'45px',height:'45px'}}/>
+                    <img src="/Medium.png" alt="" style={{width:'45px',height:'45px'}}/>
                 </div>
             </div>
             <div className={styles.bottomBot}

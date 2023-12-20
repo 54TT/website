@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 
 import dynamic from "next/dynamic";
-import styles from "../components/Layout/css/header.module.css";
+import styles from "/components/Layout/css/header.module.css";
 import { CountContext } from '/components/Layout/Layout';
 import cookie from "js-cookie";
 import { changeLang } from "/utils/set";
@@ -9,7 +9,7 @@ import { notification } from 'antd'
 
 function Search() {
   const header = changeLang("header");
-  const ChatSearch = dynamic(() => import("../components/Chat/ChatSearch"), {
+  const ChatSearch = dynamic(() => import("/components/Chat/ChatSearch"), {
     ssr: false,
   });
   const { changeTheme } = useContext(CountContext);

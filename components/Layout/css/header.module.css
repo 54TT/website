@@ -3,7 +3,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 20px
+    padding: 10px
 }
 
 .search {
@@ -75,6 +75,7 @@
 .loginBox {
     display: flex;
     align-items: center;
+    border-radius: 10px;
 }
 
 .loginImg {
@@ -89,9 +90,12 @@
     font-weight: bold;
     color: #8A8A8A!important;
 }
-
-.but {
-    margin-left: 10px;
+.loginNames{
+    border: none!important;
+}
+.loginNames  span{
+    font-weight: bold;
+    color: rgb(220, 220, 220) !important;
 }
 
 .addShow {

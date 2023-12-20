@@ -1,12 +1,12 @@
 import React from "react";
-import calculateTime from "../../utils/calculateTime";
+import calculateTime from "/utils/calculateTime";
 import Link from "next/link";
 import styled from '/public/styles/all.module.css'
 function LikeNotification({ notification }) {
   return (
     notification.type === "newLike" && (
       <div className={styled.commentNotificationBox}>
-        <img   width={60} height={60} style={{borderRadius:'50%'}} src={notification?.user?.profilePicUrl||'/dexlogo.svg'} alt="userimg" />
+        <img    style={{borderRadius:'50%',width:'60px',height:'60px'}} src={notification?.user?.profilePicUrl||'/dexlogo.svg'} alt="userimg" />
         <div className="select-none"  style={{marginLeft:'10px'}}>
           <p>
             <Link href={`/${notification?.user?.username?notification.user.username:''}`} passHref>

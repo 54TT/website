@@ -12,9 +12,9 @@ import {useEffect} from "react";
 import {notification, Skeleton} from "antd";
 import styled from '/public/styles/all.module.css'
 import {changeLang} from "/utils/set";
-import {request} from "../../utils/hashUrl";
+import {request} from "/utils/hashUrl";
 import cookie from "js-cookie";
-import {CountContext} from "../Layout/Layout";
+import {CountContext} from "/components/Layout/Layout";
 
 const notifyError = () => {
     notification.error({

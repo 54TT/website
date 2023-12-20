@@ -80,7 +80,7 @@ export default function Presale() {
             dataIndex: 'logo', align: 'center',
             width: 30,
             render: (text, record) => {
-                return <img src={text||'/dexlogo.svg'} alt="" width={30}/>
+                return <img src={text||'/dexlogo.svg'} alt="" style={{width:'30px',height:'30px'}}/>
             }
         },
         {
@@ -137,13 +137,13 @@ export default function Presale() {
             title: launch.platform,
             dataIndex: 'platformLogo', align: 'center',
             render: (text) => {
-                return <img src={text || '/dexlogo.svg'} alt="" width={'30px'} className={styled.launchTableImg}/>
+                return <img src={text || '/dexlogo.svg'} alt="" style={{width:'30px',height:'30px'}} className={styled.launchTableImg}/>
             }
         },
         {
             title: launch.dex, align: 'center', render: (text, record) => {
-                return <img src="/dex-uniswap.png" alt="" width={30}
-                              height={30} className={styled.launchTableImg}/>
+                return <img src="/dex-uniswap.png" alt="" style={{width:'30px',height:'30px'}}
+                               className={styled.launchTableImg}/>
             }
         },
     ];
@@ -157,7 +157,7 @@ export default function Presale() {
             <Card className={`${styled.launchBoxCard}  ${changeAllTheme('darknessTwo', 'brightTwo')}`}>
                 <div className={styled.launchBoxCardBox}>
                     <div style={{display: 'flex', alignItems: 'center'}}>
-                        <img src="/Group.png" alt="" width={70} height={70} className={styled.mobliceImage}/>
+                        <img src="/Group.png" alt="" style={{width:'70px',height:'70px'}} className={styled.mobliceImage}/>
                         <span style={{fontWeight: 'bold', fontSize: '26px'}}
                               className={changeAllTheme('darknessFont', 'brightFont')}> {launch.launch}</span>
                     </div>

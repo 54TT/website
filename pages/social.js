@@ -1,18 +1,15 @@
 import React, {useEffect, useState, useContext} from "react";
-import Sidebar from "../components/Sidebar";
-import styles from "../public/styles/social.module.css";
 import _ from 'lodash'
 import dynamic from 'next/dynamic'
+const styles = dynamic(() => import("/public/styles/social.module.css"), {ssr: false});
 import cook from "js-cookie";
 import {CountContext} from '/components/Layout/Layout'
-
-const Feed = dynamic(() => import('../components/Feed'), {ssr: false});
-const RightSideColumn = dynamic(() => import('../components/RightSideColumn'), {ssr: false});
-import {arrayUnique} from '/utils/set'
-import {request} from "../utils/hashUrl";
+const Sidebar = dynamic(() => import("/components/Sidebar"), {ssr: false});
+const Feed = dynamic(() => import('/components/Feed'), {ssr: false});
+const RightSideColumn = dynamic(() => import('/components/RightSideColumn'), {ssr: false});
+import {request} from "/utils/hashUrl";
 import cookie from "js-cookie";
 import {Skeleton} from "antd";
-
 function Index() {
     const {setLogin} = useContext(CountContext);
     // 推文
@@ -146,10 +143,10 @@ function Index() {
     return (
         <>
             <div className={styles.mobliceSocialBox}>
-                <div className={`min-h-screen ${changeAllTheme('darknessTwo', 'brightTwo')}`}
-                     style={{backgroundColor: 'rgb(253,213,62)', marginRight: '20px', borderRadius: '10px'}}>
+                <div className={`min-h-screen `}
+                     style={{ marginRight: '20px', borderRadius: '10px'}}>
                     <main style={{display: 'flex'}}>
-                        <Sidebar user={userPar ? userPar : ''}/>
+                        {/*<Sidebar user={userPar ? userPar : ''}/>*/}
                         {
                             postsLoad ? <Skeleton active/> : <Feed
                                 user={userPar ? userPar : ''}

@@ -27,7 +27,6 @@
     "event-source-polyfill": "^1.0.31",
     "graphql": "^16.8.1",
     "graphql-tag": "^2.12.6",
-    "hjt-connectkit": "^1.5.9",
     "js-cookie": "^3.0.5",
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",

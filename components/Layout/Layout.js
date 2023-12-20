@@ -6,7 +6,6 @@ import {Anchor} from 'antd'
 import cookie from "js-cookie";
 import {useDisconnect} from "wagmi";
 import  styled from '/public/styles/all.module.css'
-
 export const CountContext = createContext(null);
 const Layout = ({children}) => {
     const {disconnect} = useDisconnect()
@@ -63,12 +62,12 @@ const Layout = ({children}) => {
     useEffect(() => {
         if (changeTheme) {
             const body = document.querySelector('body');
-            body.classList.add('darkMode');
-            body.classList.remove('whiteMode');
+            body.classList.add('bodyBack','darkModes');
+            body.classList.remove('whiteMode','whiteModes');
         } else {
             const body = document.querySelector('body');
-            body.classList.remove('darkMode');
-            body.classList.add('whiteMode');
+            body.classList.remove('bodyBack','darkModes');
+            body.classList.add('whiteMode','whiteModes');
         }
     }, [changeTheme])
     return (

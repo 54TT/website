@@ -6,7 +6,7 @@ import styled from '/public/styles/all.module.css'
 const {Countdown} = Statistic;
 import {changeLang} from "/utils/set";
 import {CountContext} from '/components/Layout/Layout';
-import {request} from "../utils/hashUrl";
+import {request} from "/utils/hashUrl";
 import {useRouter} from "next/router";
 import cookie from "js-cookie";
 
@@ -82,7 +82,7 @@ export default function Presale() {
             dataIndex: 'address', align: 'center',
             width: 30,
             render: (_, record) => {
-                return <img src={record?.logo ? record.logo : '/avatar.png'} style={{borderRadius: '50%'}} alt="" width={30}/>
+                return <img src={record?.logo ? record.logo : '/avatar.png'} style={{borderRadius: '50%',width:'30px'}} alt="" />
             }
         },
         {
@@ -141,13 +141,13 @@ export default function Presale() {
             title: presale.platform,
             dataIndex: 'platformLogo', align: 'center',
             render: (text) => {
-                return <img src={text} alt="" width={'30px'} className={styled.presaleBoxTableImgs}/>
+                return <img src={text} alt="" style={{width:'30px'}} className={styled.presaleBoxTableImgs}/>
             }
         },
         {
             title: presale.dex, align: 'center', render: (text, record) => {
-                return <img src="/dex-uniswap.png" alt="" width={30}
-                              height={30} className={styled.presaleBoxTableImgs}/>
+                return <img src="/dex-uniswap.png" alt="" style={{width:'30px',height:'30px'}}
+                              className={styled.presaleBoxTableImgs}/>
             }
         },
     ];
@@ -160,7 +160,7 @@ export default function Presale() {
             <Card className={`${styled.launchBoxCard} ${changeAllTheme('darknessTwo', 'brightTwo')}`}>
                 <div className={styled.launchBoxCardBox}>
                     <div style={{display: 'flex', alignItems: 'center'}}>
-                        <img src="/iconsss.svg" alt="" width={70} height={70} className={styled.mobliceImage}/>
+                        <img src="/iconsss.svg" alt="" style={{width:'70px',height:'70px'}} className={styled.mobliceImage}/>
                         <span style={{fontWeight: 'bold', fontSize: '26px'}}
                               className={changeAllTheme('darknessFont', 'brightFont')}>{presale.presales}</span>
                     </div>

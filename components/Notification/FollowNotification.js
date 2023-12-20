@@ -1,16 +1,16 @@
 import React, {useEffect, useState} from "react";
-import calculateTime from "../../utils/calculateTime";
+import calculateTime from "/utils/calculateTime";
 import Link from "next/link";
 import {CheckCircleIcon, UserAddIcon} from "@heroicons/react/solid";
 import styled from '/public/styles/all.module.css'
-import {followUser, unfollowUser} from "../../utils/profileActions";
+import {followUser, unfollowUser} from "/utils/profileActions";
 
 function FollowNotification({notification, userFollowStats, userPar, chang, }) {
     return (
         notification.type === "newFollower" && (
             <div className={styled.commentNotificationBox}>
                 <div style={{display: 'flex', alignItems: 'center'}}>
-                    <img   height={50} width={50} style={{ borderRadius: '50%', marginRight: '15px'}}
+                    <img   style={{ borderRadius: '50%', marginRight: '15px',width:'50px',height:'50px'}}
                          src={notification?.user?.profilePicUrl ? notification.user.profilePicUrl : '/dexlogo.svg'}
                          alt="userimg"/>
                     <div style={{marginLeft: '10px'}}>

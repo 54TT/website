@@ -3,9 +3,9 @@ import cookie from "js-cookie";
 import Link from 'next/link'
 import styled from '/public/styles/all.module.css'
 import {changeLang} from "/utils/set";
-import {request} from "../../utils/hashUrl";
+import {request} from "/utils/hashUrl";
 import {Skeleton} from "antd";
-import {CountContext} from "../Layout/Layout";
+import {CountContext} from "/components/Layout/Layout";
 
 function FollowingUsers({userFollowStats,isUserOnOwnAccount, user,showLoad}) {
     const username=changeLang('username')
@@ -69,8 +69,7 @@ function FollowingUsers({userFollowStats,isUserOnOwnAccount, user,showLoad}) {
                                                 className="mb-5 cursor-pointer"
                                                 key={index}
                                                 style={{width: '100%'}}>
-                                                <img src={fol?.avatar||'/dexlogo.svg'} alt="userprof"   width={50}
-                                                     height={50}/>
+                                                <img src={fol?.avatar||'/dexlogo.svg'} alt="userprof" style={{width:'50px',height:'50px'}}/>
                                                 <Link href={`/${fol?.uid}`}>
                                                     <p className={` ${changeTheme?'drakColor':'fontB'}  ${styled.followerUserName}`}>
                                                         {fol?.username?fol?.username:fol?.address.slice(0,5)}

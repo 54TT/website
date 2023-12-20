@@ -6,7 +6,7 @@ import {useRouter} from 'next/router'
 import {autoConvert, changeLang} from '/utils/set'
 import styled from '/public/styles/all.module.css'
 import {CountContext} from '/components/Layout/Layout';
-import {request} from "../utils/hashUrl";
+import {request} from "/utils/hashUrl";
 export default function Featured() {
     const featured = changeLang('featured')
     const {changeTheme,setLogin} = useContext(CountContext);
@@ -131,10 +131,10 @@ export default function Featured() {
         },
         {
             title: packageHtml(featured.dex), align: 'center', render: (text, record) => {
-                return <img src="https://dex-pert-pic.sgp1.cdn.digitaloceanspaces.com/uniswap-uni-logo.png" alt="" width={30} height={30} style={{
+                return <img src="https://dex-pert-pic.sgp1.cdn.digitaloceanspaces.com/uniswap-uni-logo.png" alt="" style={{
                     borderRadius: '50%',
                     display: 'block',
-                    margin: '0 auto',
+                    margin: '0 auto',width:'30px',height:'30px'
                 }}/>
             }
         },
@@ -187,7 +187,7 @@ export default function Featured() {
             <Card className={`${styled.featuredBoxCard} ${changeAllTheme('darknessTwo', 'brightTwo')}`}>
                 <div className={styled.featuredBoxTop}>
                     <div style={{display: 'flex', alignItems: 'center'}}>
-                        <img src="/wallet.png" alt="" width={70}  height={70} className={styled.mobliceImage} />
+                        <img src="/wallet.png" alt="" style={{width:'70px',height:'70px'}} className={styled.mobliceImage} />
                         <span style={{fontWeight: 'bold', fontSize: '26px'}} className={changeAllTheme('darknessFont','brightFont')}>{featured.featured}</span>
                     </div>
                     <Segmented options={['5m', '1h', '6h', '24h']} onChange={changSeg} defaultValue={'24h'}

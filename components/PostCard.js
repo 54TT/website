@@ -10,8 +10,8 @@ const CommentComponent = dynamic(() => import('./CommentComponent'), {ssr: false
 const {TextArea} = Input
 import dayjs from 'dayjs'
 import {CountContext} from '/components/Layout/Layout';
-import {request} from "../utils/hashUrl";
-import {arrayUnique} from "../utils/set";
+import {request} from "/utils/hashUrl";
+import {arrayUnique} from "/utils/set";
 import cookie from "js-cookie";
 
 const notify = () => {
@@ -181,11 +181,11 @@ function PostCard({post, user, change, liked}) {
             {/*头像*/}
             <div className="p-4">
                 <div className="flex space-x-3 items-center ml-2 relative">
-                    <img height={50} width={50} style={{borderRadius: '50%'}}
+                    <img  style={{borderRadius: '50%',width:'50px',height:'50px'}}
                          src={post && post?.user?.avatar ? post.user.avatar : '/dexlogo.svg'}
                          alt="userimg"/>
                     <div>
-                        <Link href={`/${post?.user?.uid ? post.user.uid : ''}`}>
+                        <Link href={`/person/${post?.user?.uid ? post.user.uid : ''}`}>
                             <div style={{
                                 cursor: 'pointer',
                                 fontSize: '20px'
@@ -312,7 +312,7 @@ function PostCard({post, user, change, liked}) {
                         <form className="w-full">
                             {/* div which contains the profilepic and the input div */}
                             <div className="flex space-x-2 items-center">
-                                <img width={50} height={50} style={{borderRadius: '50%'}}
+                                <img style={{borderRadius: '50%',width:'50px',height:'50px'}}
                                      src={user?.profilePicUrl || '/dexlogo.svg'}
                                      alt="profile pic"
                                 />

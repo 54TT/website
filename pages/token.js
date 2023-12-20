@@ -2,7 +2,7 @@ import React, {useState, useEffect, useRef, useContext} from 'react';
 import {Card, Pagination, Segmented, Form, Input, Button, Popconfirm} from "antd";
 import styles from '/public/styles/all.module.css'
 import {CountContext} from '/components/Layout/Layout'
-import {request} from "../utils/hashUrl";
+import {request} from "/utils/hashUrl";
 import cookie from "js-cookie";
 import {LoadingOutlined} from '@ant-design/icons'
 import 'dayjs/locale/en'
@@ -191,14 +191,14 @@ function Token(props) {
                     {
                         infoSow ? <div style={{display: 'flex', alignItems: 'center'}}>
                                 <div className={styles.coinBoxTop}>
-                                    <img src="/Booking.png" alt="" width={30}/>
+                                    <img src="/Booking.png" alt="" style={{width:'30px'}}/>
                                     {/*<span style={{margin: '0 10px'}}>{infoParams && infoParams.name}</span>*/}
                                     <span
                                         style={{color: '#9bc2d9'}}>{infoParams.slice(0, 5) + '...' + infoParams.slice(-5)}</span>
                                 </div>
                                 <div className={styles.coinBoxSet}>
                                     <span className={styles.coinBoxInfo}>info</span>
-                                    <img src="/setCoin.svg" alt="" width={15} style={{cursor: 'pointer'}}/>
+                                    <img src="/setCoin.svg" alt=""  style={{cursor: 'pointer',width:'15px'}}/>
                                 </div>
                             </div>
                             : ''
@@ -253,7 +253,7 @@ function Token(props) {
                                 {
                                     imagePreview ? <div style={{display: 'flex', alignItems: 'center'}}>
                                         <img src={imagePreview} alt="imagePreview"
-                                             width={35}/>
+                                             style={{width:'35px'}}/>
                                         <Popconfirm
                                             title="Delete the task"
                                             description="Are you sure to delete this task?"
@@ -261,9 +261,7 @@ function Token(props) {
                                             okText="Yes"
                                             cancelText="No"
                                         >
-                                            <img src="/delete1.svg" style={{marginLeft: '10px', cursor: 'pointer'}}
-                                                 alt=""
-                                                 width={15}/>
+                                            <img src="/delete1.svg" style={{marginLeft: '10px', cursor: 'pointer',width:'15px'}} alt=""/>
                                         </Popconfirm>
                                     </div> : ''
                                 }
@@ -387,11 +385,11 @@ function Token(props) {
                                                                          setInfoShow(false)
                                                                          form.resetFields()
                                                                      }}
-                                                                     style={{cursor: 'pointer', marginRight: '20px'}}
-                                                                     width={25}/>
+                                                                     style={{cursor: 'pointer', marginRight: '20px',width:'25px'}}
+                                                                     />
                                     <img src="/sure.svg" alt="" onClick={() => form.submit()}
-                                         style={{cursor: 'pointer'}}
-                                         width={30}/>
+                                         style={{cursor: 'pointer',width:'30px'}}
+                                        />
                                 </div>
                             </Form.Item>
                         </Form> : <div>
@@ -403,7 +401,7 @@ function Token(props) {
                                     fontWeight: 'bold',
                                     marginRight: '10px'
                                 }}>{index + 1}</span>
-                                        <img src="/Booking.png" alt="" width={30}/>
+                                        <img src="/Booking.png" alt="" style={{width:'30px'}}/>
                                         {/*<span style={{margin: '0 10px'}}>{i.name}</span>*/}
                                         <span style={{color: '#2294D4'}}>{i?.slice(0, 5) + '...' + i?.slice(-4)}</span>
                                         <div className={styles.coinBoxSet}>
@@ -413,7 +411,7 @@ function Token(props) {
                                 marginRight: '10px',
                                 cursor: 'pointer',
                             }}>info</span>
-                                            <img src="/setCoin.svg" alt="" width={15} style={{cursor: 'pointer'}}
+                                            <img src="/setCoin.svg" alt="" style={{cursor: 'pointer',width:'15px'}}
                                                  onClick={() => setInfo(i)}/>
                                         </div>
                                     </div>

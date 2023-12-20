@@ -1,17 +1,17 @@
 import React, {useContext, useEffect, useState} from "react";
-import Sidebar from "../components/Sidebar";
+import Sidebar from "/components/Sidebar";
 import styles from '/public/styles/allmedia.module.css'
 import dynamic from 'next/dynamic'
 import cook from "js-cookie";
 
-const LikeNotification = dynamic(() => import('../components/Notification/LikeNotification'), {ssr: false});
-const CommentNotification = dynamic(() => import('../components/Notification/CommentNotification'), {ssr: false});
-const FollowNotification = dynamic(() => import('../components/Notification/FollowNotification'), {ssr: false});
+const LikeNotification = dynamic(() => import('/components/Notification/LikeNotification'), {ssr: false});
+const CommentNotification = dynamic(() => import('/components/Notification/CommentNotification'), {ssr: false});
+const FollowNotification = dynamic(() => import('/components/Notification/FollowNotification'), {ssr: false});
 import {changeLang} from "/utils/set";
 import cookie from "js-cookie";
-import {request} from "../utils/hashUrl";
-import {CountContext} from "../components/Layout/Layout";
-import styled from "../public/styles/all.module.css";
+import {request} from "/utils/hashUrl";
+import {CountContext} from "/components/Layout/Layout";
+import styled from "/public/styles/all.module.css";
 function Notifications() {
     const social = changeLang('social')
     const {setLogin,changeTheme} = useContext(CountContext)

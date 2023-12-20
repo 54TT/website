@@ -1,29 +1,30 @@
 import React, {useContext, useEffect, useRef, useState} from "react";
 import {request} from '/utils/hashUrl'
-import {useAccount, useConnect, useDisconnect,} from "wagmi"
+import {useAccount, useConnect} from "wagmi"
 import {InjectedConnector} from 'wagmi/connectors/injected'
 import {Button, DatePicker, Drawer, Dropdown, Form, Input, notification, Select, Switch,} from 'antd'
 import styles from './css/header.module.css'
 import jwt from 'jsonwebtoken';
-import DrawerPage from './Drawer'
 import dynamic from "next/dynamic";
 import Link from 'next/link'
-import _ from 'lodash'
 import cookie from 'js-cookie'
 import {useRouter} from 'next/router'
 import {ethers} from 'ethers'
 import {CountContext} from '/components/Layout/Layout';
 import Marquee from "react-fast-marquee";
 import {changeLang} from "/utils/set";
+// const logicModule = await import('../dynamicLogic');
 import {gql} from "graphql-tag";
 import {ApolloClient, InMemoryCache, useQuery} from "@apollo/client";
+
+const DrawerPage = dynamic(() => import('./Drawer'), {ssr: false});
 // const client = new ApolloClient({
 //     uri: 'https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-v2-dev', cache: new InMemoryCache(),
 // });
 const client = new ApolloClient({
     uri: 'https://api.thegraph.com/subgraphs/name/levi0522/uniswap', cache: new InMemoryCache(),
 });
-const ChatSearch = dynamic(() => import('../Chat/ChatSearch'), {ssr: false})
+const ChatSearch = dynamic(() => import('/components/Chat/ChatSearch'), {ssr: false})
 const Moralis = require("moralis")?.default;
 const Header = () => {
     const drawer = changeLang('drawer')
@@ -123,7 +124,7 @@ const Header = () => {
                 const user = data?.data?.data
                 setUserPar(user)
                 cookie.set('username', JSON.stringify(data?.data?.data), {expires: 1})
-            }else {
+            } else {
                 setUserPar(null)
             }
         } catch (err) {
@@ -161,12 +162,16 @@ const Header = () => {
                         const res = await request('post', '/api/v1/login', {
                             signature: signature, addr: address, message
                         })
-                       if(res==='please'){setLogin()}else if (res && res.data && res.data?.accessToken) {
+                        if (res === 'please') {
+                            setLogin()
+                        } else if (res && res.data && res.data?.accessToken) {
                             //   jwt  解析 token获取用户信息
                             const decodedToken = jwt.decode(res.data?.accessToken);
                             if (decodedToken && decodedToken.address) {
                                 const data = await request('get', "/api/v1/userinfo/" + decodedToken?.uid, '', res.data?.accessToken)
-                               if(data==='please'){setLogin()}else if (data && data?.status === 200) {
+                                if (data === 'please') {
+                                    setLogin()
+                                } else if (data && data?.status === 200) {
                                     const user = data?.data?.data
                                     changeShowData(true)
                                     setUserPar(user)
@@ -302,7 +307,7 @@ const Header = () => {
     }
     // 登录的下拉
     const items = [{
-        key: '1', label: (<Link href={`/${userPar && userPar.uid ? userPar.uid : ''}`}>
+        key: '1', label: (<Link href={`/person/${userPar && userPar.uid ? userPar.uid : ''}`}>
                        <span>
       Personal
     </span>
@@ -360,14 +365,14 @@ const Header = () => {
     const getGasPrice = async () => {
         try {
             const provider = new ethers.providers.JsonRpcProvider('https://eth-mainnet.g.alchemy.com/v2/kNPJaYqMx7BA9TcDDJQ8pS5WcLqXGiG7');
-         try {
-            // 获取当前 gas 价格
-            const data = await provider.getGasPrice()
-            const gasPrice = ethers.utils.formatUnits(data, 'gwei')
-            setGas(gasPrice && Number(gasPrice) ? Math.floor(Number(gasPrice)) : 0)
-         }catch (err){
-             return  null
-         }
+            try {
+                // 获取当前 gas 价格
+                const data = await provider.getGasPrice()
+                const gasPrice = ethers.utils.formatUnits(data, 'gwei')
+                setGas(gasPrice && Number(gasPrice) ? Math.floor(Number(gasPrice)) : 0)
+            } catch (err) {
+                return null
+            }
         } catch (err) {
             return null
         }
@@ -444,7 +449,8 @@ const Header = () => {
         <>
             <div className={styles['headerShowNode']}>
                 <div className={"top-0 w-full  z-30 transition-all headerClass"}>
-                    <div className={styles['aaa']} style={{paddingLeft: '110px'}}>
+                    <div className={`${changeTheme ? 'topBack' : 'whiteMode'} ${styles['aaa']}`}
+                         style={{paddingLeft: '110px'}}>
                         {/*走马灯*/}
                         <Marquee
                             pauseOnHover={true}
@@ -477,64 +483,66 @@ const Header = () => {
                         </div>
                         {/*eth  price*/}
                         <div className={`${styles.eth} ${changeTheme ? 'darknessTwo' : 'brightTwo'}`}>
-                            <img src="/Ellipse27.png" alt="" width={30}
-                                 style={{border: '50%', marginRight: '6px'}}/>
+                            <img src="/Ellipse27.png" alt=""
+                                 style={{border: '50%', marginRight: '6px', width: '30px', height: '30px'}}/>
                             <p className={changeTheme ? 'darknessFont' : 'brightFont'}>${!loading && data?.bundles?.length > 0 ? Number(data.bundles[0]?.ethPrice).toFixed(2) : 0}</p>
                             <p style={{display: 'flex', alignItems: 'center', marginLeft: '8px'}}><img
                                 src="/GasStation.png"
-                                width={20} alt=""/>
+                                style={{width: '20px', height: '20px'}} alt=""/>
                                 <span className={changeTheme ? 'darknessFont' : 'brightFont'}>{gas}</span>
                             </p>
                         </div>
-                        <div className={styles.login}>
-                            {/*切换字体*/}
-                            {/*<Select*/}
-                            {/*    style={{*/}
-                            {/*        width: 120,*/}
-                            {/*    }}*/}
-                            {/*    defaultValue={'english'}*/}
-                            {/*    onChange={handleChange}*/}
-                            {/*    options={[*/}
-                            {/*        {*/}
-                            {/*            value: 'chinese',*/}
-                            {/*            label: '中文简体',*/}
-                            {/*        },*/}
-                            {/*        {*/}
-                            {/*            value: 'traditional',*/}
-                            {/*            label: '中文繁体',*/}
-                            {/*        },*/}
-                            {/*        {*/}
-                            {/*            value: 'english',*/}
-                            {/*            label: 'English',*/}
-                            {/*        },*/}
-                            {/*    ]}*/}
-                            {/*/>*/}
-                            {/*添加代币*/}
-                            {/*<Button type={'primary'} className={styles['but']}*/}
-                            {/*        onClick={showDrawer}>{header.addCoin}</Button>*/}
-                            {/*eth   price*/}
-                            {/*登录*/}
-                            {userPar && userPar?.uid ? <div className={styles.loginBox}>
-                                <Link href={`/${userPar && userPar?.uid ? userPar.uid : ''}`}>
-                                    <img className={'loginImg'} width={40} style={{borderRadius: '50%'}}
-                                         src={userPar && userPar?.avatarUrl ? userPar.avatarUrl : '/deplogo.svg'}
+                        {/*<div className={styles.login}>*/}
+                        {/*切换字体*/}
+                        {/*<Select*/}
+                        {/*    style={{*/}
+                        {/*        width: 120,*/}
+                        {/*    }}*/}
+                        {/*    defaultValue={'english'}*/}
+                        {/*    onChange={handleChange}*/}
+                        {/*    options={[*/}
+                        {/*        {*/}
+                        {/*            value: 'chinese',*/}
+                        {/*            label: '中文简体',*/}
+                        {/*        },*/}
+                        {/*        {*/}
+                        {/*            value: 'traditional',*/}
+                        {/*            label: '中文繁体',*/}
+                        {/*        },*/}
+                        {/*        {*/}
+                        {/*            value: 'english',*/}
+                        {/*            label: 'English',*/}
+                        {/*        },*/}
+                        {/*    ]}*/}
+                        {/*/>*/}
+                        {/*添加代币*/}
+                        {/*<Button type={'primary'} className={styles['but']}*/}
+                        {/*        onClick={showDrawer}>{header.addCoin}</Button>*/}
+                        {/*eth   price*/}
+                        {/*登录*/}
+                        {userPar && userPar?.uid ?
+                            <div className={`${changeTheme ? 'backLine' : 'brightFore boxHover'}  ${styles.loginBox}`}>
+                                <Link href={`/person/${userPar && userPar?.uid ? userPar.uid : ''}`}>
+                                    <img className={'loginImg'}
+                                         style={{borderRadius: '50%', width: '25px', height: '25px'}}
+                                         src={userPar && userPar?.avatarUrl ? userPar.avatarUrl : '/dexlogo.svg'}
                                          alt=""/>
                                 </Link>
                                 <Dropdown
-                                    menu={{
-                                        items,
-                                    }}
-                                    placement="bottomLeft"
-                                    arrow
-                                >
+                                    menu={{items}}
+                                    overlayClassName={changeTheme ? 'dropdownClass' : ''}
+                                    placement="bottom">
                                     <Button
-                                        className={`${styles.loginName} ${styles.but} ${changeTheme ? 'darknessThree' : 'brightFore boxHover'} `}>{userPar && userPar.username ? userPar.username.length > 5 ? userPar.username.slice(0, 5) + '...' : userPar?.username : userPar?.address?.slice(0, 5) + '...' || ''}</Button>
+                                        className={`${styles.loginNames}`}>{userPar && userPar.username ? userPar.username.length > 5 ? userPar.username.slice(0, 5) + '...' : userPar?.username : userPar?.address?.slice(0, 5) + '...' || ''}</Button>
                                 </Dropdown>
+                                <img className={'loginImg'} style={{borderRadius: '50%', width: '25px', height: '25px'}}
+                                     src={userPar && userPar?.avatarUrl ? userPar.avatarUrl : '/dexlogo.svg'}
+                                     alt=""/>
                             </div> : <Button
-                                className={`${styles['but']} ${styles.loginName} ${changeTheme ? 'darknessThree' : 'brightFore boxHover'}`}
+                                className={` ${styles.loginName} ${changeTheme ? 'darknessThree' : 'brightFore boxHover'}`}
                                 onClick={getMoney}>{header.login}</Button>}
-                        </div>
                     </div>
+                    {/*</div>*/}
                 </div>
                 <DrawerPage getMoney={getMoney}/>
                 {/*</Suspense>*/}
@@ -546,28 +554,32 @@ const Header = () => {
                         <div
                             className={`${styles.ethMobliceMg} ${styles.ethMoblice} ${changeTheme ? 'darkMode' : 'whiteMode'}`}>
                             <Link href={'/'}>
-                                <img src={'/GroupMoblice.svg'} alt="GroupMoblice" style={{marginLeft: '12px'}}
-                                       width={20}/>
+                                <img src={'/GroupMoblice.svg'} alt="GroupMoblice"
+                                     style={{marginLeft: '12px', width: '20px', height: '20px'}}
+                                />
                             </Link>
                         </div>
                         <div className={`${styles.ethMoblice} ${changeTheme ? 'darkMode' : 'whiteMode'}`}>
                             <Link href={'/search'}>
-                                <img src={'/Search.svg'} alt="Search" style={{marginLeft: '10px'}} width={20}
-                                       height={20}/>
+                                <img src={'/Search.svg'} alt="Search"
+                                     style={{marginLeft: '10px', width: "20px", height: '20px'}} width={20}
+                                />
                             </Link>
                         </div>
                     </div>
                     <div className={`${styles.ethMobliceCt} ${styles.eth} ${changeTheme ? 'darkMode' : 'whiteMode'}`}>
-                        <img src="/Ellipse27.png" alt="" width={40} style={{border: '50%', marginRight: '6px'}}/>
+                        <img src="/Ellipse27.png" alt=""
+                             style={{border: '50%', marginRight: '6px', width: '40px', height: '40px'}}/>
                         <p className={changeTheme ? 'darknessFont' : 'brightFont'}>${!loading && data?.bundles?.length > 0 ? Number(data.bundles[0]?.ethPrice).toFixed(2) : 0}</p>
                         <p style={{display: 'flex', alignItems: 'center', marginLeft: '8px'}}>
-                            <img src="/GasStation.png" width={20} alt="" style={{borderRadius:'50%'}}/>
+                            <img src="/GasStation.png" alt=""
+                                 style={{borderRadius: '50%', width: '20px', height: '20px'}}/>
                             <span className={changeTheme ? 'darknessFont' : 'brightFont'}>{gas}</span>
                         </p>
                     </div>
                     {userPar && userPar?.uid ? <div className={styles.loginBox}>
-                        <Link href={`/${userPar && userPar?.uid ? userPar.uid : ''}`}>
-                            <img className={'loginImg'} width={35} style={{borderRadius:'50%'}}
+                        <Link href={`/person/${userPar && userPar?.uid ? userPar.uid : ''}`}>
+                            <img className={'loginImg'} style={{borderRadius: '50%', width: '35px', height: '35px'}}
                                  src={userPar && userPar?.avatarUrl ? userPar.avatarUrl : '/dexlogo.svg'}
                                  alt=""/>
                         </Link>
@@ -586,28 +598,29 @@ const Header = () => {
                         onClick={getMoney}>{header.login}</Button>}
                     <div className={styles.mobliceMenuFlex}>
                         {
-                            userPar && userPar?.uid ?'': <div
+                            userPar && userPar?.uid ? '' : <div
                                 className={`${styles.ethMobliceMg} ${styles.ethMoblice} ${changeTheme ? 'darkMode' : 'whiteMode'}`}
                                 onClick={getMoney}>
-                                <img src={'/WalletMoblice.svg'} alt="WalletMoblice" style={{marginLeft: '10px'}}
-                                       width={20} height={20}/>
+                                <img src={'/WalletMoblice.svg'} alt="WalletMoblice"
+                                     style={{marginLeft: '10px', width: '20px', height: '20px'}}
+                                />
                             </div>
                         }
                         <div className={`${styles.ethMoblice} ${changeTheme ? 'darkMode' : 'whiteMode'}`}
                              onClick={openShowMenuItem}>
-                            <img src={'/Menu.svg'} alt="Menu" style={{marginLeft: '10px'}} width={20} height={20}/>
+                            <img src={'/Menu.svg'} alt="Menu"
+                                 style={{marginLeft: '10px', width: '20px', height: '20px'}}/>
                         </div>
                     </div>
                 </div>
             </div>
             {/* 菜单Items */}
-            <div
-                className={`${isShowMenuItem ? styles.mobliceMentHideItemsBox : styles.mobliceMentItemsBox} ${changeTheme ? 'darknessTwo' : 'brightTwo'}`}>
+            <div className={`${isShowMenuItem ? styles.mobliceMentHideItemsBox : styles.mobliceMentItemsBox} ${changeTheme ? 'darknessTwo' : 'brightTwo'}`}>
                 <div style={{display: 'flex', flexWrap: 'wrap'}}>
                     <div className={`${styles.mobliceDpFlex}`}>
                         <div onClick={pushOnclick('one')}>
                             <div className={`${styles.mobliceDpFlexs}`}>
-                                <img src={`/Vector.svg`} alt="logo" width={32} height={32}/>
+                                <img src={`/Vector.svg`} alt="logo" style={{width: '32px', height: '32px'}}/>
                                 <div className={changeTheme ? 'darknessFont' : 'brightFont'}>{drawer.home}</div>
                             </div>
                         </div>
@@ -615,7 +628,7 @@ const Header = () => {
                     <div className={`${styles.mobliceDpFlex}`}>
                         <div onClick={pushOnclick('two')}>
                             <div className={`${styles.mobliceDpFlexs}`}>
-                                <img src={`/icon_graph_.svg`} alt="logo" height={32} width={32}/>
+                                <img src={`/icon_graph_.svg`} alt="logo" style={{width: '32px', height: '32px'}}/>
                                 <div className={changeTheme ? 'darknessFont' : 'brightFont'}>{drawer.featured}</div>
                             </div>
                         </div>
@@ -623,7 +636,7 @@ const Header = () => {
                     <div className={`${styles.mobliceDpFlex}`}>
                         <div onClick={pushOnclick('three')}>
                             <div className={`${styles.mobliceDpFlexs}`}>
-                                <img src={`/icon_rocket_.svg`} alt="logo" height={32} width={32}/>
+                                <img src={`/icon_rocket_.svg`} alt="logo" style={{width: '32px', height: '32px'}}/>
                                 <div className={changeTheme ? 'darknessFont' : 'brightFont'}>{drawer.presale}</div>
                             </div>
                         </div>
@@ -631,7 +644,7 @@ const Header = () => {
                     <div className={`${styles.mobliceDpFlex}`}>
                         <div onClick={pushOnclick('four')}>
                             <div className={`${styles.mobliceDpFlexs}`}>
-                                <img src={`/icon_timer_.svg`} alt="logo" height={32} width={32}/>
+                                <img src={`/icon_timer_.svg`} alt="logo" style={{width: '32px', height: '32px'}}/>
                                 <div className={changeTheme ? 'darknessFont' : 'brightFont'}>{drawer.launch}</div>
                             </div>
                         </div>
@@ -639,7 +652,7 @@ const Header = () => {
                     <div className={`${styles.mobliceDpFlex}`}>
                         <div onClick={pushOnclick('five')}>
                             <div className={`${styles.mobliceDpFlexs}`}>
-                                <img src={`/GroupJiuBa.svg`} alt="logo" height={32} width={32}/>
+                                <img src={`/GroupJiuBa.svg`} alt="logo" style={{width: '32px', height: '32px'}}/>
                                 <div className={changeTheme ? 'darknessFont' : 'brightFont'}>{drawer.newPair}</div>
                             </div>
                         </div>
@@ -647,7 +660,7 @@ const Header = () => {
                     <div className={`${styles.mobliceDpFlex}`}>
                         <div onClick={push}>
                             <div className={`${styles.mobliceDpFlexs}`}>
-                                <img src={`/icon_newspaper_.svg`} alt="logo" width={32} height={32}/>
+                                <img src={`/icon_newspaper_.svg`} alt="logo" style={{width: '32px', height: '32px'}}/>
                                 <div className={changeTheme ? 'darknessFont' : 'brightFont'}>{drawer.community}</div>
                             </div>
                         </div>
@@ -655,7 +668,7 @@ const Header = () => {
                     <div className={`${styles.mobliceDpFlex}`}>
                         <div onClick={pushPer}>
                             <div className={`${styles.mobliceDpFlexs}`}>
-                                <img src={`/icon_new_spaper_.svg`} height={32} alt="logo" width={32}/>
+                                <img src={`/icon_new_spaper_.svg`} style={{width: '32px', height: '32px'}} alt="logo"/>
                                 <div className={changeTheme ? 'darknessFont' : 'brightFont'}>{drawer.user}</div>
                             </div>
                         </div>

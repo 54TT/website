@@ -5,42 +5,36 @@ html {
     font-family: "Rubik", sans-serif;
 }
 
-.whiteMode {
-    background-color: rgb(249, 181, 54);
-}
 
-.whiteMode::-webkit-scrollbar {
+.whiteModes::-webkit-scrollbar {
     width: 10px;
     background-color: rgb(249, 188, 54);
 }
 
 /*定义滚动条轨道：内阴影+圆角*/
-.whiteMode::-webkit-scrollbar-track {
+.whiteModes::-webkit-scrollbar-track {
     background-color: rgb(249, 188, 54);
 }
 
 /*定义滑块：内阴影+圆角*/
-.whiteMode::-webkit-scrollbar-thumb {
+.whiteModes::-webkit-scrollbar-thumb {
     border-radius: 10px;
     background-color: rgb(253, 213, 62);
 }
 
-.darkMode {
-    background-color: rgb(37, 35, 42);
-}
 
-.darkMode::-webkit-scrollbar {
+.darkModes::-webkit-scrollbar {
     width: 10px;
     background-color: rgb(37, 35, 42);
 }
 
 /*定义滚动条轨道：内阴影+圆角*/
-.darkMode::-webkit-scrollbar-track {
+.darkModes::-webkit-scrollbar-track {
     background-color: rgb(37, 35, 42);
 }
 
 /*定义滑块：内阴影+圆角*/
-.darkMode::-webkit-scrollbar-thumb {
+.darkModes::-webkit-scrollbar-thumb {
     border-radius: 10px;
     background-color: rgb(59, 55, 71);
 }

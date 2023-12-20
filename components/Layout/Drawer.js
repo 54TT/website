@@ -75,7 +75,7 @@ const Drawer = ({getMoney}) => {
         if (cookie.get('username') && cookie.get('username') != 'undefined') {
             const data = JSON.parse(cookie.get('username'))
             if (Number(data?.uid)) {
-                router.push(`/${data?.uid}`)
+                router.push(`/person/${data?.uid}`)
             }
         } else {
             getMoney()
@@ -112,7 +112,7 @@ const Drawer = ({getMoney}) => {
                                     }}
                                 >
                                     {/* 源图片：logoTop */}
-                                    <img src={'/logo.svg'} alt="logo" width={30} height={30}/>
+                                    <img src={'/logo.svg'} alt="logo" style={{width:'30px',height:'30px'}}/>
                                 </ListItemIcon>
                                 <ListItemText primary={<div style={{width: '50%'}}>
                                     <img width={100} height={100} style={{width: '100%'}} src="/Group21.svg" alt=""/>
@@ -139,7 +139,7 @@ const Drawer = ({getMoney}) => {
                                         }}
                                     >
                                         {/* 源图片：HomeLogo */}
-                                        <img src={`/Vector.svg`} alt="logo" width={28} height={28}/>
+                                        <img src={`/Vector.svg`} alt="logo" style={{width:'28px',height:'28px'}}/>
                                     </ListItemIcon>
                                     <ListItemText primary={<span
                                         className={changeTheme ? 'darknessFont' : 'brightFont'}>{drawer.home}</span>}
@@ -163,7 +163,7 @@ const Drawer = ({getMoney}) => {
                                             justifyContent: 'center',
                                         }}>
                                         {/* 源图片：ExchangeLogo */}
-                                        <img src={`/GroupJiuBa.svg`} alt="logo" height={28} width={28}/>
+                                        <img src={`/GroupJiuBa.svg`} alt="logo" style={{width:'28px',height:'28px'}}/>
                                     </ListItemIcon>
                                     <ListItemText primary={<span
                                         className={changeTheme ? 'darknessFont' : 'brightFont'}>{drawer.featured}</span>}
@@ -188,7 +188,7 @@ const Drawer = ({getMoney}) => {
                                         }}
                                     >
                                         {/* 源图片：pre-saleLogo */}
-                                        <img src={`/icon_rocket_.svg`} alt="logo" height={28} width={28}/>
+                                        <img src={`/icon_rocket_.svg`} alt="logo"style={{width:'28px',height:'28px'}}/>
                                     </ListItemIcon>
                                     <ListItemText primary={<span
                                         className={changeTheme ? 'darknessFont' : 'brightFont'}>{drawer.presale}</span>}
@@ -213,7 +213,7 @@ const Drawer = ({getMoney}) => {
                                         }}
                                     >
                                         {/* 源图片：pre-saleLogo */}
-                                        <img src={`/icon_timer_.svg`} alt="logo" height={28} width={28}/>
+                                        <img src={`/icon_timer_.svg`} alt="logo" style={{width:'28px',height:'28px'}}/>
                                     </ListItemIcon>
                                     <ListItemText primary={<span
                                         className={changeTheme ? 'darknessFont' : 'brightFont'}>{drawer.launch}</span>}
@@ -238,7 +238,7 @@ const Drawer = ({getMoney}) => {
                                         }}
                                     >
                                         {/* 源图片：newpairsLogo */}
-                                        <img src={`/icon_graph_.svg`} alt="logo" height={28} width={28}/>
+                                        <img src={`/icon_graph_.svg`} alt="logo" style={{width:'28px',height:'28px'}}/>
                                     </ListItemIcon>
                                     <ListItemText primary={<span
                                         className={changeTheme ? 'darknessFont' : 'brightFont'}>{drawer.newPair}</span>}
@@ -263,7 +263,7 @@ const Drawer = ({getMoney}) => {
                                         }}
                                     >
                                         {/* 源图片：NewsLogo */}
-                                        <img src={`/icon_newspaper_.svg`} alt="logo" width={28} height={28}/>
+                                        <img src={`/icon_newspaper_.svg`} alt="logo"style={{width:'28px',height:'28px'}}/>
                                     </ListItemIcon>
                                     <ListItemText primary={<span
                                         className={changeTheme ? 'darknessFont' : 'brightFont'}>{drawer.community}</span>}
@@ -288,7 +288,7 @@ const Drawer = ({getMoney}) => {
                                         }}
                                     >
                                         {/* 源图片：UserSettings */}
-                                        <img src={`/icon_new_spaper_.svg`} height={28} alt="logo" width={28}/>
+                                        <img src={`/icon_new_spaper_.svg`} style={{width:'28px',height:'28px'}} alt="logo"/>
                                     </ListItemIcon>
                                     <ListItemText primary={<span
                                         className={changeTheme ? 'darknessFont' : 'brightFont'}>{drawer.user}</span>}

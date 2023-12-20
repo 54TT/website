@@ -1,5 +1,4 @@
 import React, {useContext, useState} from "react";
-import calculateTime from "../utils/calculateTime";
 import {MinusCircleIcon, TrashIcon} from "@heroicons/react/outline";
 import {notification,} from "antd";
 import dynamic from "next/dynamic";
@@ -7,7 +6,7 @@ import styled from '/public/styles/all.module.css'
 
 const ReusableDialog = dynamic(() => import('./ReusableDialog'), {ssr: false})
 import Link from 'next/link'
-import {request} from "../utils/hashUrl";
+import {request} from "/utils/hashUrl";
 import cookie from "js-cookie";
 import {CountContext} from "./Layout/Layout";
 
@@ -64,7 +63,7 @@ function CommentComponent({comment, postId, change, user, setComments, changComm
 
     return (
         <div className="flex items-start pl-5 pr-3 mt-3" style={{overflowY: 'auto'}}>
-            <img alt={''} height={50} width={50}
+            <img alt={''}  style={{width:'50px',height:'50px'}}
                  src={comment?.beReplyUserAvatar ? comment.beReplyUserAvatar : '/dexlogo.svg'}
                  className={`mr - 2 ${styled.commentCommentImg}`}
             />
@@ -82,7 +81,7 @@ function CommentComponent({comment, postId, change, user, setComments, changComm
                         {/*replyUserAddress*/}
                         {/*replyUserId*/}
                         {/*replyUsername*/}
-                        <Link href={`/${comment?.replyUserId ? comment.replyUserId : ''}`}>
+                        <Link href={`/person/${comment?.replyUserId ? comment.replyUserId : ''}`}>
                             <p className={styled.commentCommentUser}>
                                 {comment?.replyUsername ? comment?.replyUsername.length > 8 ? comment?.replyUsername.slice(0, 5) : comment?.replyUsername : comment?.replyUserAddress.slice(0, 5)} ·
                             </p>

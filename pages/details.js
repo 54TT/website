@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useContext} from 'react';
 import {useRouter} from 'next/router';
-import style from '../public/styles/details.module.css'
+import style from '/public/styles/details.module.css'
 import {Progress } from 'antd'
 import axios from 'axios';
 import {CountContext} from '/components/Layout/Layout';
@@ -71,7 +71,7 @@ function Details() {
         },
         {
             title: 'DEX', align: 'center', render: () => {
-                return <img src="/dex-uniswap.png" alt="" width={30} height={30} style={{borderRadius:'50%',display:'block',margin:'0 auto'}}/>
+                return <img src="/dex-uniswap.png" alt=""  style={{borderRadius:'50%',display:'block',margin:'0 auto',width:'30px',height:'30px'}}/>
             }
         },
     ];
@@ -234,12 +234,12 @@ function Details() {
                             style={{color: 'rgb(32,134,192)'}}>{featured?.pairAddress?featured.pairAddress.slice(0,3)+'...'+featured.pairAddress.slice(-4):''}</span></p>
                     </div>
                     <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '20%'}}>
-                        <img src="/Star1.png" alt="" width={30}   height={30}/>
-                        <img src="/Website2.png" alt="" width={30}   height={30}/>
-                        <img src="/TwitterX.png" alt="" width={30}   height={30}/>
-                        <img src="/Telegram2.png" alt="" width={30}   height={30}/>
-                        <img src="/Ellipse15.png" alt="" width={30}   height={30}/>
-                        <img src="/etherscan.png" alt="" width={30}   height={30}/>
+                        <img src="/Star1.png" alt=""  style={{width:'30px',height:'30px'}}/>
+                        <img src="/Website2.png" alt="" style={{width:'30px',height:'30px'}}/>
+                        <img src="/TwitterX.png" alt="" style={{width:'30px',height:'30px'}}/>
+                        <img src="/Telegram2.png" alt="" style={{width:'30px',height:'30px'}}/>
+                        <img src="/Ellipse15.png" alt="" style={{width:'30px',height:'30px'}}/>
+                        <img src="/etherscan.png" alt="" style={{width:'30px',height:'30px'}}/>
                     </div>
                     <p style={{
                         padding: '10px',

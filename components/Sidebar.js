@@ -10,7 +10,7 @@ const SidebarRow = dynamic(() => import("./HelperComponents/SidebarRow"), {
   ssr: false,
 });
 import { changeLang } from "/utils/set";
-import styles from "../public/styles/social.module.css";
+import styles from "/public/styles/social.module.css";
 
 function Sidebar({ user, topDist, maxWidth }) {
   const social = changeLang("social");

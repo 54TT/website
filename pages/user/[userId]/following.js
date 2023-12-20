@@ -2,13 +2,13 @@ import React, {useContext, useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import Link from "next/link";
 import {CheckCircleIcon, UserAddIcon} from "@heroicons/react/solid";
-import Sidebar from "../../../components/Sidebar";
+import Sidebar from "/components/Sidebar";
 import cook from "js-cookie";
 import styled from "/public/styles/all.module.css";
 import {changeLang} from "/utils/set";
 import cookie from "js-cookie";
-import {request} from "../../../utils/hashUrl";
-import {CountContext} from "../../../components/Layout/Layout";
+import {request} from "/utils/hashUrl";
+import {CountContext} from "/components/Layout/Layout";
 
 function FollowingPage() {
     const social = changeLang("social");
@@ -114,15 +114,13 @@ function FollowingPage() {
                                         >
                                             <div className="flex items-center ">
                                                 <img
-                                                    width={40}
-                                                    height={40}
                                                     style={{
-                                                        borderRadius: "50%",
+                                                        borderRadius: "50%",width:'40px',height:'40px'
                                                     }}
                                                     src={fol?.avatar || "/dexlogo.svg"}
                                                     alt="userimg"
                                                 />
-                                                <Link href={`/${fol?.uid}`}>
+                                                <Link href={`/person/${fol?.uid}`}>
                                                     <p className={` ${styled.followersBoxLink}  ${changeTheme?'fontW':'fontB'} `}>
                                                         {fol?.username
                                                             ? fol?.username.length > 9

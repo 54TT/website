@@ -212,7 +212,7 @@ export default function NewPair() {
         },
         {
             title: newPair.dex, align: 'center', render: (text, record) => {
-                return <img src="/dex-uniswap.png" alt="" width={30} height={30}
+                return <img src="/dex-uniswap.png" alt="" style={{width:'30px',height:'30px'}}
                               className={styled.newPairTableImg}/>
             }
         },
@@ -222,7 +222,7 @@ export default function NewPair() {
             <Card className={`${styled.launchBoxCard} ${changeTheme ? 'darknessTwo' : 'brightTwo'}`}>
                 <div className={styled.launchBoxCardBox}>
                     <div style={{display: 'flex', alignItems: 'center'}}>
-                        <img src="/gpsReceiving.png" alt="" height={70} width={70} className={styled.mobliceImage}/>
+                        <img src="/gpsReceiving.png" alt="" style={{width:'70px',height:'70px'}} className={styled.mobliceImage}/>
                         <span style={{fontWeight: 'bold', fontSize: '26px'}} className={changeTheme ? 'darknessFont' : 'brightFont'}>{newPair?.newPair}</span>
                     </div>
                     <div className={styled.mobliceNewPair}>

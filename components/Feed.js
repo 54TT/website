@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import styled from '../public/styles/allmedia.module.css'
+import styled from '/public/styles/allmedia.module.css'
 import {EmojiSadIcon} from "@heroicons/react/outline";
 import {LoadingOutlined} from '@ant-design/icons'
 import dynamic from 'next/dynamic'
@@ -15,7 +15,9 @@ function Feed({user, postsData, change, changePage, increaseSizeAnim, postsLoad}
             setPosts([])
         }
     }, [postsData])
+
     const [posts, setPosts] = useState([]);
+
     return (
         <>
             <div className={`flex-grow h-full pt-6 mr-5 md:ml-auto  scrollbar-hide ${styled.mobliceRight}`}>

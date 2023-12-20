@@ -4,7 +4,22 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5ca5f751-1a0e-4de7-a19a-35f5fc6604b8" name="更改" comment="" />
+    <list default="true" id="5ca5f751-1a0e-4de7-a19a-35f5fc6604b8" name="更改" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/Chat/Chat.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/Chat/Chat.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/Chat/ChatSearch.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/Chat/ChatSearch.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/Home.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/Home.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/Layout/Header.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/Layout/Header.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/Layout/Layout.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/Layout/Layout.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/RightSideColumn.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/RightSideColumn.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/next.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/next.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/_app.js" beforeDir="false" afterPath="$PROJECT_DIR$/pages/_app.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/chats.js" beforeDir="false" afterPath="$PROJECT_DIR$/pages/chats.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/social.js" beforeDir="false" afterPath="$PROJECT_DIR$/pages/social.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/yarn.lock" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -64,6 +79,12 @@
     </key>
   </component>
   <component name="RunManager">
+    <configuration default="true" type="docker-deploy" factoryName="dockerfile" temporary="true">
+      <deployment type="dockerfile">
+        <settings />
+      </deployment>
+      <method v="2" />
+    </configuration>
     <configuration default="true" type="docker-deploy" factoryName="dockerfile" temporary="true">
       <deployment type="dockerfile">
         <settings />
@@ -138,6 +159,7 @@
       <workItem from="1702878947847" duration="6826000" />
       <workItem from="1702886428585" duration="20534000" />
       <workItem from="1702964655994" duration="27720000" />
+      <workItem from="1703052168309" duration="4275000" />
     </task>
     <servers />
   </component>

@@ -3,17 +3,17 @@ import {useRouter} from "next/router";
 import {
     CheckCircleIcon, ExclamationCircleIcon, UserAddIcon,
 } from "@heroicons/react/solid";
-import Sidebar from "../../../components/Sidebar";
+import Sidebar from "/components/Sidebar";
 import Link from 'next/link';
 import dynamic from 'next/dynamic'
 import cook from "js-cookie";
 
-const InfoBox = dynamic(() => import('../../../components/HelperComponents/InfoBox'), {ssr: false});
+const InfoBox = dynamic(() => import('/components/HelperComponents/InfoBox'), {ssr: false});
 import styled from '/public/styles/all.module.css'
 import {changeLang} from "/utils/set";
 import cookie from "js-cookie";
-import {request} from "../../../utils/hashUrl";
-import {CountContext} from "../../../components/Layout/Layout";
+import {request} from "/utils/hashUrl";
+import {CountContext} from "/components/Layout/Layout";
 
 function FollowersPage() {
     const social = changeLang('social')
@@ -121,9 +121,8 @@ function FollowersPage() {
                                     key={fol?.uid}
                                 >
                                     <div className="flex items-center  ">
-                                        <img src={fol?.avatar || '/dexlogo.svg'} alt="userimg" width={40}
-                                             height={40}
-                                             style={{borderRadius: '50%'}}/>
+                                        <img src={fol?.avatar || '/dexlogo.svg'} alt="userimg"
+                                             style={{borderRadius: '50%',width:'40px',height:'40px'}}/>
                                         <Link href={`/${fol?.uid}`}>
                                             <p className={`${styled.followersBoxLink} ${changeTheme ? 'fontW' : 'fontB'}`}>
                                                 {fol?.username ? fol?.username.length > 10 ? fol.username.slice(0, 4) + '...' + fol.username.slice(-3) : fol?.username : fol?.address.slice(0, 4)}

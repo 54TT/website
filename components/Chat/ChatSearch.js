@@ -1,12 +1,12 @@
 import {
   DotsHorizontalIcon,
 } from "@heroicons/react/solid";
-import axios from "axios";
 import React, {useState, useRef, useContext} from "react";
 import Link from "next/link";
 import { useClickAway } from "react-use";
 import styled from '/public/styles/all.module.css';
 import {changeLang} from "/utils/set";
+
 function ChatSearch({ setShowChatSearch, setChats, chats,user, }) {
   const social=changeLang('social')
   const [searchTerm, setSearchTerm] = useState("");
@@ -92,7 +92,7 @@ function ChatSearch({ setShowChatSearch, setChats, chats,user, }) {
                 }}
                 className="flex items-center space-x-3 mt-2 cursor-pointer hover:bg-gray-100 rounded-lg p-2"
               >
-                <img style={{borderRadius:'50%'}} width={50} src={resultUser?.profilePicUrl?resultUser.profilePicUrl:'/dexlogo.svg'} alt="userimg" />
+                <img style={{borderRadius:'50%',width:'50px',height:'50px'}} src={resultUser?.profilePicUrl?resultUser.profilePicUrl:'/dexlogo.svg'} alt="userimg" />
                 <p className={styled.chatSearchName}>{resultUser?.name?resultUser.name.length>10?resultUser.name.slice(0,5)+'...'+resultUser.name.slice(-5):resultUser.name:''}</p>
               </div>
             </Link>

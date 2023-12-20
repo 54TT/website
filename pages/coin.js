@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useRef, useState} from 'react';
 import styles from '/public/styles/all.module.css'
 import {Button, Popconfirm, Input, Select, Form, DatePicker, Table, Segmented} from 'antd'
-import {request} from "../utils/hashUrl";
+import {request} from "/utils/hashUrl";
 
 const {TextArea} = Input
 import dayjs from 'dayjs'
@@ -205,7 +205,7 @@ function Coin() {
             return <Option value={i.id} key={index}>
                 <div style={{display: 'flex', alignItems: 'center'}}>
                     <img src={`${i.logo ? i.logo : '/dexlogo.svg'}`} alt=""
-                         width={25} height={25}/>
+                         style={{width:'25px',height:'25px'}}/>
                     <span>{i.name}</span>
                 </div>
             </Option>
@@ -458,7 +458,7 @@ function Coin() {
                                 {
                                     imagePreview ? <div style={{display: 'flex', alignItems: 'center'}}>
                                         <img src={imagePreview} alt="imagePreview"
-                                             width={35}/>
+                                             style={{width:'35px'}}/>
                                         <Popconfirm
                                             title="Delete the task"
                                             description="Are you sure to delete this task?"
@@ -466,9 +466,9 @@ function Coin() {
                                             okText="Yes"
                                             cancelText="No"
                                         >
-                                            <img src="/delete1.svg" style={{marginLeft: '10px', cursor: 'pointer'}}
+                                            <img src="/delete1.svg" style={{marginLeft: '10px', cursor: 'pointer',width:'10px'}}
                                                  alt=""
-                                                 width={15}/>
+                                                 />
                                         </Popconfirm>
                                     </div> : ''
                                 }
@@ -492,9 +492,9 @@ function Coin() {
                                 setImage(null)
                                 form.resetFields()
                             }}
-                                 style={{cursor: 'pointer', marginRight: '20px'}} width={25}/>
-                            <img src="/sure.svg" alt="" onClick={() => form.submit()} style={{cursor: 'pointer'}}
-                                 width={30}/>
+                                 style={{cursor: 'pointer', marginRight: '20px',width:'25px'}} />
+                            <img src="/sure.svg" alt="" onClick={() => form.submit()} style={{cursor: 'pointer',width:'30px'}}
+                                 />
                         </div>
                     </Form.Item>
                 </Form> : <div>
@@ -504,15 +504,15 @@ function Coin() {
                         data.map((i, index) => {
                             return index !== 0 && <div key={index} className={styles.coinList}>
                                 <span>{index}.</span>
-                                <img src="/avatar.png" alt="" width={30} style={{margin: '0 10px'}}/>
+                                <img src="/avatar.png" alt=""  style={{margin: '0 10px',width:'30px'}}/>
                                 <span>{i.name}</span>
                                 <span style={{fontSize: '18px', margin: '0 10px'}}>${i.coin}</span>
                                 <span style={{fontSize: '18px', fontWeight: 'bold'}}>info</span>
-                                <img src="/setCoin.svg" alt="" width={14} onClick={() => {
+                                <img src="/setCoin.svg" alt="" onClick={() => {
                                     setInfoShow(true)
                                     setInfoParams(i)
                                 }}
-                                     style={{cursor: 'pointer', margin: '0 10px'}}/>
+                                     style={{cursor: 'pointer', margin: '0 10px',width:'14px'}}/>
                                 <Popconfirm
                                     title="Delete the task"
                                     description="Are you sure to delete this task?"
@@ -520,7 +520,7 @@ function Coin() {
                                     okText="Yes"
                                     cancelText="No"
                                 >
-                                    <img src="/delete1.svg" alt=" " width={14} style={{cursor: 'pointer'}}/>
+                                    <img src="/delete1.svg" alt=" " style={{cursor: 'pointer',width:'14px'}}/>
                                 </Popconfirm>
                             </div>
                         })

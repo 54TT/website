@@ -1,7 +1,7 @@
 import React, {useContext} from "react";
 import Link from "next/link";
 import styled from '/public/styles/all.module.css'
-import {CountContext} from "../Layout/Layout";
+import {CountContext} from "/components/Layout/Layout";
 
 function SidebarRow({ Icon, title, src, route,name, height = 50, width = 50 }) {
     const {changeTheme} = useContext(CountContext);

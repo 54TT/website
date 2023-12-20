@@ -6,8 +6,7 @@ import {Skeleton} from 'antd'
 import {
     CheckCircleIcon, UserAddIcon,
 } from "@heroicons/react/solid";
-import dayjs from "dayjs";
-import {request} from "../utils/hashUrl";
+import {request} from "/utils/hashUrl";
 import cookie from "js-cookie";
 import {CountContext} from "./Layout/Layout";
 
@@ -58,7 +57,7 @@ function RightSideColumn({user, chatsData}) {
     return (<div
             className="hidden  p-2 lg:block max-w-[300px] lg:min-w-[290px] xl:min-w-[300px] sticky xl:mr-8"
             style={{alignSelf: "flex-start"}}>
-            {showLoad ? <Skeleton active/> : <> className=
+            {showLoad ? <Skeleton active/> : <>
                 <p className={`${changeTheme ? 'fontW' : 'fontB'} ${styled.rightSideColumnName}`}>{social.who}</p>
                 {usersToFollow && usersToFollow.length > 0 && Array.isArray(usersToFollow) ? (usersToFollow.map((fol) => {
                         return (<div className={'rightSideCard'} key={fol?.uid}>
@@ -66,9 +65,8 @@ function RightSideColumn({user, chatsData}) {
                                         key={fol.uid}
                                         className="flex justify-between items-center p-4 rounded-lg">
                                         <div className="flex items-center">
-                                            <img src={fol?.avatar ? fol.avatar : '/dexlogo.svg'} width={40}
-                                                 height={40}
-                                                 style={{borderRadius: '50%'}} alt="userimg"/>
+                                            <img src={fol?.avatar ? fol.avatar : '/dexlogo.svg'}
+                                                 style={{borderRadius: '50%',width:'40px',height:'40px'}} alt="userimg"/>
                                             <div>
                                                 <Link href={`/chats?chat=${fol?.uid}`}>
                                                     {/*chats?chat=*/}
@@ -134,7 +132,7 @@ function RightSideColumn({user, chatsData}) {
                                 <div className={`hover:bg-gray-200 ${styled.rightSideColumnL}`}>
                                     <div className="relative">
                                         <img src={chat?.User?.Avatar ? chat.User.Avatar : '/dexlogo.svg'}
-                                             width={40} height={40} style={{borderRadius: '50%'}} alt="userimg"/>
+                                            style={{borderRadius: '50%',width:'40px',height:'40px'}} alt="userimg"/>
                                     </div>
                                     <div className="ml-1">
                                         <p style={{fontSize: '18px', userSelect: 'none'}}>{chat?.User?.Username?chat?.User?.Username.length>7?chat?.User?.Username.slice(0,5):chat?.User?.Username:chat?.User?.Address.slice(0,5)}</p>
