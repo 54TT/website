@@ -16,7 +16,6 @@ import {changeLang} from "/utils/set";
 // const logicModule = await import('../dynamicLogic');
 import {gql} from "graphql-tag";
 import {ApolloClient, InMemoryCache, useQuery} from "@apollo/client";
-
 const DrawerPage = dynamic(() => import('./Drawer'), {ssr: false});
 // const client = new ApolloClient({
 //     uri: 'https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-v2-dev', cache: new InMemoryCache(),

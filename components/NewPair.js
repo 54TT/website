@@ -112,7 +112,6 @@ export default function NewPair() {
         }
         return data
     }
-
     // 判断
     const changeAllTheme = (a, b) => {
         return changeTheme ? a : b
@@ -287,6 +286,7 @@ export default function NewPair() {
             }
         },
     ];
+
     return (
         <div className={styled.launchBox}>
             <Card className={`${styled.launchBoxCard} ${changeTheme ? 'darknessTwo' : 'brightTwo'}`}>
