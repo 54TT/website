@@ -15,12 +15,10 @@ function Feed({user, postsData, change, changePage, increaseSizeAnim, postsLoad}
             setPosts([])
         }
     }, [postsData])
-
     const [posts, setPosts] = useState([]);
-
     return (
         <>
-            <div className={`flex-grow h-full pt-6 mr-5 md:ml-auto  scrollbar-hide ${styled.mobliceRight}`}>
+            <div className={`flex-grow h-full  scrollbar-hide ${styled.mobliceRight}`}>
                 <div className="mx-auto max-w-md md:max-w-lg lg:max-w-2xl">
                     <InputBox
                         user={user}

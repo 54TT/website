@@ -445,6 +445,30 @@ const Header = () => {
     const pushOnclick = (level) => {
         return strategy[level]
     }
+    const [ethPrice, setEthPrice] = useState(0)
+
+    useEffect(() => {
+        const symbol = 'ETHUSDT';
+        let url = `wss://stream.binance.com:9443/ws/${symbol.toLocaleLowerCase()}@avgPrice`;
+        const websocket = new WebSocket(url);
+        websocket.onopen = (event) => {
+            console.log('WebSocket Connection Opened:', event);
+        };
+        websocket.onmessage = function (event) {
+            const data = JSON.parse(event.data);
+            setEthPrice(data.w);
+        };
+
+        websocket.onclose = (event) => {
+            console.log('WebSocket Connection Closed:', event);
+        };
+        websocket.onerror = (error) => {
+            console.error('WebSocket Error:', error);
+        };
+        return () => {
+            websocket.close();
+        };
+    }, []);
     return (
         <>
             <div className={styles['headerShowNode']}>
@@ -485,7 +509,7 @@ const Header = () => {
                         <div className={`${styles.eth} ${changeTheme ? 'darknessTwo' : 'brightTwo'}`}>
                             <img src="/Ellipse27.png" alt=""
                                  style={{border: '50%', marginRight: '6px', width: '30px', height: '30px'}}/>
-                            <p className={changeTheme ? 'darknessFont' : 'brightFont'}>${!loading && data?.bundles?.length > 0 ? Number(data.bundles[0]?.ethPrice).toFixed(2) : 0}</p>
+                            <p className={changeTheme ? 'darknessFont' : 'brightFont'}>${!loading ? Number(ethPrice).toFixed(2) : 0}</p>
                             <p style={{display: 'flex', alignItems: 'center', marginLeft: '8px'}}><img
                                 src="/GasStation.png"
                                 style={{width: '20px', height: '20px'}} alt=""/>
@@ -570,7 +594,7 @@ const Header = () => {
                     <div className={`${styles.ethMobliceCt} ${styles.eth} ${changeTheme ? 'darkMode' : 'whiteMode'}`}>
                         <img src="/Ellipse27.png" alt=""
                              style={{border: '50%', marginRight: '6px', width: '40px', height: '40px'}}/>
-                        <p className={changeTheme ? 'darknessFont' : 'brightFont'}>${!loading && data?.bundles?.length > 0 ? Number(data.bundles[0]?.ethPrice).toFixed(2) : 0}</p>
+                        <p className={changeTheme ? 'darknessFont' : 'brightFont'}>${!loading ? Number(ethPrice).toFixed(2) : 0}</p>
                         <p style={{display: 'flex', alignItems: 'center', marginLeft: '8px'}}>
                             <img src="/GasStation.png" alt=""
                                  style={{borderRadius: '50%', width: '20px', height: '20px'}}/>

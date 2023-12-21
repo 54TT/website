@@ -9,12 +9,11 @@ import styled from '/public/styles/all.module.css'
 //     uri: 'https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-v2-dev', cache: new InMemoryCache(),
 // });
 const client = new ApolloClient({
-    uri: 'https://api.thegraph.com/subgraphs/name/levi0522/uniswap', cache: new InMemoryCache(),
+    uri: 'http://143.198.221.109:8000/subgraphs/name/dsb/uniswapv2', cache: new InMemoryCache(),
 });
 import {changeLang} from "/utils/set";
 import {CountContext} from '/components/Layout/Layout';
 import {useRouter} from "next/router";
-
 export default function NewPair() {
     const router = useRouter();
     const newPair = changeLang('newPair')
@@ -22,22 +21,20 @@ export default function NewPair() {
     const [currentPage, setCurrentPage] = useState(1);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const GET_DATA = gql`query LiveNewPair {
-  uniswapFactories {
-    id
-    pairCount
-  }
-  pairs(first: ${rowsPerPage}, skip: ${(currentPage - 1) * 10}, orderBy: createdAtTimestamp, orderDirection: desc) {
-    id
-    reserveETH
-    liquidityPositionSnapshots(orderDirection: desc, first: 1) {
-      token0PriceUSD
-      token1PriceUSD
+  _meta {
+    block {
+      number
+      timestamp
     }
-    volumeUSD
-    trackedReserveETH
+  }
+  uniswapFactories {
+    pairCount
+    id
+  }
+  pairs(first: 10, orderBy: createdAtTimestamp, orderDirection: desc, skip: 0) {
     token0 {
-      id
       name
+      id
       symbol
     }
     token1 {
@@ -45,9 +42,10 @@ export default function NewPair() {
       name
       symbol
     }
-    txCount
+    reserveETH
     createdAtTimestamp
-    createdAtBlockNumber
+    id
+    txCount
   }
 }`
 //     const GET_DATA = gql`query QueryPairByToken0Address {
@@ -99,7 +97,6 @@ export default function NewPair() {
         setCurrentPage(e)
         setRowsPerPage(a)
     }
-
     // 过滤数据   显示000
     const setMany = (text) => {
         let data = null
@@ -144,7 +141,7 @@ export default function NewPair() {
             clearInterval(interval);
         }
     }, [refetch])
-    const columns = [
+    const columnsss = [
         {
             fixed: 'left',
             title: '', align: 'right', width: 30,
@@ -163,15 +160,15 @@ export default function NewPair() {
                 <div>{packageEllipsisHtml(record?.token1?.id)}</div>
             </div>,
         },
-        {
-            title: newPair?.price + '($)',
-            dataIndex: 'age', align: 'center',
-            render: (text, record) => {
-                const data = record?.liquidityPositionSnapshots[0]?.token0PriceUSD || 0
-                return <p
-                    className={changeTheme ? 'darknessFont' : 'brightFont'}>{data ? autoConvertNew(Number(data)) : 0}</p>
-            }
-        },
+        // {
+        //     title: newPair?.price + '($)',
+        //     dataIndex: 'age', align: 'center',
+        //     render: (text, record) => {
+        //         const data = record?.liquidityPositionSnapshots[0]?.token0PriceUSD || 0
+        //         return <p
+        //             className={changeTheme ? 'darknessFont' : 'brightFont'}>{data ? autoConvertNew(Number(data)) : 0}</p>
+        //     }
+        // },
         {
             title: newPair?.time, align: 'center',
             dataIndex: 'tags',
@@ -203,6 +200,79 @@ export default function NewPair() {
                 return <span className={changeTheme ? 'darknessFont' : 'brightFont'}>{setMany(text)}</span>
             }
         },
+        {
+            title: newPair.txCount, align: 'center',
+            dataIndex: 'txCount',
+            render: (text) => {
+                return <span className={changeTheme ? 'darknessFont' : 'brightFont'}>{text ? text : ''}</span>
+            }
+        },
+        {
+            title: newPair.dex, align: 'center', render: (text, record) => {
+                return <img src="/dex-uniswap.png" alt="" style={{width:'30px',height:'30px'}}
+                            className={styled.newPairTableImg}/>
+            }
+        },
+    ];
+    const columns = [
+        {
+            fixed: 'left',
+            title: '', align: 'right', width: 30,
+            render: (text, record) => {
+                return <p className={styled.launchTableP}>{record?.token0?.symbol?.slice(0, 1) || ''}</p>
+            }
+        },
+        {
+            fixed: 'left',
+            title: newPair?.pair,
+            dataIndex: 'name',
+            render: (text, record) => <div className={styled.newPairTable}>
+                <p className={styled.newPairTableText}><span className={changeTheme ? 'darknessFont' : 'brightFont'}>{record?.token0?.symbol ? record?.token0?.symbol.length > 7 ? record?.token0?.symbol.slice(0, 5) : record?.token0?.symbol + '/' : ''}</span><span
+                    style={{color: 'rgb(98,98,98)'}}>{record?.token1?.symbol ? record?.token1?.symbol.length > 7 ? record?.token1?.symbol.slice(0, 5) : record?.token1?.symbol : ''}</span>
+                </p>
+                <div>{packageEllipsisHtml(record?.token1?.id)}</div>
+            </div>,
+        },
+        // {
+        //     title: newPair?.price + '($)',
+        //     dataIndex: 'age', align: 'center',
+        //     render: (text, record) => {
+        //         const data = record?.liquidityPositionSnapshots[0]?.token0PriceUSD || 0
+        //         return <p
+        //             className={changeTheme ? 'darknessFont' : 'brightFont'}>{data ? autoConvertNew(Number(data)) : 0}</p>
+        //     }
+        // },
+        {
+            title: newPair?.time, align: 'center',
+            dataIndex: 'tags',
+            render: (_, record) => {
+                const data = record?.createdAtTimestamp.toString().length > 10 ? Number(record.createdAtTimestamp.toString().slice(0, 10)) : Number(record.createdAtTimestamp)
+                return <span
+                    className={changeTheme ? 'darknessFont' : 'brightFont'}>{record?.createdAtTimestamp ? getRelativeTimeDifference(formatDateTime(data)) : ''}</span>
+            }
+        },
+        // {
+        //     title: newPair?.volume + '($)', align: 'center',
+        //     dataIndex: 'volumeUSD',
+        //     render: (text) => {
+        //         return <span className={changeTheme ? 'darknessFont' : 'brightFont'}>{setMany(text)}</span>
+        //     }
+        // },
+        {
+            title: newPair?.reserve, align: 'center',
+            dataIndex: 'reserveETH',
+            render: (text) => {
+                const data = setMany(text)
+                return <span className={changeTheme ? 'darknessFont' : 'brightFont'}>{data}</span>
+            }
+        },
+        // {
+        //     title: newPair?.tracked, align: 'center',
+        //     dataIndex: 'trackedReserveETH',
+        //     render: (text) => {
+        //         return <span className={changeTheme ? 'darknessFont' : 'brightFont'}>{setMany(text)}</span>
+        //     }
+        // },
         {
             title: newPair.txCount, align: 'center',
             dataIndex: 'txCount',

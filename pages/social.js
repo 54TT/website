@@ -1,7 +1,7 @@
 import React, {useEffect, useState, useContext} from "react";
 import _ from 'lodash'
 import dynamic from 'next/dynamic'
-const styles = dynamic(() => import("/public/styles/social.module.css"), {ssr: false});
+import  styles from "/public/styles/social.module.css"
 import cook from "js-cookie";
 import {CountContext} from '/components/Layout/Layout'
 const Sidebar = dynamic(() => import("/components/Sidebar"), {ssr: false});
@@ -17,8 +17,8 @@ function Index() {
     const [postsDataAdd, setPostsDataAdd] = useState([])
     const [postsDataBol, setPostsDataBol] = useState(false)
     const [postsLoad, setPostsLoad] = useState(true)
-
     const [chatsData, setChatsData] = useState([])
+    const [chatsLoading, setChatsLoading] = useState(true)
     //  重新获取用户接口
     const [changeBol, setChangeBol] = useState(true)
     // 推文的page
@@ -80,12 +80,18 @@ function Index() {
                 setLogin()
             } else if (data && data?.status === 200) {
                 setChatsData(data?.data?.SessionList)
+                setChatsLoading(false)
             } else {
+                setChatsLoading(false)
                 setChatsData([])
             }
         } catch (err) {
             return null
         }
+
+
+
+
     }
     useEffect(() => {
         if (cook.get("username") && cook.get("username") != 'undefined') {
@@ -145,7 +151,7 @@ function Index() {
             <div className={styles.mobliceSocialBox}>
                 <div className={`min-h-screen `}
                      style={{ marginRight: '20px', borderRadius: '10px'}}>
-                    <main style={{display: 'flex'}}>
+                    <main style={{display: 'flex',marginTop:'20px'}}>
                         {/*<Sidebar user={userPar ? userPar : ''}/>*/}
                         {
                             postsLoad ? <Skeleton active/> : <Feed
@@ -162,6 +168,7 @@ function Index() {
                         }
                         <RightSideColumn
                             chatsData={chatsData}
+                            chatsLoading={chatsLoading}
                             change={change}
                             user={userPar ? userPar : {}}
                         />
