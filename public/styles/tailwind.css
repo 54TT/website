@@ -145,13 +145,12 @@ li.check:before {
 }
 
 .rightSideCard {
-    border: 2px #626262 solid;
-    border-radius: 10px;
-    margin-bottom: 15px;
+    padding: 5px 30px;
 }
 
 .rightSideCard:hover {
-    background-color: #D0FF95;
+    border-radius: 8px;
+    background: linear-gradient(90deg, rgba(98, 126, 234, 0.20) 0%, rgba(0, 170, 255, 0.20) 100%);
 }
 
 .pair-row:hover {

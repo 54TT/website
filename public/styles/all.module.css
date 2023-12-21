@@ -363,10 +363,9 @@
 
 .inputBoxImg {
     height: 300px;
-    width: 90%;
+    width: 100%;
     margin-left: auto;
     margin-right: auto;
-    margin-bottom: 20px;
     transition: all 0.22s ease-out;
 }
 
@@ -490,9 +489,9 @@
 }
 
 .rightSideColumnName {
+    line-height: 1;
     font-size: 18px;
-    margin-left: 6px;
-    margin-top: 24px;
+    text-align: center;
 }
 
 .rightSideColumnClick {
@@ -509,8 +508,7 @@
     display: flex;
     cursor: pointer;
     border-radius: 5px;
-    border-bottom: 1px solid lightgray;
-    padding: 10px;
+    /*padding: 10px;*/
     align-items: flex-start;
 }
 

@@ -7,6 +7,7 @@ import {GlobalOutlined} from '@ant-design/icons'
 import {ExclamationCircleIcon} from "@heroicons/react/outline";
 import dynamic from "next/dynamic";
 import {notification} from "antd";
+import {CloseOutlined} from '@ant-design/icons'
 import styled from '/public/styles/all.module.css'
 import {request} from "/utils/hashUrl";
 const InfoBox = dynamic(() => import('./HelperComponents/InfoBox'), {ssr: false})
@@ -16,17 +17,29 @@ import cookie from "js-cookie";
 function InputBox({user, setPosts, increaseSizeAnim, change}) {
     const {changeTheme, setLogin} = useContext(CountContext);
     const buttonRef = useRef(null);
+    const textRef = useRef(null);
     const filePickerRef = useRef(null);
     const [image, setImage] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
     const [error, setError] = useState(null);
     const [textareaEnabled, setTextareaEnabled] = useState(false);
     const [newPost, setNewPost] = useState('');
-
+    // text行数
+    const [textRow, setTextRow] = useState(2);
     const handleChange = (e) => {
         const {name, value} = e.target;
         setNewPost(value);
+        if(!value){
+            setTextRow(2)
+        }
+        if(textRef?.current?.scrollHeight> textRef?.current?.clientHeight){
+            setTextRow(res=>res+2)
+        }
     };
+    const clearText=()=>{
+        setNewPost('');
+        setTextRow(2)
+    }
 
     const addImageFromDevice = async (e) => {
         const {files} = e.target;
@@ -125,45 +138,49 @@ function InputBox({user, setPosts, increaseSizeAnim, change}) {
     };
     return (
         <>
-            <div className={`${styled.inputBoxBox} mt-3 mb-10`}>
+            <div className={`${styled.inputBoxBox} mb-10`}>
                     <div className="flex items-center">
                         <form style={{width: '100%'}}>
-                            <div className="flex  space-x-4 items-center">
+                            <div className="flex  space-x-4 items-start">
                                 <img src={user && user.avatarUrl ? user.avatarUrl : '/dexlogo.svg'}
-                                     style={{borderRadius: "50%",width:'50px',height:"50px"}} alt="profile pic"/>
-                                <div style={{width: '100%',background:'rgb(68,66,76)',borderRadius:'10px',padding:'15px 25px'}}
-                                     className={`flex  items-center ${increaseSizeAnim.sizeIncUp}`}>
-                                    <input
+                                     style={{borderRadius: "50%",width:'50px',height:"50px",marginTop:"20px"}} alt="profile pic"/>
+                                <div style={{width: '100%',background:'linear-gradient(180deg, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0.18) 100%)',borderRadius:'10px',padding:'15px 25px'}}
+                                     className={`${increaseSizeAnim.sizeIncUp}`}>
+                                    <div style={{display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+                                    <textarea
                                         name="postText"
                                         value={newPost}
+                                        wrap="soft"
+                                        ref={textRef}
+                                        rows={textRow}
                                         onChange={handleChange}
-                                        className="outline-none w-full bg-transparent font-light text-md placeholder-gray-400 text-lg"
-                                        type="text"
-                                        placeholder={user ? `What's on your mind, ${user?.username ? user.username : user.address.slice(0, 5)}?` : "What's on your mind?"}></input>
-                                    <img src="/GroupPhoto.svg" alt=""  onClick={() => filePickerRef.current.click()}  width={20} style={{marginRight:'15px',cursor:'pointer'}}/>
-                                    <img src="/rightPost.svg" alt="" onClick={createPost} width={20} style={{cursor:'pointer'}}/>
+                                        style={{resize:'none',color:'white'}}
+                                        className="outline-none w-full bg-transparent font-light text-md placeholder-gray-400 "
+                                        placeholder={user ? `What's on your mind, ${user?.username ? user.username : user.address.slice(0, 5)}?` : "What's on your mind?"}></textarea>
+                                    {
+                                        newPost? <CloseOutlined style={{cursor:'pointer',color:'white'}} onClick={clearText}/>:''
+                                    }
+                                    </div>
                                     {imagePreview && (
-                                        <>
-                                            <div
-                                                className={styled.inputBoxView}
-                                            >
-                                                <div className={styled.inputBoxIcon}
-                                                     onClick={() => {
-                                                         setImage(null);
-                                                         setImagePreview(null);
-                                                     }}
-                                                >
-                                                    <XIcon className="h-6 text-gray-700"/>
-                                                </div>
+                                            <div className={styled.inputBoxView}>
+                                                    <img src="/SubtractClear.svg"  onClick={() => {
+                                                        setImage(null);
+                                                        setImagePreview(null);
+                                                    }} style={{position:'absolute',top:'4.5%',right:'6.5%',cursor:'pointer'}} alt="" width={'30px'}/>
                                                 <img className={styled.inputBoxImg}
                                                      src={imagePreview}
                                                      alt="imagePreview"
                                                 ></img>
                                             </div>
-                                        </>
                                     )}
                                 </div>
-                            </div>
+                                <div style={{display:'flex',marginTop:'20px'}}>
+                                <img src="/GroupPhoto.svg" alt=""  onClick={() => filePickerRef.current.click()}  width={20} style={{marginRight:'15px',cursor:'pointer'}}/>
+                                    <img src="/Vector55.svg" alt=""/>
+                                    <img src="/Group555.svg" alt=""/>
+                                    <img src="/rightPost.svg" alt="" onClick={createPost} width={20} style={{cursor:'pointer'}}/>
+                                </div>
+                                </div>
                             <input
                                 ref={filePickerRef}
                                 onChange={addImageFromDevice}

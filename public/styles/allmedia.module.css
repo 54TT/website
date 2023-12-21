@@ -1,6 +1,9 @@
 .mobliceNotifications{
   min-height: 90vh;
 }
+.mobliceRight{
+  margin-right: 20px;
+}
 /* 超小屏幕 */
 @media screen and (max-width: 768px) {
   .mobliceNonoFlex{
