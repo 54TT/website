@@ -176,11 +176,12 @@ function PostCard({post, user, change, liked}) {
         }
     }
     return (
+
+
         <div
-            className={`mb-7 flex flex-col justify-start rounded-2xl shadow-md ${changeTheme ? 'darknessThree' : 'whiteMode'}`}>
+            className={`flex flex-col justify-start rounded-2xl shadow-md postBackCard ${changeTheme ? 'postBack' : 'whiteMode'}`}>
             {/*头像*/}
-            <div className="p-4">
-                <div className="flex space-x-3 items-center ml-2 relative">
+                <div className="flex space-x-3 items-center relative">
                     <img  style={{borderRadius: '50%',width:'50px',height:'50px'}}
                          src={post && post?.user?.avatar ? post.user.avatar : '/dexlogo.svg'}
                          alt="userimg"/>
@@ -228,16 +229,14 @@ function PostCard({post, user, change, liked}) {
                         </div>
                     )}
                 </div>
-            </div>
             {/*文本*/}
-            <div style={{marginLeft: '20px'}}
-                 className={changeTheme ? 'darknessFont' : 'brightFont'}>{post?.content || ''}</div>
+            <div
+                 className={changeTheme ? 'darknessFont' : 'brightFont'} style={{margin:'10px 0'}}>{post?.content || ''}</div>
             {/*图片*/}
             {post && post?.imageList && post?.imageList.length > 0 ?
-                <img src={post?.imageList[0] || ''} alt={''} style={{width: '80%',display:'block',margin:'0 auto',borderRadius:'10px'}}/> : ''}
+                <img src={post?.imageList[0] || ''} alt={''} style={{width: '100%',display:'block',margin:'0 auto',borderRadius:'10px'}}/> : ''}
             {/*几条聊天*/}
-            <div style={{marginTop: "10px"}} className="ml-5 mr-5">
-                <div className="flex justify-between w-full">
+                <div className="flex items-center justify-end w-full" style={{marginTop:'10px'}}>
                     {/*点赞数*/}
                     {/*<div className="flex items-center space-x-0.5 cursor-pointer hover:underline">*/}
                     {/*    <ThumbUpIcon*/}
@@ -249,7 +248,8 @@ function PostCard({post, user, change, liked}) {
                     {/*        {post && post?.likeNum}*/}
                     {/*    </p>*/}
                     {/*</div>*/}
-                    <p
+                    <img src="/Group78.svg" alt="" width={'20px'}/>
+                    <span
                         onClick={() => {
                             if (!showComments) {
                                 getComments(1)
@@ -261,10 +261,9 @@ function PostCard({post, user, change, liked}) {
                             }
                             setShowComments(!showComments)
                         }}
-                        className="text-gray-500 cursor-pointer font-light select-none postCardComment"
-                    >{`${commentNum}   comments`}</p>
+                        className={`cursor-pointer font-light select-none ${changeTheme?'fontW':'fontB'}`} style={{marginLeft:"5px"}}
+                    >{`${commentNum}   comments>`}</span>
                 </div>
-            </div>
             {/*点赞*/}
             {/*<div*/}
             {/*    className={`flex space-x-4 ml-4 mr-4 justify-evenly items-center text-gray-500 ${styled.postCardBoxClick}`}*/}

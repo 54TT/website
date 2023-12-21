@@ -51,7 +51,6 @@ function Index() {
             } else {
                 setPostsDataAdd([])
             }
-            setPostsLoad(false)
         }
     }, [postsDataBol])
     const getUs = async () => {
@@ -131,9 +130,11 @@ function Index() {
         } else if (res && res?.status === 200) {
             setPostsDataBol(!postsDataBol)
             setPostsData(res?.data?.posts)
+            setPostsLoad(false)
         } else {
             setPostsDataBol(!postsDataBol)
             setPostsData([])
+            setPostsLoad(false)
         }
 
     }

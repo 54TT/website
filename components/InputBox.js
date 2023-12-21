@@ -138,7 +138,7 @@ function InputBox({user, setPosts, increaseSizeAnim, change}) {
     };
     return (
         <>
-            <div className={`${styled.inputBoxBox} mb-10`}>
+            <div className={`${styled.inputBoxBox}`}>
                     <div className="flex items-center">
                         <form style={{width: '100%'}}>
                             <div className="flex  space-x-4 items-start">
@@ -175,10 +175,8 @@ function InputBox({user, setPosts, increaseSizeAnim, change}) {
                                     )}
                                 </div>
                                 <div style={{display:'flex',marginTop:'20px'}}>
-                                <img src="/GroupPhoto.svg" alt=""  onClick={() => filePickerRef.current.click()}  width={20} style={{marginRight:'15px',cursor:'pointer'}}/>
-                                    <img src="/Vector55.svg" alt=""/>
-                                    <img src="/Group555.svg" alt=""/>
-                                    <img src="/rightPost.svg" alt="" onClick={createPost} width={20} style={{cursor:'pointer'}}/>
+                                <img src="/Group555.svg" alt=""  onClick={() => filePickerRef.current.click()}  width={20} style={{marginRight:'15px',cursor:'pointer'}}/>
+                                    <img src="/Vector55.svg" alt="" onClick={createPost} width={20} style={{cursor:'pointer'}}/>
                                 </div>
                                 </div>
                             <input

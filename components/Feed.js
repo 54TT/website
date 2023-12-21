@@ -7,67 +7,60 @@ const InputBox = dynamic(() => import('./InputBox'), {ssr: false})
 const InfoBox = dynamic(() => import('./HelperComponents/InfoBox'), {ssr: false})
 const PostCard = dynamic(() => import('./PostCard'), {ssr: false})
 import InfiniteScroll from 'react-infinite-scroll-component';
-function Feed({user, postsData, change, changePage, increaseSizeAnim, postsLoad}) {
+const PostModul = dynamic(() => import('./postModul'), {ssr: false})
+function Feed({user, postsData, change, changePage, increaseSizeAnim}) {
+    // postsLoad
     useEffect(() => {
         if (postsData && postsData.length > 0) {
             setPosts(postsData)
+            setPostLoad(false)
         } else {
             setPosts([])
+            setPostLoad(false)
         }
     }, [postsData])
     const [posts, setPosts] = useState([]);
+    const [postsLoad, setPostLoad] = useState(true);
     return (
         <>
             <div className={`flex-grow h-full  scrollbar-hide ${styled.mobliceRight}`}>
-                <div className="mx-auto max-w-md md:max-w-lg lg:max-w-2xl">
+                <div style={{width:'80%',margin:'0 auto'}}>
                     <InputBox
                         user={user}
                         change={change}
                         setPosts={setPosts}
                         increaseSizeAnim={increaseSizeAnim}
                     />
-                    {posts ? (
-                        !postsLoad && posts.length === 0 ? (
-                                <InfoBox
-                                    Icon={EmojiSadIcon}
-                                    message="Sorry, no posts..."
-                                    content="Please follow another user or create a new post to start seeing posts."
-                                ></InfoBox>
-                            ) :
-                            (
-                                <InfiniteScroll
-                                    hasMore={true}
-                                    next={changePage}
-                                    endMessage={
-                                        <p style={{textAlign: 'center'}}>
-                                            <b>Yay! You have seen it all</b>
-                                        </p>
-                                    }
-                                    loader={null}
-                                    dataLength={posts.length}
-                                >
-                                    {posts && posts?.length > 0 ? posts.map((post, index) => {
-                                        const isLiked =
-                                            post.likes && post.likes.length > 0 &&
-                                            post.likes.filter((like) => like?.user?.id === user?.id).length > 0;
-                                        return <PostCard
-                                            change={change}
-                                            liked={isLiked}
-                                            key={post?.postId}
-                                            post={post}
-                                            user={user}
-                                        />
-                                    }) : ''}
-                                </InfiniteScroll>
-                            )
-                    ) : (
-                        <LoadingOutlined/>
-                    )}
+                    {
+                        postsLoad? <PostModul />:posts&&posts.length>0?<InfiniteScroll
+                            hasMore={true}
+                            next={changePage}
+                            endMessage={
+                                <p style={{textAlign: 'center'}}>
+                                    <b>Yay! You have seen it all</b>
+                                </p>
+                            }
+                            loader={null}
+                            dataLength={posts.length}
+                        >
+                            {posts && posts?.length > 0 ? posts.map((post, index) => {
+                                const isLiked =
+                                    post.likes && post.likes.length > 0 &&
+                                    post.likes.filter((like) => like?.user?.id === user?.id).length > 0;
+                                return <PostCard
+                                    change={change}
+                                    liked={isLiked}
+                                    key={post?.postId}
+                                    post={post}
+                                    user={user}
+                                />
+                            }) : ''}
+                        </InfiniteScroll>: <InfoBox />
+                    }
                 </div>
             </div>
         </>
     )
-        ;
 }
 
 export default Feed;

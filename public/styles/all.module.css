@@ -57,7 +57,8 @@
 
 .infoBoxTop {
     position: relative;
-    background-color: rgb(254, 239, 146);
+    height: 40vh;
+    border-radius: 15px;
 }
 
 .infoBoxIcon {
@@ -336,12 +337,14 @@
     background-color: lightgrey;
     margin: 1px 16px;
     display: block;
+
 }
 
 .inputBoxBox {
     box-shadow: rgba(50, 50, 93, 0.25) 0 2px 5px -1px, rgba(0, 0, 0, 0.3) 0 1px 3px -1px;
     border-radius: 10px;
-    /* background-color: rgb(254, 239, 146) */
+    margin-bottom: 10px;
+    margin-bottom: 10px;
 }
 
 .inputBoxView {
@@ -707,9 +710,9 @@
 }
 
 .coin {
-    margin-right: 20px;
     padding: 20px;
     border-radius: 10px;
+    margin: 20px 20px 0 0;
 }
 
 .coinList {
@@ -719,6 +722,7 @@
 }
 
 .coinForm {
+    position: relative;
     margin-bottom: 10px !important;
 }
 

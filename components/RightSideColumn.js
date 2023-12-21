@@ -10,6 +10,9 @@ import {
 import {request} from "/utils/hashUrl";
 import cookie from "js-cookie";
 import {CountContext} from "./Layout/Layout";
+import dynamic from 'next/dynamic'
+
+const RightDome = dynamic(() => import('/pages/rightDome'), {ssr: false});
 
 function RightSideColumn({user, chatsData, chatsLoading,}) {
     const social = changeLang('social')
@@ -62,12 +65,8 @@ function RightSideColumn({user, chatsData, chatsLoading,}) {
             border: '1px solid  rgba(255, 255, 255, 0.20)',
             borderRadius: '0 0 20px 20px'
         }}>
-            {usersToFollowLoading ? <div style={{height: '50vh', position: 'relative'}}>
-                <div style={{position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)'}}>
-                    <img src="/lookingWho.svg" alt="" width={'50px'}/>
-                    <p style={{color: 'white'}}>loading......</p>
-                </div>
-            </div> : usersToFollow && usersToFollow.length > 0 && Array.isArray(usersToFollow) ? (usersToFollow.map((fol) => {
+            {usersToFollowLoading ? <RightDome
+                data={'loading'}/> : usersToFollow && usersToFollow.length > 0 && Array.isArray(usersToFollow) ? (usersToFollow.map((fol) => {
                 return (<div className={'rightSideCard'} key={fol?.uid}>
                     {Number(fol?.uid) !== Number(user?.uid) && (<div
                         key={fol.uid}
@@ -118,13 +117,16 @@ function RightSideColumn({user, chatsData, chatsLoading,}) {
                         </>) : ''}
                     </div>)}
                 </div>);
-            })) : ''}
-            <p className={changeTheme ? 'fontW' : 'fontB'}
-               style={{display: 'flex', justifyContent: 'center', cursor: 'pointer', marginBottom: '10px'}}>More
-                users <DownOutlined color={'rgb(94,91,103)'}/></p>
+            })) : <RightDome
+                data={'noData'}/>}
+            {
+                !usersToFollowLoading&&usersToFollow&&usersToFollow.length>0?<p className={changeTheme ? 'fontW' : 'fontB'}
+                                                                                style={{display: 'flex', justifyContent: 'center', cursor: 'pointer', marginBottom: '10px'}}>More
+                    users <DownOutlined color={'rgb(94,91,103)'}/></p>:''
+            }
         </div>
         {/*chats*/}
-        <div style={{padding: '10px', borderRadius: '15px 15px 0 0',marginTop:'10px'}}
+        <div style={{padding: '10px', borderRadius: '15px 15px 0 0', marginTop: '10px'}}
              className={changeTheme ? 'topBack' : 'brightTwo'}>
             <p className={`${changeTheme ? 'fontW' : 'fontB'} ${styled.rightSideColumnName}`}>{social.recent}</p>
             <p className={changeTheme ? 'fontW' : 'fontB'} style={{textAlign: 'center', lineHeight: '1'}}>Recent
@@ -135,12 +137,8 @@ function RightSideColumn({user, chatsData, chatsLoading,}) {
             border: '1px solid rgba(255, 255, 255, 0.20)',
             borderRadius: '0 0 20px 20px'
         }}>
-            {chatsLoading ? <div style={{height: '50vh', position: 'relative'}}>
-                <div style={{position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)'}}>
-                    <img src="/lookingWho.svg" alt="" width={'50px'}/>
-                    <p style={{color: 'white'}}>loading......</p>
-                </div>
-            </div> : chatsData && Array.isArray(chatsData) && chatsData.length > 0 ? chatsData.map((chat, i) => (
+            {chatsLoading ? <RightDome
+                data={'loading'}/> : chatsData && Array.isArray(chatsData) && chatsData.length > 0 ? chatsData.map((chat, i) => (
                 <div className={'rightSideCard'} key={i}>
                     <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
                         <div className="flex items-center">
@@ -153,12 +151,15 @@ function RightSideColumn({user, chatsData, chatsLoading,}) {
                                 </p>
                             </Link>
                         </div>
-                        <img src="/chatSocial.svg" alt="" width={'30px'} style={{cursor:'pointer'}}/>
+                        <img src="/chatSocial.svg" alt="" width={'30px'} style={{cursor: 'pointer'}}/>
                     </div>
-                </div>)) : ''}
-            <p className={changeTheme ? 'fontW' : 'fontB'}
-               style={{display: 'flex', justifyContent: 'center', cursor: 'pointer', marginBottom: '10px'}}>More
-                users <DownOutlined color={'rgb(94,91,103)'}/></p>
+                </div>)) : <RightDome
+                data={'noData'}/> }
+            {
+                !chatsLoading&&chatsData&&chatsData.length>0? <p className={changeTheme ? 'fontW' : 'fontB'}
+                                     style={{display: 'flex', justifyContent: 'center', cursor: 'pointer', marginBottom: '10px'}}>More
+                    users <DownOutlined color={'rgb(94,91,103)'}/></p>:''
+            }
         </div>
     </div>);
 }

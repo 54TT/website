@@ -8,6 +8,7 @@ import dayjs from 'dayjs'
 import 'dayjs/locale/zh-cn';
 import cookie from "js-cookie";
 import {CountContext} from '/components/Layout/Layout';
+import {useClickAway} from "react-use";
 
 function Coin() {
     const {changeTheme, setLogin} = useContext(CountContext);
@@ -211,7 +212,6 @@ function Coin() {
             </Option>
         }) : null
     }
-
     const columns = [{
         title: '1',
         align: 'center',
@@ -226,8 +226,7 @@ function Coin() {
         align: 'center',
     }]
     return (
-        //
-        <div className={`${styles.coin} ${changeTheme ? 'darknessTwo' : 'brightTwo'}`}>
+        <div className={`${styles.coin} ${changeTheme ? 'coinBack' : 'brightTwo'}`}>
             {
                 infoSow ? <Form
                     name="basic"
@@ -252,7 +251,7 @@ function Coin() {
                                     },
                                 ]}
                             >
-                                <Input className={changeTheme ? 'darknessTwo' : 'brightTT'}/>
+                                <Input  placeholder={'Select a option and change input text above'}  className={changeTheme ? 'darknessTwo placeholder-white' : 'brightTT'}/>
                             </Form.Item>
                             <Form.Item
                                 label="Symbol"
@@ -313,7 +312,7 @@ function Coin() {
                             >
                                 <DatePicker showTime
                                             style={{width: '100%'}}
-                                            className={changeTheme ? 'darknessTwo' : 'brightTT'}/>
+                                            className={changeTheme ? 'darknessTwo placeholder-white' : 'brightTT'}/>
                             </Form.Item>
                             <Form.Item
                                 label="Presale platform"

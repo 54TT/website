@@ -63,6 +63,8 @@ function Home() {
             changeShowData(false)
         }
     }, [bolLogin, showData]);
+
+
     // 退出
     useEffect(()=>{
         if(logoutBol){
