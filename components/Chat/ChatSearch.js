@@ -45,7 +45,6 @@ function ChatSearch({ setShowChatSearch, setChats, chats,user, }) {
       className={styled.chatSearchTop}
     >
       <div className="flex items-center">
-
         <div className="flex mr-2 ml-1 items-center rounded-full bg-gray-100 p-1 h-12 flex-grow">
           <input
             autoFocus={true}

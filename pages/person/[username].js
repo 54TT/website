@@ -62,7 +62,6 @@ function ProfilePage() {
     // 推文
     const [posts, setPosts] = useState([]);
     const [postsAdd, setPostsAdd] = useState([]);
-
     //  loading
     const [postsLoad, setPostsLoad] = useState(true);
     const [postsBol, setPostsBol] = useState(false);
@@ -81,18 +80,8 @@ function ProfilePage() {
             setPostsBol(false)
         }
     }, [postsBol])
-    // 是否为关注者
-    const [followBol, setFollowBol] = useState(false);
-    const isLoggedInUserFollowing =
-        userFollowStats?.following?.length > 0 &&
-        userFollowStats.following?.filter(
-            (following) => following?.following_id === user?.user_id
-        ).length > 0;
-
-    useEffect(() => {
-        setFollowBol(isLoggedInUserFollowing);
-    }, [isLoggedInUserFollowing]);
-
+    // 是否为关注者  isFollowed
+    const [followBol, setFollowBol] = useState(null);
     const addImageFromDevice = async (e, name) => {
         try {
             const {files} = e.target;
@@ -185,6 +174,7 @@ function ProfilePage() {
             } else if (data && data.status === 200) {
                 setEditInput(data?.data?.data.username ? data?.data?.data.username : data?.data?.data.address)
                 setUser(data?.data?.data)
+                setFollowBol(data?.data?.isFollowed)
                 setShowLoad(false)
             }
         } catch (error) {
@@ -198,9 +188,7 @@ function ProfilePage() {
             getPosts();
         }
     }, [params])
-    const chang = () => {
-        setFollowBol(!followBol);
-    };
+
     const [changeBol, setChangeBol] = useState(false);
     useEffect(() => {
         if (changeBol) {
@@ -208,7 +196,6 @@ function ProfilePage() {
             setChangeBol(false)
         }
     }, [changeBol]);
-
     const changePage = () => {
         setPage(page + 1)
         change()
@@ -259,13 +246,148 @@ function ProfilePage() {
     return (
         <>
             <div className={styles.allMobliceBox}>
-                {/**/}
                 {/*上面*/}
                 <div
                     className={` ${
                         !isUserOnOwnAccount ? "min-h-[32.4rem]" : "min-h-[29.3rem]"
-                    }  shadow-lg ${styled.usernameBox} ${styles.allMoblice} ${changeTheme ? 'darknessThrees' : 'usernameBack'}`}>
+                    }  shadow-lg ${styled.usernameBox} ${styles.allMoblice} ${changeTheme ? '' : 'usernameBack'}`}>
                     <div className={styled.usernameBoxTop}>
+                        {/*用户数据*/}
+                        <div style={{
+                            width: '50%',
+                            position: 'absolute',
+                            top: '0',
+                            left: '0',
+                            zIndex: '10',
+                            display: 'flex',
+                            alignItems: 'center'
+                        }}>
+                            <>
+                                {/*图像*/}
+                                {
+                                    showLoad ? <Skeleton.Avatar active={true} shape={'circle'}/> :
+                                        <Avatar onClick={() => {
+                                            if (Number(LoginUser?.uid) === Number(user?.uid)) {
+                                                profilePicRef.current.click()
+                                            }
+                                        }}
+                                                src={profilePicPreview ? profilePicPreview : user?.avatarUrl ? user?.avatarUrl : '/dexlogo.svg'}
+                                                size={120}
+                                        />
+                                }
+                                {/*关注*/}
+                                {!showLoad && !(Number(LoginUser?.uid) === Number(user?.uid)) ?
+                                    //   如果不是本人  是否关注
+                                    (followBol ? (
+                                        <div
+                                            className={styled.usernameBoxDiv}
+                                            onClick={async () => {
+                                                try {
+                                                    const token = cookie.get('token')
+                                                    const data = await request('post', "/api/v1/unfollow", {uid: user?.uid}, token)
+                                                    if (data === 'please') {
+                                                        setLogin()
+                                                    } else if (data && data?.status === 200 && data?.data?.code === 200) {
+                                                        setFollowBol(!followBol)
+                                                    }
+                                                } catch (err) {
+                                                    return null
+                                                }
+                                            }}>
+                                            <CheckCircleIcon className="h-6"/>
+                                            <p className="ml-1.5">Following</p>
+                                        </div>
+                                    ) : (
+                                        <div
+                                            className={styled.usernameBoxDiv}
+                                            onClick={async () => {
+                                                try {
+                                                    const token = cookie.get('token')
+                                                    const data = await request('post', "/api/v1/follow", {userId: user?.uid}, token)
+                                                    if (data === 'please') {
+                                                        setLogin()
+                                                    } else if (data && data?.status === 200 && data?.data?.code === 200) {
+                                                        setFollowBol(!followBol)
+                                                    }
+                                                } catch (err) {
+                                                    return null
+                                                }
+                                            }}>
+                                            <UserAddIcon className="h-6"/>
+                                            <p className="ml-1.5">Follow</p>
+                                        </div>
+                                    )) : ''}
+                            </>
+                            <div style={{marginLeft: '100px'}}>
+                                <div style={{display: 'flex', alignItems: 'center'}}>
+                                    {/*修改name*/}
+                                    <div className={styled.usernameBoxSetName}>
+                                        {/*提交按钮*/}
+                                        {editProfile ? (
+                                            <div style={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                                marginLeft: "10px",
+                                            }}>
+                                                <CloseOutlined
+                                                    style={{
+                                                        fontSize: "20px",
+                                                        fontWeight: "bold",
+                                                        color: 'rgb(59,55,71)'
+                                                    }}
+                                                    onClick={() => {
+                                                        setEditProfile(false)
+                                                        setEditInput(user.username ? user.username : user.address)
+                                                    }}
+                                                />
+                                                <CheckOutlined
+                                                    style={{
+                                                        fontSize: "20px",
+                                                        fontWeight: "bold",
+                                                        marginLeft: "10px", color: 'rgb(59,55,71)'
+                                                    }}
+                                                    onClick={setName}
+                                                />
+                                            </div>
+                                        ) : (isUserOnOwnAccount ?
+                                            <img src="/Group188.svg" width={'20px'} style={{cursor: 'pointer',marginRight:'20px'}} alt=""
+                                                 onClick={() => setEditProfile(true)}/>
+                                            : '')
+                                        }
+                                        {/*name*/}
+                                        {editProfile ? (
+                                            <Input
+                                                onChange={changeIn}
+                                                value={editInput}
+                                                style={{fontSize: "24px",}}
+                                            />
+                                        ) : (
+                                            showLoad ? <Skeleton.Button active={true} shape={'default'}/> :
+                                                <p className={` ${changeTheme ? 'fontW' : 'fontB'} ${styles.mobliceEditInput}`}
+                                                   style={{fontSize: "24px",lineHeight:'1'}}>
+                                                    {editInput}
+                                                </p>
+                                        )}
+                                    </div>
+                                    {/*上传  背景*/}
+                                    {isUserOnOwnAccount && (
+                                        <div
+                                            className={styled.usernameBoxUpdate}
+                                            onClick={() => coverImageRef.current.click()}>
+                                            <img src="/backSet.svg" alt="" width={'20px'}/>
+                                        </div>
+                                    )}
+                                </div>
+                                {/*多少关注者*/}
+                                <div className={styled.followers}>
+                                    <p className={changeTheme?'fontW':'fontB'} style={{fontSize:'20px'}}>55</p>
+                                    <p className={changeTheme?'fontW':'fontB'} style={{margin:'0 7px',fontSize:'14px'}}>Following</p>
+                                    <p className={changeTheme?'fontW':'fontB'}>|</p>
+                                    <p className={changeTheme?'fontW':'fontB'} style={{fontSize:'20px',margin:'0 7px'}}>66</p>
+                                    <p className={changeTheme?'fontW':'fontB'} style={{fontSize:'14px'}}>Follower</p>
+                                </div>
+                            </div>
+                        </div>
                         {/*修改背景图*/}
                         <input
                             type="file"
@@ -281,7 +403,6 @@ function ProfilePage() {
                         ></input>
                         {/*背景图*/}
                         <Image
-                            style={{position:'relative',top:'50%',left:'50%',transform:'translate(-50%,-50%)'}}
                             src={
                                 coverPicPreview ? coverPicPreview : user?.coverUrl ? user?.coverUrl
                                     : '/backto.gif'
@@ -302,121 +423,7 @@ function ProfilePage() {
                             ref={profilePicRef}
                             style={{display: "none"}}
                         ></input>
-                        {/*图像*/}
-                        {
-                            showLoad ? <Skeleton.Avatar active={true} shape={'circle'}/> :
-                                <Avatar onClick={() => {
-                                    if (Number(LoginUser?.uid) === Number(user?.uid)) {
-                                        profilePicRef.current.click()
-                                    }
-                                }}
-                                        src={profilePicPreview ? profilePicPreview : user?.avatarUrl ? user?.avatarUrl : '/dexlogo.svg'}
-                                        size={100}
-                                        style={{
-                                            position: "absolute",
-                                            top: "50%",
-                                            left: "50%",
-                                            cursor: 'pointer',
-                                            translate: "-50% -50%",
-                                        }}
-                                />
-                        }
-                        {/*修改name*/}
-                        <div className={styled.usernameBoxSetName}>
-                            {editProfile ? (
-                                <Input
-                                    onChange={changeIn}
-                                    value={editInput}
-                                    style={{fontSize: "20px", fontWeight: "bold"}}
-                                />
-                            ) : (
-                                showLoad ? <Skeleton.Button active={true} shape={'default'}/> :
-                                    <p className={` ${changeTheme ? 'fontW' : 'fontB'} ${styles.mobliceEditInput}`}
-                                       style={{fontSize: "20px", fontWeight: "bold"}}>
-                                        {editInput}
-                                    </p>
-                            )}
 
-                            {/*提交按钮*/}
-                            {editProfile ? (
-                                <div style={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    marginLeft: "10px",
-                                }}
-                                >
-                                    <CloseOutlined
-                                        style={{fontSize: "20px", fontWeight: "bold", color: 'rgb(59,55,71)'}}
-                                        onClick={() => {
-                                            setEditProfile(false)
-                                            setEditInput(user.username ? user.username : user.address)
-                                        }}
-                                    />{" "}
-                                    <CheckOutlined
-                                        style={{
-                                            fontSize: "20px",
-                                            fontWeight: "bold",
-                                            marginLeft: "10px", color: 'rgb(59,55,71)'
-                                        }}
-                                        onClick={setName}
-                                    />
-                                </div>
-                            ) : (isUserOnOwnAccount ? <FormOutlined
-                                className={styled.usernameBoxIcon}
-                                onClick={() => setEditProfile(true)}
-                            /> : '')
-                            }
-                        </div>
-                        {/*是否本人*/}
-                        {!showLoad && !(Number(LoginUser?.uid) === Number(user?.uid)) ?
-                            //   如果不是本人  是否关注
-                            (followBol ? (
-                                <div
-                                    className={styled.usernameBoxDiv}
-                                    onClick={async () => {
-                                        try {
-                                            const token = cookie.get('token')
-                                            const data = await request('post', "/api/v1/unfollow", {uid: user?.uid}, token)
-                                            if (data === 'please') {
-                                                setLogin()
-                                            } else if (data && data?.status === 200 && data?.data?.code === 200) {
-                                                chang()
-                                            }
-                                        } catch (err) {
-                                            return null
-                                        }
-                                    }}>
-                                    <CheckCircleIcon className="h-6"/>
-                                    <p className="ml-1.5">Following</p>
-                                </div>
-                            ) : (
-                                <div
-                                    className={styled.usernameBoxDiv}
-                                    onClick={async () => {
-                                        try {
-                                            const token = cookie.get('token')
-                                            const data = await request('post', "/api/v1/follow", {userId: user?.uid}, token)
-                                            if (data === 'please') {
-                                                setLogin()
-                                            } else if (data && data?.status === 200 && data?.data?.code === 200) {
-                                                chang()
-                                            }
-                                        } catch (err) {
-                                            return null
-                                        }
-                                    }}>
-                                    <UserAddIcon className="h-6"/>
-                                    <p className="ml-1.5">Follow</p>
-                                </div>
-                            )) : ''}
-
-                        {isUserOnOwnAccount && (
-                            <div
-                                className={styled.usernameBoxUpdate}
-                                onClick={() => coverImageRef.current.click()}>
-                                <img src="/Camera.svg" alt="" style={{width: '20px', borderRadius: '50%',}}/>
-                            </div>
-                        )}
                     </div>
                     {
                         !(Number(LoginUser?.uid) === Number(user?.uid)) &&
@@ -425,9 +432,8 @@ function ProfilePage() {
                                              style={{fontSize: '20px', cursor: 'pointer'}}/>
                         </div>
                     }
-
                     {/*下面*/}
-                    <div className={`w-full ${styled.usernameBoxBot} ${changeTheme ? 'darknessThrees' : 'brightTwo'}`}>
+                    <div className={`w-full ${styled.usernameBoxBot} ${changeTheme ? '' : 'brightTwo'}`}>
                         <div
                             className=" md:flex space-x-4 mx-auto max-w-[30rem] sm:max-w-xl md:max-w-3xl lg:max-w-[1000px]">
                             {/*左边关注*/}
@@ -443,19 +449,19 @@ function ProfilePage() {
                                     isUserOnOwnAccount={isUserOnOwnAccount}
                                 />
                                 {/*粉丝*/}
-                                <FollowingUsers
-                                    isUserOnOwnAccount={isUserOnOwnAccount}
-                                    showLoad={showLoad}
-                                    userFollowStats={userFollowStats}
-                                    user={user}
-                                />
+                                {/*<FollowingUsers*/}
+                                {/*    isUserOnOwnAccount={isUserOnOwnAccount}*/}
+                                {/*    showLoad={showLoad}*/}
+                                {/*    userFollowStats={userFollowStats}*/}
+                                {/*    user={user}*/}
+                                {/*/>*/}
                                 {/*我关注者*/}
-                                <FollowerUsers
-                                    isUserOnOwnAccount={isUserOnOwnAccount}
-                                    showLoad={showLoad}
-                                    userFollowStats={userFollowStats}
-                                    user={user}
-                                />
+                                {/*<FollowerUsers*/}
+                                {/*    isUserOnOwnAccount={isUserOnOwnAccount}*/}
+                                {/*    showLoad={showLoad}*/}
+                                {/*    userFollowStats={userFollowStats}*/}
+                                {/*    user={user}*/}
+                                {/*/>*/}
                                 <div className="h-9"></div>
                             </div>
                             {/*右边推文*/}

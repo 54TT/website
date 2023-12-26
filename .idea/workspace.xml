@@ -4,7 +4,31 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5ca5f751-1a0e-4de7-a19a-35f5fc6604b8" name="更改" comment="" />
+    <list default="true" id="5ca5f751-1a0e-4de7-a19a-35f5fc6604b8" name="更改" comment="">
+      <change afterPath="$PROJECT_DIR$/public/Group188.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/Group188.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/Rectangle119.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/VectorSet.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/backSet.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/noData.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/prompt.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/Chat/ChatSearch.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/Chat/ChatSearch.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/Launch.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/Launch.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/Layout/Drawer.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/Layout/Drawer.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/Layout/Header.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/Layout/Header.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/Layout/Layout.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/Layout/Layout.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/PostCard.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/PostCard.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/Presale.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/Presale.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/ProfileComponents/ProfileFields.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/ProfileComponents/ProfileFields.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/chats.js" beforeDir="false" afterPath="$PROJECT_DIR$/pages/chats.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/coin.js" beforeDir="false" afterPath="$PROJECT_DIR$/pages/coin.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/person/[username].js" beforeDir="false" afterPath="$PROJECT_DIR$/pages/person/[username].js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/token.js" beforeDir="false" afterPath="$PROJECT_DIR$/pages/token.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/styles/all.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/styles/all.module.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/styles/tailwind.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/styles/tailwind.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/styles/theme.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/styles/theme.css" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -145,7 +169,10 @@
       <workItem from="1702886428585" duration="20534000" />
       <workItem from="1702964655994" duration="27720000" />
       <workItem from="1703052168309" duration="4275000" />
-      <workItem from="1703138518777" duration="22781000" />
+      <workItem from="1703138518777" duration="23129000" />
+      <workItem from="1703224695036" duration="12069000" />
+      <workItem from="1703483832917" duration="25854000" />
+      <workItem from="1703570765673" duration="3921000" />
     </task>
     <servers />
   </component>

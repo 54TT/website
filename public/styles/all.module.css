@@ -1,4 +1,4 @@
-.chatLeft  {
+.chatLeft {
     margin-bottom: 11px;
     display: flex;
     margin-left: auto;
@@ -14,7 +14,7 @@
     width: fit-content;
 }
 
-.chatP{
+.chatP {
     line-height: 1;
     padding: 5px;
     border-radius: 35%;
@@ -162,7 +162,7 @@
     cursor: pointer;
     padding: 6px;
     margin-top: 15px;
-    background-color: #efeeef;
+    background-color:rgb(82,82,82);
     border-radius: 6px;
     font-weight: bold;
 }
@@ -551,11 +551,13 @@
     border-radius: 10px;
     flex-wrap: wrap;
 }
-.followersBoxFollow:hover{
+
+.followersBoxFollow:hover {
     background-color: #D0FF95;
 }
-.followersBoxFollow:hover p{
-    color: black!important;
+
+.followersBoxFollow:hover p {
+    color: black !important;
 }
 
 .followersBoxLink {
@@ -600,14 +602,14 @@
 }
 
 .usernameBoxSetName {
-    position: absolute;
-    left: 50%;
-    bottom: -10px;
-    transform: translate(-50%, -50%);
     display: flex;
     align-items: center;
-    width: 40%;
-    justify-content: center;
+    border-radius: 10px;
+    padding: 2px 20px 2px 6px;
+    filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+    border: 6px solid #16131D;
+    background: linear-gradient(90deg, #16131D 0%, #3B3747 100%);
+    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.60);
 }
 
 .usernameBoxIcon {
@@ -619,11 +621,7 @@
 
 .usernameBoxDiv {
     display: flex;
-    position: absolute;
     cursor: pointer;
-    bottom: 10px;
-    left: 50%;
-    transform: translate(-50%, -50%);
     padding: 10px;
     border-radius: 10px;
     background-color: rgba(139, 92, 246);
@@ -640,15 +638,23 @@
     left: 50%;
     border-radius: 50%;
 }
-
+.followers{
+    display: flex;
+    margin-top: 20px;
+    align-items: end;
+}
+.followers p{
+    line-height: 1;
+}
 .usernameBoxUpdate {
-    padding: 5px;
-    background-color: white;
     cursor: pointer;
-    position: absolute;
-    right: 2%;
-    bottom: 2%;
-    border-radius: 50%;
+    margin-left: 10px;
+    padding: 4px;
+    border-radius: 10px;
+    filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+    border: 6px solid #16131D;
+    background: linear-gradient(90deg, #16131D 0%, #3B3747 100%);
+    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.60);
 }
 
 .usernameBoxBot {
@@ -682,7 +688,6 @@
 
 .coinBox {
     margin-right: 20px;
-    /*min-height: 90vh;*/
     border-radius: 10px;
     position: relative;
     padding: 10px;
@@ -699,20 +704,27 @@
     align-items: center;
     margin-left: 10px;
 }
-.coinBoxInfo{
+
+.coinBoxInfo {
     font-size: 18px;
     font-weight: bold;
     margin-right: 10px;
     cursor: pointer;
 }
-.coinBoxForm{
-    display: flex;align-items: center; justify-content: space-between;flex-wrap:wrap;
+
+.coinBoxForm {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+.coinBoxFormWi{
+    width: 45%;margin-bottom: 10px;
 }
 
 .coin {
-    padding: 20px;
+    padding: 30px 40px 30px;
     border-radius: 10px;
-    margin: 20px 20px 0 0;
 }
 
 .coinList {
@@ -721,12 +733,51 @@
     margin-bottom: 10px;
 }
 
+.danger {
+    background-color: red !important;
+}
+
+.centerd {
+    text-align: center;
+}
+.centerdW{
+    width: 75%;
+    margin: 0 auto;
+}
+
+.centerOne {
+    font-size: 22px;
+}
+
 .coinForm {
-    position: relative;
     margin-bottom: 10px !important;
 }
 
-
+.modalBot {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.modalBotWh{
+    background-color: black;
+    color: white;
+}
+.modalBotBl{
+    background-color: rgb(253,213,62);
+    color: black;
+}
+.modalBotP {
+    padding: 6px 35px;
+    border-radius: 10px;
+    margin-top: 20px;
+    cursor: pointer;
+    display: inline-block;
+}
+.checkOrAdd{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
 .lpDetail {
     min-height: 80vh;
     border-radius: 10px;
@@ -735,45 +786,58 @@
     display: flex;
     justify-content: space-between;
 }
-.lpDetailRight{
+
+.lpDetailRight {
     width: 80%;
     padding: 10px;
     border-radius: 10px;
-    display:flex;align-items:center;flex-direction:column;
-}
-.lpDetailRightImg{
-    width: 30px;
-    margin-bottom: 5px;border-radius: 50%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
 }
 
-.lpDetailLeftBack{
+.lpDetailRightImg {
+    width: 30px;
+    margin-bottom: 5px;
+    border-radius: 50%;
+}
+
+.lpDetailLeftBack {
     padding: 10px 20px;
     font-weight: bold;
     font-size: 20px;
     border-radius: 15px;
 }
 
-.lpDetailLefP{
-    font-size: 18px; font-weight: bold; text-align: center;
+.lpDetailLefP {
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
 }
-.lpDetailLefPT{
-    font-size: 20px;display: flex;align-items: center;
+
+.lpDetailLefPT {
+    font-size: 20px;
+    display: flex;
+    align-items: center;
 }
+
 .lpDetailLeft {
     width: 70%;
 }
-.lpDetailLeftTop{
+
+.lpDetailLeftTop {
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin-bottom: 10px;
 }
-.lpDetailLeftBot{
-     padding: 20px;
+
+.lpDetailLeftBot {
+    padding: 20px;
     border-radius: 10px;
 }
 
-.lpDetailR{
+.lpDetailR {
     width: 24%;
     justify-content: space-between;
     display: flex;
@@ -781,31 +845,66 @@
     flex-direction: column;
 }
 
-.lpDetailRightP{
-    width: 100%;word-wrap: break-word;
-    color:#2294D4;text-align:center;line-height:1;
-}
-.lpDetailRightCen{
+.lpDetailRightP {
     width: 100%;
-  text-align:center;line-height:1;word-wrap: break-word;
+    word-wrap: break-word;
+    color: #2294D4;
+    text-align: center;
+    line-height: 1;
 }
+
+.lpDetailRightCen {
+    width: 100%;
+    text-align: center;
+    line-height: 1;
+    word-wrap: break-word;
+}
+.fromMol{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
 /* 超小屏幕 */
 @media screen and (max-width: 768px) {
-    .followersBoxMin{
+    .followersBoxMin {
         height: auto;
     }
-    .mobliceImage{
+    .fromPost{
+        width: 100%;
+    }
+    .hid{
         display: none;
     }
-    .min1200{
+    .cinFromNext{
+        border-radius: 10px;
+        color: #00AAFF;
+        margin: 20px 0;
+        border: 1px solid #0AF;
+        /* 发光冷蓝 */
+        box-shadow: 2px 2px 10px 2px rgba(0, 170, 255, 0.40);
+    }
+    .coinP{
+        font-size: 20px;font-weight: bold;
+        text-align: center;
+    }
+    .mobliceImage {
+        display: none;
+    }
+
+    .min1200 {
         margin-left: 0;
     }
-    .launchBoxFilter{
+
+    .launchBoxFilter {
         margin-top: 20px;
     }
-    .mobliceNewPair{
+
+    .mobliceNewPair {
         margin-top: 20px;
     }
+
     .launchBoxCardBox {
         align-items: flex-start;
         flex-direction: column
@@ -927,11 +1026,26 @@
         text-align: left;
     }
 }
+
 /* 小屏幕 */
 @media screen and (min-width: 768px) {
     .bottomImgs {
         width: 100%;
         justify-content: space-around;
+    }
+    .fromPost{
+        width: 60%;
+        margin: 20px auto 0;
+    }
+    .cinFromNext{
+        display: none;
+    }
+    .coinP{
+        font-size: 20px;font-weight: bold;margin-left: -15px;
+    }
+    .coinFormDivWi{width: 48%;}
+    .coinFormDiv{
+        display: flex; align-items: start;justify-content: space-between;
     }
     .featuredColumns {
         min-width: 30px;
@@ -944,29 +1058,64 @@
     .newPairTableText {
         margin-left: 0;
     }
-    .min1200{
-        margin-left:90px;
+
+    .min1200 {
+        margin-left: 90px;
     }
 }
 
 /* 中型屏幕 平板 */
 @media screen and (min-width: 992px) {
+    .cinFromNext{
+        display: none;
+    }
+    .fromPost{
+        width: 60%;
+        margin: 20px auto 0;
+    }
     .bottomImgs {
         width: 100%;
         justify-content: space-around;
     }
-    .min1200{
+    .coinP{
+        font-size: 20px;font-weight: bold;margin-left: -15px;
+    }
+    .coinFormDivWi{width: 48%;}
+    .coinFormDiv{
+        display: flex; align-items: start;justify-content: space-between;
+    }
+    .screenCoin{
+        width: 80% ;margin: 0 auto;
+    }
+    .min1200 {
         margin-left: 90px;
     }
 }
 
 /* 电脑屏幕 */
 @media screen and (min-width: 1200px) {
+    .cinFromNext{
+        display: none;
+    }
+    .fromPost{
+        width: 60%;
+        margin: 20px auto 0;
+    }
     .bottomImgs {
         width: 15%;
         justify-content: space-around;
     }
-    .min1200{
+    .coinP{
+        font-size: 20px;font-weight: bold;margin-left: -15px;
+    }
+    .coinFormDivWi{width: 48%;}
+    .coinFormDiv{
+        display: flex; align-items: start;justify-content: space-between;
+    }
+    .screenCoin{
+        width: 80% ;margin: 0 auto;
+    }
+    .min1200 {
         margin-left: 90px;
     }
 }

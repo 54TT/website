@@ -22,7 +22,6 @@ html {
     background-color: rgb(253, 213, 62);
 }
 
-
 .darkModes::-webkit-scrollbar {
     width: 10px;
     background-color: rgb(37, 35, 42);
@@ -124,10 +123,12 @@ li.check:before {
 .leftMoe:hover {
     background-color: #D0FF95;
 }
+
 .leftMoe:hover span {
     color: black !important;
 }
-.hoverBut:hover{
+
+.hoverBut:hover {
     background-color: rgb(128, 128, 128);
 }
 
@@ -135,13 +136,31 @@ li.check:before {
     background-color: rgb(253, 213, 62);
 }
 
+.loginImg {
+    cursor: pointer;
+}
+
 .more {
     color: #00b8d8;
     font-size: 13px;
 }
-.placeholderaaaaa::-webkit-input-placeholder {
-    color: red;
+
+.placeholderStyle::-webkit-input-placeholder {
+    color: rgb(126, 123, 123);
 }
+
+.placeholderStyle .ant-select-selection-placeholder {
+    color: rgb(126, 123, 123) !important;
+}
+
+.placeholderStyle .ant-picker-suffix {
+    color: rgb(126, 123, 123) !important;
+}
+
+.placeholderStyle .ant-picker-input input::-webkit-input-placeholder {
+    color: rgb(126, 123, 123) !important;
+}
+
 .pair-row {
     cursor: pointer;
 }
@@ -149,14 +168,16 @@ li.check:before {
 .rightSideCard {
     padding: 5px 30px;
 }
-.postBackCard{
+
+.postBackCard {
     border-radius: 20px;
     margin-bottom: 15px;
     padding: 15px 30px;
     border: 1px solid #16131D;
     box-shadow: 0 2px 10px 4px rgba(22, 19, 29, 0.10);
 }
-.postNoCard{
+
+.postNoCard {
     text-align: center;
     line-height: 1;
 }
@@ -385,8 +406,62 @@ li.check:before {
     flex: none !important;
 }
 
+.anyTable .ant-table .ant-table-container .ant-table-thead .ant-table-cell .ant-table-column-sorter .ant-table-column-sorter-inner span {
+    color: rgb(143, 143, 143);
+}
+
+
 .anyTable .ant-table .ant-table-content .ant-table-thead .ant-table-cell .ant-table-column-sorters {
     justify-content: center !important;
+}
+
+.filterTab .ant-table-tbody .ant-table-placeholder .ant-table-cell {
+    background: rgba(22, 19, 29, 0.7);
+    box-shadow: 0px 2px 10px 4px rgba(22, 19, 29, 0.10);
+    border: none !important;
+}
+
+.filterTab .ant-table-tbody .ant-table-placeholder {
+    pointer-events: none !important;
+}
+
+
+/*亮色*/
+.tableWh .ant-table-content::-webkit-scrollbar {
+    width: 10px;
+    background-color: rgb(249, 188, 54);
+}
+
+/*定义滚动条轨道：内阴影+圆角*/
+.tableWh .ant-table-content::-webkit-scrollbar-track {
+    background-color: rgb(249, 188, 54);
+}
+
+/*定义滑块：内阴影+圆角*/
+.tableWh .ant-table-content::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background-color: rgb(253, 213, 62);
+}
+
+/*暗色*/
+.hei .ant-table-content::-webkit-scrollbar {
+    width: 10px;
+    background-color: rgb(37, 35, 42);
+}
+
+/*定义滚动条轨道：内阴影+圆角*/
+.hei .ant-table-content::-webkit-scrollbar-track {
+    background-color: rgb(37, 35, 42);
+}
+
+/*定义滑块：内阴影+圆角*/
+.hei .ant-table-content::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background-color: rgb(59, 55, 71);
+}
+
+.heigh .ant-table-content table {
+    min-height: 70vh;
 }
 
 .ant-table .ant-table-container .ant-table-tbody .ant-table-row:hover {
@@ -435,18 +510,18 @@ li.check:before {
 }
 
 /*drawer  滚动条*/
-.socialScrolld .darknessTwo .MuiDrawer-root .MuiDrawer-paper ::-webkit-scrollbar {
+.socialScrolld .brightTwo .MuiDrawer-docked .MuiPaper-elevation::-webkit-scrollbar {
     width: 10px;
     background-color: rgb(253, 213, 62);
 }
 
 /*定义滚动条轨道：内阴影+圆角*/
-.socialScrolld .darknessTwo .MuiDrawer-root .MuiDrawer-paper ::-webkit-scrollbar-track {
+.socialScrolld .brightTwo .MuiDrawer-docked .MuiPaper-elevation::-webkit-scrollbar-track {
     background-color: rgb(253, 213, 62);
 }
 
 /*定义滑块：内阴影+圆角*/
-.socialScrolld .darknessTwo .MuiDrawer-root .MuiDrawer-paper ::-webkit-scrollbar-thumb {
+.socialScrolld .brightTwo .MuiDrawer-docked .MuiPaper-elevation::-webkit-scrollbar-thumb {
     border-radius: 10px;
     background-color: rgb(249, 188, 54);
 }
@@ -468,19 +543,18 @@ li.check:before {
     background-color: rgb(59, 55, 71);
 }
 
-
-.socialScrollDd .darknessTwo .MuiDrawer-root.MuiDrawer-paper ::-webkit-scrollbar {
+.socialScrollDd .darknessTwo .MuiDrawer-docked .MuiPaper-elevation::-webkit-scrollbar {
     width: 10px;
     background-color: rgb(37, 30, 38);
 }
 
 /*定义滚动条轨道：内阴影+圆角*/
-.socialScrollDd .darknessTwo .MuiDrawer-root.MuiDrawer-paper ::-webkit-scrollbar-track {
+.socialScrollDd .darknessTwo .MuiDrawer-docked .MuiPaper-elevation::-webkit-scrollbar-track {
     background-color: rgb(37, 30, 38);
 }
 
 /*定义滑块：内阴影+圆角*/
-.socialScrollDd .darknessTwo .MuiDrawer-root.MuiDrawer-paper ::-webkit-scrollbar-thumb {
+.socialScrollDd .darknessTwo .MuiDrawer-docked .MuiPaper-elevation::-webkit-scrollbar-thumb {
     border-radius: 10px;
     background-color: rgb(59, 55, 71);
 }
@@ -495,7 +569,6 @@ li.check:before {
     border-radius: 12px;
     transition: box-shadow 0.3s;
 }
-
 
 
 /* 超小屏幕 */

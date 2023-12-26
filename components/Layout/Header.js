@@ -16,6 +16,7 @@ import {changeLang} from "/utils/set";
 // const logicModule = await import('../dynamicLogic');
 import {gql} from "graphql-tag";
 import {ApolloClient, InMemoryCache, useQuery} from "@apollo/client";
+
 const DrawerPage = dynamic(() => import('./Drawer'), {ssr: false});
 // const client = new ApolloClient({
 //     uri: 'https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-v2-dev', cache: new InMemoryCache(),
@@ -545,20 +546,22 @@ const Header = () => {
                         {userPar && userPar?.uid ?
                             <div className={`${changeTheme ? 'backLine' : 'brightFore boxHover'}  ${styles.loginBox}`}>
                                 <Link href={`/person/${userPar && userPar?.uid ? userPar.uid : ''}`}>
-                                    <img className={'loginImg'}
-                                         style={{borderRadius: '50%', width: '25px', height: '25px'}}
-                                         src={userPar && userPar?.avatarUrl ? userPar.avatarUrl : '/dexlogo.svg'}
-                                         alt=""/>
+                                    <Dropdown
+                                        menu={{items}}
+                                        overlayClassName={changeTheme ? 'dropdownClass' : ''}
+                                        placement="bottom">
+                                        <div style={{display:'flex',alignItems:'center'}}>
+                                            <img
+                                                 style={{borderRadius: '50%', width: '25px', height: '25px'}}
+                                                 src={userPar && userPar?.avatarUrl ? userPar.avatarUrl : '/dexlogo.svg'}
+                                                 alt=""/>
+                                            <Button
+                                                className={`${styles.loginNames}`}>{userPar && userPar.username ? userPar.username.length > 5 ? userPar.username.slice(0, 5) + '...' : userPar?.username : userPar?.address?.slice(0, 5) + '...' || ''}</Button>
+                                        </div>
+                                    </Dropdown>
                                 </Link>
-                                <Dropdown
-                                    menu={{items}}
-                                    overlayClassName={changeTheme ? 'dropdownClass' : ''}
-                                    placement="bottom">
-                                    <Button
-                                        className={`${styles.loginNames}`}>{userPar && userPar.username ? userPar.username.length > 5 ? userPar.username.slice(0, 5) + '...' : userPar?.username : userPar?.address?.slice(0, 5) + '...' || ''}</Button>
-                                </Dropdown>
                                 <img className={'loginImg'} style={{borderRadius: '50%', width: '25px', height: '25px'}}
-                                     src={userPar && userPar?.avatarUrl ? userPar.avatarUrl : '/dexlogo.svg'}
+                                     src={'/prompt.svg'}
                                      alt=""/>
                             </div> : <Button
                                 className={` ${styles.loginName} ${changeTheme ? 'darknessThree' : 'brightFore boxHover'}`}
@@ -599,25 +602,29 @@ const Header = () => {
                             <span className={changeTheme ? 'darknessFont' : 'brightFont'}>{gas}</span>
                         </p>
                     </div>
-                    {userPar && userPar?.uid ? <div className={styles.loginBox}>
-                        <Link href={`/person/${userPar && userPar?.uid ? userPar.uid : ''}`}>
-                            <img className={'loginImg'} style={{borderRadius: '50%', width: '35px', height: '35px'}}
-                                 src={userPar && userPar?.avatarUrl ? userPar.avatarUrl : '/dexlogo.svg'}
+                    {userPar && userPar?.uid ?
+                        <div className={`${changeTheme ? 'backLine' : 'brightFore boxHover'}  ${styles.loginBox}`}>
+                            <Link href={`/person/${userPar && userPar?.uid ? userPar.uid : ''}`}>
+                                <Dropdown
+                                    menu={{items}}
+                                    overlayClassName={changeTheme ? 'dropdownClass' : ''}
+                                    placement="bottom">
+                                    <div style={{display:'flex',alignItems:'center'}}>
+                                        <img
+                                            style={{borderRadius: '50%', width: '25px', height: '25px'}}
+                                            src={userPar && userPar?.avatarUrl ? userPar.avatarUrl : '/dexlogo.svg'}
+                                            alt=""/>
+                                        <Button
+                                            className={`${styles.loginNames}`}>{userPar && userPar.username ? userPar.username.length > 5 ? userPar.username.slice(0, 5) + '...' : userPar?.username : userPar?.address?.slice(0, 5) + '...' || ''}</Button>
+                                    </div>
+                                </Dropdown>
+                            </Link>
+                            <img className={'loginImg'} style={{borderRadius: '50%', width: '25px', height: '25px'}}
+                                 src={'/prompt.svg'}
                                  alt=""/>
-                        </Link>
-                        <Dropdown
-                            menu={{
-                                items,
-                            }}
-                            placement="bottomLeft"
-                            arrow
-                        >
-                            <Button
-                                className={`${styles.loginName} ${styles.but} ${changeTheme ? 'darknessThree' : 'brightFore boxHover'} `}>{userPar && userPar.username ? userPar.username.length > 5 ? userPar.username.slice(0, 5) + '...' : userPar.username : userPar.address.slice(0, 5) + '...'}</Button>
-                        </Dropdown>
-                    </div> : <Button
-                        className={`${styles['but']} ${styles.loginName} ${changeTheme ? 'darknessThree' : 'brightFore boxHover'}`}
-                        onClick={getMoney}>{header.login}</Button>}
+                        </div> : <Button
+                            className={` ${styles.loginName} ${changeTheme ? 'darknessThree' : 'brightFore boxHover'}`}
+                            onClick={getMoney}>{header.login}</Button>}
                     <div className={styles.mobliceMenuFlex}>
                         {
                             userPar && userPar?.uid ? '' : <div
@@ -637,7 +644,8 @@ const Header = () => {
                 </div>
             </div>
             {/* 菜单Items */}
-            <div className={`${isShowMenuItem ? styles.mobliceMentHideItemsBox : styles.mobliceMentItemsBox} ${changeTheme ? 'darknessTwo' : 'brightTwo'}`}>
+            <div
+                className={`${isShowMenuItem ? styles.mobliceMentHideItemsBox : styles.mobliceMentItemsBox} ${changeTheme ? 'darknessTwo' : 'brightTwo'}`}>
                 <div style={{display: 'flex', flexWrap: 'wrap'}}>
                     <div className={`${styles.mobliceDpFlex}`}>
                         <div onClick={pushOnclick('one')}>

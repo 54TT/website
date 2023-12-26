@@ -4,9 +4,9 @@ import {
     TwitterOutlined,
     ArrowRightOutlined,
     FacebookOutlined,
-    FormOutlined,
+    FormOutlined,CheckOutlined,
     InstagramOutlined,
-    ArrowLeftOutlined
+    ArrowLeftOutlined,CloseOutlined
 } from '@ant-design/icons'
 import {useEffect} from "react";
 import {notification, Skeleton} from "antd";
@@ -89,7 +89,7 @@ function ProfileFields({isUserOnOwnAccount, user, change, getProfile, showLoad})
                                 {username.intro}
                             </h1>
                             <div className={styled.profileFieldsIconBox}>
-                                <ArrowLeftOutlined className={styled.profileFieldsIcon} onClick={() => {
+                                <CloseOutlined style={{color:changeTheme?'gray':'black'}} className={styled.profileFieldsIcon} onClick={() => {
                                     setEditProfile(false)
                                     setBio(user?.bio)
                                     setSocial({
@@ -97,7 +97,7 @@ function ProfileFields({isUserOnOwnAccount, user, change, getProfile, showLoad})
                                         user?.websiteLink, discord: user?.discord
                                     })
                                 }}/>
-                                <ArrowRightOutlined className={styled.profileFieldsIcons} onClick={updateProfile}/>
+                                <CheckOutlined  style={{color:changeTheme?'gray':'black'}} className={styled.profileFieldsIcons} onClick={updateProfile}/>
                             </div>
                         </div>
                     ) : (
@@ -108,9 +108,7 @@ function ProfileFields({isUserOnOwnAccount, user, change, getProfile, showLoad})
                                     {username.intro}
                                 </h1>
                                 {isUserOnOwnAccount && (
-                                    <FormOutlined style={{fontSize: '20px', fontWeight: 'bold'}}
-                                                  onClick={() => setEditProfile(true)}
-                                    />
+                                    <img src="/Group188.svg" alt="" onClick={() => setEditProfile(true)} width={'25px'} style={{cursor:'pointer'}}/>
                                 )}
                             </div>
                         </>
@@ -120,7 +118,7 @@ function ProfileFields({isUserOnOwnAccount, user, change, getProfile, showLoad})
                         <div>
                             {/**/}
                             <textarea
-                                className={`${changeTheme ? 'darknessThrees drakColor' : 'brightFore fontB'} ${styled.profileFieldsTextarea}`}
+                                className={`${changeTheme ? 'inputDrak drakColor' : 'brightFore fontB'} ${styled.profileFieldsTextarea}`}
                                 name="bio"
                                 value={bio}
                                 onChange={handleChange}
@@ -130,7 +128,7 @@ function ProfileFields({isUserOnOwnAccount, user, change, getProfile, showLoad})
                             {
                                 list.map((i, index) => {
                                     return <div key={index}
-                                                className={`${changeTheme ? 'darknessThrees' : 'brightFore'} ${styled.profileFieldsDiv}`}>
+                                                className={`${changeTheme ? 'inputDrak' : 'brightFore'} ${styled.profileFieldsDiv}`}>
                                         {
                                             index === 0 ? <YoutubeOutlined style={{color: "#8f85de"}}/> : index === 1 ?
                                                 <FacebookOutlined style={{color: "#8f85de"}}/> : index === 2 ?
@@ -138,12 +136,11 @@ function ProfileFields({isUserOnOwnAccount, user, change, getProfile, showLoad})
                                                         <InstagramOutlined style={{color: "#8f85de"}}/> : ''
                                         }
                                         <input
-                                            className={`${changeTheme ? 'darknessThrees drakColor' : 'brightFore fontB'}  ${styled.profileFieldsInput}`}
+                                            className={`${changeTheme ? 'inputTran drakColor' : 'brightFore fontB'}  ${styled.profileFieldsInput}`}
                                             name={i.name}
                                             value={social[i.name]}
                                             onChange={handleChange}
-                                            placeholder={<span
-                                                className={`${changeTheme ? 'drakColor' : 'fontB'} `}>{i.name}</span>}
+                                            placeholder={i.name}
                                         />
                                     </div>
                                 })

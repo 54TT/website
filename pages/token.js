@@ -10,7 +10,6 @@ import {default as Moralis} from "moralis";
 import {ethers} from "ethers";
 
 const {TextArea} = Input;
-
 function Token(props) {
     const {changeTheme, setLogin} = useContext(CountContext);
     const [infoSow, setInfoShow] = useState(false)
@@ -55,7 +54,7 @@ function Token(props) {
                 const aaa = await getAddressOwner('0xae2Fc483527B8EF99EB5D9B44875F005ba1FaE13')
                 if (aaa && aaa.length > 0) {
                     setTokenAll(aaa)
-                    setIsSureShow(false)
+
                 } else {
                     setTokenAll([])
                     setIsSureShow(false)
@@ -133,7 +132,8 @@ function Token(props) {
         }
     }
     useEffect(() => {
-        getParams()
+        // getParams()
+        setIsSureShow(false)
     }, [])
     const setInfo = async (i) => {
         try {
@@ -178,8 +178,8 @@ function Token(props) {
         setCurrent(e)
     }
     return (
-        <div className={`${styles.coinBox} ${changeTheme ? 'darknessTwo' : 'brightTwo'}`}>
-            <p style={{fontSize: '20px', fontWeight: 'bold'}} className={changeTheme ? 'darknessFour' : ''}>MY TOKEN</p>
+        <div className={`${styles.coinBox} ${changeTheme ? 'coinBack' : 'brightTwo'}`}>
+            <p style={{fontSize: '20px', fontWeight: 'bold'}} className={changeTheme ? 'darknessFour' : ''} onClick={()=>setInfoShow(true)}>MY TOKEN</p>
             {/*数据*/}
             {
                 isSureShow ? <LoadingOutlined
@@ -194,7 +194,7 @@ function Token(props) {
                                     <img src="/Booking.png" alt="" style={{width:'30px'}}/>
                                     {/*<span style={{margin: '0 10px'}}>{infoParams && infoParams.name}</span>*/}
                                     <span
-                                        style={{color: '#9bc2d9'}}>{infoParams.slice(0, 5) + '...' + infoParams.slice(-5)}</span>
+                                        style={{color: '#9bc2d9'}}>{(infoParams?.slice(0, 5) + '...' + infoParams?.slice(-5))||''}</span>
                                 </div>
                                 <div className={styles.coinBoxSet}>
                                     <span className={styles.coinBoxInfo}>info</span>
@@ -216,21 +216,15 @@ function Token(props) {
                             <Form.Item
                                 label="e-mail"
                                 name="email"
-                                style={{width: '45%', marginBottom: '10px'}}
-                                labelCol={{
-                                    span: 20,
-                                }}
+                                className={styles.coinBoxFormWi}
                             >
-                                <Input className={changeTheme ? 'darknessTwo' : 'brightTT'}/>
+                                <Input className={changeTheme ? 'darknessTwo placeholderStyle' : 'brightTT'}/>
                             </Form.Item>
 
                             <Form.Item
                                 label="LINK TO LOGO URL"
                                 name="link"
-                                labelCol={{
-                                    span: 20,
-                                }}
-                                style={{width: '45%', marginBottom: '10px'}}
+                                className={styles.coinBoxFormWi}
                                 rules={[
                                     {
                                         required: !imagePreview,
@@ -268,21 +262,15 @@ function Token(props) {
                             </Form.Item>
                             <Form.Item
                                 label="Token Website"
-                                labelCol={{
-                                    span: 20,
-                                }}
                                 name="website"
-                                style={{width: '45%', marginBottom: '10px'}}
+                                className={styles.coinBoxFormWi}
                             >
-                                <Input className={changeTheme ? 'darknessTwo' : 'brightTT'}/>
+                                <Input className={changeTheme ? 'darknessTwo placeholderStyle' : 'brightTT'}/>
                             </Form.Item>
                             <Form.Item
                                 label="Telegram"
-                                labelCol={{
-                                    span: 20,
-                                }}
                                 name="telegram"
-                                style={{width: '45%', marginBottom: '10px'}}
+                                className={styles.coinBoxFormWi}
                                 rules={[
                                     {
                                         required: true,
@@ -290,93 +278,68 @@ function Token(props) {
                                     },
                                 ]}
                             >
-                                <Input className={changeTheme ? 'darknessTwo' : 'brightTT'}/>
+                                <Input className={changeTheme ? 'darknessTwo placeholderStyle' : 'brightTT'}/>
                             </Form.Item>
                             <Form.Item
                                 label="Discord"
                                 name="discord"
-                                labelCol={{
-                                    span: 20,
-                                }}
-                                style={{width: '45%', marginBottom: '10px'}}
+                                className={styles.coinBoxFormWi}
                             >
-                                <Input className={changeTheme ? 'darknessTwo' : 'brightTT'}/>
+                                <Input className={changeTheme ? 'darknessTwo placeholderStyle' : 'brightTT'}/>
                             </Form.Item>
                             <Form.Item
                                 label="Twitter"
-                                labelCol={{
-                                    span: 20,
-                                }}
                                 name="Twitter"
-                                style={{width: '45%', marginBottom: '10px'}}
+                                className={styles.coinBoxFormWi}
                             >
-                                <Input className={changeTheme ? 'darknessTwo' : 'brightTT'}/>
+                                <Input className={changeTheme ? 'darknessTwo placeholderStyle' : 'brightTT'}/>
                             </Form.Item>
                             <Form.Item
                                 label="Facebook"
-                                labelCol={{
-                                    span: 20,
-                                }}
                                 name="facebook"
-                                style={{width: '45%', marginBottom: '10px'}}
+                                className={styles.coinBoxFormWi}
                             >
-                                <Input className={changeTheme ? 'darknessTwo' : 'brightTT'}/>
+                                <Input className={changeTheme ? 'darknessTwo placeholderStyle' : 'brightTT'}/>
                             </Form.Item>
                             <Form.Item
                                 label="Youtube"
                                 name="youtube"
-                                labelCol={{
-                                    span: 20,
-                                }}
-                                style={{width: '45%', marginBottom: '10px'}}
+                                className={styles.coinBoxFormWi}
                             >
-                                <Input className={changeTheme ? 'darknessTwo' : 'brightTT'}/>
+                                <Input className={changeTheme ? 'darknessTwo placeholderStyle' : 'brightTT'}/>
                             </Form.Item>
                             <Form.Item
                                 label="Instagram"
                                 name="instagram"
-                                labelCol={{
-                                    span: 20,
-                                }}
-                                style={{width: '45%', marginBottom: '10px'}}
+                                className={styles.coinBoxFormWi}
                             >
-                                <Input className={changeTheme ? 'darknessTwo' : 'brightTT'}/>
+                                <Input className={changeTheme ? 'darknessTwo placeholderStyle' : 'brightTT'}/>
                             </Form.Item>
                             <Form.Item
                                 label="TikTok"
                                 name="tikTok"
-                                labelCol={{
-                                    span: 20,
-                                }}
-                                style={{width: '45%', marginBottom: '10px'}}
+                                className={styles.coinBoxFormWi}
                             >
-                                <Input className={changeTheme ? 'darknessTwo' : 'brightTT'}/>
+                                <Input className={changeTheme ? 'darknessTwo placeholderStyle' : 'brightTT'}/>
                             </Form.Item>
                             <Form.Item
                                 label="Medium"
                                 name="medium"
-                                labelCol={{
-                                    span: 20,
-                                }}
-                                style={{width: '45%', marginBottom: '10px'}}
+                                className={styles.coinBoxFormWi}
                             >
-                                <Input className={changeTheme ? 'darknessTwo' : 'brightTT'}/>
+                                <Input className={changeTheme ? 'darknessTwo placeholderStyle' : 'brightTT'}/>
                             </Form.Item>
                             <Form.Item
                                 label="Project Brief"
                                 name="brief"
-                                labelCol={{
-                                    span: 20,
-                                }}
-                                style={{width: '45%', marginBottom: '10px'}}
+                                className={styles.coinBoxFormWi}
                             >
-                                <Input className={changeTheme ? 'darknessTwo' : 'brightTT'}/>
+                                <Input className={changeTheme ? 'darknessTwo placeholderStyle' : 'brightTT'}/>
                             </Form.Item>
-
-                            <Form.Item label="TextArea" name="12" labelCol={{span: 20,}}
-                                       style={{width: '100%', marginBottom: '10px'}}>
+                            <Form.Item label="TextArea" name="12"
+                                      style={{width:'100%',}}>
                                 <TextArea placeholder={'max. 150 characters'}
-                                          className={changeTheme ? 'darknessTwo' : 'brightTT'} style={{width: '100%',}}
+                                          className={changeTheme ? 'darknessTwo placeholderStyle' : 'brightTT'} style={{width: '100%',}}
                                           maxLength={10}/>
                             </Form.Item>
                             <Form.Item style={{display: 'flex', justifyContent: 'flex-end', width: '100%'}}>

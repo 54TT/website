@@ -88,7 +88,8 @@ const Layout = ({children}) => {
                 theme={{
                     components: {
                         Select: {
-                            selectorBg: changeTheme ? 'rgb(59, 55, 71)' : 'rgb(254, 239, 146)'
+                            selectorBg: changeTheme ? 'rgb(59, 55, 71)' : 'rgb(254, 239, 146)',
+                            optionSelectedBg:changeTheme ? 'rgb(200,200,200)' : ''
                         },
                         Segmented: {
                             itemSelectedBg: changeTheme ? 'rgb(59,55,71)' : 'rgb(253,213,62)',

@@ -181,8 +181,9 @@ function PostCard({post, user, change, liked}) {
         <div
             className={`flex flex-col justify-start rounded-2xl shadow-md postBackCard ${changeTheme ? 'postBack' : 'whiteMode'}`}>
             {/*头像*/}
-                <div className="flex space-x-3 items-center relative">
-                    <img  style={{borderRadius: '50%',width:'50px',height:'50px'}}
+                <div className="flex space-x-3 items-center justify-between relative">
+                    <div className={'flex items-center'}>
+                    <img  style={{borderRadius: '50%',width:'40px',height:'40px',marginRight:'10px'}}
                          src={post && post?.user?.avatar ? post.user.avatar : '/dexlogo.svg'}
                          alt="userimg"/>
                     <div>
@@ -203,6 +204,7 @@ function PostCard({post, user, change, liked}) {
                             {post && post.CreatedAt ? post?.CreatedAt : ''}
                         </p>
                     </div>
+                    </div>
                     <ReusableDialog
                         title={"Delete Post"}
                         action={"delete"}
@@ -214,19 +216,9 @@ function PostCard({post, user, change, liked}) {
                     />
                     {/*删除按钮*/}
                     {Number(post?.user?.uid) === Number(user?.uid) && (
-                        <div style={{
-                            borderRadius: '50%',
-                            cursor: 'pointer'
-                        }}
-                             onClick={() => {
-                                 handleClickOpen();
-                             }}
-                             className="flex justify-center items-center absolute top-0 right-2">
-                            <MinusCircleIcon
-                                style={{height: "18px", width: "18px"}}
-                                className="text-gray-500"
-                            />
-                        </div>
+                            <img  onClick={() => {
+                                handleClickOpen();
+                            }} src="/VectorSet.svg" alt="" width={'20px'} style={{cursor:'pointer'}}/>
                     )}
                 </div>
             {/*文本*/}

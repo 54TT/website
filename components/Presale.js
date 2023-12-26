@@ -3,6 +3,7 @@ import dayjs from 'dayjs';
 import {notification, Pagination, Table, Card, Statistic} from "antd";
 import {GlobalOutlined, SendOutlined, TwitterOutlined} from "@ant-design/icons";
 import styled from '/public/styles/all.module.css'
+
 const {Countdown} = Statistic;
 import {changeLang} from "/utils/set";
 import {CountContext} from '/components/Layout/Layout';
@@ -39,9 +40,9 @@ export default function Presale() {
                 setLaunch([])
                 setLaunchAll(0)
             } else if (res && res?.status === 200) {
-                let {presales} = res?.data
+                let {presales, count} = res?.data
                 setLaunch(presales && presales.length > 0 ? presales : [])
-                setLaunchAll(0)
+                setLaunchAll(count ? count : 0)
                 setLaunchBol(false)
             } else {
                 setLaunch([])
@@ -80,15 +81,14 @@ export default function Presale() {
         {
             title: '',
             dataIndex: 'address', align: 'center',
-            width: 30,
             render: (_, record) => {
-                return <img src={record?.logo ? record.logo : '/avatar.png'} style={{borderRadius: '50%',width:'30px'}} alt="" />
+                return <img src={record?.logo ? record.logo : '/avatar.png'} style={{borderRadius: '50%'}}
+                            width={'30px'} alt=""/>
             }
         },
         {
             title: presale.token,
             dataIndex: 'name', align: 'center',
-            width: 100,
             render: (text) => {
                 return <p
                     className={`${styled.presaleBoxTableP} ${styled.moblicePresaleBoxTableP} ${changeAllTheme('darknessFont', 'brightFont')}`}>{text}</p>
@@ -105,7 +105,6 @@ export default function Presale() {
         {
             title: presale.social,
             dataIndex: 'address', align: 'center',
-            width: 200,
             render: (text, record) => {
                 return <div className={styled.presaleBoxTableImg}>
                     <GlobalOutlined className={changeAllTheme('darknessFont', 'brightFont')}
@@ -141,13 +140,13 @@ export default function Presale() {
             title: presale.platform,
             dataIndex: 'platformLogo', align: 'center',
             render: (text) => {
-                return <img src={text} alt="" style={{width:'30px'}} className={styled.presaleBoxTableImgs}/>
+                return <img src={text} alt="" style={{width: '30px'}} className={styled.presaleBoxTableImgs}/>
             }
         },
         {
             title: presale.dex, align: 'center', render: (text, record) => {
-                return <img src="/dex-uniswap.png" alt="" style={{width:'30px',height:'30px'}}
-                              className={styled.presaleBoxTableImgs}/>
+                return <img src="/dex-uniswap.png" alt="" style={{width: '30px', height: '30px'}}
+                            className={styled.presaleBoxTableImgs}/>
             }
         },
     ];
@@ -160,7 +159,8 @@ export default function Presale() {
             <Card className={`${styled.launchBoxCard} ${changeAllTheme('darknessTwo', 'brightTwo')}`}>
                 <div className={styled.launchBoxCardBox}>
                     <div style={{display: 'flex', alignItems: 'center'}}>
-                        <img src="/iconsss.svg" alt="" style={{width:'70px',height:'70px'}} className={styled.mobliceImage}/>
+                        <img src="/iconsss.svg" alt="" style={{width: '70px', height: '70px'}}
+                             className={styled.mobliceImage}/>
                         <span style={{fontWeight: 'bold', fontSize: '26px'}}
                               className={changeAllTheme('darknessFont', 'brightFont')}>{presale.presales}</span>
                     </div>

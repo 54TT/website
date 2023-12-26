@@ -159,6 +159,7 @@ function ChatsPage() {
         if (socket?.current) {
             socket.current.onmessage = ({data}) => {
                 let aa = JSON.parse(data)
+                console.log(aa)
                 if (aa?.kind === "text") {
                     // 接收消息   判断是否是当前聊天用户
                     if (Number(router?.query?.chat) === Number(aa?.fromUser?.Uid)) {

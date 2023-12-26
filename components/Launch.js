@@ -2,6 +2,7 @@ import React, {useContext, useEffect, useRef, useState} from "react";
 import dayjs from 'dayjs';
 import {notification, Pagination, Table, Card, Statistic} from "antd";
 import {GlobalOutlined, SendOutlined, TwitterOutlined} from "@ant-design/icons";
+
 const {Countdown} = Statistic;
 import styled from '/public/styles/all.module.css'
 import '/public/styles/scroll.module.css'
@@ -39,9 +40,9 @@ export default function Presale() {
                 setLogin()
                 changeLaunch()
             } else if (res && res?.status === 200) {
-                let {launchs} = res.data
+                let {launchs, count} = res.data
                 setLaunch(launchs && launchs.length > 0 ? launchs : [])
-                setLaunchAll(0)
+                setLaunchAll(count ? count : 0)
                 setLaunchBol(false)
             } else {
                 changeLaunch()
@@ -80,7 +81,7 @@ export default function Presale() {
             dataIndex: 'logo', align: 'center',
             width: 30,
             render: (text, record) => {
-                return <img src={text||'/dexlogo.svg'} alt="" style={{width:'30px',height:'30px'}}/>
+                return <img src={text || '/dexlogo.svg'} alt="" style={{width: '30px', height: '30px'}}/>
             }
         },
         {
@@ -137,17 +138,17 @@ export default function Presale() {
             title: launch.platform,
             dataIndex: 'platformLogo', align: 'center',
             render: (text) => {
-                return <img src={text || '/dexlogo.svg'} alt="" style={{width:'30px',height:'30px'}} className={styled.launchTableImg}/>
+                return <img src={text || '/dexlogo.svg'} alt="" style={{width: '30px', height: '30px'}}
+                            className={styled.launchTableImg}/>
             }
         },
         {
             title: launch.dex, align: 'center', render: (text, record) => {
-                return <img src="/dex-uniswap.png" alt="" style={{width:'30px',height:'30px'}}
-                               className={styled.launchTableImg}/>
+                return <img src="/dex-uniswap.png" alt="" style={{width: '30px', height: '30px'}}
+                            className={styled.launchTableImg}/>
             }
         },
     ];
-
     const change = (e, a) => {
         setLaunchCurrent(e)
         setLaunchPageSize(a)
@@ -157,7 +158,8 @@ export default function Presale() {
             <Card className={`${styled.launchBoxCard}  ${changeAllTheme('darknessTwo', 'brightTwo')}`}>
                 <div className={styled.launchBoxCardBox}>
                     <div style={{display: 'flex', alignItems: 'center'}}>
-                        <img src="/Group.png" alt="" style={{width:'70px',height:'70px'}} className={styled.mobliceImage}/>
+                        <img src="/Group.png" alt="" style={{width: '70px', height: '70px'}}
+                             className={styled.mobliceImage}/>
                         <span style={{fontWeight: 'bold', fontSize: '26px'}}
                               className={changeAllTheme('darknessFont', 'brightFont')}> {launch.launch}</span>
                     </div>
@@ -174,7 +176,7 @@ export default function Presale() {
                     return 'oneHave'
                 }} onRow={(record) => {
                     return {
-                        onclick: () => {
+                        onClick: () => {
                             const data = JSON.stringify({...record, status: 'launch'})
                             cookie.set('list', data)
                             router.push('/launchPresaleDetail')

@@ -11,6 +11,29 @@
 .darknessTwo {
     background-color: rgb(59, 55, 71) !important;
 }
+.modalDrak .ant-modal-content{
+    border-radius: 20px;
+    background: linear-gradient(270deg, #2D2937 0%, #3B3747 100%);
+    /* 阴影1 */
+    box-shadow: 2px 6px 20px 2px rgba(0, 0, 0, 0.60);
+}
+
+.modalDrak .ant-modal-content .ant-modal-close span{
+    color: rgb(200,200,200);
+}
+
+.modalDrak .ant-modal-header{
+    background-color: transparent!important;
+}
+.modalWh .ant-modal-content{
+    border-radius: 20px;
+    background: white;
+    /* 阴影1 */
+    box-shadow: 2px 6px 20px 2px rgba(0, 0, 0, 0.60);
+}
+
+
+
 .coinBack{
 background: linear-gradient(90deg, #3B3747 0%, #16131D 100%);
 }
@@ -18,6 +41,17 @@ background: linear-gradient(90deg, #3B3747 0%, #16131D 100%);
 .darknessThrees {
     background-color: rgb(37, 30, 38) !important;
 }
+.inputTran{
+    background-color: transparent;
+}
+
+
+.inputDrak{
+    border: 1px solid #16131D;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0.08) 0.01%, rgba(255, 255, 255, 0.18) 100%);
+    box-shadow: 0px 2px 10px 4px rgba(22, 19, 29, 0.10);
+}
+
 
 .darknessItem:hover {
     background-color: rgb(53, 47, 74) !important;
@@ -73,6 +107,10 @@ background: linear-gradient(90deg, #3B3747 0%, #16131D 100%);
 .colorDrak .ant-form-item .ant-row .ant-col .ant-form-item-control-input .ant-form-item-control-input-content textarea {
     color: white !important;
 }
+.colorDrak .ant-form-item .ant-row .ant-col .ant-select-arrow {
+    color: rgb(204,204,204) !important;
+}
+
 
 .darknessFont {
     color: rgb(243, 243, 243) !important;
@@ -90,14 +128,25 @@ background: linear-gradient(90deg, #3B3747 0%, #16131D 100%);
 }
 
 .introBack {
-    background-color: rgb(44, 41, 74) !important;
+    background:  linear-gradient(180deg, rgba(255, 255, 255, 0.00) 0%, rgba(255, 255, 255, 0.14) 100%);
+    box-shadow: 0 2px 10px 4px rgba(22, 19, 29, 0.10);
 }
+
+
+
+
 
 .fontB {
     color: black;
 }
+.fontB  span{
+    color: black;
+}
 
 .fontW {
+    color: white !important;
+}
+.fontW span{
     color: white !important;
 }
 

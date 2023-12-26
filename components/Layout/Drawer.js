@@ -92,6 +92,7 @@ const Drawer = ({getMoney}) => {
         changeBack(value)
         setValue(value)
     }
+    // MuiPaper-root MuiPaper-elevation MuiPaper-elevation0 MuiDrawer-paper MuiDrawer-paperAnchorLeft MuiDrawer-paperAnchorDockedLeft css-12i7wg6-MuiPaper-root-MuiDrawer-paper
     return (
         <div className={`drawerShowNode ${changeTheme ? 'socialScrollDd' : 'socialScrolld'}`}>
             <div className={changeTheme ? 'darknessTwo' : 'brightTwo'} style={{position: 'relative'}}>
