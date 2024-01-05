@@ -166,7 +166,6 @@
 }
 
 .aboutBotLeft > p:first-child {
-    padding:  20px;
     color: white;
     background: linear-gradient(180deg, #3B3747 0%, rgba(59, 55, 71, 0.00) 100%);
 }
@@ -179,12 +178,24 @@
     border-radius: 12px;
     background:rgb(32,30,36) url(../../public/Rectangle.svg) 100px 100px repeat;
 }
+.botP{
+    text-align: center;
+    color: #9C9C9C;
+    margin: 30px 0 0 0;
+}
+.botAllImg{
+    width: 30%;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
 .bot>p:first-child{
     font-size: 22px;
     color: white;
     font-weight: bold;
     line-height: 1;
-    margin: 20px auto;
+    margin: 10% auto 5%;
 }
 .botRight{
     width:35%;
@@ -193,17 +204,18 @@
 .botRightp{
     color: white;
     line-height: 1;
+    margin-bottom: 10px;
     text-align: center;
 }
 .botRightp3{
-    margin-top: 22%;
+    margin-top: 40%;
           }
 .botRightp4{
-    margin-top: 58%;
+    margin-top: 85%;
 }
 
 .botRightp5{
-    margin-top: 48%;
+    margin-top: 62%;
 }
 .homeP{
     color: #BBBBBB;
@@ -241,14 +253,13 @@
     top: 53%;
     left: 13%;
     background-image: url(../../public/bigQiu.png);
-    background-size: 97%;
+    background-size: 100%;
     background-repeat: no-repeat;
     background-position: center;
 }
 
 .aboutBotLeft > div {
     height: 200px;
-    padding: 30px 20px;
     box-sizing: border-box;
     background: rgb(78, 79, 88) url(../../public/Rectangle.svg) 100% 100% repeat;
 }
@@ -278,17 +289,58 @@
 .botContentp1{
     color: white;
     text-align: center;
-    line-height: 1.2;margin-bottom: 8px;
+    line-height: 1.4;margin-bottom: 10px;
 }
 .botContentDiv{
     background: url(../../public/smallQiu.png) 100% 100% no-repeat;
 }
+.botImg{
+    background-image: url(../../public/now.svg);
+    background-size: contain;
+    padding-top: 10%;
+    margin-top: 10%;
+    padding-bottom: 3%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
 .learn{
     width: 100%;
-    background: url(../../public/now.svg) 100% 100% no-repeat;
+    margin-top: 7%;
+    overflow: hidden;
+    background-image: url(../../public/next.svg);
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 .botBot>img {
     z-index:10;
+}
+.learnBox{
+    width: 62%;
+    margin: 0 auto;
+}
+.learnImg{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+.learnImgBox{
+    width: 45%;
+    margin-bottom:5%;
+}
+.learnImgBox p{
+    color: white;
+    text-indent: 10px;
+    margin-top: 8px;
+    line-height: 1;
+}
+.learnp{
+    color: white;
+    font-size: 22px;
+    font-weight: bold;
+    margin: 5% 0 5% 2%;
+    line-height: 1;
 }
 @media screen and (max-width: 500px) {
     .topRight {
@@ -300,22 +352,73 @@
     .topRight {
         width: 55%;
     }
+    .aboutBotLeft > div{
+        height: 150px;
+        padding: 3px;
+    }
+    .aboutBotLeft > p:first-child{
+        padding: 4px;
+        font-size: 13px;
+    }
+    .aboutBotLeft > div > p{
+        line-height: 1.2;
+        font-size: 13px;
+    }
 }
 
-@media screen and (min-width: 800px) {
+@media screen and (min-width: 1000px) {
     .topRight {
         width: 35%;
     }
+    .aboutBotLeft > div{
+        height: 200px;
+        padding: 10px;
+    }
+    .aboutBotLeft > p:first-child{
+        padding: 6px;
+        font-size: 15px;
+    }
+    .aboutBotLeft > div > p{
+        line-height: 1;
+        font-size: 15px;
+    }
+    /*.aboutBotLeft > div{*/
+    /*    height: 300px;*/
+    /*}*/
 }
 
 @media screen and (min-width: 1200px) {
     .botRightp1{
-        margin-top: 45%;
+        margin-top: 60%;
+    }
+    .aboutBotLeft > div{
+        height: 200px;
+        padding: 15px;
+    }
+    .aboutBotLeft > p:first-child{
+        padding: 10px;
+    }
+    .aboutBotLeft > div > p{
+        line-height: 1.2;
+        font-size: 17px;
     }
     .botBot>img{
         width:30px;
     }
     .topRight {
         width: 25%;
+    }
+}
+@media screen and (min-width: 1600px) {
+    .aboutBotLeft > div{
+        height: 200px;
+        padding: 20px;
+    }
+    .aboutBotLeft > p:first-child{
+        padding: 20px;
+    }
+    .aboutBotLeft > div > p{
+        line-height: 1.4;
+        font-size: 18px;
     }
 }

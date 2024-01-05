@@ -5,6 +5,7 @@ import ScrollAnimationWrapper from './demo'
 import {motion} from "framer-motion";
 import {getScrollYAnimation, getScrollXAnimation, getScrollXXAnimation} from './a'
 import B from './b'
+
 function Home(props) {
     const router = useRouter()
     const data = [{
@@ -32,13 +33,22 @@ function Home(props) {
         const data = document.getElementById('name').offsetHeight
         setHeight(data)
     }, [])
-
-    const scrollRightAnimation = useMemo(() => getScrollXXAnimation(), []);
-    const scrollLeftAnimation = useMemo(() => getScrollXAnimation(), []);
-    const scrollTopAnimation = useMemo(() => getScrollYAnimation(), []);
     const pushDex = () => {
         window.open('http://dexpert.io')
     }
+    const img = [{img: '/learn1.svg', name: 'Introduction to DEXpert',}, {
+        img: '/learn2.svg',
+        name: 'Introduction and Exploring ERC-20 Tokens',
+    }, {img: '/learn3.svg', name: 'Token Purchase and Transactions',}, {
+        img: '/learn4.svg',
+        name: 'Choosing Token',
+    }, {img: '/learn5.svg', name: 'Setting Up a Wallet',}, {
+        img: '/learn6.svg',
+        name: 'Getting Ethereum',
+    }, {img: '/learn7.svg', name: 'Understanding Gas Fees',}, {
+        img: '/learn8.svg',
+        name: 'Token Trading and Liquidity',
+    }]
     return (
         <div className={styled.box}>
             {/*<video*/}
@@ -71,43 +81,37 @@ function Home(props) {
             </div>
             {/* about*/}
             <div className={styled.about}>
-
                 <div className={styled.aboutTop}>
-                        <B name={'top'}>
-                            <p className={styled.aboutUs}>About us</p>
-                        </B>
+                    <B name={'top'}>
+                        <p className={styled.aboutUs}>About us</p>
+                    </B>
                     {/*左右*/}
                     {
                         data.map((i, index) => {
                             return <div className={styled.aboutBot}
                                         style={{flexDirection: index % 2 === 1 ? 'row-reverse' : 'row'}}
                                         key={index}>
-                                        <B name={'top'}>
-                                        <div>
-                                            <div className={styled.aboutBotLeft}>
-                                                <p>{i.name}</p>
-                                                <div>
-                                                    <p>{i.content}</p>
-                                                </div>
+                                <B name={'top'}>
+                                    <div>
+                                        <div className={styled.aboutBotLeft}>
+                                            <p>{i.name}</p>
+                                            <div>
+                                                <p>{i.content}</p>
                                             </div>
                                         </div>
-                                        </B>
-                                        <B name={index === 0 || index === 2 ? 'left':'right'}>
-                                        <div>
-                                            <img
-                                                src={i.img === 'one' ? "/abputRight.svg" : i.img === 'two' ? "/5638.svg" : i.img === 'three' ? "/safe.svg" : "/Man.svg"}
-                                                alt="" style={{
-                                                width: i.img === 'one' ? '85%' : i.img === 'two' ? '20%' : i.img === 'three' ? '60%' : '50%',
-                                                // position: 'absolute',
-                                                // top: '50%',
-                                                // left: '50%',
-                                                // transform: 'translate(-50%,-50%)'
-                                                display: 'block',
-                                                margin: '0 auto'
-                                            }}/>
-                                            {/* 1-85  2-20  3-60 4-50*/}
-                                        </div>
-                                        </B>
+                                    </div>
+                                </B>
+                                <B name={index === 0 || index === 2 ? 'left' : 'right'}>
+                                    <div>
+                                        <img
+                                            src={i.img === 'one' ? "/abputRight.svg" : i.img === 'two' ? "/5638.svg" : i.img === 'three' ? "/safe.svg" : "/Man.svg"}
+                                            alt="" style={{
+                                            width: i.img === 'one' ? '85%' : i.img === 'two' ? '25%' : i.img === 'three' ? '60%' : '50%',
+                                            display: 'block',
+                                            margin: '0 auto'
+                                        }}/>
+                                    </div>
+                                </B>
                             </div>
 
                         })
@@ -125,9 +129,9 @@ function Home(props) {
                         {/*左边*/}
                         <div className={styled.botBotLeft}>
                             <div>
-                                        <B name={'top'}>
-                                        <p className={styled.homeP}>-Uniswap v2 and v3 live new pair</p>
-                                        </B>
+                                <B name={'top'}>
+                                    <p className={styled.homeP}>-Uniswap v2 and v3 live new pair</p>
+                                </B>
 
 
                                 <B name={'top'}>
@@ -147,9 +151,9 @@ function Home(props) {
                                 </B>
                             </div>
                             <div>
-                            <B name={'top'}>
-                                <p className={styled.homeP}>-Dex pert app optimization</p>
-                            </B>
+                                <B name={'top'}>
+                                    <p className={styled.homeP}>-Dex pert app optimization</p>
+                                </B>
                                 <B name={'top'}>
                                     <p className={styled.homeP}>-Pair chart widget</p>
                                 </B>
@@ -205,16 +209,17 @@ function Home(props) {
                                 <p className={`${styled.botRightp} ${styled.botRightp1}`}>2024 Q1</p>
                             </B>
                             <B name={'left'}>
-                                <img src="/rightQiu.png" alt=""  style={{width: '40%',marginTop:'18%',marginLeft:'8%'}}/>
+                                <img src="/rightQiu.png" alt=""
+                                     style={{width: '40%', marginTop: '18%', marginLeft: '8%'}}/>
                             </B>
                             <B name={'left'}>
-                                <p  className={`${styled.botRightp} ${styled.botRightp3}`}>2024 Q2</p>
+                                <p className={`${styled.botRightp} ${styled.botRightp3}`}>2024 Q2</p>
                             </B>
                             <B name={'left'}>
-                                <p  className={`${styled.botRightp} ${styled.botRightp4}`}>2024 Q3</p>
+                                <p className={`${styled.botRightp} ${styled.botRightp4}`}>2024 Q3</p>
                             </B>
                             <B name={'left'}>
-                                <p  className={`${styled.botRightp} ${styled.botRightp5}`}>2024 Q4</p>
+                                <p className={`${styled.botRightp} ${styled.botRightp5}`}>2024 Q4</p>
                             </B>
                         </div>
                         {/*中间大球*/}
@@ -236,7 +241,8 @@ function Home(props) {
                                 <p className={styled.botContentp1}>• Marketplace</p>
                             </B>
                             <B name={'top'}>
-                                <p className={styled.botContentp1}>• Progression and modification of every individual DEXpert</p>
+                                <p className={styled.botContentp1}>• Progression and modification of every individual
+                                    DEXpert</p>
                             </B>
                             <B name={'top'}>
                                 <p className={styled.botContentp1}>• New Chain</p>
@@ -248,19 +254,50 @@ function Home(props) {
                                 <p className={styled.botContentp1}>• New swap pair</p>
                             </B>
                             <B name={'top'}>
-                                <p className={styled.botContentp1}>Please note that there are many things that could change the ordering of these priorities
-                                    including massive traction, breakthrough research, and feedback from the community. In
-                                    addition, it should be understood that these are projections that we are making to the
+                                <p className={styled.botContentp1}>Please note that there are many things that could
+                                    change the ordering of these priorities
+                                    including massive traction, breakthrough research, and feedback from the community.
+                                    In
+                                    addition, it should be understood that these are projections that we are making to
+                                    the
                                     best of our ability but are subject to many potential disruptions.</p>
                             </B>
                         </div>
                         <img src="/smallQiu.png" alt=""/>
                     </div>
-                    <div className={styled.learn}>
-
-                    </div>
                 </div>
                 <p className={styled.aboutTopBack4}></p>
+            </div>
+            <div className={styled.learn}>
+                <div className={styled.learnBox}>
+                    <B name={'top'}>
+                        <p className={styled.learnp}>learn</p>
+                    </B>
+                    <div className={styled.learnImg}>
+                        {
+                            img.map((i, index) => {
+                                return <div className={styled.learnImgBox} key={index}>
+                                    <B name={'top'}>
+                                        <img src={i.img} alt={''} style={{width: '100%'}}/>
+                                        <p>{i.name}</p>
+                                    </B>
+                                </div>
+                            })
+                        }
+                    </div>
+                </div>
+            </div>
+            <div className={styled.botImg}>
+                <B name={'left'}>
+                    <div className={styled.botAllImg}>
+                        <img src="/x.svg" style={{width: '10%'}} alt=""/>
+                        <img src="/t.svg" style={{width: '10%'}} alt=""/>
+                        <img src="/d.svg" style={{width: '10%'}} alt=""/>
+                    </div>
+                </B>
+                <B name={'top'}>
+                    <p className={styled.botP}>©DEXPert.io</p>
+                </B>
             </div>
         </div>
     );
