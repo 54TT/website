@@ -5,19 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5ca5f751-1a0e-4de7-a19a-35f5fc6604b8" name="更改" comment="">
-      <change afterPath="$PROJECT_DIR$/public/d.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/learn1.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/learn2.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/learn3.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/learn4.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/learn5.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/learn6.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/learn7.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/learn8.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/t.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/x.svg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/home.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/home.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/_app.js" beforeDir="false" afterPath="$PROJECT_DIR$/pages/_app.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/public/style/home.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/style/home.module.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -42,26 +31,26 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "main",
-    "javascript.nodejs.core.library.configured.version": "18.18.0",
-    "javascript.nodejs.core.library.typings.version": "18.18.0",
-    "last_opened_file_path": "D:/项目/website/dex-pert/public",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "inlay.hints",
-    "ts.external.directory.path": "D:\\WebStorm 2023.2.1\\plugins\\javascript-impl\\jsLanguageServicesImpl\\external",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;javascript.nodejs.core.library.configured.version&quot;: &quot;18.18.0&quot;,
+    &quot;javascript.nodejs.core.library.typings.version&quot;: &quot;18.18.0&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/项目/website/dex-pert/public&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;inlay.hints&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;D:\\WebStorm 2023.2.1\\plugins\\javascript-impl\\jsLanguageServicesImpl\\external&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\项目\website\dex-pert\public" />
@@ -165,7 +154,8 @@
       <workItem from="1703483832917" duration="25854000" />
       <workItem from="1703570765673" duration="3921000" />
       <workItem from="1703830238097" duration="21884000" />
-      <workItem from="1704449302644" duration="11293000" />
+      <workItem from="1704449302644" duration="12118000" />
+      <workItem from="1704717276891" duration="406000" />
     </task>
     <servers />
   </component>

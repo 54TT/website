@@ -208,14 +208,14 @@
     text-align: center;
 }
 .botRightp3{
-    margin-top: 40%;
+    margin-top: 20%;
           }
 .botRightp4{
-    margin-top: 85%;
+    margin-top: 58%;
 }
 
 .botRightp5{
-    margin-top: 62%;
+    margin-top: 50%;
 }
 .homeP{
     color: #BBBBBB;
@@ -353,8 +353,8 @@
         width: 55%;
     }
     .aboutBotLeft > div{
-        height: 150px;
-        padding: 3px;
+        height: 200px;
+        padding: 5px;
     }
     .aboutBotLeft > p:first-child{
         padding: 4px;
@@ -389,7 +389,7 @@
 
 @media screen and (min-width: 1200px) {
     .botRightp1{
-        margin-top: 60%;
+        margin-top: 44%;
     }
     .aboutBotLeft > div{
         height: 200px;
