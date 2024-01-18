@@ -25,30 +25,36 @@
 
 .centerLogo {
     position: relative;
-    margin-top: 10%;
-}
-
-.centerLogo > img:first-child {
-    width: 8%;
-    display: block;
-    margin: 0 auto;
 }
 
 .centerLogo > p:nth-child(2) {
     color: #969696;
     text-align: center;
-    margin: 3% 0;
 }
 
 .centerLogo > div {
     position: relative;
 }
 
-.centerLogo > div > p {
+.mar {
+    width: 80%;
+    margin: 0 auto;
+}
+
+.dis {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.po {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+}
+
+.centerLogoP {
     font-size: 18px;
     cursor: pointer;
     color: white;
@@ -98,7 +104,7 @@
     background: #0AF;
     filter: blur(250px);
     mix-blend-mode: hard-light;
-    bottom:0;
+    bottom: 0;
     left: 0;
     transform: translate(0, 60%);
 }
@@ -111,11 +117,10 @@
     background: #0AF;
     filter: blur(250px);
     mix-blend-mode: hard-light;
-    bottom:50%;
+    bottom: 50%;
     right: 0;
-    transform: translate(0,-50%);
+    transform: translate(0, -50%);
 }
-
 
 
 .aboutTopBack1 {
@@ -146,18 +151,29 @@
     margin-bottom: 30px;
 }
 
-.aboutBot {
-    margin-bottom: 150px;
-    z-index: 10;
+.disc {
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
-.aboutBot >div{
+
+.aboutBot {
+    margin-bottom: 150px;
+    z-index: 10;
+}
+
+.aboutBotAll {
+    margin-bottom: 40px;
+    z-index: 10;
+}
+
+
+.aboutBot > div {
     width: 46%;
     overflow: hidden;
     position: relative;
 }
+
 .aboutBotLeft {
     width: 75%;
     margin: 0 auto;
@@ -169,84 +185,98 @@
     color: white;
     background: linear-gradient(180deg, #3B3747 0%, rgba(59, 55, 71, 0.00) 100%);
 }
-.bot{
+
+.bot {
     width: 62%;
     margin: 0 auto;
     overflow: hidden;
     padding: 0 8% 6% 8%;
     box-sizing: border-box;
     border-radius: 12px;
-    background:rgb(32,30,36) url(../../public/Rectangle.svg) 100px 100px repeat;
+    background: rgb(32, 30, 36) url(../../public/Rectangle.svg) 100px 100px repeat;
 }
-.botP{
+
+.botP {
     text-align: center;
     color: #9C9C9C;
     margin: 30px 0 0 0;
 }
-.botAllImg{
+
+.botAllImg {
     width: 30%;
     margin: 0 auto;
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
-.bot>p:first-child{
+
+.bot > p:first-child {
     font-size: 22px;
     color: white;
     font-weight: bold;
     line-height: 1;
     margin: 10% auto 5%;
 }
-.botRight{
-    width:35%;
+
+.botRight {
+    width: 35%;
 }
 
-.botRightp{
+.botRightp {
     color: white;
     line-height: 1;
     margin-bottom: 10px;
     text-align: center;
 }
-.botRightp3{
-    margin-top: 20%;
-          }
-.botRightp4{
-    margin-top: 58%;
+
+.botRightp3 {
+    margin-top: 100px;
 }
 
-.botRightp5{
-    margin-top: 50%;
+.botRightp4 {
+    margin-top: 190px;
 }
-.homeP{
+
+.botRightp5 {
+    margin-top: 150px;
+}
+
+.homeP {
     color: #BBBBBB;
     line-height: 1.2;
     margin-bottom: 8px;
 }
-.botBot{
+
+.botBot {
     display: flex;
     position: relative;
     align-items: start;
     justify-content: space-evenly;
 }
-.botBotLeft{
+
+.botBotLeft {
     width: 35%;
     z-index: 10;
     position: relative;
 }
-.botBotLeft>div:first-child{
+
+.botBotLeft > div:first-child {
     margin-top: 10%;
 }
-.botBotLeft>div:nth-child(2){
-    margin-top:45%;
-}
-.botBotLeft>div:nth-child(3){
-    margin-top:17%;
+
+.botBotLeft > div:nth-child(2) {
+    margin-top: 45%;
 }
 
-.botBotLeft>div:nth-child(4){
-    margin-top:13%;
+.botBotLeft > div:nth-child(3) {
+    margin-top: 17%;
 }
-.botBot>div:last-child {
+
+.botBotLeft > div:nth-child(4) {
+    margin-top: 13%;
+}
+
+.botBot > div:last-child {
     width: 40%;
     height: 42%;
     position: absolute;
@@ -269,32 +299,40 @@
     line-height: 1.4;
     font-size: 18px;
 }
-.botContent{
+
+.botContent {
     position: relative;
-    width: 35%;margin: 0 auto;
+    width: 42%;
+    margin: 0 auto;
 }
-.botContent>img{
+
+.botContent > img {
     position: absolute;
     width: 55%;
     top: 8%;
     right: -25%;
 }
-.botContent>div:first-child{
+
+.botContent > div:first-child {
     width: 100%;
     position: absolute;
     top: 0;
     z-index: 10;
     left: 0;
 }
-.botContentp1{
+
+.botContentp1 {
     color: white;
     text-align: center;
-    line-height: 1.4;margin-bottom: 10px;
+    line-height: 1.4;
+    margin-bottom: 10px;
 }
-.botContentDiv{
+
+.botContentDiv {
     background: url(../../public/smallQiu.png) 100% 100% no-repeat;
 }
-.botImg{
+
+.botImg {
     background-image: url(../../public/now.svg);
     background-size: contain;
     padding-top: 10%;
@@ -303,121 +341,160 @@
     background-repeat: no-repeat;
     background-position: center;
 }
-.learn{
+
+.learn {
     width: 100%;
     margin-top: 7%;
     overflow: hidden;
     background-image: url(../../public/next.svg);
-    background-size: 100%;
+    background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
 }
-.botBot>img {
-    z-index:10;
+
+.botBot > img {
+    z-index: 10;
 }
-.learnBox{
+
+.learnBox {
     width: 62%;
     margin: 0 auto;
 }
-.learnImg{
+
+.learnImg {
     display: flex;
-    align-items: center;
+    align-items: start;
     justify-content: space-between;
     flex-wrap: wrap;
 }
-.learnImgBox{
-    width: 45%;
-    margin-bottom:5%;
-}
-.learnImgBox p{
+
+.learnImgBox p {
     color: white;
     text-indent: 10px;
     margin-top: 8px;
     line-height: 1;
 }
-.learnp{
+
+.learnp {
     color: white;
     font-size: 22px;
     font-weight: bold;
     margin: 5% 0 5% 2%;
     line-height: 1;
 }
+
+.topRightMob > span {
+    font-size: 22px;
+    color: white;
+}
+
+.motion {
+    overflow: hidden;
+    position: absolute;
+    top: 40px;
+    right: 5px;
+    width: 80px;
+}
+
 @media screen and (max-width: 500px) {
-    .topRight {
-        width: 65%;
+    .topRightMob {
+        position: relative;
     }
 }
 
 @media screen and (min-width: 500px) {
-    .topRight {
-        width: 55%;
+    .topRightMob {
+        position: relative;
     }
-    .aboutBotLeft > div{
+
+    .aboutBotLeft {
+        margin-bottom: 40px;
+    }
+
+    .aboutBotLeft > div {
         height: 200px;
-        padding: 5px;
+        padding: 10px;
     }
-    .aboutBotLeft > p:first-child{
-        padding: 4px;
-        font-size: 13px;
+
+    .aboutBotLeft > p:first-child {
+        padding: 10px;
     }
-    .aboutBotLeft > div > p{
+
+    .aboutBotLeft > div > p {
         line-height: 1.2;
-        font-size: 13px;
+        font-size: 15px;
     }
+}
+
+.botRightp1 {
+    margin-top: 150px;
+}
+
+.disNo {
+    display: none;
 }
 
 @media screen and (min-width: 800px) {
     .topRight {
         width: 35%;
     }
-    .aboutBotLeft > div{
+
+    .aboutBotLeft > div {
         height: 200px;
         padding: 10px;
     }
-    .aboutBotLeft > p:first-child{
+
+    .aboutBotLeft > p:first-child {
         padding: 6px;
         font-size: 15px;
     }
-    .aboutBotLeft > div > p{
+
+    .aboutBotLeft > div > p {
         line-height: 1;
         font-size: 15px;
     }
+
     /*.aboutBotLeft > div{*/
     /*    height: 300px;*/
     /*}*/
 }
 
 @media screen and (min-width: 1200px) {
-    .botRightp1{
-        margin-top: 44%;
-    }
-    .aboutBotLeft > div{
+
+    .aboutBotLeft > div {
         height: 200px;
         padding: 15px;
     }
-    .aboutBotLeft > p:first-child{
+
+    .aboutBotLeft > p:first-child {
         padding: 10px;
     }
-    .aboutBotLeft > div > p{
+
+    .aboutBotLeft > div > p {
         line-height: 1.2;
         font-size: 17px;
     }
-    .botBot>img{
-        width:30px;
+
+    .botBot > img {
+        width: 30px;
     }
+
     .topRight {
         width: 25%;
     }
 }
+
 @media screen and (min-width: 1600px) {
-    .aboutBotLeft > div{
+    .aboutBotLeft > div {
         height: 200px;
         padding: 20px;
     }
-    .aboutBotLeft > p:first-child{
+
+    .aboutBotLeft > p:first-child {
         padding: 20px;
     }
-    .aboutBotLeft > div > p{
+
+    .aboutBotLeft > div > p {
         line-height: 1.4;
         font-size: 18px;
     }

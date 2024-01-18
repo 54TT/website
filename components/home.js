@@ -2,12 +2,29 @@ import React, {useEffect, useState, useMemo, useRef} from 'react';
 import styled from '/public/style/home.module.css'
 import {useRouter} from 'next/router'
 import ScrollAnimationWrapper from './demo'
-import {motion} from "framer-motion";
+import {motion, AnimatePresence} from "framer-motion";
 import {getScrollYAnimation, getScrollXAnimation, getScrollXXAnimation} from './a'
 import B from './b'
-
+// import {MenuUnfoldOutlined} from '@ant-design/icons'
 function Home(props) {
     const router = useRouter()
+    const [wodWidth, setWidth] = useState(0)
+    // 在组件挂载时添加事件监听器
+    useEffect(() => {
+        if (window && window?.innerWidth) {
+            setWidth(window?.innerWidth)
+        }
+        const handleResize = () => {
+            // 更新状态，保存当前窗口高度
+            setWidth(window?.innerWidth);
+        };
+        // 添加事件监听器
+        window.addEventListener('resize', handleResize);
+        // 在组件卸载时移除事件监听器
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []); // 仅在组件挂载和卸载时执行
     const data = [{
         name: 'Smart Contract Exploration and Management',
         content: 'Dexpert makes it easy for you to explore and manage ERC-20 smart contracts. Whether you\'re a developer, investor, or enthusiast, we provide an intuitive and feature-rich interface that allows you to delve into and effectively manage your smart contracts.',
@@ -49,6 +66,17 @@ function Home(props) {
         img: '/learn8.svg',
         name: 'Token Trading and Liquidity',
     }]
+    const [isShow, setIsShow] = useState(false)
+    const click = () => {
+        setIsShow(!isShow)
+    }
+    const Navigation = ['About us', 'Roadmap', 'Airdrop', 'Learn']
+    const time = ['-Uniswap v2 and v3 live new pair', '-Featured pair', '-Token presale and token launch', '-Pair comment, post and chat', '-The launch of Dexpert’s official website', '-Brc20 indexer']
+    const time1 = ['-Dex pert app optimization', '-Pair chart widget', '-Brc20 chart widget', '-Multivers Blockchain', '-Multivers swap pair', '-Dex pert iOS and Android app', '-The launch of DEXP', '-Add pair scoring']
+    const time2 = ['-The Launch of DEXG', '-Dex pert AMM', '-Add hot pair', '-Token presale and launch improvement']
+    const time3 = ['-New Chains', '-New scoring improvement', '-Improvements based on community feedback.',]
+    const date = ['2024 Q4', 'Continuous Improvement:', '• Social network', '• Marketplace', '• Progression and modification of every individual DEXpert', '• New Chain', '• New Pair Scoring', '• New swap pair', 'Please note that there are many things that could change the ordering of these priorities including massive traction, breakthrough research, and feedback from the community. In addition, it should be understood that these are projections that we are making to the best of our ability but are subject to many potential disruptions.']
+    const imgBot = ['/x.svg', '/t.svg', '/d.svg']
     return (
         <div className={styled.box}>
             {/*<video*/}
@@ -62,20 +90,56 @@ function Home(props) {
             {/*top*/}
             <div className={styled.top}>
                 <img src="/boxLeft.svg" alt="" style={{width: '80px'}}/>
-                <div className={styled.topRight}>
-                    <p>About us</p>
-                    <p>Roadmap</p>
-                    <p>Airdrop</p>
-                    <p>Learn</p>
-                </div>
+                {/* web端*/}
+                {
+                    wodWidth >= 768 ? <div className={styled.topRight}>
+                        {
+                            Navigation.map((i, index) => {
+                                return <p key={index}>{i}</p>
+                            })
+                        }
+                    </div> : <div className={styled.topRightMob}>
+                        {/*<MenuUnfoldOutlined />*/}
+                        <img src="/Menu.svg" width={40} onClick={click} style={{width:'40px'}} alt=""/>
+                        {/*<p onClick={click} style={{color: 'white'}}>展开</p>*/}
+                        <AnimatePresence>
+                            {isShow && (
+                                <motion.div
+                                    className={styled.motion}
+                                    key="modal"
+                                    initial={{height: 0}}
+                                    animate={{height: '150px'}}
+                                    exit={{height: 0}}
+                                    transition={{duration: 0.3}}>
+                                    {
+                                        Navigation.map((i, index) => {
+                                            return <div key={index} style={{
+                                                color: 'white',
+                                                marginBottom: '10px',
+                                                textAlign: 'right'
+                                            }}>
+                                                {i}
+                                            </div>
+                                        })
+                                    }
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                    </div>
+                }
             </div>
             {/*logo*/}
-            <div className={styled.centerLogo}>
-                <img src="/logo.gif" alt=""/>
-                <p>Join Dexpert and explore new possibilities in the world of blockchain!</p>
+            <div className={styled.centerLogo} style={{marginTop: wodWidth >= 768 ? '10%' : '25%'}}>
+                <img src="/logo.gif" alt=""
+                     style={{width: wodWidth >= 768 ? '8%' : '15%', display: 'block', margin: '0 auto'}}/>
+                <p style={{margin: wodWidth >= 768 ? '3% 0' : '10% 3%'}}>Join Dexpert and explore new possibilities in
+                    the world of blockchain!</p>
                 <div>
-                    <img src="/bg.svg" alt="" style={{width: '100%'}}/>
-                    <p onClick={pushDex}>Join Dexpert</p>
+                    <div className={wodWidth >= 768 ? '' : styled.dis}>
+                        <p onClick={pushDex}
+                           className={` ${styled.centerLogoP} ${wodWidth >= 768 ? styled.po : ''}`}>Join Dexpert</p>
+                    </div>
+                    <img src="/bg.svg" alt="" style={{width: '100%', marginTop: wodWidth >= 768 ? "0" : '10%'}}/>
                 </div>
                 <p></p>
             </div>
@@ -88,29 +152,26 @@ function Home(props) {
                     {/*左右*/}
                     {
                         data.map((i, index) => {
-                            return <div className={styled.aboutBot}
-                                        style={{flexDirection: index % 2 === 1 ? 'row-reverse' : 'row'}}
-                                        key={index}>
+                            return <div
+                                className={`${wodWidth >= 768 ? styled.disc : ''} ${wodWidth >= 768 ? styled.aboutBot : styled.aboutBotAll}`}
+                                style={{flexDirection: index % 2 === 1 ? 'row-reverse' : 'row'}}
+                                key={index}>
                                 <B name={'top'}>
-                                    <div>
-                                        <div className={styled.aboutBotLeft}>
-                                            <p>{i.name}</p>
-                                            <div>
-                                                <p>{i.content}</p>
-                                            </div>
+                                    <div className={styled.aboutBotLeft}>
+                                        <p>{i.name}</p>
+                                        <div>
+                                            <p>{i.content}</p>
                                         </div>
                                     </div>
                                 </B>
                                 <B name={index === 0 || index === 2 ? 'left' : 'right'}>
-                                    <div>
-                                        <img
-                                            src={i.img === 'one' ? "/abputRight.svg" : i.img === 'two' ? "/5638.svg" : i.img === 'three' ? "/safe.svg" : "/Man.svg"}
-                                            alt="" style={{
-                                            width: i.img === 'one' ? '85%' : i.img === 'two' ? '25%' : i.img === 'three' ? '60%' : '50%',
-                                            display: 'block',
-                                            margin: '0 auto'
-                                        }}/>
-                                    </div>
+                                    <img
+                                        src={i.img === 'one' ? "/abputRight.svg" : i.img === 'two' ? "/5638.svg" : i.img === 'three' ? "/safe.svg" : "/Man.svg"}
+                                        alt="" style={{
+                                        width: i.img === 'one' ? '85%' : i.img === 'two' ? '25%' : i.img === 'three' ? '60%' : '50%',
+                                        display: 'block',
+                                        margin: '0 auto'
+                                    }}/>
                                 </B>
                             </div>
 
@@ -127,79 +188,42 @@ function Home(props) {
                     {/*center*/}
                     <div className={styled.botBot}>
                         {/*左边*/}
-                        <div className={styled.botBotLeft}>
+                        <div className={wodWidth >= 768 ? styled.botBotLeft : styled.disNo}>
                             <div>
-                                <B name={'top'}>
-                                    <p className={styled.homeP}>-Uniswap v2 and v3 live new pair</p>
-                                </B>
-
-
-                                <B name={'top'}>
-                                    <p className={styled.homeP}>-Featured pair</p>
-                                </B>
-                                <B name={'top'}>
-                                    <p className={styled.homeP}>-Token presale and token launch</p>
-                                </B>
-                                <B name={'top'}>
-                                    <p className={styled.homeP}> -Pair comment, post and chat</p>
-                                </B>
-                                <B name={'top'}>
-                                    <p className={styled.homeP}>-The launch of Dexpert’s official website</p>
-                                </B>
-                                <B name={'top'}>
-                                    <p className={styled.homeP}>-Brc20 indexer</p>
-                                </B>
+                                {
+                                    time.map((i, index) => {
+                                        return <B name={'top'} key={index}>
+                                            <p className={styled.homeP}>{i}</p>
+                                        </B>
+                                    })
+                                }
                             </div>
                             <div>
-                                <B name={'top'}>
-                                    <p className={styled.homeP}>-Dex pert app optimization</p>
-                                </B>
-                                <B name={'top'}>
-                                    <p className={styled.homeP}>-Pair chart widget</p>
-                                </B>
-                                <B name={'top'}>
-                                    <p className={styled.homeP}>-Brc20 chart widget</p>
-                                </B>
-                                <B name={'top'}>
-                                    <p className={styled.homeP}>-Multivers Blockchain</p>
-                                </B>
-                                <B name={'top'}>
-                                    <p className={styled.homeP}>-Multivers swap pair</p>
-                                </B>
-                                <B name={'top'}>
-                                    <p className={styled.homeP}> -Dex pert iOS and Android app</p>
-                                </B>
-                                <B name={'top'}>
-                                    <p className={styled.homeP}>-The launch of DEXP</p>
-                                </B>
-                                <B name={'top'}>
-                                    <p className={styled.homeP}>-Add pair scoring</p>
-                                </B>
+                                {
+                                    time1.map((i, index) => {
+                                        return <B name={'top'} key={index}>
+                                            <p className={styled.homeP}>{i}</p>
+                                        </B>
+                                    })
+                                }
                             </div>
                             <div>
-                                <B name={'top'}>
-                                    <p className={styled.homeP}>-The Launch of DEXG</p>
-                                </B>
-                                <B name={'top'}>
-                                    <p className={styled.homeP}>-Dex pert AMM</p>
-                                </B>
-                                <B name={'top'}>
-                                    <p className={styled.homeP}>-Add hot pair</p>
-                                </B>
-                                <B name={'top'}>
-                                    <p className={styled.homeP}>-Token presale and launch improvement</p>
-                                </B>
+                                {
+                                    time2.map((i, index) => {
+                                        return <B name={'top'} key={index}>
+                                            <p className={styled.homeP}>{i}</p>
+                                        </B>
+                                    })
+                                }
                             </div>
                             <div>
-                                <B name={'top'}>
-                                    <p className={styled.homeP}>-New Chains</p>
-                                </B>
-                                <B name={'top'}>
-                                    <p className={styled.homeP}>-New scoring improvement</p>
-                                </B>
-                                <B name={'top'}>
-                                    <p className={styled.homeP}>-Improvements based on community feedback.</p>
-                                </B>
+                                {
+                                    time3.map((i, index) => {
+                                        return <B name={'top'} key={index}>
+                                            <p className={styled.homeP}>{i}</p>
+                                        </B>
+                                    })
+                                }
                             </div>
                         </div>
                         <img src="/botCenter.svg" alt=""/>
@@ -210,7 +234,7 @@ function Home(props) {
                             </B>
                             <B name={'left'}>
                                 <img src="/rightQiu.png" alt=""
-                                     style={{width: '40%', marginTop: '18%', marginLeft: '8%'}}/>
+                                     style={{width: '80px', marginTop: '60px', marginLeft: '30px'}}/>
                             </B>
                             <B name={'left'}>
                                 <p className={`${styled.botRightp} ${styled.botRightp3}`}>2024 Q2</p>
@@ -228,40 +252,13 @@ function Home(props) {
                     {/*xiao*/}
                     <div className={styled.botContent} style={{height: height}}>
                         <div id={'name'}>
-                            <B name={'top'}>
-                                <p className={styled.botContentp1}>2024 Q4</p>
-                            </B>
-                            <B name={'top'}>
-                                <p className={styled.botContentp1}>Continuous Improvement:</p>
-                            </B>
-                            <B name={'top'}>
-                                <p className={styled.botContentp1}>• Social network </p>
-                            </B>
-                            <B name={'top'}>
-                                <p className={styled.botContentp1}>• Marketplace</p>
-                            </B>
-                            <B name={'top'}>
-                                <p className={styled.botContentp1}>• Progression and modification of every individual
-                                    DEXpert</p>
-                            </B>
-                            <B name={'top'}>
-                                <p className={styled.botContentp1}>• New Chain</p>
-                            </B>
-                            <B name={'top'}>
-                                <p className={styled.botContentp1}>• New Pair Scoring</p>
-                            </B>
-                            <B name={'top'}>
-                                <p className={styled.botContentp1}>• New swap pair</p>
-                            </B>
-                            <B name={'top'}>
-                                <p className={styled.botContentp1}>Please note that there are many things that could
-                                    change the ordering of these priorities
-                                    including massive traction, breakthrough research, and feedback from the community.
-                                    In
-                                    addition, it should be understood that these are projections that we are making to
-                                    the
-                                    best of our ability but are subject to many potential disruptions.</p>
-                            </B>
+                            {
+                                date.map((i, index) => {
+                                    return <B name={'top'} key={index}>
+                                        <p className={styled.botContentp1}>{i}</p>
+                                    </B>
+                                })
+                            }
                         </div>
                         <img src="/smallQiu.png" alt=""/>
                     </div>
@@ -273,13 +270,16 @@ function Home(props) {
                     <B name={'top'}>
                         <p className={styled.learnp}>learn</p>
                     </B>
-                    <div className={styled.learnImg}>
+                    <div className={wodWidth >= 768 ? styled.learnImg : styled.mar}>
                         {
                             img.map((i, index) => {
-                                return <div className={styled.learnImgBox} key={index}>
+                                return <div className={styled.learnImgBox} key={index} style={{
+                                    width: wodWidth >= 768 ? '45%' : '100%',
+                                    marginBottom: wodWidth >= 768 ? '5%' : '10%'
+                                }}>
                                     <B name={'top'}>
                                         <img src={i.img} alt={''} style={{width: '100%'}}/>
-                                        <p>{i.name}</p>
+                                        <p style={{textAlign: wodWidth >= 768 ? 'left' : 'center'}}>{i.name}</p>
                                     </B>
                                 </div>
                             })
@@ -290,13 +290,16 @@ function Home(props) {
             <div className={styled.botImg}>
                 <B name={'left'}>
                     <div className={styled.botAllImg}>
-                        <img src="/x.svg" style={{width: '10%'}} alt=""/>
-                        <img src="/t.svg" style={{width: '10%'}} alt=""/>
-                        <img src="/d.svg" style={{width: '10%'}} alt=""/>
+                        {
+                            imgBot.map((i, index) => {
+                                return <img src={i} key={index} style={{width: wodWidth >= 768 ? '10%' : '18%'}}
+                                            alt=""/>
+                            })
+                        }
                     </div>
                 </B>
                 <B name={'top'}>
-                    <p className={styled.botP}>©DEXPert.io</p>
+                    <p className={styled.botP} style={{fontSize: '18px'}}>©DEXPert.io</p>
                 </B>
             </div>
         </div>
