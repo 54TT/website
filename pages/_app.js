@@ -4,7 +4,7 @@ function DexPert({Component}) {
     return (
         <>
             <Head>
-                <link rel="shortcut icon" href="/Group19.svg"/>
+                <link rel="shortcut icon" href="/logo.gif"/>
                 <title>DexPert</title>
             </Head>
             <Component/>
