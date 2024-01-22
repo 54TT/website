@@ -4,7 +4,9 @@ import {useRouter} from 'next/router'
 import ScrollAnimationWrapper from './demo'
 import {motion, AnimatePresence} from "framer-motion";
 import {getScrollYAnimation, getScrollXAnimation, getScrollXXAnimation} from './a'
-import B from './b'
+import B from './b';
+import Youtube from 'react-youtube'
+
 // import {MenuUnfoldOutlined} from '@ant-design/icons'
 function Home(props) {
     const router = useRouter()
@@ -53,6 +55,15 @@ function Home(props) {
     const pushDex = () => {
         window.open('http://dexpert.io')
     }
+    const chartHeight =useRef(null)
+    const [moreHeight,setMoreHeight] = useState(0)
+    useEffect(()=>{
+        if(chartHeight&&chartHeight.current){
+            const data = chartHeight.current.offsetHeight
+            setMoreHeight(data)
+        }
+    },[chartHeight])
+    //
     const img = [{img: '/learn1.svg', name: 'Introduction to DEXpert',}, {
         img: '/learn2.svg',
         name: 'Introduction and Exploring ERC-20 Tokens',
@@ -89,7 +100,7 @@ function Home(props) {
             {/*</video>*/}
             {/*top*/}
             <div className={styled.top}>
-                <img src="/boxLeft.svg" alt="" style={{width: '80px'}}/>
+                <img src="/logo.svg" alt="" style={{width: '80px'}}/>
                 {/* web端*/}
                 {
                     wodWidth >= 768 ? <div className={styled.topRight}>
@@ -100,7 +111,7 @@ function Home(props) {
                         }
                     </div> : <div className={styled.topRightMob}>
                         {/*<MenuUnfoldOutlined />*/}
-                        <img src="/Menu.svg" width={40} onClick={click} style={{width:'40px'}} alt=""/>
+                        <img src="/Menu.svg" width={40} onClick={click} style={{width: '40px'}} alt=""/>
                         {/*<p onClick={click} style={{color: 'white'}}>展开</p>*/}
                         <AnimatePresence>
                             {isShow && (
@@ -129,20 +140,62 @@ function Home(props) {
                 }
             </div>
             {/*logo*/}
-            <div className={styled.centerLogo} style={{marginTop: wodWidth >= 768 ? '10%' : '25%'}}>
-                <img src="/logo.gif" alt=""
-                     style={{width: wodWidth >= 768 ? '8%' : '15%', display: 'block', margin: '0 auto'}}/>
-                <p style={{margin: wodWidth >= 768 ? '3% 0' : '10% 3%'}}>Join Dexpert and explore new possibilities in
-                    the world of blockchain!</p>
+            <div className={styled.centerLogo} style={{marginTop: wodWidth >= 768 ? '4%' : '25%'}}>
+                <p>Empowering Connections, Trading with Ease.</p>
+                <p>DEXPERT, Where Decentralized Finance Meets Community Excellence.</p>
+                <img src="/centerLo.svg" alt=""
+                     style={{width: wodWidth >= 768 ? '80%' : '15%', display: 'block', margin: '0 auto'}}/>
+                {/*<p style={{margin: wodWidth >= 768 ? '3% 0' : '10% 3%'}}>Join Dexpert and explore new possibilities in*/}
+                {/*    the world of blockchain!</p>*/}
+                {/*<div>*/}
+                {/*    <div className={wodWidth >= 768 ? '' : styled.dis}>*/}
+                {/*        <p onClick={pushDex}*/}
+                {/*           className={` ${styled.centerLogoP} ${wodWidth >= 768 ? styled.po : ''}`}>Join Dexpert</p>*/}
+                {/*    </div>*/}
+                {/*<img src="/bg.svg" alt="" style={{width: '100%', marginTop: wodWidth >= 768 ? "0" : '10%'}}/>*/}
+                {/*</div>*/}
                 <div>
-                    <div className={wodWidth >= 768 ? '' : styled.dis}>
-                        <p onClick={pushDex}
-                           className={` ${styled.centerLogoP} ${wodWidth >= 768 ? styled.po : ''}`}>Join Dexpert</p>
+                    <div>
+                        <img src="/react.svg" width={70} alt=""/>
+                        <p>Decentralized financial functions</p>
                     </div>
-                    <img src="/bg.svg" alt="" style={{width: '100%', marginTop: wodWidth >= 768 ? "0" : '10%'}}/>
+                    <div>
+                        <img src="/xian.svg" width={70} alt=""/>
+                        <p>Decentralized financial functions</p>
+                    </div>
+                    <div>
+                        <img src="/message.svg" width={70} alt=""/>
+                        <p>Decentralized financial functions</p>
+                    </div>
                 </div>
                 <p></p>
             </div>
+            <div className={styled.join}>
+                <p>Join Dexpert</p>
+            </div>
+            <div className={styled.aboutNowBox} style={{height:moreHeight+'px'}}>
+                <div ref={chartHeight} className={styled.aboutNow}>
+                    <div>
+                        <p>About Us</p>
+                        <p>DEXPERT stands out as a decentralized finance (DeFi) platform that extends beyond traditional
+                            offerings, introducing a diverse set of trading tools. What sets it apart is its commitment to
+                            community building within the cryptocurrency ecosystem. The platform integrates social
+                            functions, emphasizing communication and collaboration among users. This unique approach goes
+                            beyond financial transactions, creating a vibrant space where members can engage, share
+                            insights, and collectively contribute to the evolving crypto landscape. DEXPERT's vision is not
+                            only to empower users with advanced trading tools but also to forge lasting connections,
+                            fostering a sense of community that transcends the boundaries of decentralized exchanges.</p>
+                        <p>Joining and using DEXPERT's social function is hassle-free; just link your wallet for identity
+                            without sharing additional details, ensuring privacy. DEXPERT strives to deliver the best in
+                            decentralized social networking, prioritizing user convenience and data security.</p>
+                    </div>
+                </div>
+                <div className={styled.aboutNowBo}  style={{height:moreHeight+'px'}}></div>
+            </div>
+            <div className={styled.updates}>
+                <p>Updates</p>
+            </div>
+            {/*<Youtube videoId={'Biu4jU9a_EA'}/>*/}
             {/* about*/}
             <div className={styled.about}>
                 <div className={styled.aboutTop}>
