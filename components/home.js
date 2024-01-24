@@ -6,6 +6,7 @@ import {motion, AnimatePresence} from "framer-motion";
 import {getScrollYAnimation, getScrollXAnimation, getScrollXXAnimation} from './a'
 import B from './b';
 import Youtube from 'react-youtube'
+
 function Home(props) {
     const [wodWidth, setWidth] = useState(0)
     // 在组件挂载时添加事件监听器
@@ -64,14 +65,19 @@ function Home(props) {
             'Launch of DEXPERT government token (DEXG)',
             'Beta release of Android & IOS APP']
     }, {time: '2024 Q4', data: ['TBA']}]
-    const vedio = [{name: 'Introduction to DEXpert', img: '58O3RUF2nNc'}, {
+    const video = [{name: 'Introduction to DEXpert', img: '58O3RUF2nNc'}, {
         name: 'Introduction and Exploring ERC-20 Tokens',
         img: 'OAANMJ-I7po'
     }, {name: 'Token Purchase and Transactions', img: 'Uz2qPfzSxZc'}]
+    const [videoPar, setVideoParams] = useState(video)
     const img = [{name: 'Decentralized financial functions', img: '/react.svg'}, {
         name: 'Live new pair',
         img: '/xian.svg'
     }, {name: 'Social Community', img: '/message.svg'}]
+    const pushVideo = (i) => {
+        const ab = videoPar.filter((item) => item.img !== i.img)
+        setVideoParams([i, ...ab])
+    }
     return (
         <div className={styled.box}>
             <div className={styled.top}>
@@ -83,7 +89,9 @@ function Home(props) {
                     wodWidth >= 768 ? <div className={styled.topRight}>
                         {
                             Navigation.map((i, index) => {
-                                return    <B name={index===0?'top':index===1?'left':index===2?'right':'top'}  key={index}> <p>{i}</p>    </B>
+                                return <B
+                                    name={index === 0 ? 'top' : index === 1 ? 'left' : index === 2 ? 'right' : 'top'}
+                                    key={index}><p>{i}</p></B>
                             })
                         }
                     </div> : <div className={styled.topRightMob}>
@@ -124,10 +132,11 @@ function Home(props) {
                     Excellence.</p></B>
                 <B name={'top'}> <img src="/centerLo.svg" alt=""
                                       style={{width: '80%', display: 'block', margin: '2.5% auto'}}/></B>
-                <div className={`${ styled.centerLogoD }`}>
+                <div className={`${styled.centerLogoD}`}>
                     {
                         img.map((i, index) => {
-                            return <div style={{width:'30%'}} key={index}><B name={index === 0 ? 'left' : index === 1 ? 'top' : 'right'} >
+                            return <div style={{width: '30%'}} key={index}><B
+                                name={index === 0 ? 'left' : index === 1 ? 'top' : 'right'}>
                                 <div className={styled.centerLogoDivP}>
                                     <img src={i.img} width={70} alt=""/>
                                     <p>{i.name}</p>
@@ -270,29 +279,41 @@ function Home(props) {
                                                                                                  }}/></p></B>
                 <div className={`${wodWidth >= 768 ? '' : styled.centerUpdate} ${styled.dexBox}`}>
                     {
-                        vedio.map((i, index) => {
-                            return <div style={{
-                                width: wodWidth >= 768 ? '30%' : '100%',
-                                padding: wodWidth >= 768 ? '3%' : '8%'
-                            }} key={index} className={styled.dexBoxBo}>
-                                <B name={'top'}>
-                                    <div style={{width:'100%',minHeight:'100px'}}>
-                                    <Youtube videoId={i.img} opts={{width: '100%',}}/>
-                                    </div>
-                                </B>
-                                <B name={'top'}>
-                                    <p className={styled.dexBoxBoP}>{i.name}</p>
-                                </B>
-                                <B name={'top'}>
-                                    <div className={styled.dexBoxBoDiv}>
-                                        <p>z</p>
-                                        <p>y</p>
-                                        <p>w</p>
-                                    </div>
-                                </B>
-                            </div>
-
+                        videoPar.map((i, index) => {
+                            if (wodWidth >= 768 || (wodWidth < 768 && index === 0)) {
+                                return <div style={{
+                                    width: wodWidth >= 768 ? '30%' : '100%',
+                                    padding: wodWidth >= 768 ? '3%' : '8%'
+                                }} key={index} className={styled.dexBoxBo}>
+                                    <B name={'top'}>
+                                        <div style={{width: '100%', minHeight: '100px'}}>
+                                            <Youtube videoId={i.img} opts={{width: '100%',}}/>
+                                        </div>
+                                    </B>
+                                    <B name={'top'}>
+                                        <p className={styled.dexBoxBoP}>{i.name}</p>
+                                    </B>
+                                    <B name={'top'}>
+                                        <div className={styled.dexBoxBoDiv}>
+                                            <p>z</p>
+                                            <p>y</p>
+                                            <p>w</p>
+                                        </div>
+                                    </B>
+                                </div>
+                            }
                         })
+                    }
+                    {
+                        wodWidth < 768 && <div style={{width: '100%'}}>
+                            {
+                                videoPar.map((i, index) => {
+                                    return (index !== 0 &&
+                                        <div key={index} className={styled.video}><span>{i.name}</span> <p
+                                            onClick={() => pushVideo(i)}>view</p></div>)
+                                })
+                            }
+                        </div>
                     }
                 </div>
             </div>
