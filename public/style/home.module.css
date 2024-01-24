@@ -20,6 +20,7 @@
     font-size: 17px;
     line-height: 1;
     cursor: pointer;
+    margin: 0 5px;
     font-weight: bold;
     color: rgb(0, 218, 255);
 }
@@ -145,7 +146,7 @@
 
 .updateBoxLeft > div {
     display: flex;
-    justify-content: end;
+    justify-content: flex-end;
 }
 
 .updateBoxLeftEnd {
@@ -194,7 +195,7 @@
 
 .roadMapBotBoxBot {
     display: flex;
-    justify-content: start;
+    justify-content: flex-start;
 }
 
 .roadMapBotBoxBot > div {
@@ -288,7 +289,7 @@
 
 .roadMapBotBoxRi {
     display: flex;
-    justify-content: end;
+    justify-content: flex-end;
 }
 
 .roadMapP {
@@ -770,7 +771,7 @@
 
 @media screen and (min-width: 800px) {
     .topRight {
-        width: 35%;
+        width: 44%;
     }
 
     .aboutBotLeft > div {
@@ -810,7 +811,7 @@
     }
 
     .topRight {
-        width: 25%;
+        width: 26%;
     }
 }
 

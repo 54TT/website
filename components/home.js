@@ -6,7 +6,6 @@ import {motion, AnimatePresence} from "framer-motion";
 import {getScrollYAnimation, getScrollXAnimation, getScrollXXAnimation} from './a'
 import B from './b';
 import Youtube from 'react-youtube'
-
 function Home(props) {
     const [wodWidth, setWidth] = useState(0)
     // 在组件挂载时添加事件监听器
@@ -65,10 +64,10 @@ function Home(props) {
             'Launch of DEXPERT government token (DEXG)',
             'Beta release of Android & IOS APP']
     }, {time: '2024 Q4', data: ['TBA']}]
-    const vedio = [{name: 'Introduction to DEXpert', img: 'no'}, {
+    const vedio = [{name: 'Introduction to DEXpert', img: '58O3RUF2nNc'}, {
         name: 'Introduction and Exploring ERC-20 Tokens',
-        img: 'no'
-    }, {name: 'Token Purchase and Transactions', img: 'no'}, {img: 'no', name: 'Choosing Token'}]
+        img: 'OAANMJ-I7po'
+    }, {name: 'Token Purchase and Transactions', img: 'Uz2qPfzSxZc'}]
     const img = [{name: 'Decentralized financial functions', img: '/react.svg'}, {
         name: 'Live new pair',
         img: '/xian.svg'
@@ -277,7 +276,9 @@ function Home(props) {
                                 padding: wodWidth >= 768 ? '3%' : '8%'
                             }} key={index} className={styled.dexBoxBo}>
                                 <B name={'top'}>
-                                    <img src="/dong.gif" alt=""/>
+                                    <div style={{width:'100%',minHeight:'100px'}}>
+                                    <Youtube videoId={i.img} opts={{width: '100%',}}/>
+                                    </div>
                                 </B>
                                 <B name={'top'}>
                                     <p className={styled.dexBoxBoP}>{i.name}</p>
@@ -303,7 +304,6 @@ function Home(props) {
                     <p className={`${styled.bottPLast} ${styled.bottP}`}>@DEXpertOfficial</p>
                 </B>
             </div>
-            {/*<Youtube videoId={'Biu4jU9a_EA'}/>*/}
         </div>
     );
 }
