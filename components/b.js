@@ -3,6 +3,7 @@ import ScrollAnimationWrapper from "./demo";
 import {motion} from "framer-motion";
 import {getScrollXAnimation, getScrollXXAnimation, getScrollYAnimation} from "./a";
 
+
 function B({children,name}) {
     const scrollRightAnimation = useMemo(() => getScrollXXAnimation(), []);
     const scrollLeftAnimation = useMemo(() => getScrollXAnimation(), []);
