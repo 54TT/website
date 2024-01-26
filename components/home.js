@@ -2,12 +2,13 @@ import React, {useEffect, useState, useMemo, useRef} from 'react';
 import styled from '/public/style/home.module.css'
 import {useRouter} from 'next/router'
 import ScrollAnimationWrapper from './demo'
+import {Anchor} from 'antd'
 import {motion, AnimatePresence} from "framer-motion";
 import {getScrollYAnimation, getScrollXAnimation, getScrollXXAnimation} from './a'
 import B from './b';
 import Youtube from 'react-youtube'
-
 function Home(props) {
+    const router = useRouter()
     const [wodWidth, setWidth] = useState(0)
     // 在组件挂载时添加事件监听器
     useEffect(() => {
@@ -51,7 +52,7 @@ function Home(props) {
     const click = () => {
         setIsShow(!isShow)
     }
-    const Navigation = ['About us', 'Roadmap', 'Airdrop', 'Learn']
+    const Navigation = ['About us', 'Roadmap', 'Airdrop', 'Learn','Blog']
     const update = ['The treasure chest can open up a variety of rare props and fragments!', 'At the same time, a new red name mechanism will also be grandly launched, with players with higher red name values having a higher chance of winning special treasures!', 'But risks and opportunities coexist, and red name players will not automatically recover their health after a PK (attack or defense) ends, until they are completely defeated.', 'Players have stronger outdoor PK strategies, more exciting gameplay, richer fun, and richer rewards.']
     const roadMpa = [{
         time: '2024 Q1',
@@ -91,7 +92,11 @@ function Home(props) {
                             Navigation.map((i, index) => {
                                 return <B
                                     name={index === 0 ? 'top' : index === 1 ? 'left' : index === 2 ? 'right' : 'top'}
-                                    key={index}><p>{i}</p></B>
+                                    key={index}><p onClick={()=>{
+                                        if(index===4) {
+                                            router.push('/blog')
+                                        }
+                                }}>{i}</p></B>
                             })
                         }
                     </div> : <div className={styled.topRightMob}>
