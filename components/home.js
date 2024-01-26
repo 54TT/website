@@ -7,6 +7,7 @@ import {motion, AnimatePresence} from "framer-motion";
 import {getScrollYAnimation, getScrollXAnimation, getScrollXXAnimation} from './a'
 import B from './b';
 import Youtube from 'react-youtube'
+
 function Home(props) {
     const router = useRouter()
     const [wodWidth, setWidth] = useState(0)
@@ -52,7 +53,7 @@ function Home(props) {
     const click = () => {
         setIsShow(!isShow)
     }
-    const Navigation = ['About us', 'Roadmap', 'Airdrop', 'Learn','Blog']
+    const Navigation = ['About us', 'Roadmap', 'Airdrop', 'Learn', 'Blog']
     const update = ['The treasure chest can open up a variety of rare props and fragments!', 'At the same time, a new red name mechanism will also be grandly launched, with players with higher red name values having a higher chance of winning special treasures!', 'But risks and opportunities coexist, and red name players will not automatically recover their health after a PK (attack or defense) ends, until they are completely defeated.', 'Players have stronger outdoor PK strategies, more exciting gameplay, richer fun, and richer rewards.']
     const roadMpa = [{
         time: '2024 Q1',
@@ -79,6 +80,31 @@ function Home(props) {
         const ab = videoPar.filter((item) => item.img !== i.img)
         setVideoParams([i, ...ab])
     }
+    const aboutRef = useRef(null)
+    const roadMapRef = useRef(null)
+    const airDropRef = useRef(null)
+    const learnRef = useRef(null)
+    const pushContent = (i) => {
+        if (i === 4) {
+            router.push('/blog')
+        } else if (i === 0) {
+            if (aboutRef && aboutRef.current) {
+                window.scrollTo(0, aboutRef.current.offsetTop || 0)
+            }
+        } else if (i === 1) {
+            if (roadMapRef && roadMapRef.current) {
+                window.scrollTo(0, roadMapRef.current.offsetTop || 0)
+            }
+        } else if (i === 2) {
+            if (airDropRef && airDropRef.current) {
+                window.scrollTo(0, airDropRef.current.offsetTop || 0)
+            }
+        } else if (i === 3) {
+            if (learnRef && learnRef.current) {
+                window.scrollTo(0, learnRef.current.offsetTop || 0)
+            }
+        }
+    }
     return (
         <div className={styled.box}>
             <div className={styled.top}>
@@ -92,11 +118,7 @@ function Home(props) {
                             Navigation.map((i, index) => {
                                 return <B
                                     name={index === 0 ? 'top' : index === 1 ? 'left' : index === 2 ? 'right' : 'top'}
-                                    key={index}><p onClick={()=>{
-                                        if(index===4) {
-                                            router.push('/blog')
-                                        }
-                                }}>{i}</p></B>
+                                    key={index}><p onClick={() => pushContent(index)}>{i}</p></B>
                             })
                         }
                     </div> : <div className={styled.topRightMob}>
@@ -117,7 +139,12 @@ function Home(props) {
                                             return <div key={index} style={{
                                                 color: 'white',
                                                 marginBottom: '10px',
-                                                textAlign: 'right'
+                                                textAlign: 'right',
+                                            }} onClick={() => {
+                                                console.log(11111111)
+                                                if (index === 4) {
+                                                    router.push('/blog')
+                                                }
                                             }}>
                                                 {i}
                                             </div>
@@ -159,7 +186,7 @@ function Home(props) {
             </B>
             {/*about*/}
             <B name={'top'}>
-                <div className={styled.aboutNowBox} style={{height: moreHeight + 'px'}}>
+                <div className={styled.aboutNowBox} ref={aboutRef} style={{height: moreHeight + 'px'}}>
                     <div ref={chartHeight} className={styled.aboutNow}>
                         <div>
                             <p>About Us</p>
@@ -189,7 +216,7 @@ function Home(props) {
                 </div>
             </B>
             {/*update*/}
-            <div className={styled.updates}>
+            <div ref={airDropRef} className={styled.updates}>
                 <B name={'top'}><p className={styled.updatesP}>Updates</p></B>
                 {/*  box*/}
                 <div className={`${wodWidth >= 768 ? '' : styled.centerUpdate} ${styled.updateBox}`}>
@@ -230,7 +257,7 @@ function Home(props) {
                 </div>
             </div>
             {/* road map*/}
-            <div className={styled.roadMap}>
+            <div ref={roadMapRef} className={styled.roadMap}>
                 <B name={'top'}><p className={styled.roadMapP}>Road Map</p></B>
                 <div className={`${wodWidth >= 768 ? '' : styled.centerUpdate} ${styled.roadMapBot}`}>
                     {
@@ -276,7 +303,7 @@ function Home(props) {
                 </div>
             </div>
             {/* DEXPERT  */}
-            <div className={styled.DEXPERT}>
+            <div className={styled.DEXPERT} ref={learnRef}>
                 <B name={'top'}><p className={styled.DEXPERTP}><span>DEXPERT Academy</span> <img src="/xing.svg" alt=""
                                                                                                  style={{
                                                                                                      width: '27px',
