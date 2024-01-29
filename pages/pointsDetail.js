@@ -1,7 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import styles from '/public/style/home.module.css'
+import {useRouter} from "next/router";
 
 function PointsDetail() {
+    const router = useRouter()
     const [wodWidth, setWidth] = useState(0)
     // 在组件挂载时添加事件监听器
     useEffect(() => {
@@ -48,7 +50,9 @@ function PointsDetail() {
         <div className={styles.detailBox}>
             <div style={{width: '90%', margin: "0 auto"}}>
                 <div className={styles.detailBoxTop}>
-                    <img src="/detailLogo.svg" style={{width: '10%'}} alt=""/>
+                    <img src="/detailLogo.svg" style={{width: '10%',cursor:"pointer",zIndex:'100'}} onClick={()=>{
+                        router.push('/')
+                    }} alt=""/>
                     <img src="/detailRight.svg" style={{width: '70%'}} alt=""/>
                 </div>
                 {!(wodWidth > 768) && abc}
