@@ -27,7 +27,6 @@ function Home(props) {
             window.removeEventListener('resize', handleResize);
         };
     }, []); // 仅在组件挂载和卸载时执行
-    const [height, setHeight] = useState('auto')
     useEffect(() => {
         // const data = document.getElementById('name').offsetHeight
         // setHeight(data)
@@ -325,13 +324,13 @@ function Home(props) {
                                     <B name={'top'}>
                                         <p className={styled.dexBoxBoP}>{i.name}</p>
                                     </B>
-                                    <B name={'top'}>
-                                        <div className={styled.dexBoxBoDiv}>
-                                            <p>z</p>
-                                            <p>y</p>
-                                            <p>w</p>
-                                        </div>
-                                    </B>
+                                    {/*<B name={'top'}>*/}
+                                    {/*    <div className={styled.dexBoxBoDiv}>*/}
+                                    {/*        <p>z</p>*/}
+                                    {/*        <p>y</p>*/}
+                                    {/*        <p>w</p>*/}
+                                    {/*    </div>*/}
+                                    {/*</B>*/}
                                 </div>
                             }
                         })
@@ -341,8 +340,7 @@ function Home(props) {
                             {
                                 videoPar.map((i, index) => {
                                     return (index !== 0 &&
-                                        <div key={index} className={styled.video}><span>{i.name}</span> <p
-                                            onClick={() => pushVideo(i)}>view</p></div>)
+                                        <div key={index} className={styled.video}><span>{i.name}</span> <p onClick={() => pushVideo(i)}>view</p></div>)
                                 })
                             }
                         </div>

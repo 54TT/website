@@ -9,7 +9,26 @@
     padding: 20px 4%;
     justify-content: space-between;
 }
-
+.botNow{
+    width: 50%;
+    display: flex;
+    align-items: center;
+    margin: 0 auto;
+    justify-content: space-between;
+}
+.botNow>img{
+    width: 20%;
+}
+.detailBoxImg{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.detailBoxImg>p{
+    color: white;
+    font-weight: bold;
+    line-height: 1.5;
+}
 .topRight {
     display: flex;
     align-items: center;
@@ -34,6 +53,12 @@
     color: rgb(0, 218, 255);
     text-align: center;
     font-size: 22px;
+}
+.bottom{
+    text-align: center;
+    margin-bottom: 10px;
+    color: rgb(102,102,102);
+    line-height: 1;
 }
 .centerLogoPOne{
     margin-bottom: 10px;
@@ -275,6 +300,23 @@
 .DEXPERT {
     width: 85%;
     margin: 5% auto 0;
+}
+.detailBoxP{
+    overflow: hidden;
+}
+.detailBoxP p{
+    color: white;
+    line-height: 1.4;
+    margin-bottom: 7px;
+}
+.detailBox{
+    margin-top: 30px;
+    position: relative;
+}
+.detailBoxTop{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .DEXPERTP {
