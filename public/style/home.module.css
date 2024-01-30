@@ -30,6 +30,7 @@
     line-height: 1.5;
 }
 .topRight {
+    z-index: 100;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -791,7 +792,6 @@
     top: 40px;
     z-index: 100;
     right: 5px;
-    width: 80px;
 }
 
 @media screen and (max-width: 500px) {
@@ -833,10 +833,6 @@
 }
 
 @media screen and (min-width: 800px) {
-    .topRight {
-        min-width: 44%;
-    }
-
     .aboutBotLeft > div {
         height: 200px;
         padding: 10px;
@@ -871,10 +867,6 @@
 
     .botBot > img {
         width: 30px;
-    }
-
-    .topRight {
-        min-width: 26%;
     }
 }
 

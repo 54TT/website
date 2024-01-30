@@ -52,7 +52,7 @@ function Home(props) {
     const click = () => {
         setIsShow(!isShow)
     }
-    const Navigation = ['About us', 'Roadmap', 'Airdrop', 'Learn', 'Blog']
+    const Navigation = ['About us', 'Roadmap', 'Airdrop', 'Learn', 'Blog','Whitepaper']
     const update = ['The treasure chest can open up a variety of rare props and fragments!', 'At the same time, a new red name mechanism will also be grandly launched, with players with higher red name values having a higher chance of winning special treasures!', 'But risks and opportunities coexist, and red name players will not automatically recover their health after a PK (attack or defense) ends, until they are completely defeated.', 'Players have stronger outdoor PK strategies, more exciting gameplay, richer fun, and richer rewards.']
     const roadMpa = [{
         time: '2024 Q1',
@@ -102,7 +102,10 @@ function Home(props) {
             if (learnRef && learnRef.current) {
                 window.scrollTo(0, learnRef.current.offsetTop || 0)
             }
+        }else {
+            window.open('https://dexpert.gitbook.io/dexpert/tokenomic/usddexp')
         }
+
     }
     return (
         <div className={styled.box}>
@@ -122,7 +125,7 @@ function Home(props) {
                         }
                     </div> : <div className={styled.topRightMob}>
                         {/*<MenuUnfoldOutlined />*/}
-                        <img src="/Menu.svg" width={40} onClick={click} style={{width: '40px'}} alt=""/>
+                        <img src="/Menu.svg" width={40} onClick={click} style={{width: '40px',cursor:"pointer"}} alt=""/>
                         {/*<p onClick={click} style={{color: 'white'}}>展开</p>*/}
                         <AnimatePresence>
                             {isShow && (
@@ -130,7 +133,7 @@ function Home(props) {
                                     className={styled.motion}
                                     key="modal"
                                     initial={{height: 0}}
-                                    animate={{height: '150px'}}
+                                    animate={{height: '180px'}}
                                     exit={{height: 0}}
                                     transition={{duration: 0.3}}>
                                     {
@@ -139,12 +142,7 @@ function Home(props) {
                                                 color: 'white',
                                                 marginBottom: '10px',
                                                 textAlign: 'right',
-                                            }} onClick={() => {
-                                                console.log(11111111)
-                                                if (index === 4) {
-                                                    router.push('/blog')
-                                                }
-                                            }}>
+                                            }} onClick={() => pushContent(index)}>
                                                 {i}
                                             </div>
                                         })

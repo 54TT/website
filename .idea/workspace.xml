@@ -5,15 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5ca5f751-1a0e-4de7-a19a-35f5fc6604b8" name="更改" comment="">
-      <change afterPath="$PROJECT_DIR$/pages/pointsDetail.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/backBack.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/detailLogo.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/detailRight.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/one.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/other.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/two.svg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/components/home.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/home.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pages/blog.js" beforeDir="false" afterPath="$PROJECT_DIR$/pages/blog.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/public/style/home.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/style/home.module.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -170,6 +164,7 @@
       <workItem from="1706164581237" duration="1487000" />
       <workItem from="1706247944492" duration="10337000" />
       <workItem from="1706527711182" duration="1040000" />
+      <workItem from="1706599631950" duration="646000" />
     </task>
     <servers />
   </component>
