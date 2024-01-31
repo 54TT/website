@@ -3,4 +3,7 @@ module.exports = {
     compiler: {
         styledComponents: true,
     },
+    experimental: {
+        esmExternals: false
+    }
 }
