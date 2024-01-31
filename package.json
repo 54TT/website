@@ -17,5 +17,5 @@
     "react-dom": "latest",
     "react-infinite-scroll-component": "^6.1.0",
     "react-youtube": "^10.1.0"
-  },
+  }
 }
