@@ -9,7 +9,6 @@
     "export": "next build && next export"
   },
   "dependencies": {
-    "@ant-design/icons": "^5.3.0",
     "framer-motion": "^6.0.0",
     "next": "latest",
     "react": "latest",

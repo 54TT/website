@@ -1,5 +1,4 @@
 import React from 'react';
-import {LeftOutlined} from '@ant-design/icons';
 import {useRouter} from "next/router";
 
 function Blog() {
@@ -8,7 +7,7 @@ function Blog() {
         <div style={{color: 'rgb(200,200,200)', padding: '20px'}}>
             <p style={{fontSize: '20px', marginBottom: '10px',cursor:'pointer',display:'inline-block'}} onClick={() => {
                 router.back()
-            }}><LeftOutlined/> back</p>
+            }}> 👈 back</p>
             <div>
                 Title: The Cryptocurrency Market: Unveiling the Infinite Potential of the Future
                 Introduction
