@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import styles from '/public/style/home.module.css'
 import {useRouter} from "next/router";
-
 function PointsDetail() {
     const router = useRouter()
     const [wodWidth, setWidth] = useState(0)
