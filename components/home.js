@@ -1,13 +1,9 @@
 import React, {useEffect, useState, useMemo, useRef} from 'react';
 import styled from '/public/style/home.module.css'
 import {useRouter} from 'next/router'
-import ScrollAnimationWrapper from './demo'
-import {Anchor} from 'antd'
 import {motion, AnimatePresence} from "framer-motion";
-import {getScrollYAnimation, getScrollXAnimation, getScrollXXAnimation} from './a'
 import B from './b';
 import Youtube from 'react-youtube'
-
 function Home(props) {
     const router = useRouter()
     const [wodWidth, setWidth] = useState(0)
